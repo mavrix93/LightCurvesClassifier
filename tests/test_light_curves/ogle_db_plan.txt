@@ -1,0 +1,7 @@
+#starid	field_num	target
+1021	1	bul
+1022	1	bul
+1003	1	bul
+1004	1	bul
+1005	1	bul
+
