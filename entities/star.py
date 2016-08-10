@@ -15,6 +15,7 @@ from entities.exceptions import FailToParseName
 
 
 #TODO: Get rid of sax attributes and put sax words, scores and matches into more dict  
+#TODO: Think more about getting rid of methods for computing things such as histrogram, variogram etc.
 
 class Star(object):
     '''
@@ -28,7 +29,7 @@ class Star(object):
     DEF_SMOOTH_RATIO = 0.5      #Default smooth ratio for abbe transformation
     
                
-    def __init__(self, ident = {},ra=None,dec=None,more = {}):
+    def __init__(self, ident = {},ra=None,dec=None,more = {}, starClass = None):
         '''
         @param ident: Dictionary of identificators for the star 
         @param ra:        Right Ascension of star (value or RA object)
@@ -55,7 +56,7 @@ class Star(object):
         self.varioWord = ""
         self.matchStar = None
         self.matchScore = None
-        self.starClass = None
+        self.starClass = starClass
         self.scoreList = []
         
         self.name = self.getIdentName()
@@ -178,7 +179,7 @@ class Star(object):
                 
     def saveStar(self,path=".", ident_convention = None):
         '''
-        Save star's light curve into file and name (field+starid) as a name of the file
+        Save star's light curve into the file
         
         @param path: Path to the folder where light curves will be saved (from 
         '''
@@ -192,9 +193,9 @@ class Star(object):
                 FailToParseName("The star does not contain desired indentificator %s, but %s"%(ident_convention,self.ident))
         else:
             try:
-                id_name = self.ident[self.ident.keys()[0]]
+                id_name = self.ident[self.ident.keys()[0]]["name"]
             except:
-                FailToParseName("The star does not contain any identificator")
+                FailToParseName("The star does not contain any identifier")
                 
         if self.lightCurve != None:
             fi_path = "%s/%s.dat" %(path,id_name)

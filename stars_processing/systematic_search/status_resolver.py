@@ -22,8 +22,8 @@ class StatusResolver(object):
         @param status_file_path: Path to the status file
         
         FORMAT OF STATUS FILE:
-        #first_query_param    second_query_param    other_query_params    found    filtred    passed
-        value1    value2    other_values    True/False    True/False    True/False
+        #first_query_param    second_query_param    other_query_param    found    filtered    passed
+        value1    value2    other_value    True/False    True/False    True/False
         ...
         
         This file will be generate automatically during systematic search.
@@ -132,7 +132,7 @@ class StatusResolver(object):
         '''Get keys from header in a list'''
         
         with open(status_file_path, 'r') as f:
-            header_line = f.readline()[1:].rstrip('\n')    #Skip first symbol is '#' and the  '\n'            
+            header_line = f.readline()[1:].rstrip('\n')    #Skip first symbol ('#') and the  '\n'            
         return header_line.split("\t")
     
         

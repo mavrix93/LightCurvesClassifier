@@ -4,13 +4,13 @@ Created on Jul 18, 2016
 @author: Martin Vo
 '''
 
-from stars_processing.systematic_search.searcher import AbstractSearch
+from stars_processing.systematic_search.stars_searcher import StarsSearcher
 from utils.helpers import verbose, create_folder
 from conf.glo import VERBOSITY
 
-class OgleSystematicSearch(AbstractSearch):
+class OgleSystematicSearch(StarsSearcher):
     '''
-    This is systematic search and filtering class for OGLEII. 
+    This is systematic searching and filtering class for OGLEII. 
     '''
     
     OBT_METHOD = "ogle"
@@ -23,7 +23,7 @@ class OgleSystematicSearch(AbstractSearch):
         @param UNFOUND_LIM: Number of unsuccessful query to interrupt searching  
         '''
         
-        AbstractSearch.__init__(self, filters_list, SAVE_PATH, SAVE_LIM, UNFOUND_LIM,OBTH_METHOD = self.OBT_METHOD)
+        StarsSearcher.__init__(self, filters_list, SAVE_PATH, SAVE_LIM, UNFOUND_LIM,OBTH_METHOD = self.OBT_METHOD)
         
 
     def matchOccur(self, star, query):

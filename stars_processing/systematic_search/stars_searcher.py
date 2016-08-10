@@ -19,8 +19,7 @@ import os
 
 
 
-class AbstractSearch():
-    __metaclass__ = abc.ABCMeta
+class StarsSearcher():
     '''
     Common class for every systematic db search class 
     '''
@@ -50,8 +49,7 @@ class AbstractSearch():
             warn("Max number of failed queries in order to end searching need to be specified.\nSetting default value: %i" % UNFOUND_LIM)
         if OBTH_METHOD == None:
             raise QueryInputError("Database for searching need to be specified in a class which inherits this abstract class")
-            
-        
+             
         self.filteringManager = FilteringManager()        
         
         #Load all filters from given list
@@ -97,7 +95,7 @@ class AbstractSearch():
         verbose(star,2, VERBOSITY)
         star.saveStar(self.save_path)
     
-    #NOTE: Default behavior. It can be overridden.    
+    #NOTE: Default behavior. It can be overwritten.    
     def failProcedure(self,query,err = None):
         '''
         What to do if a fail occurs
@@ -108,14 +106,14 @@ class AbstractSearch():
            
         print "Error occurred during filtering:",err
      
-    #NOTE: Default behavior. It can be overridden.    
+    #NOTE: Default behavior. It can be overwritten.    
     def statusFile(self,query,status):
         '''
-        This method generate status of file for overall query in certain db.
-        Every star will be noted.
+        This method generate status file for overall query in certain db.
+        Every queried star will be noted.
         
-        @param query: Query informations
-        @param status: Information whether queried star was found, filtred and passed thru filtering        
+        @param dict query: Query informations
+        @param dict status: Information whether queried star was found, filtered and passed thru filtering        
         '''
         file_name = self.save_path+"%s_db.txt" % self.OBTH_METHOD
         try:
@@ -138,10 +136,7 @@ class AbstractSearch():
             for key in status:
                 status_file.write(str(status[key])+"\t")
             status_file.write("\n")
-                
-
-        
-        
+   
     def queryStars(self,queries):
         '''
         Query db according to list of queries
@@ -151,7 +146,7 @@ class AbstractSearch():
         
         unfound_counter = 0
         for query in queries:            
-            status = {"found": False, "filtred":False, "passed":False}
+            status = {"found": False, "filtered":False, "passed":False}
             try:
                 stars = StarsProvider().getProvider(obtain_method = self.OBTH_METHOD, **query).getStarsWithCurves()
             except QueryInputError:
@@ -159,8 +154,7 @@ class AbstractSearch():
             except:
                 warn("Couldn't download the light curve")
                 stars = []
-            
-            
+                      
             #Check if searched star was found
             result_len = len(stars)
             if result_len == 0:
@@ -184,7 +178,7 @@ class AbstractSearch():
                     #Try to apply filters to the star
                     try:
                         passed = self.filterStar(stars[0],query)
-                        status["filtred"] = True
+                        status["filtered"] = True
                         status["passed"] = passed
                     except IOError as err:
                         raise InvalidFilesPath(err)
@@ -192,25 +186,6 @@ class AbstractSearch():
                         self.failProcedure(query,err)
                         warn("Something went wrong during filtering")
             self.statusFile(query, status)
-
-
-            
-class DefaultDbSearch(AbstractSearch):
-    '''
-    Default systematic searcher. Db connector is specified in OBTH_METHOD
-    and have to be listed in StarsProvider in order to be resolved
-    '''
-    def __init__(self, filters_list, SAVE_PATH=None, SAVE_LIM=None, UNFOUND_LIM=None, OBTH_METHOD=None):
-        '''
-        @param filters_list: List of filter type objects
-        @param SAVE_PATH: Path from "run" module to the folder where found light curves will be saved
-        @param SAVE_LIM: Number of searched objects after which status file will be saved
-        @param UNFOUND_LIM: Limit of failed queries in order to interrupt searching
-        @param OBTH_METHOD: Identificator for db connector (see class StarsProvider)
-        '''
-        AbstractSearch.__init__(self, filters_list, SAVE_PATH=SAVE_PATH, SAVE_LIM=SAVE_LIM, UNFOUND_LIM=UNFOUND_LIM, OBTH_METHOD=OBTH_METHOD)
-                    
-
 
        
 

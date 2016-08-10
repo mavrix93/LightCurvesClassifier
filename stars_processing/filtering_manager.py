@@ -64,9 +64,7 @@ class FilteringManager(object):
             stars=st_filter.applyFilter(stars)
         verbose("Filtering is done\nNumber of stars passed filtering: %i / %i"%(len(stars), len(self.stars)),3,VERBOSITY)
         return stars
-    
-
-        
+         
     
     def addStars(self,stars):
         '''Add list of stars or one star to the list of stars for filtering'''

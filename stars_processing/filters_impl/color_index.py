@@ -8,7 +8,7 @@ from utils.commons import returns,accepts
 from stars_processing.filters_tools.base_filter import BaseFilter
 from entities.star import Star
 from utils.helpers import progressbar
-from db_tier.ogle_helpers import updateStar
+from db_tier.ogle_client import updateStar
 
 class ColorIndexFilter(BaseFilter):
     '''

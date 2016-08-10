@@ -47,9 +47,7 @@ class ComparingFilter(BaseFilter):
         else:
             self.treshold = treshold
             self.decis_fu = self._default_decis_functio
-        
-        
-        
+
         #Check validity of given search option
         if search_opt in self.SEARCH_OPTIONS:
             self.search_opt = search_opt

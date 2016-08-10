@@ -20,7 +20,7 @@ from stars_processing.filters_impl.abbe_value import AbbeValueFilter
 
 
 from db_tier.stars_provider import StarsProvider
-from stars_processing.systematic_search.ogleII import OgleSystematicSearch
+from stars_processing.systematic_search.ogle_systematic_search import OgleSystematicSearch
 
 def search_qso_ogle():
     #aa = int(sys.argv[1])
