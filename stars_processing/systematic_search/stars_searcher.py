@@ -4,7 +4,7 @@ Created on Apr 26, 2016
 @author: Martin Vo
 '''
 
-from utils.helpers import verbose, check_path
+from utils.helpers import verbose, check_path, progressbar
 from stars_processing.filtering_manager import FilteringManager
 from conf.glo import VERBOSITY, TO_THE_DATA_FOLDER, LC_FOLDER
 from warnings import warn
@@ -48,7 +48,7 @@ class StarsSearcher():
             UNFOUND_LIM = self.DEF_UNFOUND_LIM
             warn("Max number of failed queries in order to end searching need to be specified.\nSetting default value: %i" % UNFOUND_LIM)
         if OBTH_METHOD == None:
-            raise QueryInputError("Database for searching need to be specified in a class which inherits this abstract class")
+            raise QueryInputError("Database for searching need to be specified.")
              
         self.filteringManager = FilteringManager()        
         
@@ -76,7 +76,6 @@ class StarsSearcher():
         result = self.filteringManager.performFiltering()
         
         if len(result) == 1:
-            verbose("Match!", 2, VERBOSITY)
             self.matchOccur(result[0],query)
             return True
         elif len(result) > 1:
@@ -145,7 +144,7 @@ class StarsSearcher():
         '''
         
         unfound_counter = 0
-        for query in queries:            
+        for query in progressbar(queries, "Query: "):            
             status = {"found": False, "filtered":False, "passed":False}
             try:
                 stars = StarsProvider().getProvider(obtain_method = self.OBTH_METHOD, **query).getStarsWithCurves()

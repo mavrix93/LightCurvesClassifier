@@ -1,5 +1,5 @@
-#Level of verbosity
-VERBOSITY = 5
+#Level of verbosity (higher number means more info)
+VERBOSITY = 0
 
 TO_THE_DATA_FOLDER = "../../data/"                              #Path from this module to the data folder
 LC_FOLDER = "light_curves/"                                     #Name of folder of light curves

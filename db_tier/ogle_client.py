@@ -364,7 +364,7 @@ class OgleII(LightCurvesDb):
         numStars = len(self.stars)
         i = 0
         for star in self.stars: 
-            verbose("Parsing query result"+ str(i) +"/"+str(numStars),3,VERBOSITY)
+            verbose("Parsing query result "+ str(i) +"/"+str(numStars),3,VERBOSITY)
             
         
             #Make post request in order to obtain light curves
