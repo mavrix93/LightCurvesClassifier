@@ -20,7 +20,7 @@ class SAX(object):
             raise Exception("DictionarySizeIsNotSupported")
         self.aOffset = ord('a')
         self.wordSize = wordSize
-        self.alphabetSize = alphabetSize
+        self.alphabet_size = alphabetSize
         self.eps = epsilon
         self.breakpoints = {'3' : [-0.43, 0.43],
                             '4' : [-0.67, 0, 0.67],
@@ -41,7 +41,7 @@ class SAX(object):
                             '19': [-1.62, -1.25, -1, -0.8, -0.63, -0.48, -0.34, -0.2, -0.07, 0.07, 0.2, 0.34, 0.48, 0.63, 0.8, 1, 1.25, 1.62],
                             '20': [-1.64, -1.28, -1.04, -0.84, -0.67, -0.52, -0.39, -0.25, -0.13, 0, 0.13, 0.25, 0.39, 0.52, 0.67, 0.84, 1.04, 1.28, 1.64]
                             }
-        self.beta = self.breakpoints[str(self.alphabetSize)]
+        self.beta = self.breakpoints[str(self.alphabet_size)]
         self.build_letter_compare_dict()
         self.scalingFactor = 1
 
@@ -102,7 +102,7 @@ class SAX(object):
         and will have identical values.
         """
 
-        number_rep = range(0,self.alphabetSize)
+        number_rep = range(0,self.alphabet_size)
         letters = [chr(x + self.aOffset) for x in number_rep]
         self.compareDict = {}
         for i in range(0, len(letters)):

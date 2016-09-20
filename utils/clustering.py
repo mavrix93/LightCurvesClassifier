@@ -20,7 +20,7 @@ from stars_processing.filters_impl.compare import ComparingFilter
 import networkx as nx   
 from utils.output_process_modules import saveIntoFile
 from sklearn.cross_validation import train_test_split
-from conf.glo import TO_THE_DATA_FOLDER
+from conf.settings import TO_THE_DATA_FOLDER
 
 
 #TODO: Need to be cleaned

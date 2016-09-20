@@ -7,6 +7,45 @@ import sys
 import matplotlib.pyplot as plt
 import os
 
+
+
+def unpack_objects(params):
+    """
+    EXAMPLE:
+        unpack_objects({"a":5, "b": [{"aa":55, "bb": AbbeValueFilter(1)}, {"cc": star}]})
+            --> {'a': 5, 'b': {'aa': 55, 'bb': {'abbe_lim': 1}}}
+    """
+ 
+    if type(params) is dict:
+        for key in params:
+            value = params[key]
+            try:
+                params[key] = value.__dict__
+                params[key] = unpack_objects(params[key])
+            except AttributeError:                
+                if type(value) is list:                    
+                    params[key] = unpack_objects(value)
+                    if len(params[key] ) == 1:
+                        params[key] =  params[key][0]
+                elif type(value) is dict:
+                    params[key] = unpack_objects(value)
+                 
+    elif type(params) is list:
+        for i,value in enumerate(params):
+            try:
+                params[i] = value.__dict__
+                params[i] = unpack_objects(params[i])
+            except AttributeError:  
+                if type(value) is list: 
+                    params[i] = unpack_objects(value)
+                    if len(params[i]) == 1:
+                        params[i] = params[i][0]
+                elif type(value) is dict:
+                    params[i] = unpack_objects(value)
+    return params
+      
+    
+
 def check_path(path):
     '''
     Correct path if there are more backslashes 

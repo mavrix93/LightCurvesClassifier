@@ -17,7 +17,7 @@ from db_tier.base_query import LightCurvesDb
 from urllib2 import URLError
 from utils.commons import args_type,mandatory_args,default_values
 import socket
-from conf.glo import *
+from conf.settings import *
 from utils.helpers import verbose
 from warnings import warn
 

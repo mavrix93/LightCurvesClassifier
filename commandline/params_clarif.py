@@ -33,7 +33,6 @@ from sklearn.linear_model.logistic import LogisticRegression
 from sklearn.lda import LDA
 from sklearn.grid_search import GridSearchCV
 from db_tier.stars_provider import StarsProvider
-from utils.estimators import QsoParamsEstimator
 
 
 def find_symbolic_space_params(searched_stars,contamination_stars,tuned_params,estimator,n_jobs=1):

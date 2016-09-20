@@ -9,7 +9,7 @@ from base_query import LightCurvesDb
 from entities.exceptions import QueryInputError, NoInternetConnection
 from gavo.votable.tapquery import RemoteError, WrongStatus, NetworkError
 from utils.helpers import verbose
-from conf.glo import VERBOSITY
+from conf.settings import VERBOSITY
 
 class TapClient(LightCurvesDb):
     '''

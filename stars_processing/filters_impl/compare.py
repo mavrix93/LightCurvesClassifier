@@ -7,7 +7,7 @@ from entities.exceptions import InvalidFilteringParams
 from utils.helpers import verbose, progressbar
 import numpy as np
 
-from conf.glo import *
+from conf.settings import *
 
 from utils.commons import returns,accepts
 from stars_processing.filters_tools.base_filter import BaseFilter

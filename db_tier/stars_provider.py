@@ -7,8 +7,8 @@ Created on Feb 29, 2016
 #TODO: Make a config file for db provider key - module name, in order to 
 #import these classes
 
-from file_manager import FileManager
-from ogle_client import OgleII
+from db_tier.connectors.file_manager import FileManager
+from db_tier.connectors.ogle_client import OgleII
 
 class StarsProvider(object):
     '''

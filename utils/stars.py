@@ -9,7 +9,7 @@ There are common functions for list of star objects (evaluation, plotting...)
 import matplotlib.pyplot as plt
 import os
 import warnings
-from conf.glo import *
+from conf.settings import *
 
 
 def resultEvalaution(stars,class_types = ["QC"]):

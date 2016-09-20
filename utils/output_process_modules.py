@@ -7,9 +7,9 @@ Created on Feb 5, 2016
 import pickle
 from entities.exceptions import InvalidFilesPath, InvalidFile
 import os
-        
+            
 
-def saveIntoFile(obj,path,fileName="saved_object",folder_name=None):
+def saveIntoFile(obj,path = ".",fileName="saved_object.pickle",folder_name=None):
     '''This  method serialize object (save it into file)''' 
 
     path_with_name = "%s/%s" % (path, fileName)
@@ -23,12 +23,11 @@ def saveIntoFile(obj,path,fileName="saved_object",folder_name=None):
     except IOError:
         raise InvalidFilesPath
     
-def loadFromFile(path,fileName):    
+def loadFromFile(file_name = "saved_object.pickle"):    
     ''' Open object from file '''
-    
-    pathWithName = "%s/%s" % (path, fileName)
+  
     try:
-        with open(pathWithName,'rb') as inputToLoad:
+        with open(file_name,'rb') as inputToLoad:
             loaded_object =pickle.load(inputToLoad)
         return loaded_object 
     except IOError:

@@ -20,7 +20,7 @@ class SymbolicRepresentation(object):
     def __init__(self,filter_attribute,days_per_bin=100,alphabet_size=10):
         '''
         @param letterPerDayRatio: This ration is deciding about length of the star word
-        @param alphabetSize: Size of alphabet
+        @param alphabet_size: Size of alphabet
         @param treshold: Criterion for deciding whether if matching filter and star
                          is sufficient to consider the star as certain phenomena
                          (such as: qso, gravitational lensing etc.)
@@ -28,7 +28,7 @@ class SymbolicRepresentation(object):
         '''
         
         self.filter_attribute = filter_attribute
-        self.alphabetSize = alphabet_size
+        self.alphabet_size = alphabet_size
         self.days_per_bin = days_per_bin
         
        
@@ -83,7 +83,7 @@ class SymbolicRepresentation(object):
         best_score = 99
         while (aWordSize +shift <= bWordSize ):            
             word = bWord[shift:shift+aWordSize]
-            sax = SAX(aWordSize,self.alphabetSize)
+            sax = SAX(aWordSize,self.alphabet_size)
             sax.scalingFactor = np.sqrt(curve_len/len(word))
             score= sax.compare_strings(word, aWord)
             if (score < best_score):

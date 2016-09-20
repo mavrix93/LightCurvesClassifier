@@ -9,7 +9,10 @@ from utils.stars import count_types
 from entities.exceptions import StarAttributeNotSpecified
 from sklearn.grid_search import GridSearchCV
 from utils.helpers import verbose
-from conf.glo import VERBOSITY
+from conf.settings import VERBOSITY
+from utils.output_process_modules import saveIntoFile
+from conf import settings
+import os
 
 
 class DefaultEstimator(BaseEstimator, ClassifierMixin):
@@ -22,14 +25,42 @@ class DefaultEstimator(BaseEstimator, ClassifierMixin):
     function of true positive (tp) and false positive (fp) values. This method can be changed,
     by default it return difference of tp_rate and fp_rate.
     
-    Every estimator has to inherit BaseEstimator, ClassifierMixin and have "fit" and "score" function
+    Note:
+    -----
+        Every estimator has to inherit BaseEstimator, ClassifierMixin and has
+        "fit" and "score" function
+    
+    Attributes:
+    -----------
+        tuned_params : dict
+            Tuned parameters of the inspected filter
+        
     '''
      
     def __init__(self,tuned_params = {} ):
         self.tuned_params = tuned_params
       
     def fit(self, all_stars,y,filt): 
-        '''Learn to recognize stars according'''
+        '''Learn to recognize stars
+        
+        Parameters:
+        -----------
+            all_stars : list
+                Star objects
+            
+            y : list
+                List of zeroes and ones, which say whether object in all_stars
+                list is searched object (1) or not (0).
+            
+            filt : Filter object
+                Investigated filter object
+                
+        Throws:
+        -------
+            StarAttributeNotSpecified
+                The searched type is recognized according to starClass attribute
+                of Star objects. The method throws the exception if it is not specified.
+        '''
          
         self.searched= []
         self.others = []
@@ -76,17 +107,20 @@ class ParamsEstimation(object):
     according to train classified stars.  
     '''
 
-    def __init__(self, searched,others,filt, tuned_params, estimator = DefaultEstimator(),save_file = "GridSearch_params.txt"):
+    def __init__(self, searched,others,filt,
+                 tuned_params, estimator = DefaultEstimator(),
+                 save_file = "GridSearch_params.pickl"):
         '''
         @param searched: List of star-like objects containing light curves and "starClass" attribute
         @param others: List of another stars
         @param filt: Star filter type object
         @param tuned_params: List of combinations of parameters which will be tried
-        @param estimator: Estimator object        
+        @param estimator: Estimator object   
         
         EXAMPLE:
-        es = ParamsEstimation(quasars,stars,AbbeValueFilter, [{"abbe_lim": 0.37},{"abbe_lim": 0.4}])
-        es.fit() 
+        --------
+            es = ParamsEstimation(quasars,stars,AbbeValueFilter, [{"abbe_lim": 0.37},{"abbe_lim": 0.4}])
+            es.fit() 
         '''
         
         self.searched = searched
@@ -96,25 +130,44 @@ class ParamsEstimation(object):
         self.tuned_params = {"tuned_params":tuned_params}
         self.estimator = estimator
         
-        self.save_fi = open(save_file,"w")
+        self.save_file_name = save_file
         
     def fit(self):
         ''' Make a fit according to given stars and find best parameters '''
         
         gs = GridSearchCV(self.estimator, self.tuned_params,fit_params={"filt":self.filt})
         gs.fit(self.searched + self.others,y=[1 for i in range(len(self.searched))]+[0 for i in range(len(self.others))])
-        best_params =  gs.best_params_
+        best_params =  gs.best_params_['tuned_params']
         
-        verbose( str(best_params["tuned_params"])+"\tScore: "+ str(gs.best_score_), 0, VERBOSITY)
+        print best_params
+        #result_dict = unpack_objects(best_params["tuned_params"])
+        verbose("Score: "+ str(gs.best_score_), 0, VERBOSITY)
         self._saveResultParams(best_params)
         verbose("Result file was saved into the file", 1, VERBOSITY)
         
     def _saveResultParams(self,best_params):
-        ''' Save results into the file '''
+        '''
+        Save results into the file
         
-        for key in best_params["tuned_params"]:
-            self.save_fi.write("%s:\t%.02f\n" % (key,best_params["tuned_params"][key]))       
-        self.save_fi.close()
+        Result will be saved as pickle object - dictionary with two keys:
+            "filter": Filter class (unconstructed filter object)
+            "params": Tuned parameters as dictionary
+            
+        This file can be easily reconstructed as initialized filter object with
+        most optimal values:
+        
+            objects = loadFromFile(os.path.join(settings.FILTERS_PATH,"GridSearch_params.pickel"))
+            uninstanc_filter = objects["filter"]
+            params = objects["params"]
+            
+            ready_filter = uninstanc_filter(**params)
+        '''
+        
+        file_path = os.path.join(settings.FILTERS_PATH, self.save_file_name)
+        saveIntoFile({"filter": self.filt, "params": best_params}, fileName = file_path)
+
+        
+        
         
     def _calcCombinations(self,tuned_params):      
         #{"abbe_lim": [0.37,0.4], "a":[1]}--> ???

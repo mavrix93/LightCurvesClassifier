@@ -15,7 +15,7 @@ class VariogramSlope(BaseFilter):
     '''
 
 
-    def __init__(self, slopes_range,variogram_days_bin=None):
+    def __init__(self, slopes_range, variogram_days_bin):
         '''
         @param slopes_range: Tuple/list.. of border values for permitted range of slopes 
         '''

@@ -10,8 +10,9 @@ from warnings import warn
 import numpy as np
 from utils.data_analysis import  to_ekvi_PAA,abbe, histogram, variogram,\
     compute_bins, cart_distance
-from utils.helpers import check_path
+from utils.helpers import check_path, verbose
 from entities.exceptions import FailToParseName
+from conf import settings
 
 
 #TODO: Get rid of sax attributes and put sax words, scores and matches into more dict  
@@ -169,7 +170,7 @@ class Star(object):
             warn("Star {0} has no light curve".format(self.field+self.starid))
             return None
         if (smooth_ratio == None):
-            warn("Smooth ratio was not specified. Setting default value: %f" % self.DEF_SMOOTH_RATIO)
+            verbose( "Smooth ratio was not specified. Setting default value: %f" % self.DEF_SMOOTH_RATIO, 2, settings.VERBOSITY )
             smooth_ratio = self.DEF_SMOOTH_RATIO
  
         x = to_ekvi_PAA(self.lightCurve.time, self.lightCurve.mag)[1]

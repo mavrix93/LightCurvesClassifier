@@ -1,4 +1,4 @@
-from conf.glo import TO_THE_DATA_FOLDER, LC_FOLDER
+from conf.settings import TO_THE_DATA_FOLDER, LC_FOLDER
 
 HIST_ALPHABET_SIZE = 7          #Histogram alphabet size
 VARIO_ALPHABET_SIZE = 17        #Variogram alphabet size

@@ -35,7 +35,7 @@ class CurvesShapeFilter(SymbolicRepresentation):
           
         if (star.curveWord == "" or star.curveWord == None):
             word_size = compute_bins(star.lightCurve.time,self.days_per_bin)
-            sax = SAX(word_size,self.alphabetSize)
+            sax = SAX(word_size,self.alphabet_size)
             lettersCurve = sax.to_letter_rep(star.lightCurve.mag)[0]
             star.putLettersCurve(lettersCurve)
         return star
@@ -51,7 +51,7 @@ class HistShapeFilter(SymbolicRepresentation):
     def __init__(self,days_per_bin,alphabet_size):
         '''
         @param wordSize: Length of symbol representation of histogram
-        @param alphabetSize: Range of of used letters     
+        @param alphabet_size: Range of of used letters     
         '''
         SymbolicRepresentation.__init__(self, filter_attribute="histWord",days_per_bin=days_per_bin,alphabet_size=alphabet_size)
         
@@ -66,7 +66,7 @@ class HistShapeFilter(SymbolicRepresentation):
    
         if (star.histWord == "" or star.histWord == None):
             hist = star.getHistogram(days_per_bin=self.days_per_bin)[0]
-            sax = SAX(len(hist),self.alphabetSize)
+            sax = SAX(len(hist),self.alphabet_size)
             lettersHist = sax.to_letter_rep(hist)[0]
             star.putLettersHist(lettersHist)
         return star
@@ -96,7 +96,7 @@ class VariogramShapeFilter(SymbolicRepresentation):
         
         if (star.varioWord == "" or star.varioWord == None):  
             vario = star.getVariogram(days_per_bin=self.days_per_bin)[1]
-            sax = SAX(len(vario),self.alphabetSize)
+            sax = SAX(len(vario),self.alphabet_size)
             lettersVario = sax.to_letter_rep(vario)[0]
             star.putLettersVario(lettersVario)
         return star

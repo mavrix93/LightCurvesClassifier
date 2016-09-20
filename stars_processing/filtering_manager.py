@@ -16,7 +16,7 @@ from entities.exceptions import NotFilterTypeClass
 
 from utils.helpers import verbose
 
-from conf.glo import *
+from conf.settings import *
 from entities.star import Star
 from stars_processing.filters_tools.base_filter import BaseFilter
 

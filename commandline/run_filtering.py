@@ -10,7 +10,7 @@ from stars_processing.filters_impl.color_index import ColorIndexFilter
 from utils.output_process_modules import saveIntoFile
 from utils.stars import plotStarsPicture
 
-from conf.glo import *
+from conf.settings import *
 from conf.filters_params.qso import *
 from entities.right_ascension import RightAscension
 from entities.declination import Declination

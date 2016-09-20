@@ -6,7 +6,7 @@ Created on Jul 18, 2016
 
 from stars_processing.systematic_search.stars_searcher import StarsSearcher
 from utils.helpers import verbose, create_folder
-from conf.glo import VERBOSITY
+from conf.settings import VERBOSITY
 
 class OgleSystematicSearch(StarsSearcher):
     '''

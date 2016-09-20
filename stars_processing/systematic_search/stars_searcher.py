@@ -6,7 +6,7 @@ Created on Apr 26, 2016
 
 from utils.helpers import verbose, check_path, progressbar
 from stars_processing.filtering_manager import FilteringManager
-from conf.glo import VERBOSITY, TO_THE_DATA_FOLDER, LC_FOLDER
+from conf.settings import VERBOSITY, TO_THE_DATA_FOLDER, LC_FOLDER
 from warnings import warn
 
 import abc

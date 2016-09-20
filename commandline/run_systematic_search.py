@@ -5,7 +5,7 @@ Created on May 11, 2016
 '''
 #Relative imports fix
 import sys, os
-from conf.glo import MQS_QSO_PATH, OGLE_QSO_PATH
+from conf.settings import MQS_QSO_PATH, OGLE_QSO_PATH
 myPath = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, myPath + '/../')
 from conf.filters_params.qso import *

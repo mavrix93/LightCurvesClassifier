@@ -6,7 +6,7 @@ Created on Apr 2, 2016
 
 #Relative imports fix
 import sys, os
-from conf.glo import TO_THE_DATA_FOLDER
+from conf.settings import TO_THE_DATA_FOLDER
 from conf.filters_params.qso import *
 myPath = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, myPath + '/../')
