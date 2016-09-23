@@ -151,6 +151,7 @@ class StatusResolver(object):
         
         queries_list = []
         for query in queries:
+            if type(query) is not np.ndarray: query = [query]
             queries_list.append(dict(zip(header,query)))
         return queries_list
 

@@ -14,10 +14,11 @@ from conf.settings import *
 from conf.filters_params.qso import *
 from entities.right_ascension import RightAscension
 from entities.declination import Declination
+from conf import settings
 
 #
 #Path to the folder with quasar light curves
-qso_path = OGLE_QSO_PATH
+qso_path = settings.STARS_PATH["ogle"]
 
 obtain_params = {
      "ra":RightAscension(5.56*15),
@@ -30,14 +31,14 @@ obtain_params = {
 
 files_prov = StarsProvider().getProvider(path=qso_path,
                                          files_limit=15,
-                                         obtain_method="file",
+                                         obtain_method="FileManager",
                                          star_class="quasar")
 quasars =  files_prov.getStarsWithCurves()
 
 
 #----  Download  stars from OGLE II database    ------
 
-ogle_prov = StarsProvider().getProvider(obtain_method="ogle",
+ogle_prov = StarsProvider().getProvider(obtain_method="OgleII",
                                         obtain_params=obtain_params)
 stars = ogle_prov.getStarsWithCurves()
 
@@ -85,5 +86,6 @@ result_stars = filteringManager.performFiltering()
 
 #-----   Plot and save stars passed thru filter   ----
 
+print result_stars
 #Plot stars
 plotStarsPicture(result_stars)

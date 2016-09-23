@@ -1,6 +1,4 @@
-from conf.package_reader import PackageReader
+from stars_processing.systematic_search.status_resolver import StatusResolver
 
-a =  PackageReader().getClasses("connectors")
 
-for cl in a:
-    print cl.__name__
+print StatusResolver("tuned_params.txt").getQueries()

@@ -1,0 +1,11 @@
+#starid	found	passed	filtered	
+['1' '1' 'lmc']	False	False	False	
+['12' '1' 'lmc']	False	False	False	
+1	1	lmc	True	True	True	
+12	1	lmc	True	True	True	
+['1' '1' 'lmc']	False	False	False	
+['12' '1' 'lmc']	False	False	False	
+1	1	lmc	True	True	True	
+12	1	lmc	True	True	True	
+1	1	lmc	True	True	True	
+12	1	lmc	True	True	True	

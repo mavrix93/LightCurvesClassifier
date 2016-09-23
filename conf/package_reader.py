@@ -11,8 +11,6 @@ import inspect
 
 from conf import settings
 
-from stars_processing.filters_tools.base_filter import BaseFilter
-from db_tier.base_query import LightCurvesDb
 from entities.exceptions import InvalidFilesPath, InvalidFilteringParams
 
 
@@ -35,8 +33,7 @@ class PackageReader(object):
     """
 
     MODULE_EXTENSIONS = ('.py',)
-    NAMES = {"filters" : ( settings.FILTERS_IMPL_PATH, BaseFilter ),
-             "connectors" : ( settings.DB_CONNECTORS, LightCurvesDb ) }
+    NAMES = settings.IMPLEMENTED_CLASSES
     EXCLUDE = ( '__init__', )
 
     
@@ -70,6 +67,14 @@ class PackageReader(object):
                 if issubclass(module_class, base_class ):
                     searched_classes.append(module_class)
         return searched_classes
+    
+    def getClassesDict( self, package_name ):
+        searched_classes = self.getClasses( package_name )
+        
+        classes_dict = {}
+        for cls in searched_classes:
+            classes_dict[cls.__name__] = cls
+        return classes_dict
     
     def getPackageContents(self, package_name):
         """
@@ -123,7 +128,7 @@ class ConfigReader():
             Designation (key) for name of the filter
     """
     
-    SEPARATOR = "="
+    SEPARATOR = settings.CONF_FILE_SEPARATOR
     FILTER_NAME_KEY = "name"
     
     def __init__( self, separator = None, filter_name_key = None ):

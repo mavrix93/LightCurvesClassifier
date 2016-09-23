@@ -106,10 +106,12 @@ class ParamsEstimation(object):
     This class is responsible for calculating best params of star filters 
     according to train classified stars.  
     '''
+    
+    DEFAULT_FILTER_NAME = "tuned_filter"
 
     def __init__(self, searched,others,filt,
                  tuned_params, estimator = DefaultEstimator(),
-                 save_file = "GridSearch_params.pickl"):
+                 save_file = DEFAULT_FILTER_NAME + "." + settings.OBJECT_SUFFIX ):
         '''
         @param searched: List of star-like objects containing light curves and "starClass" attribute
         @param others: List of another stars
@@ -127,7 +129,7 @@ class ParamsEstimation(object):
         self.others = others
         self.filt = filt
         #self.tuned_params = self._calcCombinations(tuned_params)
-        self.tuned_params = {"tuned_params":tuned_params}
+        self.tuned_params = { "tuned_params" : tuned_params }
         self.estimator = estimator
         
         self.save_file_name = save_file
@@ -154,17 +156,11 @@ class ParamsEstimation(object):
             "params": Tuned parameters as dictionary
             
         This file can be easily reconstructed as initialized filter object with
-        most optimal values:
-        
-            objects = loadFromFile(os.path.join(settings.FILTERS_PATH,"GridSearch_params.pickel"))
-            uninstanc_filter = objects["filter"]
-            params = objects["params"]
-            
-            ready_filter = uninstanc_filter(**params)
+        most optimal values by FilterLoader
         '''
         
         file_path = os.path.join(settings.FILTERS_PATH, self.save_file_name)
-        saveIntoFile({"filter": self.filt, "params": best_params}, fileName = file_path)
+        saveIntoFile( {"filter": self.filt, "params": best_params}, fileName = file_path)
 
         
         

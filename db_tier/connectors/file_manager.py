@@ -104,8 +104,18 @@ class FileManager(LightCurvesDb):
         '''
         
         if self.object_file_name:
-            return self._load_stars_object()     
-        return self._load_stars_from_folder()   
+            return self._load_stars_object()
+        
+        if not hasattr( self.path , "__iter__" ):                 
+            stars = self._load_stars_from_folder()
+        else:
+            paths = self.path
+            stars = []
+            for path in paths:
+                self.path = path
+                stars += self._load_stars_from_folder()
+                        
+        return stars
         
     def _load_stars_from_folder(self):  
         '''Load all files with a certain suffix as light curves'''  

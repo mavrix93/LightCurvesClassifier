@@ -4,11 +4,7 @@ Created on Feb 29, 2016
 @author: Martin Vo
 '''
 
-#TODO: Make a config file for db provider key - module name, in order to 
-#import these classes
-
-from db_tier.connectors.file_manager import FileManager
-from db_tier.connectors.ogle_client import OgleII
+from conf.package_reader import PackageReader
 
 class StarsProvider(object):
     '''
@@ -18,8 +14,8 @@ class StarsProvider(object):
     Also thru initializing of a stars providers query validity will be performed
     '''
     
-    STARS_PROVIDERS = {"file":FileManager,"ogle":OgleII}
-
+    def __init__(self):
+        self.STARS_PROVIDERS = self._mapProviders(PackageReader().getClasses( "connectors" ))
    
     def getProvider(self,obtain_method = "",**kwargs):
         '''
@@ -38,6 +34,14 @@ class StarsProvider(object):
         if len(kwargs) == 0:
             return provider
         return provider(kwargs)
+    
+    def _mapProviders( self, available_providers ):
+        providers = {}
+        
+        for provider in available_providers:
+            providers[ provider.__name__ ] = provider
+            
+        return providers
     
     
 
