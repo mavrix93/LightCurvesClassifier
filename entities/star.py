@@ -10,9 +10,10 @@ from warnings import warn
 import numpy as np
 from utils.data_analysis import  to_ekvi_PAA,abbe, histogram, variogram,\
     compute_bins, cart_distance
-from utils.helpers import check_path, verbose
+from utils.helpers import verbose
 from entities.exceptions import FailToParseName
 from conf import settings
+import os
 
 
 #TODO: Get rid of sax attributes and put sax words, scores and matches into more dict  
@@ -191,7 +192,7 @@ class Star(object):
             try:
                 id_name = self.ident[ident_convention]["name"]
             except:
-                FailToParseName("The star does not contain desired indentificator %s, but %s"%(ident_convention,self.ident))
+                FailToParseName("The star does not contain desired indentifier %s, but %s"%(ident_convention,self.ident))
         else:
             try:
                 id_name = self.ident[self.ident.keys()[0]]["name"]
@@ -199,8 +200,8 @@ class Star(object):
                 FailToParseName("The star does not contain any identifier")
                 
         if self.lightCurve != None:
-            fi_path = "%s/%s.dat" %(path,id_name)
-            np.savetxt(check_path(fi_path), np.c_[self.lightCurve.time,self.lightCurve.mag,self.lightCurve.err])
+            fi_path = os.path.join( path, "%s.dat" % id_name )
+            np.savetxt( fi_path, np.c_[self.lightCurve.time,self.lightCurve.mag,self.lightCurve.err])
         else:
             warn("Star {0} has no light curve".format(self.ident))
     

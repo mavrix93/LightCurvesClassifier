@@ -53,7 +53,7 @@ class SymbolicRepresentation(object):
     def compareTwoStars(self,star,comp_star):
         if (star != comp_star):
             curve_len = np.max([len(star.lightCurve.mag),len(comp_star.lightCurve.mag)])
-            score = self._seekInStarAttribute(getattr(star,self.filter_attribute),getattr(comp_star,self.filter_attribute),curve_len)
+            score = self._seekInStarAttribute( star.more.get(self.filter_attribute), comp_star.more.get(self.filter_attribute),curve_len)
             return score
         warnings.warn("Comparing the same stars")
         return 0

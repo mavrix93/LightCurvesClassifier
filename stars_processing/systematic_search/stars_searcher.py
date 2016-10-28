@@ -4,7 +4,7 @@ Created on Apr 26, 2016
 @author: Martin Vo
 '''
 
-from utils.helpers import verbose, check_path, progressbar
+from utils.helpers import verbose, progressbar
 from stars_processing.filtering_manager import FilteringManager
 from conf.settings import VERBOSITY, TO_THE_DATA_FOLDER, LC_FOLDER
 from warnings import warn
@@ -114,13 +114,12 @@ class StarsSearcher():
         @param dict query: Query informations
         @param dict status: Information whether queried star was found, filtered and passed thru filtering        
         '''
-        file_name = self.save_path+"%s_db.txt" % self.OBTH_METHOD
+        file_name = os.path.join( self.save_path, "%s_db.txt" % self.OBTH_METHOD )
         try:
             empty_file = os.stat(file_name).st_size == 0
         except OSError:
             empty_file = True
         
-        file_name = check_path(file_name)
         with open(file_name, "a") as status_file:
             if empty_file:
                 status_file.write("#")

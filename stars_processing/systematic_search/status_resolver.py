@@ -5,8 +5,9 @@ Created on Jul 19, 2016
 '''
 
 import numpy as np
-from utils.helpers import check_path, subDictInDict
+from utils.helpers import subDictInDict
 from entities.exceptions import InvalidFilesPath
+import os
 
 class StatusResolver(object):
     '''
@@ -89,10 +90,10 @@ class StatusResolver(object):
         '''
         
         header = query[0].keys()
-        path = PATH+"/"+FI_NAME
+        path = os.path.join( PATH, FI_NAME )
         
         try:
-            query_file = open(check_path(path),"w")
+            query_file = open( path ,"w")
         except IOError as err:
             raise InvalidFilesPath(err)
         
@@ -155,6 +156,7 @@ class StatusResolver(object):
             queries_list.append(dict(zip(header,query)))
         return queries_list
 
+            
     
     
 

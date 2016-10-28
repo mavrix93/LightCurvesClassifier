@@ -13,7 +13,7 @@ class OgleSystematicSearch(StarsSearcher):
     This is systematic searching and filtering class for OGLEII. 
     '''
     
-    OBT_METHOD = "ogle"
+    OBT_METHOD = "OgleII"
 
     def __init__(self, filters_list, SAVE_PATH = None, SAVE_LIM = None, UNFOUND_LIM = None):
         '''

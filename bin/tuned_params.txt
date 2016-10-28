@@ -1,0 +1,1 @@
+#compar_filters	compar_stars	treshold	search_opt	filt_opt	

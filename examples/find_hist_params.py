@@ -22,14 +22,14 @@ def main():
     STEP2 = 30
     
     
-    files_prov1 = StarsProvider().getProvider(path=settings.OGLE_QSO_PATH,
+    files_prov1 = StarsProvider().getProvider(path=settings.STARS_PATH["quasars"],
                                              files_limit=NUM,
                                              obtain_method="file",
                                              star_class="quasar")
     quasars =  files_prov1.getStarsWithCurves()
     
     
-    files_prov2 = StarsProvider().getProvider(path=settings.STARS_PATH,
+    files_prov2 = StarsProvider().getProvider(path=settings.STARS_PATH["stars"],
                                              files_limit=NUM,
                                              obtain_method="file",
                                              star_class="star")

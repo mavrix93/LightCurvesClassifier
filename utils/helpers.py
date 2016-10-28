@@ -7,7 +7,17 @@ import sys
 import matplotlib.pyplot as plt
 import os
 
-
+def checkDepth(a, deep_level):
+    lev = 0
+    while True:
+        try:
+            a = a[0]
+            lev += 1
+        except:
+            break
+    if not lev == deep_level:
+        raise Exception("Wrong input nested level. Excepted %i, got %i\n %s" % (deep_level, lev, a))
+        
 
 def unpack_objects(params):
     """
@@ -46,22 +56,6 @@ def unpack_objects(params):
       
     
 
-def check_path(path):
-    '''
-    Correct path if there are more backslashes 
-    
-    @param path: String path
-    
-    EXAMPLE:
-    "home/ap//bla" --> "home/ap/bla"    
-    '''
-    
-    while True:
-        pos = path.find("//")
-        if (pos == -1):
-            break
-        path = path[:pos] + path[pos+1:]
-    return path
 
 
 def subDictInDict(sub_dict, dict_list):

@@ -39,7 +39,7 @@ class ColorIndexFilter(BaseFilter):
     
     @accepts(Star)   
     def _filterStar(self,star):        
-        if not star.bvi:
+        if not star.more:
             star = updateStar(star)
         
         try:   

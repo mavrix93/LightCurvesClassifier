@@ -5,11 +5,10 @@ Created on May 11, 2016
 '''
 #Relative imports fix
 import sys, os
-from conf.settings import MQS_QSO_PATH, OGLE_QSO_PATH
 myPath = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, myPath + '/../')
-from conf.filters_params.qso import *
 
+from conf import settings
 from stars_processing.filters_impl.color_index import ColorIndexFilter
 from stars_processing.filters_impl.curve_density import CurveDensityFilter
 from stars_processing.filters_impl.word_filters import HistShapeFilter,\
@@ -23,15 +22,23 @@ from db_tier.stars_provider import StarsProvider
 from stars_processing.systematic_search.ogle_systematic_search import OgleSystematicSearch
 
 def search_qso_ogle():
-    #aa = int(sys.argv[1])
-    #bb = int(sys.argv[2])
+    HIST_ALPHABET_SIZE = 7          #Histogram alphabet size
+    VARIO_ALPHABET_SIZE = 17        #Variogram alphabet size
+    HIST_DAYS_PER_BIN= 97           #Histogram word ratio
+    VARIO_DAYS_PER_BIN =99          #Variogram word ratio
+    ABBE_LIM = 0.3                  #Abbe value limit
+    BV_MIN = 1.5                    #Minimal b-v color index
+    VI_MIN = 1.5                    #Minimal v-i color index
+    
+    VAR_HIST_A = -0.59 
+    VAR_HIST_B = 9.96
     
     aa = 1
     bb = 1
 
 
-    quasars =  StarsProvider().getProvider(path=MQS_QSO_PATH,obtain_method="file",star_class="qso").getStarsWithCurves()  
-    quasars +=  StarsProvider().getProvider(path=OGLE_QSO_PATH,obtain_method="file",star_class="qso").getStarsWithCurves()  
+    quasars =  StarsProvider().getProvider(path=settings.STARS_PATH["mqs_quasars"],obtain_method="FileManager",star_class="qso").getStarsWithCurves()  
+    quasars +=  StarsProvider().getProvider(path=settings.STARS_PATH["quasars"],obtain_method="FileManager",star_class="qso").getStarsWithCurves()  
     def dec_func_t(distances):
         hist_dist,vario_dist = distances
         a = VAR_HIST_A
@@ -65,8 +72,8 @@ def search_qso_ogle():
 
     filters_list = [color_filt,curve_dens_filt,abbe_filt,comp_filt]         
      
-    searcher = OgleSystematicSearch(filters_list,SAVE_LIM=5,save_path=MATCHED_QSO_PATH) 
-    searcher.systematic_ogle_search(target="lmc",field_num=aa,start_starid=bb) 
+    searcher = OgleSystematicSearch(filters_list,SAVE_LIM=5) 
+    searcher.queryStars([{"field_num": "1", "starid":1,"target":"lmc"}])
     
 
 

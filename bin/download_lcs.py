@@ -54,9 +54,9 @@ WITHOUT FILTERING
     
         The light curves and status file will be saved into "out" folder.
         
-WITH FILTERING
-    Filters can be specified by filter file name in filters folder (see settings).
-    There are two types of filter files:
+    WITH FILTERING
+        Filters can be specified by filter file name in filters folder (see settings).
+        There are two types of filter files:
     
         1. Config file
             Regular text file with key and value separated by delimiter
@@ -71,7 +71,7 @@ WITH FILTERING
                 "filter": Filter class (unconstructed filter object)
                 "params": Parameters as dictionary (similar as config file)
             It is not intended to create this file manually, but automatically
-            from parameters estimators (which find the best parameters).
+            by parameters estimators (which find the best parameters).
             However it is possible to create the file manually.
             
     The file type is resolved by suffix of the file. The object extension
@@ -85,16 +85,16 @@ WITH FILTERING
         A command for executing searching light curves in OGLE database
         with filtering:
         
-        ./download_lcs.py -i query.txt -o out/ -d "ogle" -f abbe_filter.conf -f vario_slope.pickel
+        ./download_lcs.py -i query.txt -o out/ -d "OgleII" -f abbe_filter.conf -f vario_slope.pickel
         """
     
     program_name = os.path.basename(sys.argv[0])
-    program_version = "v0.1"
+    program_version = "v0.2"
     program_build_date = "%s" % __updated__
 
     
     program_version_string = '%%prog %s (%s)' % (program_version, program_build_date)
-    program_longdesc = "Run script without paramas to get info about the program and list of available databases"  
+    program_longdesc = "Run script without params to get info about the program and list of available databases"  
     program_license = "Copyright 2016 Martin Vo"
 
 
@@ -113,6 +113,7 @@ WITH FILTERING
                            help = "Searched database" )
         parser.add_option( "-f", "--filters", dest = "filt", action = "append", default = [],
                            help = "Name of the filter file in filters folder (see settings file)")
+
         
         # set defaults
         parser.set_defaults( output = "." )
@@ -152,7 +153,6 @@ WITH FILTERING
         print "Download is done. Results and status file were saved into %s folder"% opts.output
 
     except Exception, e:
-        raise
         indent = len(program_name) * " "
         sys.stderr.write(program_name + ": " + repr(e) + "\n")
         sys.stderr.write(indent + "  for help use --help")
@@ -195,7 +195,11 @@ def _load_filters( filt_input ):
             
         star_filters.append( FilterLoader( filter_path , object_file ).getFilter() )
       
-    return star_filters   
+    return star_filters
+
+
+
+
 
 
 if __name__ == "__main__":    

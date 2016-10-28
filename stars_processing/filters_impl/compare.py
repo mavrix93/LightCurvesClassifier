@@ -3,14 +3,16 @@ Created on Apr 12, 2016
 
 @author: Martin Vo
 '''
-from entities.exceptions import InvalidFilteringParams
-from utils.helpers import verbose, progressbar
 import numpy as np
+import copy
 
-from conf.settings import *
-
-from utils.commons import returns,accepts
+from entities.exceptions import InvalidFilteringParams
+from utils.helpers import verbose, progressbar, checkDepth
+from conf import settings
 from stars_processing.filters_tools.base_filter import BaseFilter
+from stars_processing.deciders.distance_desider import DistanceDesider
+
+
 
 class ComparingFilter(BaseFilter):
     '''
@@ -18,198 +20,243 @@ class ComparingFilter(BaseFilter):
     of comparing subfilters 
     '''
     
-    SEARCH_OPTIONS = ["closest","passing"]
-    FILTER_OPTIONS = ["together","onebyone"]
-
-    def __init__(self, compar_filters,compar_stars,treshold,search_opt="closest",filt_opt="together"):
-        '''
-        @param compar_filters: List of comparing subfilters
-        @param compar_stars: Stars which will be used as filtering templates
-        @param treshold: Complete sum of distances of comparing filters
-        @param search_opt: Option for searching:
-            "closest": Find the nearest template star (lowest sum of distances)
-            "passing": Find a star which match score (sum of distances) is lower then treshold
+    
+    def __init__(self, compar_filters, compar_stars, decider, filters_params = {}):
+        """
+        Parameters:
+        -----------
+            compar_filters : iterable
+                List of comparative filter classes
+                
+            compar_stars : iterable
+                List of Star objects which represent searched group of star objects
             
-            Whether inspected stars pass thru this filter doesn't matter on search option,
-            it just affect the match star and the score which will be assigned
-            to the star
-        '''
-        self.comp_filters = compar_filters
-        self.comp_stars = self.prepareStars(compar_stars)
+            decider : Decider object
+                This object learns to recognize and then find searched star objects 
+                
+                
+        """
+        self.compar_filters = [ cls( **filters_params ) for cls in compar_filters ]        
+        self.comp_stars = self.prepareStars( compar_stars )        
+        self.decider = decider
         
-        if hasattr(treshold, '__call__'):
-            self.decis_fu = treshold
+        self.learned = False
         
-        #If just a one number was given, make list of length of given filters 
-        elif type(treshold) == int or type(treshold) == float or type(treshold) == np.float64:
-            self.treshold = [treshold for i in range(len(self.comp_filters))]
-            self.decis_fu = self._default_decis_functio
-        else:
-            self.treshold = treshold
-            self.decis_fu = self._default_decis_functio
-
-        #Check validity of given search option
-        if search_opt in self.SEARCH_OPTIONS:
-            self.search_opt = search_opt
-        else:
-            raise InvalidFilteringParams("Unresolved search option.\nAvaible options: %s",self.SEARCH_OPTIONS)
-        if filt_opt in self.FILTER_OPTIONS:
-            self.filt_opt =filt_opt
-        else:
-            raise InvalidFilteringParams("Unresolved filter option.\nAvaible options: %s",self.FILTER_OPTIONS)
+        # TODO: Get mean probability value
+        # if search_opt.startswith("average"):
+        #     search_opt, self.avg_num = search_opt[ : len("average") ], search_opt[len("average") : ]
+        
+    def applyFilter( self, stars, meth = "average"):
+        """
+        Parameters:
+        -----------
+            stars: iterable
+                List of Star objects to filter
+                
+        Returns:
+        --------
+            List of Star objects which passed thru filtering                
+        """
+        
+        assert self.decider != None
+        
+        if not self.learned:
+            raise Exception("First you have to learn this compare filter")
          
+        stars_coords = self.getSpaceCoordinates(stars, meth)               
+        passed = self.decider.filter( stars_coords )
         
+        return [ star for this_passed, star in zip( passed, stars) if this_passed == True] 
         
-    @accepts(list)
-    @returns(list)    
-    def applyFilter(self,stars):
-        if (self.filt_opt == "together"):
-            return self.togetherFilt(stars)
-        elif (self.filt_opt == "onebyone"):
-            return self.oneByOneFilt(stars)
-        else:
-            raise InvalidFilteringParams(self.filt_opt)
-    
-    
-    def togetherFilt(self,stars):
+    def getSpaceCoordinates(self, stars, meth = "average"):    
         '''
-        Apply all filters and return stars which distances were lower then treshold.
-        A star pass thru filtering just if it pass thru all filters of a template star.
+        Apply all filters and get their space coordinates
         
-        @param stars: Stars which will be filtered
-        @return: Stars which passed thru filtering
+        Parameters:
+        -----------
+            stars : Star objects
+                Stars to filtering
+                
+            meth : str
+                Method key for calculating distance from comparative objects
+                    
+                    average     : take mean distance in each coordinate as object coordinate
+                    closest     : take coordinate with closest distance as object coordinate
+                    probable    : take coordinate with highest probability
+                                of membership. Can be performed just on learned decider
+        Returns:
+        --------        
+            List of probabilities, coordinates and True/False if star passed thru filtering
         '''
+        
         
         #Let stars to obtain necessary values        
         stars = self.prepareStars(stars)
         
-        result_stars = []
-        for star in progressbar(stars,"Comparative filtering: "): 
-            match, score_list = self._filtOneStar(star)
-   
-            if self.decis_fu(score_list):
-                star.putMatchStar(match)
-                star.scoreList = score_list
-                result_stars.append(star)
-        return result_stars
-    
-    
-    def oneByOneFilt(self,stars):
-        '''
-        Apply filter individually. Stars which pass thru one filter will
-        be filtered by second one etc. Output are stars passed thru all filters.
-        For each filter will be used particular treshold value.
-        
-        @param stars: List of star objects which will be compared with template stars
-        @return: List of stars passed thru filtering appended by match scores
-        '''
-        
-        #Let stars to obtain necessary values
-        stars = self.prepareStars(stars)
-        
-        for i,filt in enumerate(self.comp_filters):
-            stars = self._applyOneFilter(filt,stars,self.treshold[i])
-        return stars
+        space_coordinates = []
+        for star in progressbar(stars,"Obtaining space coordinates: "): 
+            coords = self._filtOneStar( star, search_opt = "all" )
             
-        
-    
-    def _applyOneFilter(self,filt,stars,this_treshold):
-        '''
-        @param filt: Comparative filter which will be applied 
-        @param stars: List of star objects which will be compared with template stars
-        @param this_treshold: Treshold value for current filter
-        
-        @return: List of stars passed thru filtering appended by match scores
-        '''
-        result_stars = []
-        for star in stars: 
-            score = self._lookUpForMatchStar(star,filt,this_treshold)
-            if score:
-                star.putScore(score)
-                star.putIntoScoreList(score)
-                result_stars.append(star)
-        return result_stars
-    
-    def _lookUpForMatchStar(self,star,filt,this_treshold):
-        '''
-        @param star: Star which will be compared with template stars
-        @param filt: Comparative filter which will be applied 
-        @param this_treshold: Treshold value for current filter
-        
-        @return: Best score of match or if option is "passing" the first score of match
-                 which passed will be returned. If there are no match for given treshold
-                 False will be returned
-        '''
-        
-        best_score = 99
-        for comp_star in self.comp_stars:  
-            score = filt.compareTwoStars(star,comp_star)
+            if meth == "closest":
+                space_coordinates.append( self._findClosestCoord( coords ) )
             
-            if (self.filt_opt == "passing" and score <= this_treshold):
-                star.putScore(score)
-                star.putIntoScoreList(score)
-                return score
-            if (score < best_score):
-                best_score = score
+            elif meth == "average":
+                space_coordinates.append( self._findAverageCoord( coords ) )    
             
-        if (best_score == 99): return False  
-        
-        return best_score
+            elif meth == "probab":
+                if not self.learned:
+                    raise Exception("First you have to learn this compare filter")
+                space_coordinates.append( self.decider.getBestCoord( coords ) )
+                
+            else:
+                raise Exception("Unresolved coordinate calculation method")                
+            
+        return space_coordinates
     
     
-             
-    def _filtOneStar(self,star):
+    def _filtOneStar( self, star, search_opt = "all" ):
         '''
         Calculate distances of inspected star and template stars
         
-        @return: Best matched template star, its score and list of scores for each comp. filter
+        Parameters:
+        -----------
+            star: Star object
+                Star to filter
+        
+        Returns:
+        --------
+            List of all distances (coordinates) of inspected star to all
+            comparative stars
         '''
         
-        best_score = 99
-        best_match = None
-        best_score_list = []
-        
+        coordinates = []
         #Try every template star
         for comp_star in self.comp_stars:
-            this_score_list = []
+            this_coo_list = []
             
             #Apply all comparative filters
-            for filt in self.comp_filters:
-                this_score = filt.compareTwoStars(star,comp_star)  
-                this_score_list.append(this_score)
+            for filt in self.compar_filters:
+                this_coo_list.append( filt.compareTwoStars(star,comp_star))
             
             #Return best match if match is sufficient (there is no need to find best match)                             
-            if (self.search_opt == "passing" and self.decis_fu(this_score_list)):
-                return comp_star, this_score_list
+            if ( search_opt == "passing" and self.decider.filter( [this_coo_list] ) ):
+                return [this_coo_list]
             
-            #Note best match
-            if sum(this_score_list) < best_score:
-                best_score = sum(this_score_list)
-                best_match = comp_star 
-                best_score_list = this_score_list            
+            coordinates.append( this_coo_list )
+        
+        if search_opt == "passing":
+            return False
+        
+        elif search_opt == "closest":
+            return self.decider.getBestCoord( coordinates )
             
-        return best_match, best_score_list
-    
+        return coordinates
+         
     
     def prepareStars(self,stars):
-        '''Obtain necessary attributes for given stars'''
+        """
+        Parameters:
+        -----------
+            stars : Star objects
+                Stars to inspect
+                
+            filters : Filter object
+                Comparative filters which have 'prepareStar' method to obtain 
+                
+        Returns:
+        --------
+            List of stars with necessary values appended into Star.more dictionary
+        """
          
-        verbose("There are %i stars which will be prepared..." %len(stars),3,VERBOSITY)
+        verbose("There are %i stars which will be prepared..." %len(stars),3, settings.VERBOSITY)
         prepared_stars = []
         for star in progressbar(stars,"Preparing stars for comparative filtering: "):
-            for filt in self.comp_filters:
-                star = filt.prepareStar(star)            
-            prepared_stars.append(star)
-        verbose("Stars were prepared",2,VERBOSITY)
-        return stars
-    
-    def _default_decis_functio(self,score_list):
-        treshold_score_list = self.treshold
-        if len(score_list) != len(treshold_score_list):
-            raise InvalidFilteringParams("Wrong length of treshold list")
+            new_star = copy.deepcopy(star)
+            for filt in self.compar_filters:
+                new_star = filt.prepareStar(new_star)
+            prepared_stars.append(new_star)
+        verbose("Stars were prepared",2, settings.VERBOSITY)
+        return prepared_stars
+     
+     
+    def learn(self, s_stars, c_stars, meth = "average"):
         
-        for i in range(len(score_list)):
-            if score_list[i]> treshold_score_list[i]:
-                return False
-        return True
+        searched_stars_coords = self.getSpaceCoordinates( s_stars , meth = meth)
+                
+        contamination_stars_coords = self.getSpaceCoordinates( c_stars , meth = meth)
             
+        self.decider.learn( searched_stars_coords, contamination_stars_coords)
+        
+        # self.decider.plotProbabSpace()           
+        self.learned = True      
+     
+     
+        
+        
+    def _learn(self, s_stars, c_stars, meth = "closest"):
+        searched_stars = self.prepareStars( s_stars )
+        contamination_stars = self.prepareStars( c_stars )
+        
+        searched_stars_coords = []
+        for star in searched_stars:
+            coords = self._filtOneStar(star)
+            
+            if meth == "closest":
+                searched_stars_coords.append(  self._findClosestCoord( coords ))
+            elif meth == "average":
+                searched_stars_coords.append(  self._findAverageCoord( coords ))
+            else:
+                raise Exception("Unresolved learn method")
+                
+        contamination_stars_coords = []
+        for star in contamination_stars:
+            coords = self._filtOneStar(star)
+            
+            if meth == "closest":
+                contamination_stars_coords.append(  self._findClosestCoord( coords ))
+            elif meth == "average":
+                contamination_stars_coords.append(  self._findAverageCoord( coords ))
+            else:
+                raise Exception("Unresolved learn method")
+            
+        self.decider.learn( searched_stars_coords, contamination_stars_coords)
+        
+        self.decider.plotProbabSpace()           
+        self.learned = True
+        
+            
+    def _findClosestCoord(self, coords):
+        checkDepth(coords, 2)
+        
+        best_dist = 1e99
+        best_coord = None
+        for coord in coords:
+            dist = np.sqrt( sum([x**2 for x in coord]) )
+            
+            if dist < best_dist:
+                best_dist = dist
+                best_coord = coord
+                
+        return best_coord
+    
+    
+    def _findAverageCoord(self, coords):        
+        checkDepth(coords, 2)        
+        x = np.array(coords)        
+        mean_coord = []
+        for dim in range(x.shape[1]):
+            mean_coord.append( x[:,dim].mean())
+            
+        return mean_coord           
+        
+    
+    def getStatistic(self, s_stars, c_stars):
+        
+        searched_stars_coords = self.getSpaceCoordinates( s_stars)            
+        contamination_stars_coords = self.getSpaceCoordinates( c_stars)
+        
+        return self.decider.getStatistic( searched_stars_coords, contamination_stars_coords )
+        
+        
+  
+    

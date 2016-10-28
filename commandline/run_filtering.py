@@ -11,14 +11,14 @@ from utils.output_process_modules import saveIntoFile
 from utils.stars import plotStarsPicture
 
 from conf.settings import *
-from conf.filters_params.qso import *
+
 from entities.right_ascension import RightAscension
 from entities.declination import Declination
 from conf import settings
 
 #
 #Path to the folder with quasar light curves
-qso_path = settings.STARS_PATH["ogle"]
+qso_path = settings.STARS_PATH["quasars"]
 
 obtain_params = {
      "ra":RightAscension(5.56*15),
