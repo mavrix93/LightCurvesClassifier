@@ -18,7 +18,7 @@ class ColorIndexFilter(BaseFilter):
     '''
 
 
-    def __init__(self, dec_func,pass_not_found=False):
+    def __init__(self, dec_func,pass_not_found=False, *args, **kwargs):
         '''
         @param  dec_func: Decision function which takes two arguments - BV and VI
                 index and returns True/False

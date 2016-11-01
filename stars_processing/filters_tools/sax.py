@@ -15,9 +15,10 @@ class SAX(object):
     """
 
     def __init__(self, wordSize = 8, alphabetSize = 10, epsilon = 1e-6):
-
+        
+        alphabetSize = int(alphabetSize)
         if alphabetSize < 3 or alphabetSize > 20:
-            raise Exception("DictionarySizeIsNotSupported")
+            raise Exception("DictionarySizeIsNotSupported: %s " % alphabetSize)
         self.aOffset = ord('a')
         self.wordSize = wordSize
         self.alphabet_size = alphabetSize

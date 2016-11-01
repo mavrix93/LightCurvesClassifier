@@ -13,15 +13,17 @@ from conf.settings import VERBOSITY
 from utils.output_process_modules import saveIntoFile
 from conf import settings
 import os
+from stars_processing.filters_impl.compare import ComparingFilter
+import random
 
 
 class DefaultEstimator(BaseEstimator, ClassifierMixin):
     '''
     This is default estimator which can be used for calculating parameters
-    of star filters. Input params of methods of the class is directed
+    of star filters. Input params of methods of the class is ruled
     by GridSearch and ParamsEstimation (see below).
     Scoring function is defined by the result of filtering via given combinations
-    of parameters. Evaluation of certain combination of params is by given by "score_calc" as 
+    of parameters. Evaluation of certain combination of params is given by "score_calc" as 
     function of true positive (tp) and false positive (fp) values. This method can be changed,
     by default it return difference of tp_rate and fp_rate.
     
@@ -80,7 +82,13 @@ class DefaultEstimator(BaseEstimator, ClassifierMixin):
         '''Use examined parameters to calculate precision of the combination'''
         
         filt = FilteringManager(all_stars)
-        filt.loadFilter(self.filt(**self.tuned_params))
+        
+        try:
+            filt.loadFilter(self.filt(**self.tuned_params))
+        except TypeError:
+            raise Exception("Mandatory arguments for given filter is missing.")
+       
+                    
         stars = filt.performFiltering()
         
         all_num = len(all_stars)
@@ -101,6 +109,35 @@ class DefaultEstimator(BaseEstimator, ClassifierMixin):
         return tp/float(all_num) - fp/float(all_num)
 
 
+class ComparativeEstimation(object):
+    
+    DEFAULT_FILTER_NAME = "ComparativeFilter"
+    
+    def __init__(self, searched, others ,compar_filters, tuned_params, decider, comp,
+                 save_file = DEFAULT_FILTER_NAME + "." + settings.OBJECT_SUFFIX ):
+        
+        # TODO: Custom split ratio
+        random.shuffle( searched )
+        self.searched, self.compar_stars = searched[ : len(searched)/2 ], searched[len(searched)/2 : ]
+        self.others = others
+        self.tuned_params = tuned_params
+        self.decider = decider
+        self.compar_filters = compar_filters
+        
+        self.save_file = save_file
+    
+    def fit( self ):
+        precisions = []
+        for tun_param in self.tuned_params:
+            filt = ComparingFilter(compar_filters = self.compar_filters,
+                                compar_stars = self.compar_stars,
+                                decider = self.decider(),
+                                filters_params = tun_param)
+            filt.learn(self.searched, self.others)
+                
+            precisions.append( filt.getStatistic( self.searched, self.others )["precision"] )
+
+
 class ParamsEstimation(object):
     '''
     This class is responsible for calculating best params of star filters 
@@ -110,8 +147,8 @@ class ParamsEstimation(object):
     DEFAULT_FILTER_NAME = "tuned_filter"
 
     def __init__(self, searched,others,filt,
-                 tuned_params, estimator = DefaultEstimator(),
-                 save_file = DEFAULT_FILTER_NAME + "." + settings.OBJECT_SUFFIX ):
+                 tuned_params, estimator = None,
+                 save_file = DEFAULT_FILTER_NAME + "." + settings.OBJECT_SUFFIX, comp_info = {} ):
         '''
         @param searched: List of star-like objects containing light curves and "starClass" attribute
         @param others: List of another stars
@@ -130,18 +167,25 @@ class ParamsEstimation(object):
         self.filt = filt
         #self.tuned_params = self._calcCombinations(tuned_params)
         self.tuned_params = { "tuned_params" : tuned_params }
-        self.estimator = estimator
+        
+        if estimator:
+            self.estimator = estimator
+        else:
+            self.estimator = DefaultEstimator( tuned_params,  comp_info)
         
         self.save_file_name = save_file
+        
+        self.comp_info  = comp_info
+
         
     def fit(self):
         ''' Make a fit according to given stars and find best parameters '''
         
-        gs = GridSearchCV(self.estimator, self.tuned_params,fit_params={"filt":self.filt})
+        gs = GridSearchCV(self.estimator, self.tuned_params,fit_params = {"filt":self.filt})
         gs.fit(self.searched + self.others,y=[1 for i in range(len(self.searched))]+[0 for i in range(len(self.others))])
         best_params =  gs.best_params_['tuned_params']
         
-        print best_params
+        print "best params", best_params
         #result_dict = unpack_objects(best_params["tuned_params"])
         verbose("Score: "+ str(gs.best_score_), 0, VERBOSITY)
         self._saveResultParams(best_params)
@@ -162,9 +206,7 @@ class ParamsEstimation(object):
         file_path = os.path.join(settings.FILTERS_PATH, self.save_file_name)
         saveIntoFile( {"filter": self.filt, "params": best_params}, fileName = file_path)
 
-        
-        
-        
+ 
     def _calcCombinations(self,tuned_params):      
         #{"abbe_lim": [0.37,0.4], "a":[1]}--> ???
         #{[{"abbe_lim": 0.37, "a":1},{"abbe_lim": 0.4}, "a":1]

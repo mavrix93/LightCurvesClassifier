@@ -11,14 +11,17 @@
 
 import sys
 import os
-import inspect
+import random
+
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+import inspect
 from db_tier.stars_provider import StarsProvider
 from conf.package_reader import PackageReader
 from conf import settings
 from stars_processing.systematic_search.status_resolver import StatusResolver
-from conf.params_estim import ParamsEstimation
+from stars_processing.filters_tools.params_estim import ParamsEstimation,\
+    ComparativeEstimation
 
 from optparse import OptionParser
 
@@ -92,6 +95,12 @@ def main(argv = None):
                            help = "Designation of searched light curves folder (in settings)")
         parser.add_option( "-c", "--contamination", dest = "cont" ,action = "append", default = [],
                            help = "Designation of contamination light curve folder (in settings)") 
+        parser.add_option( "-d", "--decider", dest = "decider" , default = None,
+                           help = "Decider for learning to recognize objects")
+        parser.add_option( "-l", "--lightcurves", dest = "comp" ,action = "append", default = [],
+                           help = "Light curves which are compared to other stars (in case of comparative filtering)")
+        parser.add_option( "-r", "--ratio", dest = "fraction" , default = 1,
+                           help = "Specify the fraction of available stars")
         
         # set defaults
         parser.set_defaults( file_name = "my_filter.pickle")
@@ -106,7 +115,11 @@ def main(argv = None):
         
         #-------    Core    ------  
        
-        filt = PackageReader().getClassesDict("filters")[opts.filt]
+        try:
+            filt = PackageReader().getClassesDict("filters")[opts.filt]
+        except KeyError:
+            raise Exception("There are no filter %s.\nAvailable filters: %s" % (opts.filt, PackageReader().getClassesDict("filters")))
+            
         file_name = os.path.join( settings.FILTERS_PATH, opts.file_name )
            
         try:
@@ -120,14 +133,34 @@ def main(argv = None):
                 return 1
             raise
         
+        if not tuned_params:
+            raise Exception("Empty parameters file")
         # TODO: Add check that tuned_paramters are these params needed to construct filter. 
         
+        if opts.filt == "ComparingFilter":
+            all_deciders = PackageReader().getClassesDict( "deciders" )
+            try:
+                decider = all_deciders[opts.decider]
+            except KeyError:
+                raise Exception("Unknown decider %s\nAvailable deciders: %s" % (opts.decider, all_deciders))
+            
+
+            es = ComparativeEstimation(searched = _getStars( opts.searched, float(opts.fraction) ),
+                                       others = _getStars( opts.cont, float(opts.fraction) ),
+                                       compar_filters = getSubFilters( tuned_params[0] ),
+                                       tuned_params = tuned_params,
+                                       decider = decider,
+                                       comp = _getStars( opts.comp, float(opts.fraction) ))
+            
+        else:
+            es = ParamsEstimation( searched = _getStars( opts.searched, float(opts.fraction) ), 
+                                   others = _getStars( opts.cont, float(opts.fraction) ),
+                                   filt = filt,
+                                   tuned_params = tuned_params,
+                                   save_file = file_name)
+                
         print "Tuning is about to start. Tuned parameters:", tuned_params
-        es = ParamsEstimation( searched = _getStars( opts.searched ), 
-                               others = _getStars( opts.cont ),
-                               filt = filt,
-                               tuned_params = tuned_params,
-                               save_file = file_name)
+        
         es.fit() 
 
     except Exception, e:
@@ -137,7 +170,7 @@ def main(argv = None):
         sys.stderr.write(indent + "  for help use --help")
         return 2
     
-def _getStars( path ):
+def _getStars( path, fraction = 1 ):
     """
     Get stars from folder/s. If path is iterable (case that more folders were
     given, light curves from that all folder will be loaded
@@ -157,14 +190,40 @@ def _getStars( path ):
     if hasattr( path, "__iter__"):
         stars = []
         for p in path:
-            stars += StarsProvider().getProvider( obtain_method = "FileManager",
-                                         path = settings.STARS_PATH[p] ).getStarsWithCurves()
+            try:
+                stars += StarsProvider().getProvider( obtain_method = "FileManager",
+                                             path = settings.STARS_PATH[p] ).getStarsWithCurves()
+            except KeyError:
+                raise Exception("\n\nThere no folder with light curves named %s.\nAvailable light curve folders %s" % (p,settings.STARS_PATH)  )
     else:
-        stars = StarsProvider().getProvider( obtain_method = "FileManager",
-                                         path = settings.STARS_PATH[path] ).getStarsWithCurves()   
+        try:
+            stars = StarsProvider().getProvider( obtain_method = "FileManager",
+                                             path = settings.STARS_PATH[path] ).getStarsWithCurves()   
+        except KeyError:
+            raise Exception("\n\nThere no folder with light curves named %s.\nAvailable light curve folders %s" % (path,settings.STARS_PATH)  )
+    
+    if fraction != 1:    
+        random.shuffle( stars )
+        n = len(stars)
+        num = int(n * fraction)
+        return stars[:num]
+            
     return stars
 
+def getSubFilters(params):
+        sub_filters = []
+        for subf in PackageReader().getClasses( "sub_filters" ):
+            try:
+                subf(**params)
+                sub_filters.append( subf )
+            except TypeError as e:
+                print e, subf, params
+                pass
+        if not sub_filters:
+            raise Exception("There are no comparative subfilter which can be constructed from given parameters %s" % params) 
+        return sub_filters
 
+# TODO: Check the output of the method
 def prepareFile( file_name, filt ):
     """
     In case that file with parameters to try is not found, the user is prompted

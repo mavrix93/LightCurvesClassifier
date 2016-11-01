@@ -15,7 +15,7 @@ class AbbeValueFilter(BaseFilter):
     '''
 
 
-    def __init__(self, abbe_lim):
+    def __init__(self, abbe_lim, *args, **kwargs):
         '''
         @param abbe_lim: Maximum abbe value for passing thru filter
         '''

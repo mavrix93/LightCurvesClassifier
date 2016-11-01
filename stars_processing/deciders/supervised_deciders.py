@@ -70,7 +70,7 @@ class SupervisedBase(BaseDesider):
     def evaluate( self, coords ): 
         # TODO:
         # if coords != np.ndarray: coords = np.array( coords )
-        checkDepth(coords, 2)
+        # checkDepth(coords, 2)
         a =  self.learner.predict_proba(coords)[:,1]
         checkDepth(a, 1)        
         return a

@@ -220,8 +220,11 @@ class BaseDesider(object):
         
         try:
             Z = self.evaluate(np.c_[xx.ravel(), yy.ravel()])
+            print "a"
         except ValueError:
             Z = self.evaluateList(np.c_[xx.ravel(), yy.ravel()])
+            print "b"
+        print "Z", Z         
         Z = Z.reshape(xx.shape)  
         
         plt.pcolor(xx,yy,Z)    

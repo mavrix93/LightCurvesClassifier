@@ -8,7 +8,7 @@ according given quasars and ordinary stars curves
 '''
 
 
-from conf.params_estim  import ParamsEstimation
+from stars_processing.filters_tools.params_estim  import ParamsEstimation
 from conf import settings
 from db_tier.stars_provider import StarsProvider
 from stars_processing.filters_impl.abbe_value import AbbeValueFilter

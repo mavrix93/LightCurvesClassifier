@@ -10,8 +10,9 @@ with tested stars) via their words (data transformed into the symbolic represent
 from stars_processing.filters_tools.symbolic_representation import SymbolicRepresentation
 from stars_processing.filters_tools.sax import SAX
 from utils.data_analysis import compute_bins
+from stars_processing.filters_tools.base_filter import ComparativeSubFilter
 
-class CurvesShapeFilter(SymbolicRepresentation):
+class CurvesShapeFilter(ComparativeSubFilter, SymbolicRepresentation):
     '''
     This filter implementation sort stars according to their string (symbolic) 
     representation of light curve. Template for filtering is build up as a list 
@@ -46,7 +47,7 @@ class CurvesShapeFilter(SymbolicRepresentation):
         return star
     
     
-class HistShapeFilter(SymbolicRepresentation):
+class HistShapeFilter(ComparativeSubFilter, SymbolicRepresentation):
     '''
     This filter implementation sort stars according to their string (symbolic) 
     representation of histogram. Template for filtering is build up as a list 
@@ -75,7 +76,7 @@ class HistShapeFilter(SymbolicRepresentation):
         star.more[ self.KEY_NAME ] = sax.to_letter_rep(hist)[0]
         return star   
     
-class VariogramShapeFilter(SymbolicRepresentation):
+class VariogramShapeFilter(ComparativeSubFilter, SymbolicRepresentation):
     '''
     This filter implementation sort stars according to their string (symbolic) 
     representation of light curve. Template for filtering is build up as a list 

@@ -16,7 +16,7 @@ class CurveDensityFilter(BaseFilter):
     '''
 
 
-    def __init__(self, dens_limit = 0.23):
+    def __init__(self, dens_limit = 0.23, *args, **kwargs):
         '''
         @param dens_limit: Minimal value of light curve density
         '''

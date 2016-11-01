@@ -16,6 +16,7 @@ class StatusResolver(object):
     '''
     
     NUM_STATUS_INFO = 4         #Number of status info columns +1
+    DELIMITER = ";"
 
 
     def __init__(self, status_file_path):
@@ -125,16 +126,24 @@ class StatusResolver(object):
         '''Get header and data from the file'''
         
         header = self._readHeader(path)
-        data = np.genfromtxt(path,dtype="|S5")
+        data = np.genfromtxt(path,dtype="|S5", delimiter = self.DELIMITER)
+        
+        try:
+            data.shape[1]
+        except IndexError:
+            data = [data]
+         
+        assert len(header) == len(data[0])
         return header, data
     
     
     def _readHeader(self,status_file_path):
-        '''Get keys from header in a list'''
+        '''Get keys from header in a list'''        
         
         with open(status_file_path, 'r') as f:
-            header_line = f.readline()[1:].rstrip('\n')    #Skip first symbol ('#') and the  '\n'            
-        return header_line.split("\t")
+            header_line = f.readline()[1:].rstrip('\n')    #Skip first symbol ('#') and the  '\n'  
+          
+        return [head.strip() for head in header_line.split( self.DELIMITER )]
     
         
     def _getDiff(self,desir_dicts, comp_dicts):
@@ -149,7 +158,6 @@ class StatusResolver(object):
     
     def _getDictQuery(self,header,queries):
         '''Get header list and contents of the status file as list of dictionaries'''
-        
         queries_list = []
         for query in queries:
             if type(query) is not np.ndarray: query = [query]

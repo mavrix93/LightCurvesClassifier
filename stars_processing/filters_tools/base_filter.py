@@ -20,3 +20,6 @@ class BaseFilter(object):
         raise NotImplementedError
 
     #TODO: Check whether these lists contains object of Star class type
+    
+class ComparativeSubFilter(object):
+    pass

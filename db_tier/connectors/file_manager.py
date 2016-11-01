@@ -153,11 +153,10 @@ class FileManager(LightCurvesDb):
             #Check if light curve is not empty
             if (len(lc.mag)>=1):
                 db_ident = self.parseFileName(singleFile)
-                
                 if self.db_ident:
-                    ident = { self.db_ident : { "name" : db_ident }}
+                    ident = { self.db_ident : {"name" : db_ident }}
                 else:
-                    ident = {}
+                    ident = { "file" : {"name" : db_ident }}
                     
                 star = Star(ident=ident)
                 star.starClass = self.star_class

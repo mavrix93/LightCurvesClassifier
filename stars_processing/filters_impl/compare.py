@@ -96,7 +96,6 @@ class ComparingFilter(BaseFilter):
         space_coordinates = []
         for star in progressbar(stars,"Obtaining space coordinates: "): 
             coords = self._filtOneStar( star, search_opt = "all" )
-            
             if meth == "closest":
                 space_coordinates.append( self._findClosestCoord( coords ) )
             
@@ -187,7 +186,7 @@ class ComparingFilter(BaseFilter):
             
         self.decider.learn( searched_stars_coords, contamination_stars_coords)
         
-        # self.decider.plotProbabSpace()           
+        self.decider.plotProbabSpace()           
         self.learned = True      
      
      
