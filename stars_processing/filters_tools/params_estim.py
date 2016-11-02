@@ -8,13 +8,14 @@ from stars_processing.filtering_manager import FilteringManager
 from utils.stars import count_types
 from entities.exceptions import StarAttributeNotSpecified
 from sklearn.grid_search import GridSearchCV
-from utils.helpers import verbose
+from utils.helpers import verbose, progressbar
 from conf.settings import VERBOSITY
 from utils.output_process_modules import saveIntoFile
 from conf import settings
 import os
 from stars_processing.filters_impl.compare import ComparingFilter
 import random
+import numpy as np
 
 
 class DefaultEstimator(BaseEstimator, ClassifierMixin):
@@ -113,8 +114,8 @@ class ComparativeEstimation(object):
     
     DEFAULT_FILTER_NAME = "ComparativeFilter"
     
-    def __init__(self, searched, others ,compar_filters, tuned_params, decider, comp,
-                 save_file = DEFAULT_FILTER_NAME + "." + settings.OBJECT_SUFFIX ):
+    def __init__(self, searched, others ,compar_filters, tuned_params, decider,
+                 save_file = DEFAULT_FILTER_NAME + "." + settings.OBJECT_SUFFIX, log_path = "." ):
         
         # TODO: Custom split ratio
         random.shuffle( searched )
@@ -124,19 +125,31 @@ class ComparativeEstimation(object):
         self.decider = decider
         self.compar_filters = compar_filters
         
+        self.log_path = log_path
         self.save_file = save_file
     
     def fit( self ):
         precisions = []
-        for tun_param in self.tuned_params:
+        filters = []
+        stats = []
+        for tun_param in progressbar(self.tuned_params, "Estimating combinations: ", 5*len(self.tuned_params)):
             filt = ComparingFilter(compar_filters = self.compar_filters,
                                 compar_stars = self.compar_stars,
                                 decider = self.decider(),
                                 filters_params = tun_param)
             filt.learn(self.searched, self.others)
-                
-            precisions.append( filt.getStatistic( self.searched, self.others )["precision"] )
-
+            
+            st = filt.getStatistic( self.searched, self.others )    
+            precisions.append( st["precision"] )
+            filters.append( filt )
+            stats.append( st )
+        
+        best_id = np.argmax( precisions )
+        print "Best params: %s" % self.tuned_params[best_id]
+        print stats[ best_id ]
+        
+        file_path = os.path.join(settings.FILTERS_PATH, self.save_file)
+        saveIntoFile( filters[best_id] , fileName = file_path)
 
 class ParamsEstimation(object):
     '''
@@ -204,7 +217,7 @@ class ParamsEstimation(object):
         '''
         
         file_path = os.path.join(settings.FILTERS_PATH, self.save_file_name)
-        saveIntoFile( {"filter": self.filt, "params": best_params}, fileName = file_path)
+        saveIntoFile( self.filt( **best_params ), fileName = file_path)
 
  
     def _calcCombinations(self,tuned_params):      

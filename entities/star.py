@@ -31,7 +31,7 @@ class Star(object):
     DEF_SMOOTH_RATIO = 0.5      #Default smooth ratio for abbe transformation
     
                
-    def __init__(self, ident = {},ra=None,dec=None,more = {}, starClass = None):
+    def __init__(self, ident = {}, ra = None, dec = None, more = {}, starClass = None):
         '''
         @param ident: Dictionary of identificators for the star 
         @param ra:        Right Ascension of star (value or RA object)
@@ -204,6 +204,8 @@ class Star(object):
             np.savetxt( fi_path, np.c_[self.lightCurve.time,self.lightCurve.mag,self.lightCurve.err])
         else:
             warn("Star {0} has no light curve".format(self.ident))
+            
+        return fi_path
     
     def getIdentName(self, db_key = None):
         if db_key == None:

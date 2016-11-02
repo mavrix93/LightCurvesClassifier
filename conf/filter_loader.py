@@ -63,11 +63,7 @@ class FilterLoader(object):
         return filt( **params )
     
     def _loadFromPickle(self):
-        objects = loadFromFile( os.path.join( self.FILTER_PATH, self.file_name ) )
-        filt = objects["filter"]
-        params = objects["params"]
-        
-        return filt( **params )
+        return loadFromFile( os.path.join( self.FILTER_PATH, self.file_name ) )
     
     
         

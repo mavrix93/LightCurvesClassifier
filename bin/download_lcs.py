@@ -50,7 +50,7 @@ WITHOUT FILTERING
             12      1       lmc
         
         
-        ./download_lcs.py -i query.txt -o out/ -d "ogle"
+        ./download_lcs.py -i query.txt -o out/ -d "OgleII"
     
         The light curves and status file will be saved into "out" folder.
         
@@ -106,7 +106,7 @@ WITHOUT FILTERING
                                epilog = program_longdesc,
                                description = program_license)
         parser.add_option( "-o", "--output", dest = "output",
-                           help = "Path to the directory for output files", type = str )
+                           help = "Path to the directory for output files from data/light_curves", type = str )
         parser.add_option( "-i", "--input", dest = "input",
                            help = "Path to the query file" )
         parser.add_option( "-d", "--database", dest = "db",
@@ -150,7 +150,7 @@ WITHOUT FILTERING
                                   UNFOUND_LIM = UNFOUND_LIM)
         searcher.queryStars( queries )
         
-        print "Download is done. Results and status file were saved into %s folder"% opts.output
+        print "Download is done. Results and status file were saved into %s folder in %s"% (opts.output, settings.LC_FOLDER)
 
     except Exception, e:
         indent = len(program_name) * " "

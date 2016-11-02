@@ -1,3 +1,4 @@
+import os
 from os.path import join
 from stars_processing.filters_tools.base_filter import BaseFilter,\
     ComparativeSubFilter
@@ -13,14 +14,15 @@ VERBOSITY = 0
 OBJECT_SUFFIX = "pickle"
 CONF_FILE_SEPARATOR = "="
 
-#TODO: Add absolute path!
+# TODO
+ROOT_DIR = join( os.path.dirname(os.path.realpath(__file__)) , os.pardir, os.pardir )
 BASE_DIR = ".."
 
 FILTERS_IMPL_PATH = join( BASE_DIR, "stars_processing", "filters_impl" )
 DB_CONNECTORS = join( BASE_DIR, "db_tier", "connectors" )
 DECIDERS_PATH = join( BASE_DIR, "stars_processing", "deciders")
 
-TO_THE_DATA_FOLDER = join( BASE_DIR, "../data" )               #Path to the data folder
+TO_THE_DATA_FOLDER = join( ROOT_DIR, "data" )               #Path to the data folder
 LC_FOLDER = join( TO_THE_DATA_FOLDER, "light_curves" )                                    #Name of folder of light curves
 
 FILTERS_PATH = join( TO_THE_DATA_FOLDER, "star_filters" )       #Path to the folder of prepared filters
@@ -41,3 +43,5 @@ STARS_PATH = {"stars" : join( LC_FOLDER, "some_stars" ),
               "rr_lyr" : join( LC_FOLDER, "rr_lyr" ),
               "cepheids" : join( LC_FOLDER, "cepheids" ),
               }
+
+DB_FILE_PATH = join( LC_FOLDER, "Stars.db")

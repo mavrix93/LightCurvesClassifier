@@ -4,18 +4,20 @@ Created on Apr 26, 2016
 @author: Martin Vo
 '''
 
-from utils.helpers import verbose, progressbar
+from utils.helpers import verbose, progressbar, create_folder
 from stars_processing.filtering_manager import FilteringManager
 from conf.settings import VERBOSITY, TO_THE_DATA_FOLDER, LC_FOLDER
 from warnings import warn
 
-import abc
 from entities.exceptions import QueryInputError, InvalidFilesPath
 from db_tier.stars_provider import StarsProvider
 import os
+import warnings
+from db_tier.local_stars_db.stars_mapper import StarsMapper
+from conf import settings
 
-#TODO: Think more about propriety of location of this class
-#TODO: Make this class general for every db manager
+# TODO: Think more about propriety of location of this class
+# TODO: Make this class general for every db manager
 
 
 
@@ -56,7 +58,19 @@ class StarsSearcher():
         for filt in filters_list:
             self.filteringManager.loadFilter(filt)
         
-        self.save_path = SAVE_PATH
+        SAVE_PATH = os.path.join( settings.LC_FOLDER , SAVE_PATH) 
+        if os.path.isdir(SAVE_PATH):
+            self.save_path = SAVE_PATH
+        else:
+            SAVE_PATH = os.path.join( settings.LC_FOLDER , SAVE_PATH)
+            try:                
+                create_folder( SAVE_PATH )
+                self.save_path = SAVE_PATH
+                warnings.warn("Output folder %s was created because it has not existed.\n" % (SAVE_PATH))
+            except:
+                warnings.warn("Invalid save path. Current folder was set")
+                self.save_path = "."
+            
         self.OBTH_METHOD = OBTH_METHOD
         self.SAVE_LIM = SAVE_LIM      
         self.UNFOUND_LIM = UNFOUND_LIM
@@ -92,7 +106,13 @@ class StarsSearcher():
         '''
         
         verbose(star,2, VERBOSITY)
-        star.saveStar(self.save_path)
+        
+        # TODO:
+        # upload_to_db( star, self.save_path) 
+        lc_path = star.saveStar(self.save_path)
+        
+        mapper = StarsMapper()
+        mapper.uploadStar(star, lc_path)
     
     #NOTE: Default behavior. It can be overwritten.    
     def failProcedure(self,query,err = None):
@@ -181,6 +201,7 @@ class StarsSearcher():
                     except IOError as err:
                         raise InvalidFilesPath(err)
                     except Exception as err:
+                        raise 
                         self.failProcedure(query,err)
                         warn("Something went wrong during filtering")
             self.statusFile(query, status)

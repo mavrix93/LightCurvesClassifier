@@ -18,7 +18,6 @@ from utils.helpers import verbose
 
 from conf.settings import *
 from entities.star import Star
-from stars_processing.filters_tools.base_filter import BaseFilter
 
 
 class FilteringManager(object):

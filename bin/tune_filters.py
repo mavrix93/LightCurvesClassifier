@@ -97,8 +97,8 @@ def main(argv = None):
                            help = "Designation of contamination light curve folder (in settings)") 
         parser.add_option( "-d", "--decider", dest = "decider" , default = None,
                            help = "Decider for learning to recognize objects")
-        parser.add_option( "-l", "--lightcurves", dest = "comp" ,action = "append", default = [],
-                           help = "Light curves which are compared to other stars (in case of comparative filtering)")
+        parser.add_option( "-l", "--log", dest = "log",  default = ".",
+                           help = "Path to the folder where info about tuning will be stored")
         parser.add_option( "-r", "--ratio", dest = "fraction" , default = 1,
                            help = "Specify the fraction of available stars")
         
@@ -150,7 +150,7 @@ def main(argv = None):
                                        compar_filters = getSubFilters( tuned_params[0] ),
                                        tuned_params = tuned_params,
                                        decider = decider,
-                                       comp = _getStars( opts.comp, float(opts.fraction) ))
+                                       log_path = opts.log )
             
         else:
             es = ParamsEstimation( searched = _getStars( opts.searched, float(opts.fraction) ), 
@@ -217,7 +217,6 @@ def getSubFilters(params):
                 subf(**params)
                 sub_filters.append( subf )
             except TypeError as e:
-                print e, subf, params
                 pass
         if not sub_filters:
             raise Exception("There are no comparative subfilter which can be constructed from given parameters %s" % params) 
