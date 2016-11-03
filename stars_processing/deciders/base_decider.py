@@ -178,7 +178,6 @@ class BaseDesider(object):
         else:
             precision = None
         
-        print true_pos, true_neg, false_pos, false_neg  
         return {"precision" : precision,
                 "true_positive_rate" : true_pos / right_num ,
                 "true_negative_rate" : true_neg / wrong_num,
@@ -192,7 +191,7 @@ class BaseDesider(object):
                 "false_negative_rate" : false_neg / (false_neg + true_pos)}"""
         
         
-    def plotProbabSpace(self, xlim = None, ylim = None, OFFSET = 0.4):
+    def plotProbabSpace(self, xlim = None, ylim = None, OFFSET = 0.4, save_path = None):
         plt.clf()
         try:
             if xlim == None or ylim == None:
@@ -230,6 +229,10 @@ class BaseDesider(object):
         plt.colorbar()  
         plt.xlim(*xlim)
         plt.ylim(*ylim)  
-        plt.show()
+        
+        if not save_path:
+            plt.show()
+        else:
+            plt.savefig( save_path )
         
     

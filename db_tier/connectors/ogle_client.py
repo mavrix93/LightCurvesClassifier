@@ -4,22 +4,26 @@ Created on Jan 6, 2016
 @author: Martin Vo
 '''
 
-#Throws:
-from entities.exceptions import NoInternetConnection, QueryInputError, FailToParseName
 import numpy as np
 import re
 import urllib
 import urllib2
+from warnings import warn
+import socket
+from urllib2 import URLError
+
+
+#Throws:
+from entities.exceptions import NoInternetConnection, QueryInputError, FailToParseName
+
 from entities.declination import Declination as Dec
 from entities.right_ascension import RightAscension as Ra
 from entities.star import Star
 from db_tier.base_query import LightCurvesDb
-from urllib2 import URLError
 from utils.commons import args_type,mandatory_args,default_values
-import socket
 from conf import settings
 from utils.helpers import verbose
-from warnings import warn
+
 
 
 #NOTE: This is kind of messy version of db connector. Lots of changes in order

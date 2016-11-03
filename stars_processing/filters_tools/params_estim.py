@@ -16,6 +16,9 @@ import os
 from stars_processing.filters_impl.compare import ComparingFilter
 import random
 import numpy as np
+from stars_processing.systematic_search.status_resolver import StatusResolver
+import collections
+import json
 
 
 class DefaultEstimator(BaseEstimator, ClassifierMixin):
@@ -117,6 +120,9 @@ class ComparativeEstimation(object):
     def __init__(self, searched, others ,compar_filters, tuned_params, decider,
                  save_file = DEFAULT_FILTER_NAME + "." + settings.OBJECT_SUFFIX, log_path = "." ):
         
+        if not searched or not others:
+            raise Exception("Empty searched or other light curves sample")
+        
         # TODO: Custom split ratio
         random.shuffle( searched )
         self.searched, self.compar_stars = searched[ : len(searched)/2 ], searched[len(searched)/2 : ]
@@ -125,31 +131,43 @@ class ComparativeEstimation(object):
         self.decider = decider
         self.compar_filters = compar_filters
         
-        self.log_path = log_path
+        if not os.path.isdir( log_path ):
+            raise Exception("There is no folder %s" % log_path)
+        
         self.save_file = save_file
-    
+        self.log_path = log_path
+            
     def fit( self ):
         precisions = []
         filters = []
         stats = []
-        for tun_param in progressbar(self.tuned_params, "Estimating combinations: ", 5*len(self.tuned_params)):
+        i = 0
+        for tun_param in progressbar(self.tuned_params, "Estimating combinations: "):
+            i+=1
             filt = ComparingFilter(compar_filters = self.compar_filters,
                                 compar_stars = self.compar_stars,
                                 decider = self.decider(),
-                                filters_params = tun_param)
+                                filters_params = tun_param,
+                                plot_save_path = os.path.join( self.log_path, self.DEFAULT_FILTER_NAME +"_"+str(i)+".png" ))
             filt.learn(self.searched, self.others)
             
             st = filt.getStatistic( self.searched, self.others )    
             precisions.append( st["precision"] )
             filters.append( filt )
             stats.append( st )
+            
+            z = collections.OrderedDict(tun_param).copy()
+            z.update( collections.OrderedDict(st) )
+            StatusResolver.save_query([z], FI_NAME = self.DEFAULT_FILTER_NAME+"_log.dat", PATH = self.log_path, DELIM = settings.FILE_DELIM )
+            
         
         best_id = np.argmax( precisions )
-        print "Best params: %s" % self.tuned_params[best_id]
-        print stats[ best_id ]
         
-        file_path = os.path.join(settings.FILTERS_PATH, self.save_file)
-        saveIntoFile( filters[best_id] , fileName = file_path)
+        print "*"*30
+        print "Best params:\n%s\n" % json.dumps( self.tuned_params[best_id] , indent=4)
+        print "Statistic:\n%s\n" % json.dumps( stats[ best_id ] , indent=4)
+        
+        saveIntoFile( filters[best_id] , path = settings.FILTERS_PATH, fileName = self.save_file)
 
 class ParamsEstimation(object):
     '''

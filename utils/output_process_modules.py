@@ -21,7 +21,7 @@ def saveIntoFile(obj,path = ".",fileName="saved_object.pickle",folder_name=None)
             pickle.dump(obj, output, pickle.HIGHEST_PROTOCOL)
         print "Object has been saved into %s/%s" % (path,fileName)
     except IOError:
-        raise InvalidFilesPath
+        raise InvalidFilesPath("Path: %s\tfile name: %s" % (path, fileName))
     
 def loadFromFile(file_name = "saved_object.pickle"):    
     ''' Open object from file '''

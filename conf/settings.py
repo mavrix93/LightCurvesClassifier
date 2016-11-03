@@ -14,6 +14,8 @@ VERBOSITY = 0
 OBJECT_SUFFIX = "pickle"
 CONF_FILE_SEPARATOR = "="
 
+FILE_DELIM = ";"
+
 # TODO
 ROOT_DIR = join( os.path.dirname(os.path.realpath(__file__)) , os.pardir, os.pardir )
 BASE_DIR = ".."

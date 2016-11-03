@@ -1,7 +1,7 @@
 '''
 Created on Nov 2, 2016
 
-@author: martin
+@author: Martin Vo
 '''
 
 from sqlalchemy.ext.declarative import declarative_base
@@ -11,13 +11,16 @@ from sqlalchemy.orm import sessionmaker
 
 class StarsMapper(object):
     '''
-    classdocs
+    This class is responsible for communication between Star objects
+    and Stars database 
     '''
-
 
     def __init__(self):
         '''
-        Constructor
+        Attributes:
+        -----------
+            session : session instance
+                Instance which communicates with database
         '''
         
         self.session = self.getSession()
@@ -37,18 +40,48 @@ class StarsMapper(object):
     
     def uploadStar(self, star, lc_path = None):
         """
+        Save star object to the database according to mapper specified in mapStar
+        
         Parameters:
         -----------
-        
-        
-        Save star object to the database according to mapper specified in mapStar
+            star : Star
+                Star to be uploaded to db
+                
+            lc_path : str
+                Path to the light curve file of this star
         """
         maped_star = self.mapStar(star, lc_path)
+        st = self.session.query( Stars ).filter( Stars.identifier == maped_star.identifier,
+                                                 Stars.db_origin == maped_star.db_origin,
+                                                 Stars.light_curve == maped_star.light_curve ).first()
+        
+        # TODO: Ask for updating
+        if st:
+            self.session.delete( st )
+            self.session.commit()
+        
         self.session.add( maped_star )
         self.session.commit()
     
     
     def mapStar(self, star, lc_path = None):
+        """
+        Transform Star object into Stars db table object which can be uploaded
+        into the stars db
+        
+        Parameters:
+        -----------
+            star : Star
+                Star to be uploaded to db
+                
+            lc_path : str
+                Path to the light curve file of this star
+                
+        Returns:
+        -------
+            Mapped db star object
+        
+        """
         
         if star.lightCurve:
             lc_n = len(star.lightCurve.time)
@@ -59,15 +92,13 @@ class StarsMapper(object):
 
         if star.ident.keys():
             db_origin = star.ident.keys()[0]
-            print db_origin
             identifier = star.ident[ db_origin ]
             name = identifier.get( "name", None )
         else:
             db_origin = None
             identifier = None
             name = None
-            
-        
+                    
         return Stars(identifier = str(identifier)[1:-1],
                    name = name,
                    db_origin = db_origin,
@@ -80,6 +111,11 @@ class StarsMapper(object):
                    i_mag = star.more.get( "i_mag", None),
                    lc_n = lc_n,
                    lc_time_delta = lc_time_delta)
+        
+        
+    def isInDb(self, star):
+        pass
+        #self.session.query( Stars ).filter( Stars.name = star)
         
     # TODO: Create Star object from db star
     def createStar(self):

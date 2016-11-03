@@ -4,7 +4,7 @@ Created on Apr 26, 2016
 @author: Martin Vo
 '''
 
-from utils.helpers import verbose, progressbar, create_folder
+from utils.helpers import verbose, progressbar, create_folder, cut_path
 from stars_processing.filtering_manager import FilteringManager
 from conf.settings import VERBOSITY, TO_THE_DATA_FOLDER, LC_FOLDER
 from warnings import warn
@@ -18,7 +18,6 @@ from conf import settings
 
 # TODO: Think more about propriety of location of this class
 # TODO: Make this class general for every db manager
-
 
 
 class StarsSearcher():
@@ -112,7 +111,7 @@ class StarsSearcher():
         lc_path = star.saveStar(self.save_path)
         
         mapper = StarsMapper()
-        mapper.uploadStar(star, lc_path)
+        mapper.uploadStar(star, cut_path(lc_path, "light_curves"))
     
     #NOTE: Default behavior. It can be overwritten.    
     def failProcedure(self,query,err = None):
@@ -123,7 +122,7 @@ class StarsSearcher():
         @param err: Error message
         '''
            
-        print "Error occurred during filtering:",err
+        warnings.warn( "Error occurred during filtering: %s" % err)
      
     #NOTE: Default behavior. It can be overwritten.    
     def statusFile(self,query,status):
@@ -201,7 +200,6 @@ class StarsSearcher():
                     except IOError as err:
                         raise InvalidFilesPath(err)
                     except Exception as err:
-                        raise 
                         self.failProcedure(query,err)
                         warn("Something went wrong during filtering")
             self.statusFile(query, status)

@@ -83,7 +83,7 @@ class StatusResolver(object):
     
         
     @staticmethod
-    def save_query(query, FI_NAME = "query_file.txt", PATH = ".", DELIM = "\t"):
+    def save_query(query, FI_NAME = "query_file.txt", PATH = ".", DELIM = ";"):
         '''
         Save queries into the file which can be loaded for another query
         
@@ -94,18 +94,27 @@ class StatusResolver(object):
         path = os.path.join( PATH, FI_NAME )
         
         try:
-            query_file = open( path ,"w")
+            query_file = open( path ,"a+")
         except IOError as err:
             raise InvalidFilesPath(err)
         
-        query_file.write("#")
-        for head in header:
-            query_file.write(head + "\t")
-        query_file.write("\n")
+        n = len(header)
+        if not query_file.readline().startswith("#"):            
+            query_file.write("#")  
+            for i, head in enumerate(header):
+                delim = DELIM
+                if i >= n-1: delim = ""
+                
+                query_file.write(head + delim)
+            query_file.write("\n")
         
         for que in query:
-            for key in que:
-                query_file.write(que[key]+"\t")
+            assert len(que) == len(header)
+            for i, key in enumerate(que):
+                delim = DELIM
+                if i >= n-1: delim = ""
+                
+                query_file.write( str(que[key])+ delim)
             query_file.write("\n")
             
         query_file.close()

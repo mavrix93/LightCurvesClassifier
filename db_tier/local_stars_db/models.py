@@ -50,7 +50,7 @@ class Stars(Base):
     crossmatch_id = Column(Integer, ForeignKey('Stars.id'))
     crossmatch = relationship("Stars", remote_side=[id])
     
-
+    UniqueConstraint(identifier, db_origin, light_curve )
 
 def update_db():
     engine = db_connect()

@@ -123,4 +123,15 @@ def create_folder(path):
     if not os.path.exists(path):
         os.makedirs(path)
         
-        
+ 
+def cut_path( path, last_folder):
+    split_id = None
+    for i,it in enumerate(path.split("/")):
+        if it == last_folder:
+            split_id =  i 
+    if split_id:      
+        return os.path.join( *path.split("/")[ split_id + 1:] )
+    
+    return None
+    
+       

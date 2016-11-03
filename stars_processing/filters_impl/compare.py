@@ -21,7 +21,7 @@ class ComparingFilter(BaseFilter):
     '''
     
     
-    def __init__(self, compar_filters, compar_stars, decider, filters_params = {}):
+    def __init__(self, compar_filters, compar_stars, decider, filters_params = {}, plot_save_path = None):
         """
         Parameters:
         -----------
@@ -39,6 +39,7 @@ class ComparingFilter(BaseFilter):
         self.compar_filters = [ cls( **filters_params ) for cls in compar_filters ]        
         self.comp_stars = self.prepareStars( compar_stars )        
         self.decider = decider
+        self.plot_save_path = plot_save_path
         
         self.learned = False
         
@@ -94,7 +95,8 @@ class ComparingFilter(BaseFilter):
         stars = self.prepareStars(stars)
         
         space_coordinates = []
-        for star in progressbar(stars,"Obtaining space coordinates: "): 
+        # PB for star in progressbar(stars,"Obtaining space coordinates: "): 
+        for star in stars: 
             coords = self._filtOneStar( star, search_opt = "all" )
             if meth == "closest":
                 space_coordinates.append( self._findClosestCoord( coords ) )
@@ -169,7 +171,8 @@ class ComparingFilter(BaseFilter):
          
         verbose("There are %i stars which will be prepared..." %len(stars),3, settings.VERBOSITY)
         prepared_stars = []
-        for star in progressbar(stars,"Preparing stars for comparative filtering: "):
+        # PB: for star in progressbar(stars,"Preparing stars for comparative filtering: "):
+        for star in stars:
             new_star = copy.deepcopy(star)
             for filt in self.compar_filters:
                 new_star = filt.prepareStar(new_star)
@@ -186,7 +189,7 @@ class ComparingFilter(BaseFilter):
             
         self.decider.learn( searched_stars_coords, contamination_stars_coords)
         
-        # self.decider.plotProbabSpace()           
+        self.decider.plotProbabSpace( save_path = self.plot_save_path)           
         self.learned = True      
      
      

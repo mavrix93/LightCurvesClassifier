@@ -1,0 +1,5 @@
+#vario_days_per_bin;hist_alphabet_size;hist_days_per_bin;vario_alphabet_size;false_negative_rate;false_positive_rate;true_negative_rate;precision;true_positive_rate
+9;7;97;17;0.0;0.0;1.0;1.0;1.0
+8;7;80;16;0.0;0.0;1.0;1.0;1.0
+9;7;97;17;0.0;0.0;1.0;1.0;1.0
+8;7;80;16;0.0;0.0;1.0;1.0;1.0

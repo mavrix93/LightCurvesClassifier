@@ -11,6 +11,8 @@
 
 import sys
 import os
+import warnings
+from optparse import OptionParser
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -20,14 +22,12 @@ from stars_processing.systematic_search.status_resolver import StatusResolver
 from stars_processing.systematic_search.stars_searcher import StarsSearcher
 from db_tier.stars_provider import StarsProvider
 
-from optparse import OptionParser
 
 
 __all__ = []
-__version__ = 0.1
+__version__ = 0.3
 __date__ = '2016-09-05'
-__updated__ = '2016-09-23'
-
+__updated__ = '2016-11-03'
 
 
 
@@ -203,4 +203,5 @@ def _load_filters( filt_input ):
 
 
 if __name__ == "__main__":    
+    warnings.filterwarnings("ignore", category=DeprecationWarning)
     sys.exit(main())

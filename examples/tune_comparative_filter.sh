@@ -1,1 +1,1 @@
-../bin/tune_filters.py  -i in/tuned_params.txt -f ComparingFilter -s quasars -c cepheids -d GaussianNBDec -r 0.2
+../bin/tune_filters.py  -i in/tuned_params_histvario.txt -f ComparingFilter -s quasars:9 -c cepheids:7 -d GaussianNBDec -o MyCompFilter
