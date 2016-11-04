@@ -35,7 +35,7 @@ class LightCurve:
         
         #Light curve could be made from:
         #OPTION 1:    Name of the file (in this case default path will be used) or whole path contains file name
-        if (type(param) is str):           
+        if (type(param) is str or type(param) is unicode): 
             self.openLC(param)
             
         #OPTION 2:    List of three lists (time,mag,err)    
@@ -80,7 +80,7 @@ class LightCurve:
         try:
             a = np.loadtxt(fileWithPath,usecols=(self.TIME_COL,self.MAG_COL,self.ERR_COL),skiprows=0)
         except IndexError:
-            a = a = np.loadtxt(fileWithPath,usecols=(self.TIME_COL,self.MAG_COL,self.ERR_COL),skiprows=2)
+            a = np.loadtxt(fileWithPath,usecols=(self.TIME_COL,self.MAG_COL,self.ERR_COL),skiprows=2)
         except IOError,Argument:
             raise InvalidFilesPath("\nCannot open light curve file\n %s" %Argument)
             

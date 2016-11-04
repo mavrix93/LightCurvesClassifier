@@ -29,9 +29,25 @@ from stars_processing.deciders.supervised_deciders import QDADec, GaussianNBDec,
 from stars_processing.deciders.neuron_decider import NeuronDecider
 from conf.package_reader import PackageReader
 
+ra = RightAscension(5.549147, "hours")
+dec = Declination( -70.55792)
 
+query =  {"ra" : ra.degrees, "dec": dec.degrees, "delta":20,"target":"lmc"}
+stars = StarsProvider().getProvider(obtain_method = "OgleII", **query).getStars()
 
-params = {"vario_days_per_bin": 50, "vario_alphabet_size" : 10}
-print PackageReader().getClassesDict( "deciders" )
+print stars[0].more
 
+"""query = {"db_origin" : "ogle"}
+
+stars = StarsProvider().getProvider(obtain_method = "LocalDbClient", **query).getStarsWithCurves()
+
+fi = ColorIndexFilter( GaussianNBDec(), colors = ["b_mag", "v_mag"])
+
+fi.learn(stars[:3], stars[3:])
+
+fi_man = FilteringManager ( stars )
+fi_man.loadFilter( fi )
+print fi_man.performFiltering()
+
+fi.decider.plotProbabSpace()"""
         

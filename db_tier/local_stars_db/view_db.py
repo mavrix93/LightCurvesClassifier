@@ -19,6 +19,7 @@ def show_all_stars():
         for i,star in enumerate(all_stars):
             d =  star.__dict__
             d["uploaded"] = d["uploaded"].isoformat()
+            if d["crossmatch_id"]: d["crossmatch_id"] = d["crossmatch_id"].id
             del d["_sa_instance_state"]
             
             if i < 1:
@@ -34,3 +35,6 @@ def show_all_stars():
         
         separ = "-" * (len(header) + (len(keys)-2)* 4)
         print "%s\n%s\n%s" % (header, separ,rows)
+        
+        
+show_all_stars()

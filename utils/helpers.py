@@ -7,6 +7,7 @@ import sys
 import matplotlib.pyplot as plt
 import os
 
+
 def checkDepth(a, deep_level):
     lev = 0
     while True:
@@ -70,7 +71,6 @@ def subDictInDict(sub_dict, dict_list):
     
     In this example list of dictionaries which contain x = 1 is returned
     '''
-    
     assert len(sub_dict.keys()) == 1
     
     key = sub_dict.keys()[0]

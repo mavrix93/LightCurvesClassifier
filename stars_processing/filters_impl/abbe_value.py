@@ -32,7 +32,7 @@ class AbbeValueFilter(BaseFilter):
         @return: List of star-like objects passed thru filtering
         '''
         passed_stars = []
-        for star in progressbar(stars,"Abbe value filtering: "):
+        for star in stars:
             res = self._filterStar(star)
             if res[0]: passed_stars.append(res[0])
         return passed_stars

@@ -109,7 +109,8 @@ class StatusResolver(object):
             query_file.write("\n")
         
         for que in query:
-            assert len(que) == len(header)
+            if len(que) != len(header):
+                raise Exception("Number of header params and values have to be the same.\nGot %s and %s" % (que, header))
             for i, key in enumerate(que):
                 delim = DELIM
                 if i >= n-1: delim = ""
@@ -138,11 +139,19 @@ class StatusResolver(object):
         data = np.genfromtxt(path,dtype="|S5", delimiter = self.DELIMITER)
         
         try:
+            data[0]
+        except:
+            data = np.array([data])
+        try:            
             data.shape[1]
         except IndexError:
-            data = [data]
+            if data.shape[0] ==1:
+                data = [data]
+            else:
+                data = [ [d] for d in data]
          
-        assert len(header) == len(data[0])
+        if len(header) != len(data[0]):
+            raise Exception("Number of header params and values have to be the same.\nGot %s and %s" % (data[0], header))
         return header, data
     
     
@@ -168,8 +177,10 @@ class StatusResolver(object):
     def _getDictQuery(self,header,queries):
         '''Get header list and contents of the status file as list of dictionaries'''
         queries_list = []
+        
         for query in queries:
-            if type(query) is not np.ndarray: query = [query]
+            if type(query) is not np.ndarray and type(query) is not list:
+                query = [query]
             queries_list.append(dict(zip(header,query)))
         return queries_list
 

@@ -16,6 +16,7 @@ from optparse import OptionParser
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+from entities.exceptions import InvalidFilesPath
 from conf import settings
 from conf.filter_loader import FilterLoader
 from stars_processing.systematic_search.status_resolver import StatusResolver
@@ -44,13 +45,12 @@ def main(argv = None):
 
 WITHOUT FILTERING
     EXAMPLE:
-        For Ogle query file (columns separated by tab) named query.txt:
-            #starid field_num       target
-            1       1       lmc
-            12      1       lmc
+        For Ogle query file (columns separated by ';' by default) named query.txt:
+            #starid;field_num;target
+            1;1;lmc
+            12;1;lmc
         
-        
-        ./download_lcs.py -i query.txt -o out/ -d "OgleII"
+        ./filterlcs.py -i query.txt -o out/ -d "OgleII"
     
         The light curves and status file will be saved into "out" folder.
         
@@ -136,7 +136,13 @@ WITHOUT FILTERING
         
         UNFOUND_LIM = 2        
      
-        resolver = StatusResolver( status_file_path = opts.input )
+     
+        if opts.input.startswith("HERE:"):
+            inp = opts.input[5:] 
+        else:
+            inp = os.path.join( settings.INPUTS_PATH, opts.input )
+     
+        resolver = StatusResolver( status_file_path = inp )
         queries = resolver.getQueries()
         
         star_filters = _load_filters( opts.filt )
@@ -150,7 +156,7 @@ WITHOUT FILTERING
                                   UNFOUND_LIM = UNFOUND_LIM)
         searcher.queryStars( queries )
         
-        print "Download is done. Results and status file were saved into %s folder in %s"% (opts.output, settings.LC_FOLDER)
+        print "\nResults and status file were saved into %s folder in %s"% (opts.output, settings.LC_FOLDER)
 
     except Exception, e:
         indent = len(program_name) * " "
@@ -192,8 +198,10 @@ def _load_filters( filt_input ):
             object_file = True
         else:
             object_file = False
-            
-        star_filters.append( FilterLoader( filter_path , object_file ).getFilter() )
+        try:    
+            star_filters.append( FilterLoader( filter_path , object_file ).getFilter() )
+        except InvalidFilesPath:
+            raise InvalidFilesPath("There are no filter %s in data/star_filters" % filter_path)
       
     return star_filters
 

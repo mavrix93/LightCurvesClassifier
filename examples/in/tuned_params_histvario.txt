@@ -1,3 +1,0 @@
-#hist_days_per_bin;vario_days_per_bin;vario_alphabet_size;hist_alphabet_size      
-97;9;17;7
-80;8;16;7

@@ -68,8 +68,8 @@ class OgleII(LightCurvesDb):
                          Other case searching via coordinates will be done. Moreover
                          there is possibility to search in magnitude ranges if
                          "minMag" and "maxMag" is in dictionary
-        @param "ra":     Right Ascension value in degrees
-        @param "dec":    Declination value in degrees
+        @param ra:     Right Ascension value in degrees
+        @param dec:    Declination value in degrees
         
         EXAMPLE:
         print OgleII({"field":"LMC_SC1","starid":"152248","target":"lmc"}).getStarsWithCurves()
@@ -226,15 +226,17 @@ class OgleII(LightCurvesDb):
             "valmin_imean": self.valmin_imean,
             "valmax_imean": self.valmax_imean,
             "disp_pgood": "off",
+            "disp_bmean": "on",
+            "disp_vmean": "on",
             "disp_imean": "on",
             "disp_imed": "off",
-            "disp_bsig": "on",
-            "disp_vsig": "on",
-            "disp_isig": "on",
+            "disp_bsig": "off",
+            "disp_vsig": "off",
+            "disp_isig": "off",
             "disp_imederr": "off",
             "disp_ndetect": "off",
-            "disp_v_i":"on",
-            "disp_b_v":"on",
+            "disp_v_i":"off",
+            "disp_b_v":"off",
             "sorting": "ASC",
             "pagelen": PAGE_LEN,
         }
@@ -280,7 +282,7 @@ class OgleII(LightCurvesDb):
         tmpdir_pattern = re.compile("<input type='hidden' name='tmpdir' value='(.*)'>")
         value_pattern = re.compile("^.*<td align='right'>(.*)</td>.*$")
         #If query post is successful         
-        if (result.code == 200):            
+        if (result.code == 200):  
             for line in result.readlines():
                 if line.strip().startswith("<td align="):  
                     #Try to match star id (first line of star line, length is controlled by idx value)
@@ -318,27 +320,18 @@ class OgleII(LightCurvesDb):
                             #Decl
                             elif (idx == 2):
                                 values["dec"] = value                 
-                            #V-I
+                            #V mag
                             elif (idx == 3):
-                                more["v_i"] = value
-                            #I
+                                more["v_mag"] = value
+                            #I mag
                             elif (idx==4):
                                 more["i_mag"] = value
                                 values["more"] = more
-                            #Vsig
+                            #B mag
                             elif (idx==5):
-                                more["v_sig"] = value
+                                more["b_mag"] = value
                             
-                            #Isig
-                            elif (idx==6):
-                                more["i_sig"] = value
-                            #B-V
-                            elif (idx==7):
-                                more["b_v"] = value
                             
-                            #Bsig
-                            elif (idx==8):
-                                more["b_sig"] = value
                     
                     #If first line of star info
                     if (field_starid):

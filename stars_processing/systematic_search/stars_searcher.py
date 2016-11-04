@@ -30,7 +30,7 @@ class StarsSearcher():
     DEF_UNFOUND_LIM = 150
    
 
-    def __init__(self,filters_list, SAVE_PATH = None ,SAVE_LIM = None, UNFOUND_LIM = None, OBTH_METHOD = None):
+    def __init__(self,filters_list, SAVE_PATH = None, SAVE_LIM = None, UNFOUND_LIM = None, OBTH_METHOD = None):
         '''
         @param filters_list: List of filter type objects
         @param SAVE_PATH: Path from "run" module to the folder where found light curves will be saved
@@ -74,6 +74,14 @@ class StarsSearcher():
         self.SAVE_LIM = SAVE_LIM      
         self.UNFOUND_LIM = UNFOUND_LIM
         
+        filt_name = ""
+        for filt in filters_list:
+            filt_name += "_" + filt.__class__.__name__
+        self.filt_name = filt_name
+        
+        self.not_uploaded = []
+            
+        
         
     def filterStar(self,star, query):
         '''
@@ -106,12 +114,11 @@ class StarsSearcher():
         
         verbose(star,2, VERBOSITY)
         
-        # TODO:
-        # upload_to_db( star, self.save_path) 
         lc_path = star.saveStar(self.save_path)
         
         mapper = StarsMapper()
-        mapper.uploadStar(star, cut_path(lc_path, "light_curves"))
+        if not mapper.uploadStar(star, cut_path(lc_path, "light_curves")):
+            self.not_uploaded.append(star)
     
     #NOTE: Default behavior. It can be overwritten.    
     def failProcedure(self,query,err = None):
@@ -121,7 +128,6 @@ class StarsSearcher():
         @param query: Query informations
         @param err: Error message
         '''
-           
         warnings.warn( "Error occurred during filtering: %s" % err)
      
     #NOTE: Default behavior. It can be overwritten.    
@@ -133,7 +139,8 @@ class StarsSearcher():
         @param dict query: Query informations
         @param dict status: Information whether queried star was found, filtered and passed thru filtering        
         '''
-        file_name = os.path.join( self.save_path, "%s_db.txt" % self.OBTH_METHOD )
+        
+        file_name = os.path.join( self.save_path, "%s%s.txt" % (self.OBTH_METHOD, self.filt_name ) )
         try:
             empty_file = os.stat(file_name).st_size == 0
         except OSError:
@@ -161,6 +168,9 @@ class StarsSearcher():
         @param queries: List of dictionaries of queries for certain db 
         '''
         
+        stars_num = 0
+        passed_num = 0
+        
         unfound_counter = 0
         for query in progressbar(queries, "Query: "):            
             status = {"found": False, "filtered":False, "passed":False}
@@ -169,40 +179,52 @@ class StarsSearcher():
             except QueryInputError:
                 raise
             except:
+                raise
                 warn("Couldn't download the light curve")
                 stars = []
                       
             #Check if searched star was found
             result_len = len(stars)
             if result_len == 0:
-                warn("No stars were found: %s\n." %(query))
+                warn("No stars have been found: %s\n." %(query))
                 unfound_counter += 1
                 if unfound_counter > self.UNFOUND_LIM:
                     warn("Max number of unsatisfied queries reached: %i" % self.UNFOUND_LIM)
                     break
 
-            else:          
-                status["found"] = True
-                unfound_counter = 0
-                
-                contain_lc = True
-                try:
-                    stars[0].lightCurve.time
-                except AttributeError:
-                    contain_lc = False
+            else:       
+                for one_star in progressbar(stars, "Filtering result stars from query: "): 
+                    status["found"] = True
+                    unfound_counter = 0
                     
-                if contain_lc:
-                    #Try to apply filters to the star
+                    contain_lc = True
                     try:
-                        passed = self.filterStar(stars[0],query)
-                        status["filtered"] = True
-                        status["passed"] = passed
-                    except IOError as err:
-                        raise InvalidFilesPath(err)
-                    except Exception as err:
-                        self.failProcedure(query,err)
-                        warn("Something went wrong during filtering")
-            self.statusFile(query, status)
+                        stars[0].lightCurve.time
+                    except AttributeError:
+                        contain_lc = False
+                        
+                    if contain_lc:
+                        #Try to apply filters to the star
+                        try:
+                            # TODO: Case of multiple stars, not just one as assumed
+                            passed = self.filterStar(one_star,query)
+                            status["filtered"] = True
+                            status["passed"] = passed
+                            stars_num += 1
+                            if passed: passed_num += 1
+                            
+                        except IOError as err:
+                            raise InvalidFilesPath(err)
+                        except Exception as err:
+                            self.failProcedure(query,err)
+                            warn("Something went wrong during filtering")
+                    query["name"] = one_star.getName()
+                    self.statusFile(query, status)
+        
+        print "\n************\t\tQuery is done\t\t************"    
+        print "Query results:\nThere are %i stars passed thru filtering from %s." % (passed_num, stars_num)
+        if self.not_uploaded:
+            print "\t%i stars have not been uploaded into local db, because they are already there." % len(self.not_uploaded)
 
        
 

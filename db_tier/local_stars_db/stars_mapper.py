@@ -7,6 +7,11 @@ Created on Nov 2, 2016
 from sqlalchemy.ext.declarative import declarative_base
 from db_tier.local_stars_db.models import db_connect, Stars
 from sqlalchemy.orm import sessionmaker
+from entities.star import Star
+from entities.light_curve import LightCurve
+from conf import settings
+import os
+import warnings
 
 
 class StarsMapper(object):
@@ -55,13 +60,17 @@ class StarsMapper(object):
                                                  Stars.db_origin == maped_star.db_origin,
                                                  Stars.light_curve == maped_star.light_curve ).first()
         
-        # TODO: Ask for updating
-        if st:
-            self.session.delete( st )
-            self.session.commit()
         
-        self.session.add( maped_star )
-        self.session.commit()
+        # TODO: Ask for updating
+        if not st:
+            #self.session.delete( st )
+            #self.session.commit()
+        
+            self.session.add( maped_star )
+            self.session.commit()
+        else:
+            return False
+        return True
     
     
     def mapStar(self, star, lc_path = None):
@@ -112,11 +121,35 @@ class StarsMapper(object):
                    lc_n = lc_n,
                    lc_time_delta = lc_time_delta)
         
-        
-    def isInDb(self, star):
-        pass
-        #self.session.query( Stars ).filter( Stars.name = star)
+
         
     # TODO: Create Star object from db star
-    def createStar(self):
-        pass
+    def createStar(self, db_star):
+        if db_star.db_origin:
+            ident = { db_star.db_origin : {"identifier" : db_star.identifier, "name" : db_star.name},
+                     "local_db" : {"id" : db_star.id}}
+        else:
+            ident = {"local_db" : {"id" : db_star.id} }
+            
+        more = {"b_mag" : db_star.b_mag,
+                "v_mag" : db_star.v_mag,
+                "i_mag" : db_star.i_mag,
+                "lc_time_delta" : db_star.lc_time_delta,
+                "lc_n" : db_star.lc_n,
+                "uploaded" : db_star.uploaded}
+        
+        star = Star(ident = ident,
+                    ra = db_star.ra,
+                    dec = db_star.dec,
+                    more = more,
+                    starClass = db_star.star_class)
+        
+        
+        lc = LightCurve( os.path.join(settings.LC_FOLDER, db_star.light_curve))
+        
+        star.lightCurve = lc
+        return star
+        
+        
+        
+        

@@ -1,1 +1,1 @@
-../bin/download_lcs.py -i in/query.txt -o out/ -d "OgleII"
+../bin/filter_lcs.py -i examples/query.txt -o examples/ -d "OgleII"

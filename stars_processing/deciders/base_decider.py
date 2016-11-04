@@ -220,6 +220,7 @@ class BaseDesider(object):
         try:
             Z = self.evaluate(np.c_[xx.ravel(), yy.ravel()])
         except ValueError:
+            raise
             Z = self.evaluateList(np.c_[xx.ravel(), yy.ravel()])
             
         Z = Z.reshape(xx.shape)  

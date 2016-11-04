@@ -19,6 +19,7 @@ import numpy as np
 from stars_processing.systematic_search.status_resolver import StatusResolver
 import collections
 import json
+from stars_processing.filters_impl.color_index import ColorIndexFilter
 
 
 class DefaultEstimator(BaseEstimator, ClassifierMixin):
@@ -124,8 +125,7 @@ class ComparativeEstimation(object):
             raise Exception("Empty searched or other light curves sample")
         
         # TODO: Custom split ratio
-        random.shuffle( searched )
-        self.searched, self.compar_stars = searched[ : len(searched)/2 ], searched[len(searched)/2 : ]
+        self.searched = searched
         self.others = others
         self.tuned_params = tuned_params
         self.decider = decider
@@ -158,7 +158,62 @@ class ComparativeEstimation(object):
             
             z = collections.OrderedDict(tun_param).copy()
             z.update( collections.OrderedDict(st) )
-            StatusResolver.save_query([z], FI_NAME = self.DEFAULT_FILTER_NAME+"_log.dat", PATH = self.log_path, DELIM = settings.FILE_DELIM )
+            StatusResolver.save_query([z], FI_NAME = self.DEFAULT_FILTER_NAME+"_log.dat", PATH = self.log_path, DELIM = "\t" )
+            
+        
+        best_id = np.argmax( precisions )
+        
+        print "*"*30
+        print "Best params:\n%s\n" % json.dumps( self.tuned_params[best_id] , indent=4)
+        print "Statistic:\n%s\n" % json.dumps( stats[ best_id ] , indent=4)
+        
+        saveIntoFile( filters[best_id] , path = settings.FILTERS_PATH, fileName = self.save_file)
+
+
+
+class ColorIndexEstimation(object):
+    
+    DEFAULT_FILTER_NAME = "ColorIndexFilter"
+    
+    def __init__(self, searched, others, tuned_params, decider,
+                 save_file = DEFAULT_FILTER_NAME + "." + settings.OBJECT_SUFFIX, log_path = "." ):
+        
+        if not searched or not others:
+            raise Exception("Empty searched or other light curves sample")
+        
+        # TODO: Custom split ratio
+        random.shuffle( searched )
+        self.searched, self.compar_stars = searched[ : len(searched)/2 ], searched[len(searched)/2 : ]
+        self.others = others   
+        self.tuned_params = tuned_params     
+        self.decider = decider        
+        
+        if not os.path.isdir( log_path ):
+            raise Exception("There is no folder %s" % log_path)
+        
+        self.save_file = save_file
+        self.log_path = log_path
+            
+    def fit( self ):
+        precisions = []
+        filters = []
+        stats = []
+        i = 0
+        for tun_param in progressbar(self.tuned_params, "Estimating combinations: "):
+            i+=1
+            filt = ColorIndexFilter( self.decider(),
+                                    plot_save_path = os.path.join( self.log_path, self.DEFAULT_FILTER_NAME +"_"+str(i)+".png" ),
+                                    **tun_param)
+            filt.learn(self.searched, self.others)
+            
+            st = filt.getStatistic( self.searched, self.others )    
+            precisions.append( st["precision"] )
+            filters.append( filt )
+            stats.append( st )
+            
+            z = collections.OrderedDict(tun_param).copy()
+            z.update( collections.OrderedDict(st) )
+            StatusResolver.save_query([z], FI_NAME = self.DEFAULT_FILTER_NAME+"_log.dat", PATH = self.log_path, DELIM = "\t" )
             
         
         best_id = np.argmax( precisions )

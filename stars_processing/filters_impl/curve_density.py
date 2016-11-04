@@ -33,7 +33,7 @@ class CurveDensityFilter(BaseFilter):
         @return: List of star-like objects passed thru filtering
         '''
         res_stars = []
-        for st in progressbar(stars,"Curve density filtering: "):   
+        for st in stars:   
             if self._filterStar(st):
                 res_stars.append(st)
                 

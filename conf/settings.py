@@ -28,7 +28,8 @@ TO_THE_DATA_FOLDER = join( ROOT_DIR, "data" )               #Path to the data fo
 LC_FOLDER = join( TO_THE_DATA_FOLDER, "light_curves" )                                    #Name of folder of light curves
 
 FILTERS_PATH = join( TO_THE_DATA_FOLDER, "star_filters" )       #Path to the folder of prepared filters
-
+INPUTS_PATH = join( TO_THE_DATA_FOLDER, "inputs" )
+TUNING_LOGS = join( TO_THE_DATA_FOLDER, "tuning_logs" )
 #
 IMPLEMENTED_CLASSES = { "filters" : ( FILTERS_IMPL_PATH, BaseFilter ),
                         "connectors" : ( DB_CONNECTORS, LightCurvesDb ),

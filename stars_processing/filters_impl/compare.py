@@ -87,7 +87,7 @@ class ComparingFilter(BaseFilter):
                                 of membership. Can be performed just on learned decider
         Returns:
         --------        
-            List of probabilities, coordinates and True/False if star passed thru filtering
+            List of coordinates 
         '''
         
         

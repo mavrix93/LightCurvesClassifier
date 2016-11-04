@@ -18,6 +18,7 @@ from conf.settings import VERBOSITY
 from entities.exceptions import InvalidFilesPath, InvalidFile
 from entities.star import Star
 from entities.light_curve import LightCurve
+from conf import settings
 
 
 class FileManager(LightCurvesDb):
@@ -34,7 +35,7 @@ class FileManager(LightCurvesDb):
         suffix : str
             Suffix of light curve files in the folder (specified in path attribute)
         
-        files_limit : int
+        files_limit : int, str
             Number of files which will be loaded
             
         db_ident : str
@@ -66,7 +67,7 @@ class FileManager(LightCurvesDb):
                object_file_name = str,
                suffix = str,
                star_class = str,
-               files_limit = int,
+               files_limit = (int, str),
                db_ident = str)
     def __init__(self,obtain_params):
         '''
@@ -75,11 +76,15 @@ class FileManager(LightCurvesDb):
         obtain_params : dict
             Query dictionary (see class Attributes doc above)
         '''
-
-        self.path = obtain_params["path"]
+        path = settings.STARS_PATH.get(obtain_params["path"], obtain_params["path"])
+        self.path = path 
         self.star_class = obtain_params.get( "star_class", self.DEFAULT_STARCLASS )
-        self.suffix = obtain_params.get( "suffix", self.DEFAULT_SUFFIX )         
-        self.files_limit = obtain_params.get("files_limit", None )
+        self.suffix = obtain_params.get( "suffix", self.DEFAULT_SUFFIX ) 
+        file_lim = obtain_params.get("files_limit", None )      
+        if file_lim:  
+            self.files_limit = int(file_lim)
+        else:
+            self.files_limit = None
         self.db_ident = obtain_params.get( "db_ident", None)
         self.files_to_load = obtain_params.get( "files_to_load", None)        
         self.object_file_name = obtain_params.get( "object_file_name", None )        

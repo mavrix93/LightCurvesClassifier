@@ -22,7 +22,7 @@ from conf.package_reader import PackageReader
 from conf import settings
 from stars_processing.systematic_search.status_resolver import StatusResolver
 from stars_processing.filters_tools.params_estim import ParamsEstimation,\
-    ComparativeEstimation
+    ComparativeEstimation, ColorIndexEstimation
 
 
 
@@ -111,7 +111,7 @@ def main(argv = None):
                                description = program_license)
         parser.add_option( "-i", "--input", dest = "input",
                            help = "Path to the query file" )
-        parser.add_option( "-o", "--file_name", dest = "file_name",
+        parser.add_option( "-o", "--file_name", dest = "file_name", default = "my_filter.pickle",
                            help = "Name of result filter file" )
         parser.add_option( "-f", "--filter", dest = "filt",
                            help = "Name of the filter file in filters folder (see settings file)")
@@ -122,10 +122,8 @@ def main(argv = None):
         parser.add_option( "-d", "--decider", dest = "decider" , default = None,
                            help = "Decider for learning to recognize objects")
         parser.add_option( "-l", "--log", dest = "log",  default = ".",
-                           help = "Path to the folder where info about tuning will be stored")
-        
-        # set defaults
-        parser.set_defaults( file_name = "my_filter.pickle")
+                           help = "Path to the folder where info about tuning and plot will be saved")
+     
         
         # process options
         opts, args = parser.parse_args(argv)
@@ -143,30 +141,50 @@ def main(argv = None):
             raise Exception("There are no filter %s.\nAvailable filters: %s" % (opts.filt, PackageReader().getClassesDict("filters")))
             
         file_name = os.path.join( settings.FILTERS_PATH, opts.file_name )
+        
+        if opts.input.startswith("HERE:"):
+            inp = opts.input[5:] 
+        else:
+            inp = os.path.join( settings.INPUTS_PATH, opts.input )
            
         try:
-            tuned_params = StatusResolver( status_file_path = opts.input ).getQueries()
+            tuned_params = StatusResolver( status_file_path = inp ).getQueries()
         except IOError:
-            raise Exception("File of parameters combinations of filter was not found")
+            raise Exception("File of parameters combinations was not found")
         
         if not tuned_params:
             raise Exception("Empty parameters file")
         # TODO: Add check that tuned_paramters are these params needed to construct filter. 
         
-        if opts.filt == "ComparingFilter":
+        if opts.log.startswith("HERE:"):
+            log_path = opts.log[5:]
+        else:
+            log_path = os.path.join( settings.TUNING_LOGS, opts.log ) 
+        
+        if opts.filt in  ["ComparingFilter", "ColorIndexFilter"]:
             all_deciders = PackageReader().getClassesDict( "deciders" )
             try:
                 decider = all_deciders[opts.decider]
             except KeyError:
                 raise Exception("Unknown decider %s\nAvailable deciders: %s" % (opts.decider, all_deciders))
             
-
-            es = ComparativeEstimation(searched = _getStars( opts.searched ),
-                                       others = _getStars( opts.cont ),
-                                       compar_filters = getSubFilters( tuned_params[0] ),
-                                       tuned_params = tuned_params,
-                                       decider = decider,
-                                       log_path = opts.log )
+            
+            if  opts.filt == "ComparingFilter":
+                es = ComparativeEstimation(searched = _getStars( opts.searched ),
+                                           others = _getStars( opts.cont ),
+                                           compar_filters = getSubFilters( tuned_params[0] ),
+                                           tuned_params = tuned_params,
+                                           decider = decider,
+                                           log_path = log_path )
+            elif  opts.filt == "ColorIndexFilter":
+                es = ColorIndexEstimation(searched = _getStars( opts.searched ),
+                                          others = _getStars( opts.cont ),
+                                          tuned_params = tuned_params,
+                                          decider = decider,
+                                          log_path = log_path)
+                
+                
+                
             
         else:
             es = ParamsEstimation( searched = _getStars( opts.searched ), 
@@ -178,6 +196,8 @@ def main(argv = None):
         print "Tuning is about to start. There are %i combinations to try" % len(tuned_params)
         
         es.fit() 
+        
+        print "It is done.\nLog file and plots have been saved into %s " % opts.log
 
     except Exception, e:
         raise
@@ -221,7 +241,7 @@ def _getStars( path ):
      
 def split_stars(stars, restr):       
     random.shuffle( stars )        
-    
+    num = None
     if type(restr) == float:  
         n = len(stars)      
         num = int(n * restr)

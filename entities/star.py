@@ -192,12 +192,18 @@ class Star(object):
             try:
                 id_name = self.ident[ident_convention]["name"]
             except:
-                FailToParseName("The star does not contain desired indentifier %s, but %s"%(ident_convention,self.ident))
+                raise FailToParseName("The star does not contain desired indentifier %s, but %s"%(ident_convention,self.ident))
         else:
-            try:
-                id_name = self.ident[self.ident.keys()[0]]["name"]
-            except:
-                FailToParseName("The star does not contain any identifier")
+            anything = False
+            for k in self.ident.keys():
+                try:
+                    id_name = self.ident[ k ]["name"]
+                    anything = True
+                    break
+                except:
+                    pass
+            if not anything:
+                raise FailToParseName("The star does not contain any identifier")
                 
         if self.lightCurve != None:
             fi_path = os.path.join( path, "%s.dat" % id_name )
@@ -253,6 +259,22 @@ class Star(object):
         
     def putIntoScoreList(self,score):
         self.scoreList.append(score)
+        
+        
+    def getName(self):
+        if self.ident.keys():
+            for key in self.ident.keys():
+                
+                name = self.ident[ key ].get("name", None)
+                if name:
+                    return name
+                
+            for key in self.ident.keys():
+                ident = self.ident[ key ].get("identifier", None)
+                
+                if ident:
+                    return ident
+        return "Unresolved"
     
   
     

@@ -33,7 +33,7 @@ class VariogramSlope(BaseFilter):
         '''
         
         result_stars = []
-        for star in progressbar(stars,"Filtering by variogram slopes: "):
+        for star in stars:
             if self._filterStar(star):
                 result_stars.append(star)
                 

@@ -65,12 +65,17 @@ class SupervisedBase(BaseDesider):
         y += [0 for i in range(len(wrong_coords))]
         self.X = np.array(right_coords + wrong_coords)
         self.y = np.array(y)
+        
+        if not self.X or not self.y:
+            raise Exception("There are no data to learn on")
+        
         self.learner.fit( self.X, self.y)
         
     def evaluate( self, coords ): 
         # TODO:
         # if coords != np.ndarray: coords = np.array( coords )
         # checkDepth(coords, 2)
+        
         a =  self.learner.predict_proba(coords)[:,1]
         checkDepth(a, 1)        
         return a
