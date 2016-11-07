@@ -6,6 +6,7 @@ Created on Apr 12, 2016
 import sys
 import matplotlib.pyplot as plt
 import os
+import itertools
 
 
 def clean_path( path ):
@@ -142,4 +143,27 @@ def cut_path( path, last_folder):
     
     return None
     
+def get_combinations( keys, *lists):
+    """
+    
+    
+    Example:
+    --------
+        get_combinations( ["key1", "key2", "key3"], [1,2,3], ["m", "n", "k"], [77,88,99,55,22]
+    """
+    
+    queries = []
+    
+    if not len(keys) == len(lists):
+        raise Exception("Length of header have to be the same of number of lists for combinations")
+    
+    for comb in list(itertools.product(*lists)):
+        this_query = {}
+        for i, key in enumerate(keys):
+            this_query[key] = comb[i]
+        queries.append( this_query )
+    return queries
+            
+            
+        
        

@@ -34,19 +34,15 @@ from db_tier.local_stars_db.models import Stars
 import re
 from db_tier.connectors.local_db_client import LocalDbClient
 from stars_processing.systematic_search.status_resolver import StatusResolver
+from utils.helpers import get_combinations
 
 
-print StatusResolver("t1.txt").getQueries()[0]
+target = ["lmc", "smc"]
+
+starid = [i+1 for i in range(1000)]
+field = [i+1 for i in range(13)]
 
 
-"""query = {"redshift": ">5.95", "b_mag" : ">22", "r_mag" : "!=0.0", "star_class" : "Q"}
-db = LocalDbClient(query, db_key = "milliquas")
-q_stars = db.getStarsWithCurves()
+q = get_combinations(["target", "starid", "field"], target, starid, field)
 
-query = {"redshift": ">1", "b_mag" : ">22", "r_mag" : "!=0.0", "star_class" : "A"}
-db = LocalDbClient(query, db_key = "milliquas")
-agn_stars = db.getStarsWithCurves()
-
-col_filt = ColorIndexFilter(["b_mag", "r_mag"], decider = GMMBayesDec())
-
-col_filt.learn(agn_stars, q_stars )"""
+StatusResolver.save_query(q)

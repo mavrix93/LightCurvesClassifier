@@ -253,10 +253,14 @@ class BaseDesider(object):
             
         
             
-    def plotHist(self, title = "", labels = [], bins = 15, save_path = None,
+    def plotHist(self, title = "", labels = [], bins = None, save_path = None,
                  file_name = "hist.png"):
         
+        
+        
         if self.X.any():
+            if not bins:
+                bins =1+3.32*np.log10( len(self.X) )
         
             for i in range( len(self.X[0]) ):
                 

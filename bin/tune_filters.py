@@ -19,7 +19,6 @@ from optparse import OptionParser
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from db_tier.connectors.local_db_client import LocalDbClient
-from stars_processing.filters_tools.base_filter import Learnable
 from db_tier.stars_provider import StarsProvider
 from conf.package_reader import PackageReader
 from conf import settings
@@ -202,7 +201,6 @@ def main(argv = None):
         print "It is done.\nLog file and plots have been saved into %s " % opts.log
 
     except Exception, e:
-        raise
         indent = len(program_name) * " "
         sys.stderr.write(program_name + ": " + repr(e) + "\n")
         sys.stderr.write(indent + "  for help use --help")
