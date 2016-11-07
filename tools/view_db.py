@@ -7,10 +7,15 @@ from db_tier.local_stars_db.stars_mapper import StarsMapper
 from db_tier.local_stars_db.models import Stars
 
 
-def show_all_stars():
+def count_stars( db_key = "local"):
+    session = StarsMapper( db_key ).session
+    
+    print session.query( Stars ).count()
+
+def show_all_stars( db_key = "local"):
     delim = "\t"
     
-    session = StarsMapper().session
+    session = StarsMapper( db_key ).session
     
     all_stars = session.query( Stars ).all()
     
@@ -36,5 +41,8 @@ def show_all_stars():
         separ = "-" * (len(header) + (len(keys)-2)* 4)
         print "%s\n%s\n%s" % (header, separ,rows)
         
+    print len(all_stars)
         
-show_all_stars()
+ 
+#count_stars( "ogleII" )       
+show_all_stars( "ogleII" )

@@ -30,7 +30,7 @@ class StarsSearcher():
     DEF_UNFOUND_LIM = 150
    
 
-    def __init__(self,filters_list, SAVE_PATH = None, SAVE_LIM = None, UNFOUND_LIM = None, OBTH_METHOD = None):
+    def __init__(self,filters_list, SAVE_PATH = None, SAVE_LIM = None, UNFOUND_LIM = None, OBTH_METHOD = None, db_key = "local"):
         '''
         @param filters_list: List of filter type objects
         @param SAVE_PATH: Path from "run" module to the folder where found light curves will be saved
@@ -74,6 +74,8 @@ class StarsSearcher():
         self.SAVE_LIM = SAVE_LIM      
         self.UNFOUND_LIM = UNFOUND_LIM
         
+        self.db_key = db_key
+        
         filt_name = ""
         for filt in filters_list:
             filt_name += "_" + filt.__class__.__name__
@@ -104,7 +106,7 @@ class StarsSearcher():
         return False
         
     #NOTE: Default behavior. It can be overridden.
-    def matchOccur(self,star,query = None):
+    def matchOccur(self, star, query = None):
         '''
         What to do with star which passed thru filtering
         
@@ -116,7 +118,7 @@ class StarsSearcher():
         
         lc_path = star.saveStar(self.save_path)
         
-        mapper = StarsMapper()
+        mapper = StarsMapper( self.db_key )
         if not mapper.uploadStar(star, cut_path(lc_path, "light_curves")):
             self.not_uploaded.append(star)
     
@@ -176,6 +178,7 @@ class StarsSearcher():
             status = {"found": False, "filtered":False, "passed":False}
             try:
                 stars = StarsProvider().getProvider(obtain_method = self.OBTH_METHOD, **query).getStarsWithCurves()
+                
             except QueryInputError:
                 raise
             except:
@@ -192,17 +195,19 @@ class StarsSearcher():
                     warn("Max number of unsatisfied queries reached: %i" % self.UNFOUND_LIM)
                     break
 
-            else:       
+            else:    
+                unfound_counter = 0   
                 for one_star in progressbar(stars, "Filtering result stars from query: "): 
                     status["found"] = True
-                    unfound_counter = 0
+                    
                     
                     contain_lc = True
                     try:
                         stars[0].lightCurve.time
                     except AttributeError:
                         contain_lc = False
-                        
+                    
+                    
                     if contain_lc:
                         #Try to apply filters to the star
                         try:

@@ -47,4 +47,8 @@ STARS_PATH = {"stars" : join( LC_FOLDER, "some_stars" ),
               "cepheids" : join( LC_FOLDER, "cepheids" ),
               }
 
-DB_FILE_PATH = join( LC_FOLDER, "Stars.db")
+DB_FILE_PATH = join( TO_THE_DATA_FOLDER, "databases")
+
+DATABASES = {"local" : join(DB_FILE_PATH, "local.db"),
+             "milliquas" : join( DB_FILE_PATH, "milliquas.db"),
+             "ogleII" : join( DB_FILE_PATH, "ogleII.db")}

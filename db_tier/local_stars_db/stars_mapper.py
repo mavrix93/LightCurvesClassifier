@@ -12,6 +12,7 @@ from entities.light_curve import LightCurve
 from conf import settings
 import os
 import warnings
+from utils.helpers import progressbar
 
 
 class StarsMapper(object):
@@ -20,7 +21,7 @@ class StarsMapper(object):
     and Stars database 
     '''
 
-    def __init__(self):
+    def __init__(self, db_key = "local"):
         '''
         Attributes:
         -----------
@@ -28,8 +29,9 @@ class StarsMapper(object):
                 Instance which communicates with database
         '''
         
+        self.db_key = db_key
         self.session = self.getSession()
-        
+                
         
     def getSession( self ):
         """
@@ -37,7 +39,7 @@ class StarsMapper(object):
         """
         
         Base = declarative_base()    
-        engine = db_connect()
+        engine = db_connect( self.db_key )
         Base.metadata.create_all(engine)
         Base.metadata.bind = engine
         DBSession = sessionmaker(bind=engine, autoflush=False)
@@ -151,5 +153,22 @@ class StarsMapper(object):
         return star
         
         
+    def uploadViaKeys(self, values):
+        """
+        Upload star into db via key and values
+        
+        Parameters:
+        ----------
+            values : list of dicts
+                Every item of the list is dictionary with key corresponds with
+                Stars model key
+        """
+        
+        for value in progressbar(values, "Uploading: "):
+            db_star = Stars( **value )            
+            self.session.add( db_star )
+            
+        self.session.commit()
+            
         
         
