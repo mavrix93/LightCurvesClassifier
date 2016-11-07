@@ -136,9 +136,11 @@ class StarsMapper(object):
         more = {"b_mag" : db_star.b_mag,
                 "v_mag" : db_star.v_mag,
                 "i_mag" : db_star.i_mag,
+                "r_mag" : db_star.r_mag,
                 "lc_time_delta" : db_star.lc_time_delta,
                 "lc_n" : db_star.lc_n,
-                "uploaded" : db_star.uploaded}
+                "uploaded" : db_star.uploaded,
+                "redshift" : db_star.redshift}
         
         star = Star(ident = ident,
                     ra = db_star.ra,
@@ -146,10 +148,10 @@ class StarsMapper(object):
                     more = more,
                     starClass = db_star.star_class)
         
-        
-        lc = LightCurve( os.path.join(settings.LC_FOLDER, db_star.light_curve))
-        
-        star.lightCurve = lc
+        if db_star.light_curve:
+            lc = LightCurve( os.path.join(settings.LC_FOLDER, db_star.light_curve))        
+            star.lightCurve = lc
+            
         return star
         
         

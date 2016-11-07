@@ -159,7 +159,7 @@ class Star(object):
         
         return variogram(self.lightCurve.time,self.lightCurve.mag,bins=bins,log_opt=True)
         
-    def getAbbe(self, smooth_ratio = None, normalize_abbe=True):
+    def getAbbe(self, bins = None,smooth_ratio = None, normalize_abbe=True):
         '''
         Compute Abbe value of light curve
         
@@ -174,7 +174,7 @@ class Star(object):
             verbose( "Smooth ratio was not specified. Setting default value: %f" % self.DEF_SMOOTH_RATIO, 2, settings.VERBOSITY )
             smooth_ratio = self.DEF_SMOOTH_RATIO
  
-        x = to_ekvi_PAA(self.lightCurve.time, self.lightCurve.mag)[1]
+        x = to_ekvi_PAA(self.lightCurve.time, self.lightCurve.mag, bins)[1]
         return abbe(x,smooth_ratio)
     
  

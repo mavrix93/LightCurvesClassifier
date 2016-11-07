@@ -31,11 +31,22 @@ from conf.package_reader import PackageReader
 import os
 from db_tier.local_stars_db.stars_mapper import StarsMapper
 from db_tier.local_stars_db.models import Stars
+import re
+from db_tier.connectors.local_db_client import LocalDbClient
+from stars_processing.systematic_search.status_resolver import StatusResolver
 
 
-obtain_params = {"field_num" : "1", "starid" : 1, "target": "lmc"}
+print StatusResolver("t1.txt").getQueries()[0]
 
-ogle_prov = StarsProvider().getProvider(obtain_method="OgleII",
-                                        obtain_params=obtain_params)
-stars = ogle_prov.getStarsWithCurves()
-print stars
+
+"""query = {"redshift": ">5.95", "b_mag" : ">22", "r_mag" : "!=0.0", "star_class" : "Q"}
+db = LocalDbClient(query, db_key = "milliquas")
+q_stars = db.getStarsWithCurves()
+
+query = {"redshift": ">1", "b_mag" : ">22", "r_mag" : "!=0.0", "star_class" : "A"}
+db = LocalDbClient(query, db_key = "milliquas")
+agn_stars = db.getStarsWithCurves()
+
+col_filt = ColorIndexFilter(["b_mag", "r_mag"], decider = GMMBayesDec())
+
+col_filt.learn(agn_stars, q_stars )"""

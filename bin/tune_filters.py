@@ -15,15 +15,17 @@ import random
 import warnings
 from optparse import OptionParser
 
+
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+from db_tier.connectors.local_db_client import LocalDbClient
+from stars_processing.filters_tools.base_filter import Learnable
 from db_tier.stars_provider import StarsProvider
 from conf.package_reader import PackageReader
 from conf import settings
 from stars_processing.systematic_search.status_resolver import StatusResolver
-from stars_processing.filters_tools.params_estim import ParamsEstimation,\
-    ComparativeEstimation, ColorIndexEstimation
-
+from stars_processing.filters_tools.params_estim import DeciderEstimation
+from entities.exceptions import QueryInputError
 
 
 __all__ = []
@@ -139,8 +141,6 @@ def main(argv = None):
             filt = PackageReader().getClassesDict("filters")[opts.filt]
         except KeyError:
             raise Exception("There are no filter %s.\nAvailable filters: %s" % (opts.filt, PackageReader().getClassesDict("filters")))
-            
-        file_name = os.path.join( settings.FILTERS_PATH, opts.file_name )
         
         if opts.input.startswith("HERE:"):
             inp = opts.input[5:] 
@@ -161,38 +161,40 @@ def main(argv = None):
         else:
             log_path = os.path.join( settings.TUNING_LOGS, opts.log ) 
         
-        if opts.filt in  ["ComparingFilter", "ColorIndexFilter"]:
-            all_deciders = PackageReader().getClassesDict( "deciders" )
-            try:
-                decider = all_deciders[opts.decider]
-            except KeyError:
-                raise Exception("Unknown decider %s\nAvailable deciders: %s" % (opts.decider, all_deciders))
+        # TODO: Every filter will be learnable
+        # if isinstance( filt,  Learnable ):
+        all_deciders = PackageReader().getClassesDict( "deciders" )
+        try:
+            decider = all_deciders[opts.decider]()
+        except KeyError:
+            raise Exception("Unknown decider %s\nAvailable deciders: %s" % (opts.decider, all_deciders))
+        
             
+        addit_params = {}
+        searched = _getStars( opts.searched )
+        
+        if opts.filt == "ComparingFilter":
+            # TODO: Cust split
+            split_n = len(searched) / 2 
+            addit_params["compar_stars"] = searched[split_n: ]
+            searched = searched[: split_n ]
+            addit_params["compar_filters"] = getSubFilters( tuned_params[0] )
             
-            if  opts.filt == "ComparingFilter":
-                es = ComparativeEstimation(searched = _getStars( opts.searched ),
-                                           others = _getStars( opts.cont ),
-                                           compar_filters = getSubFilters( tuned_params[0] ),
-                                           tuned_params = tuned_params,
-                                           decider = decider,
-                                           log_path = log_path )
-            elif  opts.filt == "ColorIndexFilter":
-                es = ColorIndexEstimation(searched = _getStars( opts.searched ),
-                                          others = _getStars( opts.cont ),
-                                          tuned_params = tuned_params,
-                                          decider = decider,
-                                          log_path = log_path)
-                
-                
-                
+        elif opts.filt == "ColorIndexFilter":
+            # Nothing needed?
+            pass
+        
+        es = DeciderEstimation(searched = searched,
+                               others = _getStars( opts.cont ),
+                               tuned_params = tuned_params,
+                               decider = decider,
+                               star_filter = filt,
+                               log_path = log_path,
+                               plot_save_path = log_path,
+                               plot_save_name = opts.file_name,
+                               save_filter_name =  opts.file_name, **addit_params  )
             
-        else:
-            es = ParamsEstimation( searched = _getStars( opts.searched ), 
-                                   others = _getStars( opts.cont ),
-                                   filt = filt,
-                                   tuned_params = tuned_params,
-                                   save_file = file_name)
-                
+    
         print "Tuning is about to start. There are %i combinations to try" % len(tuned_params)
         
         es.fit() 
@@ -205,17 +207,35 @@ def main(argv = None):
         sys.stderr.write(program_name + ": " + repr(e) + "\n")
         sys.stderr.write(indent + "  for help use --help")
         return 2
+
+def _getStars( queries ):
+    LOC_QUERY_KEY = "QUERY:"
     
-def _getStars( path ):
+    stars = []  
+    for query in queries:
+        query = query.strip()
+        
+        if query.startswith( LOC_QUERY_KEY ):
+            stars += _getStarsFromLocalDb( query[len(LOC_QUERY_KEY):])       
+        else:
+            stars += _getStarsFromFolder( query )
+    
+    if not stars:
+        raise QueryInputError("There no stars. Your query: %s" % query)        
+    
+    return stars
+
+    
+def _getStarsFromFolder( single_path ):
     """
     Get stars from folder/s. If path is iterable (case that more folders were
     given, light curves from that all folder will be loaded
     
     Parameters:
     -----------
-        path : iterable, str
+        single_path : str
             Name of the folder of lightcurves from "light_curve" directory (specified
-            in settings). Can be also list/tuple.. of these names
+            in settings). 
             
     Returns:
     --------
@@ -223,21 +243,62 @@ def _getStars( path ):
             Stars from the folder
     """
     
-    stars = []
-    for single_path in path:            
-        p, restr = check_sample_name( single_path )
-        try:
-            st = StarsProvider().getProvider( obtain_method = "FileManager",
-                                         path = settings.STARS_PATH[p] ).getStarsWithCurves()
-            stars += split_stars(st, restr)
-                                         
-        except KeyError: 
-            raise Exception("\n\nThere no folder with light curves named %s.\nAvailable light curve folders %s" % (p,settings.STARS_PATH)  )
+             
+    p, restr = check_sample_name( single_path )
+    try:
+        st = StarsProvider().getProvider( obtain_method = "FileManager",
+                                     path = settings.STARS_PATH[p] ).getStarsWithCurves()
+        stars = split_stars(st, restr)
+                                     
+    except KeyError: 
+        raise Exception("\n\nThere no folder with light curves named %s.\nAvailable light curve folders %s" % (p,settings.STARS_PATH)  )
     
     if not stars: 
-        raise Exception("There are no stars in path with given restriction %s " % path)
+        raise Exception("There are no stars in path with given restriction %s " % single_path)
   
+    random.shuffle( stars )
     return stars
+
+def _getStarsFromLocalDb( query ):
+    """
+    This method parsing the query text in order to return desired stars
+    
+    Parameters:
+    -----------
+        query : str
+            
+            
+            
+            
+               
+    Example:
+    --------
+        _getStarsFromLocalDb("QUERY:milliquas:query_file.txt") --> [Star objects]
+        
+        query_file.txt:
+            #dec;r_mag
+            <-50;>20
+            
+            
+    
+    """
+
+    try:
+        db_key, query_file = query.split(":") 
+    except:
+        QueryInputError("Key for resolving stars source was not recognized:\n%s" % query)
+        
+    db_path = settings.DATABASES.get( db_key , None)
+    
+    if not db_path:
+        QueryInputError("Db key was not resolved: %s\nParsed from: %s" % (db_key, query))
+        
+
+    queries = StatusResolver( os.path.join( settings.INPUTS_PATH, query_file )).getQueries()
+    
+    searcher = LocalDbClient( queries, db_key)
+    
+    return searcher.getStarsWithCurves()
      
 def split_stars(stars, restr):       
     random.shuffle( stars )        
@@ -261,7 +322,7 @@ def getSubFilters(params):
             except TypeError as e:
                 pass
         if not sub_filters:
-            raise Exception("There are no comparative subfilter which can be constructed from given parameters %s" % params) 
+            raise Exception("There are no filter which can be constructed from given parameters %s" % params) 
         return sub_filters
 
 def check_sample_name( star_class ):

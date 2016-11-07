@@ -38,8 +38,8 @@ def to_PAA(x,box_size):
     return (np.array(approximation), indices)
     
     
-def to_ekvi_PAA(x,y,bins=None):
-    '''
+def to_ekvi_PAA(x,y,bins_ratio = 1 ):
+    ''' 
     This method perform PAA (see above) on y data set, but it will consider
     different time steps between values (in x data set) and return corrected data set
     '''
@@ -47,8 +47,8 @@ def to_ekvi_PAA(x,y,bins=None):
     if isinstance(x, list):
         x = np.array(x)
         y = np.array(y)
-    if (bins == None):
-        bins = len(x)
+    
+    bins = len(x) * bins_ratio
     
     if not len(x) == len(y):
         raise Exception("X and Y have no same length")    

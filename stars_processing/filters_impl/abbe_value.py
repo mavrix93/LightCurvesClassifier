@@ -5,25 +5,30 @@ Created on Mar 20, 2016
 '''
 
 from utils.commons import returns,accepts
-from stars_processing.filters_tools.base_filter import BaseFilter
+from stars_processing.filters_tools.base_filter import BaseFilter, Learnable
 from entities.star import Star
-from utils.helpers import progressbar
 
-class AbbeValueFilter(BaseFilter):
+class AbbeValueFilter(BaseFilter, Learnable):
     '''
     Filter implementation which sorts stars according to their Abbe value
     '''
 
 
-    def __init__(self, abbe_lim, *args, **kwargs):
+    def __init__(self, bins = None, smooth_ratio = None, decider = None, plot_save_path = None,
+                 plot_save_name = None, *args, **kwargs):
         '''
         @param abbe_lim: Maximum abbe value for passing thru filter
         '''
-        self.abbe_lim = abbe_lim
+        self.bins = bins
+        self.smooth_ratio = smooth_ratio
+        self.decider = decider
+        
+        self.plot_save_path = plot_save_path
+        self.plot_save_name = plot_save_name
     
     @accepts(list)
     @returns(list)
-    def applyFilter(self,stars):
+    def applyFilter(self, stars):
         '''
         Filter stars according to Abbe values
         
@@ -31,16 +36,28 @@ class AbbeValueFilter(BaseFilter):
         
         @return: List of star-like objects passed thru filtering
         '''
-        passed_stars = []
-        for star in stars:
-            res = self._filterStar(star)
-            if res[0]: passed_stars.append(res[0])
-        return passed_stars
+        
+        abbe_values = self.getSpaceCoords(stars)
+        
+        return [ star for star, passed in zip( stars, self.decider.filter( abbe_values )) if passed]
     
-    @accepts(Star)    
-    def _filterStar(self,star):
-        abbe_value = star.getAbbe()
-        if (abbe_value < self.abbe_lim):
-            return star,abbe_value
-        return False, False
+    
+    def getSpaceCoords(self, stars):  
+        """
+        Get list of Abbe values
+        
+        Parameters:
+        -----------
+            stars : list of Star objects
+                Stars with color magnitudes in their 'more' attribute
  
+        Returns:
+        -------
+            List of list of floats
+        """
+        abbe_values = []
+        
+        for star in stars: 
+            abbe_values.append( [star.getAbbe(bins = self.bins, smooth_ratio = self.bins)] )  
+            
+        return abbe_values  

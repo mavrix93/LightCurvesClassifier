@@ -5,16 +5,17 @@ Created on May 8, 2016
 '''
 
 from utils.commons import returns,accepts
-from stars_processing.filters_tools.base_filter import BaseFilter
+from stars_processing.filters_tools.base_filter import BaseFilter, Learnable
 
-class ColorIndexFilter(BaseFilter):
+class ColorIndexFilter(BaseFilter, Learnable):
     '''
     Filter star according their color indexes    
     '''
 
     def __init__(self, colors = ["b_mag", "v_mag", "i_mag"],
                  decider = None, pass_not_found = False, raise_if_not = False,
-                 save_plot_path = None, *args, **kwargs):
+                 plot_save_path = None, plot_save_name = "",
+                 without_notfound = False, *args, **kwargs):
         '''
         Parameters:
         -----------
@@ -31,23 +32,33 @@ class ColorIndexFilter(BaseFilter):
             raise_if_not : bool
                 If True it throws exception whenever a star has no color index
                 
-            save_plot_path : str, NoneType
+            plot_save_path : str, NoneType
                 Location for saving plot of probabilities after learning. If None,
                 plot will not be saved, but showed
+                
+            without_notfound : bool
+                If False coordinates of stars which have no color indexes will
+                be returned as well, but with None instead of coordinates (list of
+                values)
                 
         '''
         self.decider = decider
         self.pass_not_found = pass_not_found
         self.colors = colors
+        self.labels = self.colors
+
         
         self.raise_if_not = raise_if_not
         
-        self.save_plot_path = save_plot_path
+        self.plot_save_path = plot_save_path
+        self.plot_save_name = plot_save_name
+        
+        self.without_notfound = without_notfound
     
     @accepts(list)
     @returns(list)     
     def applyFilter(self, stars ):
-        stars_coords = self.getColorCoords( stars )    
+        stars_coords = self.getSpaceCoords( stars )    
         
         stars_without_colors = []
         stars_with_colors = []
@@ -68,7 +79,7 @@ class ColorIndexFilter(BaseFilter):
         return [ star for this_passed, star in zip( passed, stars_with_colors) if this_passed == True] + add_stars
     
     
-    def getColorCoords(self, stars, without_notfound = False):  
+    def getSpaceCoords(self, stars):  
         """
         Get list of desired colors
         
@@ -76,12 +87,7 @@ class ColorIndexFilter(BaseFilter):
         -----------
             stars : list of Star objects
                 Stars with color magnitudes in their 'more' attribute
-                
-            without_notfound : bool
-                If False coordinates of stars which have no color indexes will
-                be returned as well, but with None instead of coordinates (list of
-                values)
-                
+ 
         Returns:
         -------
             List of list of floats
@@ -100,18 +106,9 @@ class ColorIndexFilter(BaseFilter):
                 if self.raise_if_not:
                     raise Exception("Star %s has no color index." % star.ident)
                 
-                if not without_notfound:
+                if not self.without_notfound:
                     coords.append( None )
-        
+
         return coords  
 
-    
-    def learn(self, searched_stars, contamination_stars):        
-        self.decider.learn( self.getColorCoords( searched_stars, without_notfound = True),
-                            self.getColorCoords(contamination_stars, without_notfound = True))
-        
-        if len(self.colors) == 2:
-            self.decider.plotProbabSpace( save_path = self.save_plot_path)
-            
-        
         

@@ -36,7 +36,7 @@ def show_learning(quasars, stars, deciders = []):
         
 if __name__ == "__main__":    
       
-    N = 40
+    N = 10
     
     files_prov = StarsProvider().getProvider(path= settings.STARS_PATH["quasars"],
                                              files_limit=N,
@@ -57,6 +57,6 @@ if __name__ == "__main__":
                         "vario_alphabet_size" : 17,
                         "hist_alphabet_size" : 7
                         }
-    deciders = [NeuronDecider, QDADec, GaussianNBDec, GMMBayesDec]
+    deciders = [QDADec, NeuronDecider, GaussianNBDec, GMMBayesDec]
     show_learning(quasars, stars, deciders)
 

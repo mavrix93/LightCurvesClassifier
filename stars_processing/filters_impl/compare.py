@@ -6,22 +6,24 @@ Created on Apr 12, 2016
 import numpy as np
 import copy
 
-from entities.exceptions import InvalidFilteringParams
-from utils.helpers import verbose, progressbar, checkDepth
+
+from utils.helpers import verbose,  checkDepth
 from conf import settings
-from stars_processing.filters_tools.base_filter import BaseFilter
-from stars_processing.deciders.distance_desider import DistanceDesider
+from stars_processing.filters_tools.base_filter import BaseFilter, Learnable
+import warnings
+from entities.exceptions import QueryInputError
 
 
 
-class ComparingFilter(BaseFilter):
+class ComparingFilter(BaseFilter, Learnable):
     '''
     This class is responsible for comparing stars according to implementations
     of comparing subfilters 
     '''
     
     
-    def __init__(self, compar_filters, compar_stars, decider, filters_params = {}, plot_save_path = None):
+    def __init__(self, compar_filters, compar_stars, decider, 
+                plot_save_path = None, plot_save_name = "ComparingPlot.png", **filters_params):
         """
         Parameters:
         -----------
@@ -40,8 +42,12 @@ class ComparingFilter(BaseFilter):
         self.comp_stars = self.prepareStars( compar_stars )        
         self.decider = decider
         self.plot_save_path = plot_save_path
+        self.plot_save_name = plot_save_name
+        
+        self.labels = [filt.__class__.__name__ + " distance" for filt in self.compar_filters]
         
         self.learned = False
+        
         
         # TODO: Get mean probability value
         # if search_opt.startswith("average"):
@@ -64,12 +70,12 @@ class ComparingFilter(BaseFilter):
         if not self.learned:
             raise Exception("First you have to learn this compare filter")
          
-        stars_coords = self.getSpaceCoordinates(stars, meth)               
+        stars_coords = self.getSpaceCoords(stars, meth)               
         passed = self.decider.filter( stars_coords )
         
         return [ star for this_passed, star in zip( passed, stars) if this_passed == True] 
         
-    def getSpaceCoordinates(self, stars, meth = "average"):    
+    def getSpaceCoords(self, stars, meth = "average"):    
         '''
         Apply all filters and get their space coordinates
         
@@ -90,6 +96,7 @@ class ComparingFilter(BaseFilter):
             List of coordinates 
         '''
         
+        #TODO: Get rid of prepareStars and then sax attributes in Star class
         
         #Let stars to obtain necessary values        
         stars = self.prepareStars(stars)
@@ -154,7 +161,7 @@ class ComparingFilter(BaseFilter):
         return coordinates
          
     
-    def prepareStars(self,stars):
+    def prepareStars(self, stars):
         """
         Parameters:
         -----------
@@ -173,59 +180,20 @@ class ComparingFilter(BaseFilter):
         prepared_stars = []
         # PB: for star in progressbar(stars,"Preparing stars for comparative filtering: "):
         for star in stars:
-            new_star = copy.deepcopy(star)
-            for filt in self.compar_filters:
-                new_star = filt.prepareStar(new_star)
-            prepared_stars.append(new_star)
+            if star.lightCurve:
+                new_star = copy.deepcopy(star)
+                for filt in self.compar_filters:
+                    new_star = filt.prepareStar(new_star)
+                prepared_stars.append(new_star)
+            else:
+                warnings.warn("Star has no light curve")
         verbose("Stars were prepared",2, settings.VERBOSITY)
+        
+        if not prepared_stars:
+            raise QueryInputError("There is no star with a light curve")
+        
         return prepared_stars
      
-     
-    def learn(self, s_stars, c_stars, meth = "average"):
-        
-        searched_stars_coords = self.getSpaceCoordinates( s_stars , meth = meth)
-                
-        contamination_stars_coords = self.getSpaceCoordinates( c_stars , meth = meth)
-            
-        self.decider.learn( searched_stars_coords, contamination_stars_coords)
-        
-        self.decider.plotProbabSpace( save_path = self.plot_save_path)           
-        self.learned = True      
-     
-     
-        
-        
-    def _learn(self, s_stars, c_stars, meth = "closest"):
-        searched_stars = self.prepareStars( s_stars )
-        contamination_stars = self.prepareStars( c_stars )
-        
-        searched_stars_coords = []
-        for star in searched_stars:
-            coords = self._filtOneStar(star)
-            
-            if meth == "closest":
-                searched_stars_coords.append(  self._findClosestCoord( coords ))
-            elif meth == "average":
-                searched_stars_coords.append(  self._findAverageCoord( coords ))
-            else:
-                raise Exception("Unresolved learn method")
-                
-        contamination_stars_coords = []
-        for star in contamination_stars:
-            coords = self._filtOneStar(star)
-            
-            if meth == "closest":
-                contamination_stars_coords.append(  self._findClosestCoord( coords ))
-            elif meth == "average":
-                contamination_stars_coords.append(  self._findAverageCoord( coords ))
-            else:
-                raise Exception("Unresolved learn method")
-            
-        self.decider.learn( searched_stars_coords, contamination_stars_coords)
-        
-        self.decider.plotProbabSpace()           
-        self.learned = True
-        
             
     def _findClosestCoord(self, coords):
         checkDepth(coords, 2)
@@ -251,13 +219,7 @@ class ComparingFilter(BaseFilter):
             
         return mean_coord           
         
-    
-    def getStatistic(self, s_stars, c_stars):
-        
-        searched_stars_coords = self.getSpaceCoordinates( s_stars)            
-        contamination_stars_coords = self.getSpaceCoordinates( c_stars)
-        
-        return self.decider.getStatistic( searched_stars_coords, contamination_stars_coords )
+
         
         
   

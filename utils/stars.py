@@ -174,9 +174,12 @@ def plotStarsPicture(stars,bins=20 ,option="show",center=True,save_loc=None,with
             plt.tight_layout()    
             fig.savefig(save_loc+"/"+star.getIdentName+".png")
         else:
-            plt.tight_layout()
-            plt.show()
-    
+            try:
+                plt.tight_layout()
+                plt.show()
+            except ValueError:
+                raise Exception("There no light curves to plot")
+        
         plt.close()
 
 

@@ -21,7 +21,6 @@ def db_connect(db_key = "local"):
 
 Base = declarative_base()
 
-
 class Stars(Base):
     __tablename__ = "Stars"
     __table_args__ = {'extend_existing':True}
@@ -49,11 +48,14 @@ class Stars(Base):
     
     lc_n = Column( Integer, nullable = True)
     lc_time_delta = Column( Float(10), nullable = True)
-     
+    
+    
     crossmatch_id = Column(Integer, ForeignKey('Stars.id'))
     crossmatch = relationship("Stars", remote_side=[id])
     
     UniqueConstraint(identifier, db_origin, light_curve )
+    
+    
 
 def update_db( db_key = "local"):
     engine = db_connect( db_key )

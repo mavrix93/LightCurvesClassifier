@@ -66,7 +66,7 @@ class SupervisedBase(BaseDesider):
         self.X = np.array(right_coords + wrong_coords)
         self.y = np.array(y)
         
-        if not self.X or not self.y:
+        if not self.X.any() or not self.y.any():
             raise Exception("There are no data to learn on")
         
         self.learner.fit( self.X, self.y)

@@ -8,6 +8,14 @@ import matplotlib.pyplot as plt
 import os
 
 
+def clean_path( path ):
+    cleaned_name = path[ path.rfind("/")+1 : ] 
+    
+    if "." in cleaned_name:
+        cleaned_name = cleaned_name[ :cleaned_name.rfind(".")]
+        
+    return cleaned_name
+
 def checkDepth(a, deep_level):
     lev = 0
     while True:

@@ -10,6 +10,7 @@ import warnings
 import numpy as np
 from matplotlib import pyplot as plt
 from utils.helpers import checkDepth
+import os
 
 
 
@@ -130,7 +131,7 @@ class BaseDesider(object):
         checkDepth(stars_coords, 2)
         return [ self.evaluate( [coo]) >= self.treshold for coo in stars_coords ]
     
-    
+    # TODO: Reduce number of digits in output
     def getStatistic( self, right_coords, wrong_coords ):
         """
         Parameters:
@@ -191,49 +192,93 @@ class BaseDesider(object):
                 "false_negative_rate" : false_neg / (false_neg + true_pos)}"""
         
         
-    def plotProbabSpace(self, xlim = None, ylim = None, OFFSET = 0.4, save_path = None):
-        plt.clf()
+    def plotProbabSpace(self, xlim = None, ylim = None, OFFSET = 0.4,
+                        save_path = None, x_lab = "", y_lab = "", title = "",
+                        file_name = "plot.png"):
         try:
-            if xlim == None or ylim == None:
-                x_min, x_max = np.min(self.X[:,0]), np.max(self.X[:,0]) 
-                y_min, y_max = np.min(self.X[:,1]), np.max(self.X[:,1])
+            plt.clf()
+            try:
+                if xlim == None or ylim == None:
+                    x_min, x_max = np.min(self.X[:,0]), np.max(self.X[:,0]) 
+                    y_min, y_max = np.min(self.X[:,1]), np.max(self.X[:,1])
+                    
+                    x_offset = (x_max-x_min) * OFFSET    
+                    y_offset = (y_max-y_min) * OFFSET  
+                              
+                    xlim = ( x_min - x_offset, x_max + x_offset)
+                    ylim = ( y_min - y_offset, y_max + y_offset)
                 
-                x_offset = (x_max-x_min) * OFFSET    
-                y_offset = (y_max-y_min) * OFFSET  
-                          
-                xlim = ( x_min - x_offset, x_max + x_offset)
-                ylim = ( y_min - y_offset, y_max + y_offset)
-            
-            searched = self.X[self.y==1]
-            others = self.X[self.y==0]    
-            plt.plot( searched[:,0], searched[:,1], "ro", label = "Searched objects")
-            plt.plot( others[:,0], others[:,1], "bo", label = "Others")            
-        except:
-            xlim = (0, 50)
-            ylim = (0, 50)
-            print "Can't plot coordinates of training objects. Decider has to have X and y attribute."
-        
+                searched = self.X[self.y==1]
+                others = self.X[self.y==0]    
+                plt.plot( searched[:,0], searched[:,1], "bo", label = "Searched objects", markeredgecolor='red',  markeredgewidth=0.5)
+                plt.plot( others[:,0], others[:,1], "ro", label = "Others",  markeredgecolor='blue', markeredgewidth=0.5) 
 
-        xx, yy = np.meshgrid(np.linspace(xlim[0], xlim[1], 100),
-                             np.linspace(ylim[0], ylim[1], 100))
-        
-        try:
-            Z = self.evaluate(np.c_[xx.ravel(), yy.ravel()])
-        except ValueError:
-            raise
-            Z = self.evaluateList(np.c_[xx.ravel(), yy.ravel()])
+            except:
+                xlim = (0, 50)
+                ylim = (0, 50)
+                print "Can't plot coordinates of training objects. Decider has to have X and y attribute."
             
-        Z = Z.reshape(xx.shape)  
+    
+            xx, yy = np.meshgrid(np.linspace(xlim[0], xlim[1], 100),
+                                 np.linspace(ylim[0], ylim[1], 100))
+            
+            try:
+                Z = self.evaluate(np.c_[xx.ravel(), yy.ravel()])
+            except ValueError:
+                raise
+                Z = self.evaluateList(np.c_[xx.ravel(), yy.ravel()])
+                
+            Z = Z.reshape(xx.shape)  
+            
+            plt.pcolor(xx,yy,Z)    
+            plt.legend()
+            plt.colorbar()  
+            plt.xlim(*xlim)
+            plt.ylim(*ylim)  
+            
+            
+            if x_lab and y_lab:
+                plt.xlabel( str(x_lab))
+                plt.ylabel( str(y_lab))
+            if title:
+                plt.title( str(title) )
+            
+            if not save_path:
+                plt.show()
+            else:
+                plt.savefig( os.path.join( save_path, file_name) )
+                
+        except Exception, e:
+            warnings.warn("Could not plot, because: %s" % e)
+            
         
-        plt.pcolor(xx,yy,Z)    
-        plt.legend()
-        plt.colorbar()  
-        plt.xlim(*xlim)
-        plt.ylim(*ylim)  
+            
+    def plotHist(self, title = "", labels = [], bins = 15, save_path = None,
+                 file_name = "hist.png"):
         
-        if not save_path:
-            plt.show()
+        if self.X.any():
+        
+            for i in range( len(self.X[0]) ):
+                
+                if len(labels) > i:
+                    lab = labels[i].lower()
+                else:
+                    lab = ""
+                    
+                plt.clf()
+                plt.hist( self.X[self.y == 0][:,i], normed = True, bins = bins, histtype='bar', color="crimson", label = "Searched objects")
+                plt.hist( self.X[self.y == 1][:,i], normed = True, bins = bins, label = "Others")
+                plt.title( title )
+                
+                plt.xlabel( str(lab ) )
+                
+                plt.legend()
+                
+                if save_path:
+                    plt.savefig( os.path.join( save_path, file_name+"_hist_%s_%i.png" % (lab.replace(" ", "_"), i))  )
+                else:
+                    plt.show()
         else:
-            plt.savefig( save_path )
+            warnings.warn("No data to plot histogram")
         
     

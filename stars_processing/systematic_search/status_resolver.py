@@ -8,6 +8,7 @@ import numpy as np
 from utils.helpers import subDictInDict
 from entities.exceptions import InvalidFilesPath
 import os
+import ast
 
 class StatusResolver(object):
     '''
@@ -136,20 +137,11 @@ class StatusResolver(object):
         '''Get header and data from the file'''
         
         header = self._readHeader(path)
-        data = np.genfromtxt(path,dtype="|S5", delimiter = self.DELIMITER)
         
-        try:
-            data[0]
-        except:
-            data = np.array([data])
-        try:            
-            data.shape[1]
-        except IndexError:
-            if data.shape[0] ==1:
-                data = [data]
-            else:
-                data = [ [d] for d in data]
-         
+        data = self._getFileData(path)
+        # data = np.genfromtxt(path,dtype="|S5", delimiter = self.DELIMITER)
+        # data = self._correctData(data, header)  
+               
         if len(header) != len(data[0]):
             raise Exception("Number of header params and values have to be the same.\nGot %s and %s" % (data[0], header))
         return header, data
@@ -177,12 +169,57 @@ class StatusResolver(object):
     def _getDictQuery(self,header,queries):
         '''Get header list and contents of the status file as list of dictionaries'''
         queries_list = []
-        
         for query in queries:
             if type(query) is not np.ndarray and type(query) is not list:
                 query = [query]
-            queries_list.append(dict(zip(header,query)))
+            queries_list.append(dict(zip(header, self._readInStr(query))))
         return queries_list
+    
+    def _readInStr(self, words):
+        x = []
+        for word in words:
+            try:
+                x.append(ast.literal_eval(word.strip()))
+            except:
+                x.append(word)
+        return x
+    
+    def _correctData(self, data, header):
+        try:
+            len(data[0])
+            assert not isinstance( data[0], str)
+        except:
+            # Check if just one value
+            try:
+                len(data)
+            except:
+                return [[data]] 
+            
+            # One line
+            if len(data) == len(header):
+                return [data]
+            
+            # One column
+            else:
+                return [ [i] for i in data ]
+        return data
+    
+    
+    def _getFileData(self, path):
+        
+        fi = open(path)
+        
+        data = []
+        for line in fi.readlines():
+            line = line.strip()
+            
+            if not line.startswith("#"):
+                parts = line.split( self.DELIMITER )
+                
+                parts = self._readInStr(parts)
+                data.append( parts )
+        fi.close
+        return data
 
             
     
