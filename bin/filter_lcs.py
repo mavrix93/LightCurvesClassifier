@@ -163,7 +163,7 @@ WITHOUT FILTERING
         sys.stderr.write(program_name + ": " + repr(e) + "\n")
         sys.stderr.write(indent + "  for help use --help")
         return 2
-
+# TODO: UPGRADE!
 def available_databases():
     '''Find all available databases'''
     

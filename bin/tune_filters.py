@@ -14,6 +14,7 @@ import os
 import random
 import warnings
 from optparse import OptionParser
+import json
 
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -30,67 +31,168 @@ from entities.exceptions import QueryInputError
 __all__ = []
 __version__ = 0.3
 __date__ = '2016-09-23'
-__updated__ = '2016-11-03'
+__updated__ = '2016-11-08'
 
 def main(argv = None):
     '''Command line options.'''
     
     program_info = """ABOUT
     The program searches for the most optional parameters for given filters
-    according to sample of searched and other train light curves.
+    according to sample of searched and other train light curves. 
     
-    Parameters to try are specified in the file where first row starts with '#'
-    and then there are names of parameters which will be tuned. Next rows consist
-    of values to tune. All columns are separated by ';' (can be change in settings). 
+    Getting stars
+    -------------        
+        Stars can be obtained by three different ways resolved from query text
+        according to format:
+        
+            1.LOCAL:db_name:query_file_in_inputs_folder
+                --> Local database is queried (according to key in settings.DATABASES)
+                
+                    Example:
+                        LOCAL:milliquas:query_file.txt
+                        
+                    Note:
+                        There is a overview of available local databases
+                        at the end (if it is launched from command line without
+                        parameters)
+                
+            2.QUERY:db_name:query_file_in_inputs_folder
+                --> Remote database is queried (db key is name of connector class)
+                
+                    Example:
+                        QUERY:OgleII:query_file.txt
+                        
+                    Note:
+                        There is a overview of available database connectors
+                        at the end (if it is launched from command line without
+                        parameters)
+            
+            3.stars_folder_key:number or stars_folder_key%float_number or stars_folder_key
+                --> Light curves from folder according to first key is loaded
+                    (according to settings.STARS_PATH dictionary). All stars are
+                    loaded if there is no number and ':', in case of integer after
+                    ':' just this number of stars are loaded and if there are is a float
+                    number after '%' this percentage number of all stars are loaded.
+                    
+                    Example:
+                        quasars:10    or    be_stars%0.5    or    cepheids
+                        
+                    Note:
+                        There is a overview of registered light curve locations 
+                        at the end (if it is launched from command line without
+                        parameters)
     
-    Filter is loaded by name of the filter class in the filter package specified in settings
-    (by default data/star_filters).
-    Light curves are loaded from light_curves folder (by default data/light_curves)
-    by the key from STARS_PATH dictionary specified in settings.
+    Status file:
+    ------------    
+        Parameters to try or queries can be specified in the file where first
+        row starts with '#' and then there are names of parameters which can be used
+        for finding the most optional parameters of a filter or as query for a database.
+        Next rows consist of values to tune or queries. All columns are separated
+        by ';' (can be changed in settings). 
+        
+        Note:
+            Example files can be find in data/inputs/examples
+        
+    Getting filter:
+    ---------------    
+        Filter is loaded by name of the filter class in the filter package
+        specified in settings. 
+            
+            Note:
+                All classes which inherits BaseFilter class located
+                in the filters_imp package are considered as filters.
+                
+    Data folder hierarchy:
+    -----------------------
+        Next to src/ (source) folder there is a data/ folder where all data files
+        are saved. All input/outputs are loaded/saved into a folder in data/.
+        
+        This behaviour can be suppressed by entering word 'HERE:'
+        (e.g. 'HERE:path_of_the_file_with_its_name'). It forces to take relative
+        path from the directory of executing the script.
+        
+        There are 5 main folders:
+          
+            1. data/inputs/
+                Location of files of queries and files fro tuning parameters 
+            
+            2. data/light_curves/
+                Location of light curve subfolders. 
+            
+            3. data/star_filters/
+                Location where tuned filters is saved (or can be loaded by
+                filter_lcs script)
+            
+            4. data/tuning_logs/
+                Location of output files from tuning - statistic for every combination
+                of parameters, graphs (probability distribution with train objects
+                and histograms).
+            
+            5. data/databases/
+                Location of local db files (sqlite).
+                
+    Deciders:
+    --------
+        Deciders manage all learning and then recognizing of inspected objects.
+        They an be loaded via name of their class. 
     
-    EXAMPLE 1:
-        File tuned_params.txt:
-            #abbe_lim
-            0.2
-            0.3
-            0.5
-            0.8
-            0.9
+        Note:
+            There is a overview of implemented deciders at the end (if it is
+            launched from command line without parameters)
+      
+    Examples:
+    ---------
+        Example 1:
+            File tuned_params.txt:
+                #smooth_ratio
+                0.2
+                0.3
+                0.5
+                0.8
+                0.9
+                
+            ./tune_filters.py   -i tuned_params.txt
+                                -f AbbeValueFilter
+                                -s quasars:30
+                                -c stars%0.5
+                                -c cepheids
+                                -o MyAbbeFilter
+                                -d NeuronDecider
+                
+            In the example file above one row represents one combination of parameters (per column).
+            Class name is AbbeValueFilter. Desired light curves are quasars (30
+            of them are loaded) and they are trained on a "contamination sample"
+            of ordinary stars (50 % of available light curves in the folder)
+            and cepheids (all light curves in the folder).
             
-        ./tune_filters.py  -i tuned_params.txt -f AbbeValueFilter -s quasars:30 -c stars%0.5 -c cepheids -o MyAbbeFilter
+        Example 2:
+            File in/tuned_params_histvario.txt:
+                #hist_days_per_bin;vario_days_per_bin;vario_alphabet_size;hist_alphabet_size      
+                97;9;17;7
+                80;8;16;7
             
-        In the example file above one row represents one combination of parameters (per column).
-        Class name is AbbeValueFilter. Desired light curves are quasars and they 
-        are trained on a "contamination sample" of ordinary stars and cepheids.
-        These two names of categories represent key to the path to
-        the folder of light curves specified in settings file. 
-        
-        There can be two special marks after of the light curves group: ':' 
-        and '%'. Value after ':' specifies number of light curves to load and
-        '%' specifies percentage number of light curves to load. In case 
-        of name without any of these special marks all samples will be taken.
+            ./tune_filters.py   -i tuned_params_histvario.txt
+                                -f ComparingFilter
+                                -s quasars:9
+                                -c cepheids:7
+                                -d GaussianNBDec
+                                -o MyCompFilter
+                                
             
-    EXAMPLE 2:
-        File in/tuned_params_histvario.txt:
-            #hist_days_per_bin;vario_days_per_bin;vario_alphabet_size;hist_alphabet_size      
-            97;9;17;7
-            80;8;16;7
-        
-        ../bin/tune_filters.py  -i in/tuned_params_histvario.txt -f ComparingFilter -s quasars:9 -c cepheids:7 -d GaussianNBDec -o MyCompFilter
-        
-        In the second example above there is a special case of tuning for ComparingFilter.
-        It means that one more parameter needs to be specified - decider ('-d'),
-        which estimates probability of membership of inspected object to
-        the searched group. Available options will be shown in case of not
-        specifying this option. 
-        
-        Searched sample is split into two samples: First is assigned as comparing
-        stars (filter parameter) and second as train sample.
-        
-        Comparing subfilters are created on base of parameters to tune. All subfilters
-        (all classes in filter package which inherit ComparativeSubFilter) which
-        would be able to be created from parameters in params file, will be loaded. 
-        
+            In the second example above there is a special case of tuning for ComparingFilter.
+            It means that one more parameter needs to be specified - decider ('-d'),
+            which estimates probability of membership of inspected object to
+            the searched group. Available options will be shown in case of not
+            specifying this option. 
+            
+            Searched sample is split into two samples: First is assigned as comparing
+            stars (filter parameter) and second as train sample.
+            
+            Comparing subfilters are created on base of parameters to tune. All subfilters
+            (all classes in filter package which inherit ComparativeSubFilter) which
+            would be able to be created from parameters in params file, will be loaded. 
+
+                        
         """
     
     program_name = os.path.basename(sys.argv[0])
@@ -130,7 +232,12 @@ def main(argv = None):
         opts, args = parser.parse_args(argv)
         
         if not len(argv):
-            print program_info, "\n"          
+            print program_info, "\n"   
+            print "Databases accessible via LOCAL:db_key:query_file:\n\t%s\n" % json.dumps( settings.DATABASES , indent=4)
+            print "Databases accessible via QUERY:db_key:query_file:\n\t%s\n" % json.dumps( PackageReader().getClassesDict("connectors").keys() , indent=4)
+            print "Stars path accessible via STARS_PATH key:\n\t%s\n" % json.dumps( settings.STARS_PATH , indent=4)
+            print "Available filters:\n\t%s\n" %  json.dumps( PackageReader().getClassesDict("filters").keys(), indent=4)
+            print "Available deciders:\n\t%s\n" % json.dumps( PackageReader().getClassesDict( "deciders" ).keys()       , indent=4)
             print "Run with '-h' in order to show params help\n"
             return False
         
@@ -206,15 +313,40 @@ def main(argv = None):
         sys.stderr.write(indent + "  for help use --help")
         return 2
 
+
+
 def _getStars( queries ):
-    LOC_QUERY_KEY = "QUERY:"
+    """
+    Get stars from query text. According to format of the query text different
+    methods are called.
+    
+        1.LOCAL:db_name:query_file_in_inputs_folder
+            --> Local database is queried (according to key in settings.DATABASES)
+            
+        2.QUERY:db_name:query_file_in_inputs_folder
+            --> Remote database is queried (db key is name of connector class)
+        
+        3.stars_folder_key:number or stars_folder_key:float_number or stars_folder_key
+            --> Light curves from folder according to first key is loaded
+                (according to settings.STARS_PATH dictionary). All stars are
+                loaded if there is no number and ':', in case of integer after
+                ':' just this number of stars are loaded and if there are float
+                number after ':' this percentage number of all stars are loaded.
+                
+    """
+    LOC_QUERY_KEY =  "LOCAL"
+    ORDINARY_QUERY_KEY = "QUERY:"
     
     stars = []  
     for query in queries:
         query = query.strip()
         
         if query.startswith( LOC_QUERY_KEY ):
-            stars += _getStarsFromLocalDb( query[len(LOC_QUERY_KEY):])       
+            stars += _getStarsFromLocalDb( query[len(LOC_QUERY_KEY):]) 
+        
+        elif query.startswith( ORDINARY_QUERY_KEY ):
+            stars += _getStarsFromRemoteDb( query[len(ORDINARY_QUERY_KEY):])     
+                  
         else:
             stars += _getStarsFromFolder( query )
     
@@ -260,25 +392,24 @@ def _getStarsFromFolder( single_path ):
 def _getStarsFromLocalDb( query ):
     """
     This method parsing the query text in order to return desired stars
+    from local database.
     
     Parameters:
     -----------
         query : str
-            
-            
-            
-            
+            Query text contains db_key and query file separated by ':' 
+                      
+    Returns:
+    --------
+        List of Star objects 
                
     Example:
     --------
-        _getStarsFromLocalDb("QUERY:milliquas:query_file.txt") --> [Star objects]
+        _getStarsFromLocalDb("milliquas:query_file.txt") --> [Star objects]
         
         query_file.txt:
             #dec;r_mag
-            <-50;>20
-            
-            
-    
+            <-50;>20  
     """
 
     try:
@@ -291,12 +422,51 @@ def _getStarsFromLocalDb( query ):
     if not db_path:
         QueryInputError("Db key was not resolved: %s\nParsed from: %s" % (db_key, query))
         
-
     queries = StatusResolver( os.path.join( settings.INPUTS_PATH, query_file )).getQueries()
     
     searcher = LocalDbClient( queries, db_key)
     
     return searcher.getStarsWithCurves()
+
+
+def _getStarsFromRemoteDb( query ):
+    """
+    This method parsing the query text in order to return desired stars
+    from remote database.
+    
+    Parameters:
+    -----------
+        query : str
+            Query text contains db_key and query file separated by ':' 
+                      
+    Returns:
+    --------
+        List of Star objects 
+               
+    Example:
+    --------
+        _getStarsFromRemoteDb("OgleII:query_file.txt") --> [Star objects]
+        
+        query_file.txt:
+            #starid;field;target
+            1;1;lmc
+            10;1;smc  
+    """
+    
+    try:
+        db_key, query_file = query.split(":") 
+    except:
+        QueryInputError("Key for resolving stars source was not recognized:\n%s" % query)
+        
+    queries = StatusResolver( os.path.join( settings.INPUTS_PATH, query_file )).getQueries()
+     
+    starsProvider = StarsProvider().getProvider(obtain_method = db_key,
+                                        obtain_params = queries)
+    
+    return starsProvider.getStarsWithCurves()
+    
+
+
      
 def split_stars(stars, restr):       
     random.shuffle( stars )        
