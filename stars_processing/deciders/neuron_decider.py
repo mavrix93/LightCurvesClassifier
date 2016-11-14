@@ -7,13 +7,10 @@ Created on Oct 28, 2016
 from pybrain.tools.shortcuts import buildNetwork
 from pybrain.datasets import SupervisedDataSet
 from pybrain.supervised.trainers import BackpropTrainer
-from sklearn.cross_validation import train_test_split
 
 import numpy as np
-import pickle
-
-from matplotlib import pyplot as plt
 from stars_processing.deciders.base_decider import BaseDesider
+from conf import deciders_settings
 
 class NeuronDecider(BaseDesider):
     """
@@ -47,9 +44,8 @@ class NeuronDecider(BaseDesider):
     """
     
     OUTPUT_NEURONS = 1
-    TRAIN_SAMPLE_SIZE = 0.5
     
-    def __init__(self, treshold = 0.5, hiden_neurons = 1):
+    def __init__(self, treshold = None, hiden_neurons = None):
         '''
         Parameters:
         -----------
@@ -60,7 +56,12 @@ class NeuronDecider(BaseDesider):
         -----
             Attributes with None values will be updated by setTrainer and train methods
         '''
+        if not treshold:
+            treshold = deciders_settings.TRESHOLD
         
+        if not hiden_neurons:
+            hiden_neurons = deciders_settings.HIDDEN_NEURONS
+            
         self.hiden_neurons = hiden_neurons
         
         self.input_neuron = None

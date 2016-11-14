@@ -6,9 +6,12 @@ Created on Mar 9, 2016
 There are functions for processing data series
 '''
 
+from __future__ import division
+
 import numpy as np
 import math
 import warnings
+
 
 
 def to_PAA(x,box_size):
@@ -38,18 +41,25 @@ def to_PAA(x,box_size):
     return (np.array(approximation), indices)
     
     
-def to_ekvi_PAA(x,y,bins_ratio = 1 ):
+def to_ekvi_PAA(x,y, days_per_bin = None ):
     ''' 
     This method perform PAA (see above) on y data set, but it will consider
     different time steps between values (in x data set) and return corrected data set
     '''
-    
+        
     if isinstance(x, list):
         x = np.array(x)
         y = np.array(y)
+        
+    if not days_per_bin:
+        bins = len(x)
+    else:
+        days_len = x[-1] - x[0]
+        bins = days_len / days_per_bin
     
-    bins = len(x) * bins_ratio
-    
+        if bins > len(x):
+            bins = len(x)
+        
     if not len(x) == len(y):
         raise Exception("X and Y have no same length")    
                 
@@ -76,7 +86,7 @@ def to_ekvi_PAA(x,y,bins_ratio = 1 ):
             y_frame_sum = 0
             items_in_this_frame = 0
             frame_num +=1
-    return np.array(x),np.array(y)
+    return np.array(y_aprox),np.array(x_aprox)
      
 def normalize(x,eps=1e-6):
     """
@@ -91,20 +101,18 @@ def normalize(x,eps=1e-6):
         return [0 for entry in X]
     return (X-X.mean())/X.std()
 
-def abbe(x,smooth_ratio=0.1):
+# TODO: Check n==1 
+def abbe(x):
+    
     '''
     Calculation of Abbe value
     
-    @param smooth_ratio: Percent value (from 0 to 1) for smoothing 
     '''
-    if smooth_ratio: 
-        bins = len(x)*smooth_ratio
-        x = to_PAA(x, bins)[0]
     
     x_mean = x.mean()
     n = len(x)
     sum1 = ((x[1:]-x[:-1])**2).sum()
-    sum2 = ((x-x_mean)**2).sum()    
+    sum2 = ((x-x_mean)**2).sum()   
     return n/(2*(n-1.0)) * sum1/float(sum2)
 
 
@@ -145,7 +153,7 @@ def variogram(x,y,bins=None,log_opt=True):
 
 
 
-def histogram(xx,yy,bins_num=None,centred=True,normed=True):
+def histogram(xx, yy,bins_num=None,centred=True,normed=True):
     '''
     @param bins_num: Number of values in histogram
     @param centred: If True values will be shifted (mean value into the zero)

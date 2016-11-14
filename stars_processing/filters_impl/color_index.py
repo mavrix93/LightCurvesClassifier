@@ -6,6 +6,7 @@ Created on May 8, 2016
 
 from utils.commons import returns,accepts
 from stars_processing.filters_tools.base_filter import BaseFilter, Learnable
+from entities.exceptions import QueryInputError
 
 class ColorIndexFilter(BaseFilter, Learnable):
     '''
@@ -96,8 +97,21 @@ class ColorIndexFilter(BaseFilter, Learnable):
         
         for star in stars:    
             colors = []
-            for col in self.colors:        
-                colors.append( star.more.get( col , None ) ) 
+            for col in self.colors: 
+                if not "-" in col:       
+                    colors.append( star.more.get( col , None ) )
+                else:
+                    try:
+                        mag1_txt, mag2_txt = col.split("-")
+                        mag1, mag2 = star.more.get( mag1_txt.strip() , None ), star.more.get( mag2_txt.strip() , None ) 
+                        if mag1 and mag2:
+                            col_index = mag1 - mag2 
+                        else:
+                            col_index = None
+                        
+                        colors.append( col_index )
+                    except:
+                        raise QueryInputError("Invalid color index input.\nThere have to be mag1-mag2.")
            
             if not None in colors:
                 coords.append( [ float(c) for c in colors] )  

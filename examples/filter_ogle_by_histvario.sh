@@ -1,1 +1,2 @@
-../bin/filter_lcs.py -i examples/query.txt -o examples/ -d "OgleII" -f examples/HistVarioFilter.pickle
+../bin/filter_stars.py -i examples/query_ogle.txt -o examples/ -d "OgleII" -f examples/HistVario_quasars.filter
+

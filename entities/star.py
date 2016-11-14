@@ -3,6 +3,9 @@ Created on Jan 9, 2016
 
 @author: Martin Vo
 '''
+
+from __future__ import division
+
 from entities.right_ascension import RightAscension as Ra
 from entities.declination import Declination as Dec
 from entities.light_curve import LightCurve
@@ -28,7 +31,6 @@ class Star(object):
     
     EPS = 0.000138              #Max distance in degrees to consider two stars the equal
     DEF_DAYS_PER_BIN = 25       #Default value for histogram and variogram transformation
-    DEF_SMOOTH_RATIO = 0.5      #Default smooth ratio for abbe transformation
     
                
     def __init__(self, ident = {}, ra = None, dec = None, more = {}, starClass = None):
@@ -122,7 +124,7 @@ class Star(object):
         return cart_distance(x,y)
     
     
-    def getHistogram(self,days_per_bin=None,centred=True,normed=True):
+    def getHistogram(self, days_per_bin=None,centred=True,normed=True):
         '''
         @param bins_num: Number of values in histogram
         @param centred: If True values will be shifted (mean value into the zero)
@@ -159,23 +161,21 @@ class Star(object):
         
         return variogram(self.lightCurve.time,self.lightCurve.mag,bins=bins,log_opt=True)
         
-    def getAbbe(self, bins = None,smooth_ratio = None, normalize_abbe=True):
+    def getAbbe(self, days_per_bin, normalize_abbe = True):
         '''
         Compute Abbe value of light curve
         
-        @param bins: Number of items of light curve which will be taken to computing
+        @param bins_ratio: Percentage number of bins from original dimension
         @param normalize_abbe: Normalizing time series
         @return: Abbe value of star (light curve)
         '''
         if (self.lightCurve == None):
-            warn("Star {0} has no light curve".format(self.field+self.starid))
+            warn("Star {0} has no light curve".format(self.field + self.starid))
             return None
-        if (smooth_ratio == None):
-            verbose( "Smooth ratio was not specified. Setting default value: %f" % self.DEF_SMOOTH_RATIO, 2, settings.VERBOSITY )
-            smooth_ratio = self.DEF_SMOOTH_RATIO
- 
-        x = to_ekvi_PAA(self.lightCurve.time, self.lightCurve.mag, bins)[1]
-        return abbe(x,smooth_ratio)
+        
+        x = to_ekvi_PAA(self.lightCurve.time, self.lightCurve.mag, days_per_bin)[1]
+        
+        return abbe(x)*len(x)/len(self.lightCurve.time)
     
  
                 

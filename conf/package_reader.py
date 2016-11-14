@@ -90,7 +90,7 @@ class PackageReader(object):
         """
 
         _, pathname, _ = imp.find_module(package_name)
-
+        
         # Use a set because some may be both source and compiled.
         return set([os.path.splitext(module)[0]
                     for module in os.listdir(pathname)

@@ -1,1 +1,1 @@
-../bin/tune_filters.py  -i examples/tuned_params_color.txt -f ColorIndexFilter -s QUERY:milliquas:examples/localdb_query.txt -c QUERY:milliquas:examples/localdb_query2.txt -d GaussianNBDec -o examples/Colorindex_from_milliquas.pickle -l examples
+../bin/make_filter.py  -i examples/tuning_color_index2.txt -f ColorIndexFilter -s LOCAL:milliquas:examples/query_localdb.txt -c LOCAL:milliquas:examples/query_localdb2.txt -d GaussianNBDec -o examples/ColorIndex_quasars.filter -l examples/ColorIndex_quasars_filter

@@ -13,6 +13,7 @@ from sklearn.qda import QDA
 
 from stars_processing.deciders.base_decider import BaseDesider
 from utils.helpers import checkDepth
+from conf import deciders_settings
 
 class SupervisedBase(BaseDesider):
     """
@@ -81,18 +82,26 @@ class SupervisedBase(BaseDesider):
         return a
     
 class LDADec(SupervisedBase):
-    def __init__(self, treshold = 0.5):
+    def __init__(self, treshold = None):
+        if not treshold:
+            treshold = deciders_settings.TRESHOLD
         SupervisedBase.__init__( self, clf = LDA, treshold = treshold)
 
 class GaussianNBDec(SupervisedBase):
-    def __init__(self, treshold = 0.5):
+    def __init__(self, treshold = None):
+        if not treshold:
+            treshold = deciders_settings.TRESHOLD
         SupervisedBase.__init__( self, clf = GaussianNB, treshold = treshold)        
         
         
 class GMMBayesDec(SupervisedBase):
-    def __init__(self, treshold = 0.5):
+    def __init__(self, treshold = None):
+        if not treshold:
+            treshold = deciders_settings.TRESHOLD
         SupervisedBase.__init__( self, clf = GMMBayes, treshold = treshold)
         
 class QDADec(SupervisedBase):
-    def __init__(self, treshold = 0.5):
+    def __init__(self, treshold = None):
+        if not treshold:
+            treshold = deciders_settings.TRESHOLD
         SupervisedBase.__init__( self, clf = QDA, treshold = treshold)

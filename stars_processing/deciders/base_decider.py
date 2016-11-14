@@ -11,6 +11,8 @@ import numpy as np
 from matplotlib import pyplot as plt
 from utils.helpers import checkDepth
 import os
+from conf import deciders_settings
+import collections
 
 
 
@@ -174,16 +176,16 @@ class BaseDesider(object):
         true_neg = sum([1  for guess in self.filter( wrong_coords ) if guess == False])
         false_pos = wrong_num - true_neg
         
-        if true_pos + false_pos > 0:
-            precision = true_pos / (true_pos + false_pos)
-        else:
-            precision = None
+        precision = round(deciders_settings.PRECISION(true_pos, false_pos, true_neg, false_neg),3)
         
-        return {"precision" : precision,
-                "true_positive_rate" : true_pos / right_num ,
-                "true_negative_rate" : true_neg / wrong_num,
-                "false_positive_rate" : false_pos / right_num,
-                "false_negative_rate" : false_neg / wrong_num}
+        
+        stat =  (("precision", precision),
+                ("true_positive_rate" , round(true_pos / right_num ,3)),
+                ("true_negative_rate" , round(true_neg / wrong_num,3)),
+                ("false_positive_rate" , round(false_pos / right_num,3)),
+                ("false_negative_rate" , round(false_neg / wrong_num,3)))
+        
+        return collections.OrderedDict( stat )
         
         """return {"precision" : precision,
                 "true_positive_rate" : true_pos / (false_neg + true_pos) ,
@@ -270,14 +272,13 @@ class BaseDesider(object):
                     lab = ""
                     
                 plt.clf()
-                plt.hist( self.X[self.y == 0][:,i], normed = True, bins = bins, histtype='bar', color="crimson", label = "Searched objects")
-                plt.hist( self.X[self.y == 1][:,i], normed = True, bins = bins, label = "Others")
+                plt.hist( self.X[self.y == 1][:,i], normed = True, bins = bins, histtype='bar', color="crimson", label = "Searched objects")
+                plt.hist( self.X[self.y == 0][:,i], normed = True, bins = bins, label = "Others")
                 plt.title( title )
                 
                 plt.xlabel( str(lab ) )
                 
                 plt.legend()
-                
                 if save_path:
                     plt.savefig( os.path.join( save_path, file_name+"_hist_%s_%i.png" % (lab.replace(" ", "_"), i))  )
                 else:

@@ -15,7 +15,7 @@ from utils.helpers import verbose
 from conf.settings import VERBOSITY
 
 # Throws:
-from entities.exceptions import InvalidFilesPath, InvalidFile
+from entities.exceptions import InvalidFilesPath, InvalidFile, QueryInputError
 from entities.star import Star
 from entities.light_curve import LightCurve
 from conf import settings
@@ -27,7 +27,7 @@ class FileManager(LightCurvesDb):
     Attributes:
     -----------
         path : str
-            Path to the folder of light curves files or light curves pickle file
+            Path key of folder of light curves registered in settings
             
         star_class : str
             Name of the loaded star-like type (e.g. Cepheids)
@@ -59,6 +59,7 @@ class FileManager(LightCurvesDb):
     
     DEFAULT_SUFFIX = "dat"
     DEFAULT_STARCLASS = "star"
+    REL_PATH = "HERE:"
     
     # Query possibilities (combination of necessary values)       
     # Check types of given parameters 
@@ -76,7 +77,15 @@ class FileManager(LightCurvesDb):
         obtain_params : dict
             Query dictionary (see class Attributes doc above)
         '''
-        path = settings.STARS_PATH.get(obtain_params["path"], obtain_params["path"])
+        
+        raw_path = obtain_params["path"]
+        if raw_path.startswith( self.REL_PATH ):
+            path = raw_path[len(self.REL_PATH): ]
+        else:
+            path = settings.STARS_PATH.get( raw_path, None)
+        
+        if not path:
+            raise QueryInputError("Path key: %s is not registered key for light curve files in settings.\nThere these variables: %s" % (path, settings.STARS_PATH))
         self.path = path 
         self.star_class = obtain_params.get( "star_class", self.DEFAULT_STARCLASS )
         self.suffix = obtain_params.get( "suffix", self.DEFAULT_SUFFIX ) 

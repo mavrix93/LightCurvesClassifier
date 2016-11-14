@@ -9,6 +9,7 @@ from utils.helpers import subDictInDict
 from entities.exceptions import InvalidFilesPath
 import os
 import ast
+from conf import settings
 
 class StatusResolver(object):
     '''
@@ -17,7 +18,7 @@ class StatusResolver(object):
     '''
     
     NUM_STATUS_INFO = 4         #Number of status info columns +1
-    DELIMITER = ";"
+    DELIMITER = settings.FILE_DELIM
 
 
     def __init__(self, status_file_path):
@@ -84,7 +85,7 @@ class StatusResolver(object):
     
         
     @staticmethod
-    def save_query(query, FI_NAME = "query_file.txt", PATH = ".", DELIM = ";"):
+    def save_query(query, FI_NAME = "query_file.txt", PATH = ".", DELIM = None, overwrite = False):
         '''
         Save queries into the file which can be loaded for another query
         
@@ -94,8 +95,15 @@ class StatusResolver(object):
         header = query[0].keys()
         path = os.path.join( PATH, FI_NAME )
         
+        if not DELIM:
+            DELIM = settings.FILE_DELIM
+        
         try:
-            query_file = open( path ,"a+")
+            if overwrite:
+                query_file = open( path ,"w+")
+            else:
+                query_file = open( path ,"a+")
+            
         except IOError as err:
             raise InvalidFilesPath(err)
         
@@ -103,6 +111,7 @@ class StatusResolver(object):
         if not query_file.readline().startswith("#"):            
             query_file.write("#")  
             for i, head in enumerate(header):
+                
                 delim = DELIM
                 if i >= n-1: delim = ""
                 
@@ -118,7 +127,7 @@ class StatusResolver(object):
                 
                 query_file.write( str(que[key])+ delim)
             query_file.write("\n")
-            
+           
         query_file.close()
         
         

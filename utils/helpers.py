@@ -131,6 +131,8 @@ def progressbar(it, prefix = "", size = 60):
 def create_folder(path):
     if not os.path.exists(path):
         os.makedirs(path)
+        return True
+    return False
         
  
 def cut_path( path, last_folder):
@@ -144,9 +146,7 @@ def cut_path( path, last_folder):
     return None
     
 def get_combinations( keys, *lists):
-    """
-    
-    
+    """  
     Example:
     --------
         get_combinations( ["key1", "key2", "key3"], [1,2,3], ["m", "n", "k"], [77,88,99,55,22]
@@ -163,6 +163,9 @@ def get_combinations( keys, *lists):
             this_query[key] = comb[i]
         queries.append( this_query )
     return queries
+
+
+
             
             
         

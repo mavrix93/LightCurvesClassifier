@@ -6,7 +6,6 @@ Created on Mar 20, 2016
 
 from utils.commons import returns,accepts
 from stars_processing.filters_tools.base_filter import BaseFilter, Learnable
-from entities.star import Star
 
 class AbbeValueFilter(BaseFilter, Learnable):
     '''
@@ -14,13 +13,12 @@ class AbbeValueFilter(BaseFilter, Learnable):
     '''
 
 
-    def __init__(self, bins = None, smooth_ratio = None, decider = None, plot_save_path = None,
+    def __init__(self, days_per_bin = None, decider = None, plot_save_path = None,
                  plot_save_name = None, *args, **kwargs):
         '''
-        @param abbe_lim: Maximum abbe value for passing thru filter
         '''
-        self.bins = bins
-        self.smooth_ratio = smooth_ratio
+        
+        self.days_per_bin = days_per_bin
         self.decider = decider
         
         self.plot_save_path = plot_save_path
@@ -58,6 +56,6 @@ class AbbeValueFilter(BaseFilter, Learnable):
         abbe_values = []
         
         for star in stars: 
-            abbe_values.append( [star.getAbbe(bins = self.bins, smooth_ratio = self.bins)] )  
+            abbe_values.append( [star.getAbbe(days_per_bin = self.days_per_bin)] )  
             
         return abbe_values  

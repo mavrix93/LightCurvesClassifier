@@ -15,6 +15,7 @@ import os
 import warnings
 from db_tier.local_stars_db.stars_mapper import StarsMapper
 from conf import settings
+import collections
 
 # TODO: Think more about propriety of location of this class
 # TODO: Make this class general for every db manager
@@ -57,7 +58,10 @@ class StarsSearcher():
         for filt in filters_list:
             self.filteringManager.loadFilter(filt)
         
-        SAVE_PATH = os.path.join( settings.LC_FOLDER , SAVE_PATH) 
+        if SAVE_PATH.startswith("HERE:"):
+            SAVE_PATH = SAVE_PATH[5:]
+        else:
+            SAVE_PATH = os.path.join( settings.LC_FOLDER , SAVE_PATH) 
         if os.path.isdir(SAVE_PATH):
             self.save_path = SAVE_PATH
         else:
@@ -151,16 +155,29 @@ class StarsSearcher():
         with open(file_name, "a") as status_file:
             if empty_file:
                 status_file.write("#")
-                for key in query:
-                    status_file.write(str(key)+"\t")
-                for key in status:
-                    status_file.write(str(key)+"\t")
+                for i, key in enumerate(query):
+                    delim = settings.FILE_DELIM                        
+                    status_file.write(str(key)+ delim)
+                for i, key in enumerate(status):
+                    if i >= len(status)-1:
+                        delim = ""
+                    else:
+                        delim = settings.FILE_DELIM                    
+                    
+                    status_file.write(str(key)+delim)
                 status_file.write("\n")
                 
-            for key in query:
-                status_file.write(str(query[key])+"\t")
-            for key in status:
-                status_file.write(str(status[key])+"\t")
+            for i, key in enumerate(query):
+                delim = settings.FILE_DELIM       
+                        
+                status_file.write(str(query[key])+ delim)
+            for i, key in enumerate(status):
+                if i >= len(status)-1:
+                    delim = ""
+                else:
+                    delim = settings.FILE_DELIM   
+                    
+                status_file.write(str(status[key])+ delim)
             status_file.write("\n")
    
     def queryStars(self,queries):
@@ -173,9 +190,10 @@ class StarsSearcher():
         stars_num = 0
         passed_num = 0
         
+        all_unfound = 0
         unfound_counter = 0
         for query in progressbar(queries, "Query: "):            
-            status = {"found": False, "filtered":False, "passed":False}
+            status = collections.OrderedDict( (("found", False), ("filtered", False), ("passed", False)) )
             try:
                 stars = StarsProvider().getProvider(obtain_method = self.OBTH_METHOD, **query).getStarsWithCurves()
                 
@@ -189,15 +207,15 @@ class StarsSearcher():
             #Check if searched star was found
             result_len = len(stars)
             if result_len == 0:
-                warn("No stars have been found: %s\n." %(query))
                 unfound_counter += 1
+                all_unfound += 1
                 if unfound_counter > self.UNFOUND_LIM:
                     warn("Max number of unsatisfied queries reached: %i" % self.UNFOUND_LIM)
                     break
 
             else:    
                 unfound_counter = 0   
-                for one_star in progressbar(stars, "Filtering result stars from query: "): 
+                for one_star in stars: 
                     status["found"] = True
                     
                     
@@ -228,6 +246,7 @@ class StarsSearcher():
         
         print "\n************\t\tQuery is done\t\t************"    
         print "Query results:\nThere are %i stars passed thru filtering from %s." % (passed_num, stars_num)
+        if all_unfound: print "There are %i stars which was not found" % all_unfound
         if self.not_uploaded:
             print "\t%i stars have not been uploaded into local db, because they are already there." % len(self.not_uploaded)
 

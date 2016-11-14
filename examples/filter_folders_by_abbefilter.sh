@@ -1,1 +1,1 @@
-../bin/filter_lcs.py -d FileManager -i examples/file_query.txt -f examples/abbe_filt.conf -o examples
+../bin/filter_stars.py -d FileManager -i examples/query_folders.txt -f examples/AbbeValue_quasar.filter -o examples

@@ -25,7 +25,11 @@ class LocalDbClient(LightCurvesDb):
     
     """
     
-    def __init__(self, obtain_params = {}, db_key = "local", raise_if_not = True):
+    def __init__(self, obtain_params = [], raise_if_not = True, **kwargs):
+        if obtain_params:
+            db_key = obtain_params[0].get("db_key", None)
+            [di.pop("db_key", None) for di in obtain_params]
+        if not db_key: db_key = kwargs.get( "db_key", "local")
         self.mapper = StarsMapper( db_key )
         self.obtain_params = obtain_params
         self.raise_if_not = raise_if_not
@@ -34,8 +38,13 @@ class LocalDbClient(LightCurvesDb):
         
         stars = []
         
+        #TODO!
+        # Hotfix
+        if type(self.obtain_params) == dict:
+            self.obtain_params = [self.obtain_params]
+        
         for param in self.obtain_params:
-            try:
+            try:                
                 que = self._getWithRanges( self.mapper.session.query( Stars ), param )
                 db_stars = que.all()
             except InvalidRequestError:
@@ -54,7 +63,7 @@ class LocalDbClient(LightCurvesDb):
     
     def _getWithRanges(self, que, params_dict):
         
-
+        
         for key, value in params_dict.iteritems():            
             
             mat =  re.match( "^(?P<sym>[>|<])(?P<num>\d+)",  str(value))

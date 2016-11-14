@@ -1,7 +1,7 @@
 '''
 Created on Nov 2, 2016
 
-@author: martin
+@author: Martin Vo
 '''
 
 from sqlalchemy.ext.declarative import declarative_base
@@ -65,4 +65,4 @@ def update_db( db_key = "local"):
     x_session = DBSession()
     x_session.commit()
     
-# update_db()
+update_db( db_key = "local" )

@@ -12,6 +12,7 @@
 import sys
 import os
 from optparse import OptionParser
+import numpy as np
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -32,6 +33,13 @@ def main(argv = None):
     
     program_info = """ABOUT
     
+    The program creates query files or files of parameters to tune. Name of output
+    file is specified by '-o' option. This file will be created in data/inputs/.
+    
+    Name of parameters are specified by '-p' and their ranges via '-r'. Format
+    of ranges is: from_number:to_number:step_number (i.e. 1:10:2 means from
+    1 to 10 with step size 2 --> 1,3,5..). It is not necessary to specify step,
+    in that  case step will be taken as 1.
         
         Example:
         
@@ -65,8 +73,11 @@ def main(argv = None):
     program_longdesc = "Run script without paramas to get info about the program."  
     program_license = "Copyright 2016 Martin Vo"
 
+    #Separator for range keys input text
     RANGES_SEPARATOR = ":"
-    ENUM_SYMBOL = ","
+    
+    #
+    ENUM_SYMBOL = ";"
     
     if argv is None:
         argv = sys.argv[1:]
@@ -101,6 +112,7 @@ def main(argv = None):
         
         x = []
         for i in range( len(params) ):
+            just_one = False
             enum =  _enumeration( ranges[i], ENUM_SYMBOL)
             if not enum:
                 parts = ranges[i].split( RANGES_SEPARATOR )
@@ -108,7 +120,7 @@ def main(argv = None):
                 n = len(parts)
                 
                 if n == 1:
-                    raise Exception("Invalid range key. There needs to be ranges separated by '%s'. " % RANGES_SEPARATOR)
+                    just_one = True
                 
                 elif n == 2:
                     step = 1
@@ -119,10 +131,15 @@ def main(argv = None):
                 else:
                     step = parts[2]
                 
-                from_n = parts[0]
-                to_n = parts[1]        
-            
-                x.append( range( int(from_n), int(to_n), int(step)))
+                if not just_one:
+                    from_n = parts[0]
+                    to_n = parts[1]        
+                    try:
+                        x.append( range( int(from_n), int(to_n), int(step)))
+                    except:
+                        x.append( np.arange( float(from_n), float(to_n), float(step)))
+                else:
+                    x.append( parts )
                 
             else:
                 x.append( enum )
@@ -140,11 +157,12 @@ def main(argv = None):
         
         StatusResolver.save_query(query, file_name, path, opts.delim)
         
-        print "Done. File %s was saved into %s" % (file_name, path) 
+        print "\nDone.\nFile %s was saved into %s" % (file_name, path) 
         
     
     
     except Exception, e:
+        raise
         indent = len(program_name) * " "
         sys.stderr.write(program_name + ": " + repr(e) + "\n")
         sys.stderr.write(indent + "  for help use --help")
@@ -154,6 +172,7 @@ def main(argv = None):
 def _enumeration( param, ENUM_SYMBOL = "," ):    
     if ENUM_SYMBOL in param:
         return [ en.strip() for en in param.split( ENUM_SYMBOL )]
+    
         
     else:
         return False
