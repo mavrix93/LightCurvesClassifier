@@ -14,7 +14,7 @@ import warnings
 
 
 
-def to_PAA(x,box_size):
+def to_PAA(x,bins):
     """
     Funciton performs Piecewise Aggregate Approximation on data set, reducing
     the dimension of the dataset x to w discrete levels. returns the reduced
@@ -22,11 +22,11 @@ def to_PAA(x,box_size):
     data for each reduced dimension
     
     @param x: 1D serie of values
-    @param box_size: Size for averaging values
+    @param bins: 
     """
     
     n = len(x)
-    stepFloat = n/float(box_size)
+    stepFloat = n/float(bins)
     step = int(math.ceil(stepFloat))
     frameStart = 0
     approximation = []
@@ -41,7 +41,7 @@ def to_PAA(x,box_size):
     return (np.array(approximation), indices)
     
     
-def to_ekvi_PAA(x,y, days_per_bin = None ):
+def to_ekvi_PAA(x,y, bins = None, days_per_bin = None ):
     ''' 
     This method perform PAA (see above) on y data set, but it will consider
     different time steps between values (in x data set) and return corrected data set
@@ -52,22 +52,27 @@ def to_ekvi_PAA(x,y, days_per_bin = None ):
         y = np.array(y)
         
     if not days_per_bin:
-        bins = len(x)
+        if not bins:
+            bins = len(x)
+        
     else:
-        days_len = x[-1] - x[0]
-        bins = days_len / days_per_bin
+        bins = (x[-1] - x[0]) / days_per_bin
     
         if bins > len(x):
             bins = len(x)
         
     if not len(x) == len(y):
         raise Exception("X and Y have no same length")    
-                
+         
+    # Check if sorted times
+    sorting = np.argsort( x )
+    x = x[ sorting ]
+    y = y[ sorting ]          
     n = len(x)
     x_beg= x.min()
     x_end= x.max()
     x_width = x_end-x_beg
-    frame_len = int(math.ceil(x_width/float(bins)))
+    frame_len = x_width / bins
     x_aprox = []
     y_aprox = []
     i = 0
@@ -86,7 +91,7 @@ def to_ekvi_PAA(x,y, days_per_bin = None ):
             y_frame_sum = 0
             items_in_this_frame = 0
             frame_num +=1
-    return np.array(y_aprox),np.array(x_aprox)
+    return np.array(x_aprox),np.array(y_aprox)
      
 def normalize(x,eps=1e-6):
     """
@@ -102,21 +107,17 @@ def normalize(x,eps=1e-6):
     return (X-X.mean())/X.std()
 
 # TODO: Check n==1 
-def abbe(x):
-    
+def abbe(x, n):
     '''
-    Calculation of Abbe value
-    
+    Calculation of Abbe value    
     '''
     
-    x_mean = x.mean()
-    n = len(x)
-    sum1 = ((x[1:]-x[:-1])**2).sum()
-    sum2 = ((x-x_mean)**2).sum()   
-    return n/(2*(n-1.0)) * sum1/float(sum2)
+    sum1 = ((x[1:] - x[:-1])**2).sum()
+    sum2 = ((x - x.mean())**2).sum()   
+    return n/(2*(n-1.0)) * sum1/sum2
 
 
-def variogram(x,y,bins=None,log_opt=True):
+def variogram(x,y, bins = None,log_opt=True):
     '''
     Variogram of function shows variability of function in various time steps
     
@@ -127,28 +128,33 @@ def variogram(x,y,bins=None,log_opt=True):
       
     @return: Variogram as two numpy arrays
     '''
-    x = to_PAA(x, len(x)*0.7)[0]
-    y = to_PAA(y,len(y)*0.7)[0]
+    if not bins:
+        bins = 12
     
+    pre_bins = len(x) * 0.5
+    
+    x = to_PAA(x, pre_bins)[0]
+    y = to_PAA(y, pre_bins)[0]
     sort_opt=True
     n = len(x)
     vario_x = []
     vario_y = []
     for i in range(n):
         for j in range(n):
-            if i != j:
+            if i != j and not np.isnan(x[i]) and not np.isnan(y[i]):
                 x_val = abs(x[i]-x[j])
                 y_val = (y[i]-y[j])**2
-                vario_x.append(x_val)
-                vario_y.append(y_val)
+                
+                if not np.isnan(x_val) and not np.isnan(y_val):
+                    vario_x.append(x_val)
+                    vario_y.append(y_val)
     vario_x, vario_y = np.array(vario_x), np.array(vario_y)
-    if sort_opt: vario_x, vario_y =  sort_pairs(vario_x, vario_y)         
     
-    if bins: 
-        vario_x = to_PAA(vario_x,bins)[0]
-        vario_y = to_PAA(vario_y,bins)[0]
+    if sort_opt: vario_x, vario_y =  sort_pairs(vario_x, vario_y) 
+    vario_x = to_PAA(vario_x,bins)[0]
+    vario_y = to_PAA(vario_y,bins)[0]
+        
     if log_opt: vario_x, vario_y = np.log10(vario_x), np.log10(vario_y)
-    
     return vario_x, vario_y
 
 
@@ -161,18 +167,18 @@ def histogram(xx, yy,bins_num=None,centred=True,normed=True):
     '''
     if (bins_num==None):
         warnings.warn("Number of bins of histogram was not specified. Setting default value (a length of given data")
-        bins_num = len(yy)*0.1
+        bins_num = 20
     
     #Fix light curve length in case of non equidistant time steps between observations
-    
-    x = to_ekvi_PAA(xx,yy)[1]
+    x = to_ekvi_PAA(xx,yy, bins = len(xx))[1]
     
     #Center values to zero
     if centred: x = x-x.mean()
     hist, bins = np.histogram(x, bins=bins_num)
     
     #Norm histogram (number of point up or below the mean value)
-    if normed: hist = normalize(hist)
+    if normed:
+        hist = normalize(hist)
     return hist,bins          
 
 

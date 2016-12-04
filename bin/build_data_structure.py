@@ -5,7 +5,7 @@ import os
 import sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from tools.prepare_package import create_data_structure
+from _tools.prepare_package import create_data_structure
 from entities.exceptions import QueryInputError
 
 

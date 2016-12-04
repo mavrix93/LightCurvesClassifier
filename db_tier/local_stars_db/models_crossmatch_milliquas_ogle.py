@@ -8,30 +8,39 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
 
-from sqlalchemy import Column, ForeignKey, Integer, String, Float, DateTime
+from sqlalchemy import Column, Integer, String, Float, DateTime
 from sqlalchemy.sql.schema import UniqueConstraint
-from sqlalchemy.orm import relationship
 
 import datetime
 
 from conf import settings
 
-def db_connect(db_key = "local"):
+DB_KEY = "og_milli_crossmatch"
+
+def db_connect(db_key):
     return create_engine('sqlite:///' + settings.DATABASES.get( db_key , ""))
 
 Base = declarative_base()
 
-class Stars(Base):
-    __tablename__ = "Stars"
+class StarsMO(Base):
+    __tablename__ = "StarsMO"
     __table_args__ = {'extend_existing':True}
     
     id = Column(Integer, primary_key = True, autoincrement = True)
-    name = Column( String(35), nullable = True )
-    identifier = Column( String(50), nullable = True )
-    db_origin = Column(String(20), nullable = True)
     
-    ra = Column(Float(10), nullable = True)
-    dec = Column(Float(12), nullable = True)
+    name_milliquas = Column( String(35), nullable = True )
+    identifier_milliquas = Column( String(50), nullable = True )
+    
+    name_ogle = Column( String(35), nullable = True )
+    identifier_ogle = Column( String(50), nullable = True )
+    
+    ra_milliquas = Column(Float(10), nullable = True)
+    dec_milliquas = Column(Float(12), nullable = True)
+    
+    ra_ogle = Column(Float(10), nullable = True)
+    dec_ogle = Column(Float(12), nullable = True)
+    
+    angle_dist = Column( Integer )
     
     star_class = Column(String(20), nullable = True)
     
@@ -39,10 +48,11 @@ class Stars(Base):
     
     uploaded = Column(DateTime, default = datetime.datetime.utcnow )
     
-    b_mag = Column(Float(10), nullable = True)
-    v_mag = Column(Float(10), nullable = True)
-    i_mag = Column(Float(10), nullable = True)
-    r_mag = Column(Float(10), nullable = True)
+    b_mag_milliquas = Column(Float(10), nullable = True)
+    b_mag_ogle = Column(Float(10), nullable = True)
+    v_mag_ogle = Column(Float(10), nullable = True)
+    i_mag_ogle = Column(Float(10), nullable = True)
+    r_mag_milliquas = Column(Float(10), nullable = True)
     
     redshift = Column(Float(4), nullable = True)
     
@@ -50,14 +60,11 @@ class Stars(Base):
     lc_time_delta = Column( Float(10), nullable = True)
     
     
-    crossmatch_id = Column(Integer, ForeignKey('Stars.id'))
-    crossmatch = relationship("Stars", remote_side=[id])
-    
-    UniqueConstraint(identifier, db_origin, light_curve )
+    UniqueConstraint(name_milliquas, name_ogle, identifier_milliquas, identifier_ogle)
     
     
 
-def update_db( db_key = "local"):
+def update_db( db_key ):
     engine = db_connect( db_key )
     Base.metadata.create_all(engine)
     Base.metadata.bind = engine
@@ -65,5 +72,4 @@ def update_db( db_key = "local"):
     x_session = DBSession()
     x_session.commit()
 
-update_db( db_key = "local" )  
-update_db( db_key = "milliquas" )
+update_db( db_key = DB_KEY )  

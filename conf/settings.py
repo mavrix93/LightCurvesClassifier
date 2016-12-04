@@ -65,12 +65,14 @@ STARS_PATH = {"stars" : join( LC_FOLDER, "some_stars" ),
               "lpv" : join( LC_FOLDER, "lpv" ),
               "rr_lyr" : join( LC_FOLDER, "rr_lyr" ),
               "cepheids" : join( LC_FOLDER, "cepheids" ),
+              "crossmatch" : join( LC_FOLDER, "crossmatch" )
               }
 
 # Folders of local database files
 DATABASES = {"local" : join(DB_FILE_PATH, "local.db"),
              "milliquas" : join( DB_FILE_PATH, "milliquas.db"),
-             "ogleII" : join( DB_FILE_PATH, "ogleII.db")}
+             "ogleII" : join( DB_FILE_PATH, "ogleII.db"),
+             "og_milli_crossmatch" : join( DB_FILE_PATH, "og_milli_crossmatch.db")}
 
 # Listen folders of implemented classes
 IMPLEMENTED_CLASSES = { "filters" : ( FILTERS_IMPL_PATH, BaseFilter ),

@@ -88,5 +88,4 @@ def upload_to_db( file_path ):
         
         
 if __name__ == "__main__":    
-    #upload_to_db( file_path )
-    pass
+    upload_to_db( file_path )

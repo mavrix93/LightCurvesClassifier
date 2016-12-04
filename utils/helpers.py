@@ -68,12 +68,13 @@ def unpack_objects(params):
 
 
 
-def subDictInDict(sub_dict, dict_list):
+def subDictInDict(sub_dict, dict_list, remove_keys = [] ):
     '''
     Return list of dictionaries which contain condition in sub_dict
     
     @param sub_dict:  Single dictionary
     @param dict_list: List of dictionaries
+    @param remove_keys: List of keys which are removed from dictionaries
     
     EXAMPLE:
     subDictInDict({"x":1},[{"x":2,"y":5,..},{"x":1,"z":2,..}, ..} --> [{"x":1, "z":2, ..},..]
@@ -85,8 +86,13 @@ def subDictInDict(sub_dict, dict_list):
     key = sub_dict.keys()[0]
     matched_dicts = []
     for one_dict in dict_list:
+        d = one_dict.copy()
+        
+        for k in remove_keys:
+            d.pop( k )
+                    
         if str(one_dict[key]) == str(sub_dict[key]):
-            matched_dicts.append(one_dict)
+            matched_dicts.append(d )
     return matched_dicts
 
 #TODO: Get rid of this

@@ -13,7 +13,7 @@ from entities.exceptions import InvalidFile, InvalidFilesPath
 
 
 class LightCurve:
-    BAD_VALUE = -99     
+    BAD_VALUES = -99   
     TIME_COL = 0        #Order of columns in the light curve file
     MAG_COL = 1
     ERR_COL = 2
@@ -30,7 +30,7 @@ class LightCurve:
                         Name of file (with path) where column 1:time, column 2:magnitudes
         '''
 
-        if (type(param) is list):
+        if (type(param) is list or type(param) is tuple):
             param = np.array(param)
         
         #Light curve could be made from:
@@ -57,19 +57,22 @@ class LightCurve:
             self.mag = param[1]
             self.err = param[2]
         else:
-            print ("Wrong object parameters\nLightCurve object is not created")
+            raise Exception("Wrong object parameters\nLightCurve object is not created")
             
         #Delete all bad values in light curve
-        bad_values_postions = np.where(self.mag==self.BAD_VALUE)
+        bad_values_postions = np.where(self.mag == self.BAD_VALUES)
         self.mag = np.delete(self.mag,bad_values_postions) 
         self.time = np.delete(self.time,bad_values_postions) 
         self.err = np.delete(self.err,bad_values_postions)
           
      
     def __str__(self):
+        txt = "Time\tMag\tErr\n"
+        txt += "-"*(len(txt)+6) + "\n"
         for i in range(0,len(self.time)):
-            print self.time[i], self.mag[i], self.err[i]
-        
+            txt += "%.02f\t%.02f\t%.02f\n" % ( self.time[i], self.mag[i], self.err[i])
+            
+        return txt       
     
     
     def openLC(self,fileWithPath):

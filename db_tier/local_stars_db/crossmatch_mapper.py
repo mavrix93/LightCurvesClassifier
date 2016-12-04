@@ -13,15 +13,16 @@ from conf import settings
 import os
 import warnings
 from utils.helpers import progressbar
+from db_tier.local_stars_db.models_crossmatch_milliquas_ogle import StarsMO
 
-
-class StarsMapper(object):
+#NOTE: Hardcoded for Ogle-Milliquas
+class CrossmatchMapper(object):
     '''
     This class is responsible for communication between Star objects
     and Stars database 
     '''
 
-    def __init__(self, db_key = "local"):
+    def __init__(self, db_key = None):
         '''
         Attributes:
         -----------
@@ -29,7 +30,7 @@ class StarsMapper(object):
                 Instance which communicates with database
         '''
         
-        self.db_key = db_key
+        self.db_key = "og_milli_crossmatch"
         self.session = self.getSession()
                 
         
@@ -45,37 +46,16 @@ class StarsMapper(object):
         DBSession = sessionmaker(bind=engine, autoflush=False)
         return DBSession() 
     
-    def uploadStar(self, star, lc_path = None):
-        """
-        Save star object to the database according to mapper specified in mapStar
+    def uploadStar(self, og_star, mil_star, lc_path = None):
         
-        Parameters:
-        -----------
-            star : Star
-                Star to be uploaded to db
-                
-            lc_path : str
-                Path to the light curve file of this star
-        """
-        maped_star = self.mapStar(star, lc_path)
-        st = self.session.query( Stars ).filter( Stars.identifier == maped_star.identifier,
-                                                 Stars.db_origin == maped_star.db_origin,
-                                                 Stars.light_curve == maped_star.light_curve ).first()
+        maped_star = self.mapStar(og_star, mil_star, lc_path)
         
         
-        # TODO: Ask for updating
-        if not st:
-            #self.session.delete( st )
-            #self.session.commit()
-        
-            self.session.add( maped_star )
-            self.session.commit()
-        else:
-            return False
-        return True
+        self.session.add( maped_star )
+        self.session.commit()
     
     
-    def mapStar(self, star, lc_path = None):
+    def mapStar(self, og_star, mil_star, lc_path = None):
         """
         Transform Star object into Stars db table object which can be uploaded
         into the stars db
@@ -94,60 +74,73 @@ class StarsMapper(object):
         
         """
         
-        if star.lightCurve:
-            lc_n = len(star.lightCurve.time)
-            lc_time_delta = star.lightCurve.time[-1] - star.lightCurve.time[0]
+        if og_star.lightCurve:
+            lc_n = len(og_star.lightCurve.time)
+            lc_time_delta = og_star.lightCurve.time[-1] - og_star.lightCurve.time[0]
         else:
             lc_n = None
             lc_time_delta = None
+       
 
-        if star.ident.keys():
-            db_origin = star.ident.keys()[0]
-            identifier = star.ident[ db_origin ]
-            name = identifier.get( "name", None )
-        else:
-            db_origin = None
-            identifier = None
-            name = None
+        identifier_milliquas = mil_star.ident[ "milliquas" ]["name"]
+        
+        name_ogle = og_star.ident[ "ogle" ][ "name" ] 
+        identifier_ogle = name_ogle
+        name_milliquas = mil_star.ident[ "milliquas" ]["name"]
+        
+        b = mil_star.more.get( "b_mag", None)
+        if str(b) == "0.0":
+            b = None
+            
+        r = mil_star.more.get( "r_mag", None)
+        if str(r) == "0.0":
+            r = None
+
                     
-        return Stars(identifier = str(identifier)[1:-1],
-                   name = name,
-                   db_origin = db_origin,
-                   ra = star.ra.degrees,
-                   dec = star.dec.degrees,
-                   star_class = star.starClass,
+        return StarsMO(identifier_ogle = identifier_ogle,
+                   identifier_milliquas = identifier_milliquas,
+                   name_ogle = name_ogle,
+                   name_milliquas = name_milliquas,
+                   ra_milliquas = mil_star.ra.degrees,
+                   dec_milliquas = mil_star.dec.degrees,
+                   ra_ogle = og_star.ra.degrees,
+                   dec_ogle = og_star.dec.degrees,
+                   star_class = mil_star.starClass,
                    light_curve = lc_path,
-                   b_mag = star.more.get( "b_mag", None),
-                   v_mag = star.more.get( "v_mag", None),
-                   i_mag = star.more.get( "i_mag", None),
+                   angle_dist = int( round(mil_star.getDistance( og_star )*3600)),
+                   redshift = mil_star.more["redshift"],
+                   b_mag_milliquas = b,
+                   b_mag_ogle = og_star.more.get( "b_mag", None),
+                   v_mag_ogle = og_star.more.get( "v_mag", None),
+                   i_mag_ogle = og_star.more.get( "i_mag", None),
+                   r_mag_milliquas = r,
                    lc_n = lc_n,
                    lc_time_delta = lc_time_delta)
         
-
-        
     # TODO: Create Star object from db star
     def createStar(self, db_star):
-        if not db_star.db_origin:
-            db_star.db_origin = self.db_key
             
-        if db_star.db_origin:
-            ident = { self.db_key : {"identifier" : db_star.identifier, "name" : db_star.name},
-                     "local_db" : {"id" : db_star.id}}
-        else:
-            ident = {"local_db" : {"id" : db_star.id} }
+        ident = { "milliquas" : {"identifier" : db_star.identifier_milliquas, "name" : db_star.name_milliquas},
+                     "ogle" : {"identifier" : db_star.identifier_ogle, "name" : db_star.name_ogle}}
+        
             
-        more = {"b_mag" : db_star.b_mag,
-                "v_mag" : db_star.v_mag,
-                "i_mag" : db_star.i_mag,
-                "r_mag" : db_star.r_mag,
+        more = {"b_mag_milliquas" : db_star.b_mag_milliquas,
+                "b_mag_ogle" : db_star.b_mag_ogle,
+                "v_mag_ogle" : db_star.v_mag_ogle,
+                "i_mag_ogle" : db_star.i_mag_ogle,
+                "r_mag_milliquas" : db_star.r_mag_milliquas,
                 "lc_time_delta" : db_star.lc_time_delta,
                 "lc_n" : db_star.lc_n,
                 "uploaded" : db_star.uploaded,
-                "redshift" : db_star.redshift}
+                "redshift" : db_star.redshift,
+                "ra_milliquas" : db_star.ra_milliquas,
+                "dec_milliquas" : db_star.dec_milliquas,
+                "ra_ogle" : db_star.ra_ogle,
+                "dec_ogle" : db_star.dec_ogle}
         
         star = Star(ident = ident,
-                    ra = db_star.ra,
-                    dec = db_star.dec,
+                    ra = db_star.ra_ogle,
+                    dec = db_star.dec_ogle,
                     more = more,
                     starClass = db_star.star_class)
         

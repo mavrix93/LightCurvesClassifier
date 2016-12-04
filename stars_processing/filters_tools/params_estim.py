@@ -3,23 +3,14 @@ Created on Jul 22, 2016
 
 @author: Martin Vo
 '''
-from sklearn.base import BaseEstimator, ClassifierMixin
-from stars_processing.filtering_manager import FilteringManager
-from utils.stars import count_types
-from entities.exceptions import StarAttributeNotSpecified
-from sklearn.grid_search import GridSearchCV
-from utils.helpers import verbose, progressbar, clean_path
-from conf.settings import VERBOSITY
+from utils.helpers import progressbar, clean_path
 from utils.output_process_modules import saveIntoFile
 from conf import settings
 import os
-from stars_processing.filters_impl.compare import ComparingFilter
-import random
 import numpy as np
 from stars_processing.systematic_search.status_resolver import StatusResolver
 import collections
 import json
-from stars_processing.filters_impl.color_index import ColorIndexFilter
 
 
 

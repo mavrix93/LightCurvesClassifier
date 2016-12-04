@@ -9,16 +9,17 @@ from stars_processing.filters_tools.base_filter import BaseFilter, Learnable
 
 class AbbeValueFilter(BaseFilter, Learnable):
     '''
-    Filter implementation which sorts stars according to their Abbe value
+    Filter implementation which denies stars with lower value then a limit
+    of Abbe value
     '''
 
 
-    def __init__(self, days_per_bin = None, decider = None, plot_save_path = None,
+    def __init__(self, bins = None, decider = None, plot_save_path = None,
                  plot_save_name = None, *args, **kwargs):
         '''
         '''
         
-        self.days_per_bin = days_per_bin
+        self.bins = bins
         self.decider = decider
         
         self.plot_save_path = plot_save_path
@@ -56,6 +57,6 @@ class AbbeValueFilter(BaseFilter, Learnable):
         abbe_values = []
         
         for star in stars: 
-            abbe_values.append( [star.getAbbe(days_per_bin = self.days_per_bin)] )  
+            abbe_values.append( [star.getAbbe(bins = self.bins)] )  
             
         return abbe_values  

@@ -33,7 +33,7 @@ def create_data_structure( examples = False ):
     
 def make_examples( ):
     os.system( os.path.join( settings.BASE_DIR, 'bin/prepare_query.py -o examples/query_folders.txt -p path -r "lpv;dpv" -p files_limit -r 10'))
-    os.system( os.path.join( settings.BASE_DIR,"bin/prepare_query.py -o examples/tuning_abbe_filter.txt  -p days_per_bin -r 10:150:10 "))
+    os.system( os.path.join( settings.BASE_DIR,"bin/prepare_query.py -o examples/tuning_abbe_filter.txt  -p bins -r 10:150:10 "))
     os.system( os.path.join( settings.BASE_DIR,"""bin/prepare_query.py -o examples/tuning_color_index2.txt -p colors -r '["b_mag - r_mag"]' """))
     os.system( os.path.join( settings.BASE_DIR,"""bin/prepare_query.py -o examples/tuning_color_index.txt -p colors -r '["v_mag-i_mag","b_mag-v_mag"];["v_mag","i_mag"]' """))
     os.system( os.path.join( settings.BASE_DIR,"""bin/prepare_query.py -o examples/tuning_histvario_filter.txt -p hist_days_per_bin -r "97;80" -p vario_days_per_bin -r 9 -p vario_alphabet_size -r 16 -p hist_alphabet_size -r 7 """))

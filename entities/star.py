@@ -13,9 +13,7 @@ from warnings import warn
 import numpy as np
 from utils.data_analysis import  to_ekvi_PAA,abbe, histogram, variogram,\
     compute_bins, cart_distance
-from utils.helpers import verbose
 from entities.exceptions import FailToParseName
-from conf import settings
 import os
 
 
@@ -29,20 +27,41 @@ class Star(object):
     and add parameters additionally
     '''    
     
-    EPS = 0.000138              #Max distance in degrees to consider two stars the equal
-    DEF_DAYS_PER_BIN = 25       #Default value for histogram and variogram transformation
+    EPS = 0.000138              # Max distance in degrees to consider two stars as equal
+    BINS = 100      # Default value for histogram and variogram transformation
     
                
-    def __init__(self, ident = {}, ra = None, dec = None, more = {}, starClass = None):
+    def __init__(self, ident = {}, name = None, ra = None, dec = None, more = {}, starClass = None):
         '''
-        @param ident: Dictionary of identificators for the star 
-        @param ra:        Right Ascension of star (value or RA object)
-        @param dec:       Declination of star (value or DEC object)
-        @param star_info: Another informations about the star in dictionary
-
-        EXAMPLE:
-        Identificator for OGLE db would be:
-            ident = {"ogle":{"field":1,"starid":1,"target":"lmc"},...}
+        Parameters:
+        -----------
+            ident : dict
+                Dictionary of identifiers of the star. Each key of the dict 
+                is name of a database and its value is another dict of database
+                identifiers for the star (e.g. 'name') which can be used
+                as an unique identifier for querying the star. For example:
+                
+                    ident = {"ogle":{"name" : "LMC_SC1_1", "field" : 1, "starid" : 1,"target" : "lmc"},...}
+                
+            name : str
+                Optional name of the star across the all databases
+                
+            ra : str, int, float, RightAscension
+                Right Ascension of star (value or RA object) in degrees
+                
+            dec : str, float, Declination
+                Declination of star (value or DEC object) in degrees
+                
+            more : dict
+                Additional informations about the star in dictionary. This attribute
+                can be considered as a container. These parameters can be then used
+                for filtering. For example it can contains color indexes:
+                    
+                    more = { "b_mag" : 17.56, "v_mag" : 16.23 }
+                    
+            star_class : str
+                Name of category of the star e.g. 'cepheid', 'RR Lyrae', 'quasar'
+         
         '''
         
         if (ra.__class__.__name__  != "RightAscension"  ):
@@ -63,7 +82,10 @@ class Star(object):
         self.starClass = starClass
         self.scoreList = []
         
-        self.name = self.getIdentName()
+        if not name:
+            self.name = self.getIdentName()
+        else:
+            self.name = name
         
         
     def __len__(self):
@@ -124,7 +146,7 @@ class Star(object):
         return cart_distance(x,y)
     
     
-    def getHistogram(self, days_per_bin=None,centred=True,normed=True):
+    def getHistogram(self, days_per_bin = None, bins = None, centred=True, normed=True):
         '''
         @param bins_num: Number of values in histogram
         @param centred: If True values will be shifted (mean value into the zero)
@@ -134,16 +156,16 @@ class Star(object):
         if not self.lightCurve:
             warn("Star {0} has no light curve".format(self.ident))
             return None
-        if days_per_bin==None:
-            warn("Days per bin ratio was not specified. Setting default value: %i" % self.DEF_DAYS_PER_BIN)
-            bins = self.DEF_DAYS_PER_BIN
-        else:
-            bins = compute_bins(self.lightCurve.time,days_per_bin)
+        if not bins:
+            if days_per_bin == None:
+                bins = None
+            else:
+                bins = compute_bins(self.lightCurve.time,days_per_bin)
         
         return histogram(self.lightCurve.time,self.lightCurve.mag,bins,centred,normed)
         
         
-    def getVariogram(self,days_per_bin = None,log_opt=True):
+    def getVariogram(self, days_per_bin = None, bins = 12, log_opt=True):
         '''
         Variogram is function which shows variability of time series in different lags
         
@@ -153,33 +175,29 @@ class Star(object):
         if (self.lightCurve == None):
             warn("Star {0} has no light curve".format(self.ident))
             return None
-        if days_per_bin==None:
-            warn("Days per bin ratio was not specified. Setting default value: %i" % self.DEF_DAYS_PER_BIN)
-            bins = self.DEF_DAYS_PER_BIN
-        else:
+        if days_per_bin:
             bins = compute_bins(self.lightCurve.time,days_per_bin)
         
         return variogram(self.lightCurve.time,self.lightCurve.mag,bins=bins,log_opt=True)
         
-    def getAbbe(self, days_per_bin, normalize_abbe = True):
+    def getAbbe(self, bins = None):
         '''
-        Compute Abbe value of light curve
+        Compute Abbe value of the light curve
         
         @param bins_ratio: Percentage number of bins from original dimension
-        @param normalize_abbe: Normalizing time series
         @return: Abbe value of star (light curve)
         '''
         if (self.lightCurve == None):
-            warn("Star {0} has no light curve".format(self.field + self.starid))
+            warn("Star {0} has no light curve".format( self.name ))
             return None
+        if not bins:
+            bins = self.BINS
         
-        x = to_ekvi_PAA(self.lightCurve.time, self.lightCurve.mag, days_per_bin)[1]
-        
-        return abbe(x)*len(x)/len(self.lightCurve.time)
-    
- 
+        x = to_ekvi_PAA(self.lightCurve.time, self.lightCurve.mag, bins)[1]
+        return abbe(x, len(self.lightCurve.time))
+
                 
-    def saveStar(self,path=".", ident_convention = None):
+    def saveStar(self, path=".", ident_convention = None):
         '''
         Save star's light curve into the file
         
@@ -207,13 +225,26 @@ class Star(object):
                 
         if self.lightCurve != None:
             fi_path = os.path.join( path, "%s.dat" % id_name )
-            np.savetxt( fi_path, np.c_[self.lightCurve.time,self.lightCurve.mag,self.lightCurve.err])
+            np.savetxt( fi_path, np.c_[self.lightCurve.time,self.lightCurve.mag,self.lightCurve.err], fmt='%.3f')
         else:
             warn("Star {0} has no light curve".format(self.ident))
+            return None
             
         return fi_path
     
     def getIdentName(self, db_key = None):
+        """
+        Parameters:
+        -----------
+            db_key : str
+                Database key
+                
+        Returns:
+        --------
+            Name of the star in given database. If it is not specified,
+            the first database will be taken to construct the name
+        """
+        
         if db_key == None:
             if len(self.ident.keys()) == 0:
                 return "Unknown"
@@ -225,16 +256,12 @@ class Star(object):
         for key in self.ident[db_key]:
             star_name += "_%s_%s" % (key, self.ident[db_key][key])
         return star_name
+  
     
-    #TODO: Decide resolver according to db (issue with loop imports)
-    def resolveIdent(self, db):
-        self.ident[db]["name"]
-    
-    
-    def putLightCurve(self,lc):
+    def putLightCurve(self, lc):
         '''Add light curve to the star'''
         
-        #It's possible to give non light curve object and create it additionally
+        # It's possible to give non light curve object and create it additionally
         if (lc.__class__.__name__  != "LightCurve" and lc != None):  
             lc = LightCurve(lc)
         self.lightCurve = lc

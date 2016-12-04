@@ -398,6 +398,7 @@ class OgleII(LightCurvesDb):
           "points": "good",
         }
 
+        
         url = "%s/getobj.php" % self.ROOT
         result = urllib2.urlopen(url, urllib.urlencode(params))
         if (result.code != 200):

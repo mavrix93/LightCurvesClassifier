@@ -5,9 +5,12 @@ Created on May 18, 2016
 '''
 
 import abc
-from utils.commons import returns,accepts
+from utils.commons import returns, accepts
 import warnings
-from utils.helpers import clean_path
+from utils.helpers import clean_path, verbose
+import os
+
+import sys
 
 class BaseFilter(object):
     __metaclass__ = abc.ABCMeta
@@ -70,15 +73,27 @@ class Learnable( object ):
         except AttributeError:
             self.plot_save_path = None    
         
-        img_name = clean_path(self.plot_save_name)+"_%s" % str(learn_num)
-        self.decider.plotHist(title, self.labels, file_name = img_name, save_path = self.plot_save_path)
-        
-        if len(self.labels) == 2:                       
-            self.decider.plotProbabSpace( save_path = self.plot_save_path,
-                                          file_name = img_name,
-                                          x_lab = self.labels[0],
-                                          y_lab = self.labels[1],
-                                          title = title)
+        try:
+            img_name = clean_path(self.plot_save_name)+"_%s" % str(learn_num)
+            self.decider.plotHist(title, self.labels, file_name = img_name, save_path = self.plot_save_path)
+            
+            if len(self.labels) == 2:                       
+                self.decider.plotProbabSpace( save_path = self.plot_save_path,
+                                              file_name = img_name,
+                                              x_lab = self.labels[0],
+                                              y_lab = self.labels[1],
+                                              title = title)
+        except Exception as err:
+            # TODO: Load from settings file
+            #path = settings.TO_THE_DATA_FOLDER
+            path = "."
+            VERB = 2
+            
+            err_log = open( os.path.join( path , "plot_err_occured.log"), "w")
+            err_log.write( str(err) )
+            err_log.close()       
+            verbose( "Error during plotting.. Log file has been saved into data folder", 1, VERB) 
+            
             
         try:
             self.learned = True

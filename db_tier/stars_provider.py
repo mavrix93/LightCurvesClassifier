@@ -16,7 +16,8 @@ class StarsProvider(object):
     
     def __init__(self):
         self.STARS_PROVIDERS = self._mapProviders(PackageReader().getClasses( "connectors" ))
-   
+        
+    
     def getProvider(self,obtain_method = "",**kwargs):
         '''
         @param obtain_method: Query dictionary

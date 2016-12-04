@@ -10,6 +10,8 @@ from sqlalchemy.exc import InvalidRequestError
 from entities.exceptions import QueryInputError
 import warnings
 import re
+from db_tier.local_stars_db.crossmatch_mapper import CrossmatchMapper
+from db_tier.local_stars_db.models_crossmatch_milliquas_ogle import StarsMO
 
 # TODO: Allow query with two same keys in order to get closed ranges
 
@@ -27,12 +29,24 @@ class LocalDbClient(LightCurvesDb):
     
     def __init__(self, obtain_params = [], raise_if_not = True, **kwargs):
         if obtain_params:
+            if type(obtain_params) == dict:
+                obtain_params = [obtain_params]
             db_key = obtain_params[0].get("db_key", None)
             [di.pop("db_key", None) for di in obtain_params]
+        else:
+            raise QueryInputError("There are no query to obtain stars")
+        
         if not db_key: db_key = kwargs.get( "db_key", "local")
-        self.mapper = StarsMapper( db_key )
+        
+        if db_key == "og_milli_crossmatch":
+            self.mapper = CrossmatchMapper(db_key)
+            self.model = StarsMO
+        else:
+            self.mapper = StarsMapper( db_key )
+            self.model = Stars
         self.obtain_params = obtain_params
         self.raise_if_not = raise_if_not
+        self.db_key = db_key
         
     def getStarsWithCurves(self):
         
@@ -45,7 +59,9 @@ class LocalDbClient(LightCurvesDb):
         
         for param in self.obtain_params:
             try:                
-                que = self._getWithRanges( self.mapper.session.query( Stars ), param )
+                q_stars = self.mapper.session.query( self.model )
+                    
+                que = self._getWithRanges( q_stars, param )
                 db_stars = que.all()
             except InvalidRequestError:
                 raise InvalidRequestError(" Invalid query for local db: %s" % self.obtain_params)
@@ -72,19 +88,19 @@ class LocalDbClient(LightCurvesDb):
             
             if mat:        
                 if mat.group("sym") == ">":
-                    que = que.filter( getattr(Stars, key) >= mat.group("num") )
+                    que = que.filter( getattr( self.model, key) >= mat.group("num") )
                     
                 elif mat.group("sym") == "<":
-                    que = que.filter( getattr(Stars, key) <= mat.group("num") )
+                    que = que.filter( getattr( self.model, key) <= mat.group("num") )
                     
                 else:
                     raise Exception("Parsing < > failed.\n%s" % mat.groupdict())
                 
             elif mat2:
-                que = que.filter( getattr(Stars, key) != mat2.group("num") )                
+                que = que.filter( getattr(self.model, key) != mat2.group("num") )                
                 
             else:
-                que = que.filter( getattr(Stars, key) == value )
+                que = que.filter( getattr(self.model, key) == value )
         return que
         
                 

@@ -60,7 +60,7 @@ class StatusResolver(object):
         return self._getDiff(plan_dict, status_dict)
   
   
-    def getWithStatus(self,stat):
+    def getWithStatus(self, stat):
         '''
         Return all queries with desired status
         
@@ -74,7 +74,7 @@ class StatusResolver(object):
         '''
         
         status_dict = self._getDictQuery(self.status_header, self.status_queries)
-        return subDictInDict( status_dict,stat)
+        return subDictInDict( stat, status_dict, ["passed", "filtered", "found"])
     
     
     def getQueries(self):
@@ -139,7 +139,7 @@ class StatusResolver(object):
         @param stat: Dictionary with status column name and its value
         @param queries: List of query dictionaries
         '''
-        return subDictInDict(queries, stat)
+        return subDictInDict(stat, queries)
     
     
     def _readFile(self,path):

@@ -289,8 +289,6 @@ def main(argv = None):
             
         create_folder( log_path )
         
-        # TODO: Every filter will be learnable
-        # if isinstance( filt,  Learnable ):
         all_deciders = PackageReader().getClassesDict( "deciders" )
         try:
             decider = all_deciders[opts.decider]()
@@ -302,15 +300,13 @@ def main(argv = None):
         searched = _getStars( opts.searched )
         
         if opts.filt == "ComparingFilter":
-            # TODO: Cust split
+            # TODO: Custom split
             split_n = len(searched) / 2 
             addit_params["compar_stars"] = searched[split_n: ]
             searched = searched[: split_n ]
             addit_params["compar_filters"] = getSubFilters( tuned_params[0] )
             
-        elif opts.filt == "ColorIndexFilter":
-            # Nothing needed?
-            pass
+  
         
         es = DeciderEstimation(searched = searched,
                                others = _getStars( opts.cont ),
@@ -330,7 +326,7 @@ def main(argv = None):
         print "It is done.\nLog file and plots have been saved into %s " % opts.log
 
     except Exception, e:
-        raise
+        raise 
         indent = len(program_name) * " "
         sys.stderr.write(program_name + ": " + repr(e) + "\n")
         sys.stderr.write(indent + "  for help use --help")

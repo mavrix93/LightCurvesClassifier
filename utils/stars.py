@@ -112,13 +112,12 @@ def getStarsLabels(stars,opt="names",db=None):
 
 #**********    Plotting    ********
 
-def plotStarsPicture(stars,bins=20 ,option="show",center=True,save_loc=None,without_match=False,num_plots=None,hist_days_per_bin=100, vario_days_per_bin=100):
+def plotStarsPicture(stars, option="show", hist_bins = None, vario_bins = None, center=True, save_loc=None, num_plots = None):
     '''
     This function plot three graphs for all stars: Light curve, histogram
     and variogram. Additionally Abbe value will be displayed
     
     @param stars: List of star objects to be plot
-    @param bins: Number of final values in histogram and variogram
     @param option: Option whether plots will be saved or just showed
     '''   
     
@@ -127,16 +126,15 @@ def plotStarsPicture(stars,bins=20 ,option="show",center=True,save_loc=None,with
         raise Exception("Invalid plot option")
 
     for num,star in enumerate(stars[:num_plots]):
-        num_rows = 2
-        if (star.matchStar==None or without_match==True):
-            num_rows = 1
+        num_rows = 1
+        
         if (star.lightCurve != None):    
             fig = plt.figure(figsize=(20, 6))
             ax1 = fig.add_subplot(31+num_rows*100)
-            ax1.set_xlabel("Magnitude [mag] + %.2f mag" % star.lightCurve.mag.mean())
+            ax1.set_xlabel("Magnitude [mag] + %.02f mag" % star.lightCurve.mag.mean())
             ax1.set_ylabel("Normalized counts")
           
-            hist,indices = star.getHistogram(hist_days_per_bin)
+            hist,indices = star.getHistogram( bins = hist_bins)
             
             ax1.set_title("Abbe index: %.2f" %star.getAbbe(),loc="left")
             
@@ -155,7 +153,7 @@ def plotStarsPicture(stars,bins=20 ,option="show",center=True,save_loc=None,with
             ax3.set_title("Star: {0}: {1}".format(star.name,star.starClass))
             ax3.set_xlabel("log(h [days])")
             ax3.set_ylabel("log (I_i - I_j)^2")
-            x_v,y_v= star.getVariogram(vario_days_per_bin)
+            x_v, y_v= star.getVariogram( bins = vario_bins)
             ax3.plot(x_v,y_v,"b--")
             
         else:
@@ -172,7 +170,7 @@ def plotStarsPicture(stars,bins=20 ,option="show",center=True,save_loc=None,with
             
               
             plt.tight_layout()    
-            fig.savefig(save_loc+"/"+star.getIdentName+".png")
+            fig.savefig(save_loc+"/"+star.getIdentName()+".png")
         else:
             try:
                 plt.tight_layout()

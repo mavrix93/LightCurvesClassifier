@@ -201,7 +201,7 @@ class StarsSearcher():
                 raise
             except:
                 raise
-                warn("Couldn't download the light curve")
+                warn("Couldn't download any light curve")
                 stars = []
                       
             #Check if searched star was found
