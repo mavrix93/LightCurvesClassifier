@@ -1,35 +1,76 @@
-# Light Curve Classifier: User guide1 INTRODUCTION
+# Light Curve Classifier
 
 ## Introduction
 The Light Curve Classifier is a Python package for classifying astronomical objects. It is
-accomplished mainly by their light curves, but there are no limits to achieve classifying
-by any other parameter of stars. The purpose of the program is to learn to recognize
-certain objects according to specified attributes. Then it is possible to filter stars and
-decide if they are member of searched group or if not.
-There are two main executable scripts for using the package and one support tool:
+accomplished mainly by their light curves, but there are no limits to achieve that
+by any other attribute of stars. The package can used for several tasks:
+
++ Download light curves from implemented databases
++ Learn implemented filters on train sample and find the most optional parameters
++ Run systematic search and filter stars directly in databases
+
+New filters, database connctors or learning methods can be easily implemented thanks to class interfaces (see "Implementing new classes" section). However there are many of them already included, so there are lots task which can be done just via command line. These exutables are all you need for using the package:
 
 1. make filter.py
 2. filter stars.py
 3. prepare query.py
 
-## Make filter
+
+#### Make filter
 This script creates new filter object which is then able to recognize if an inspected
 star object is a member of searched group or if it is not. The learning is performed
 by different methods (which can be specified) on train sample of searched objects and
 contamination objects (other stars).
 
-## Filter stars
+#### Filter stars
 After creation of filter object it is possible to filter given sample of star objects. In-
 spected stars can be obtained by various connectors which will be described in a next
 chapter.
 
-![Alt text](histvario.png)
+#### Prepare query
+Support tool for making files of queries or files of tuning combinations in given ranges.
 
-1.3
-Prepare query
-Support tool for making query or tuning combinations in given ranges.
-13 HOW DOES IT WORK?
-2
+## Usage
+
+### Filtering stars via Abbe Value Filter
+
+Our task is to find stars with a trend in their light curves. This can be reached by calculating of Abbe value.
+
+First of all we need to prepare files of filter parameters which will be tuned. For Abbe Value Filter there is just one parameter which have to be find - dimension of reduced light curve (bins). Let's try values between 10 and 150 which step of 5:
+
+```
+./prepare_query.py -o tuning_abbe_filter.txt  -p bins -r 10:150:5
+```
+
+This generates file named "tuning_abbe_filter.txt" in data/inputs.
+
+| #bins |
+|-------|
+| 10    |
+| 20    |
+| 30    |
+| ...   |
+| 130   |
+| 140   |
+
+
+Then we can learn AbbeValueFilter on train sample of quasars and non variable stars as contamination sample. Our learning method is GaussianNBDec (description of all implemented methods can be found in a next section).
+
+```
+./make_filter.py  -i tuning_abbe_filter.txt -f AbbeValueFilter -s quasars -c stars -d GaussianNBDec -o AbbeValue_quasar.filter -l AbbeValue_quasar
+```
+
+
+
+```
+./filter_stars.py -d FileManager -i query_folders.txt -f AbbeValue_quasar.filter -o examples
+```
+
+
+
+
+
+
 Build data folders tree and examples
 In order to create necessary data folders for input/output there is a script build data structure.py.
 It will be disused about it more in 3.2. Before using it is needed to tun the builder.
@@ -526,3 +567,4 @@ again.
 References
 [1] “Nasa exoplanet archive.” http://exoplanetarchive.ipac.caltech.edu/.
 14
+
