@@ -326,7 +326,6 @@ def main(argv = None):
         print "It is done.\nLog file and plots have been saved into %s " % opts.log
 
     except Exception, e:
-        raise 
         indent = len(program_name) * " "
         sys.stderr.write(program_name + ": " + repr(e) + "\n")
         sys.stderr.write(indent + "  for help use --help")

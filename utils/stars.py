@@ -9,10 +9,9 @@ There are common functions for list of star objects (evaluation, plotting...)
 import matplotlib.pyplot as plt
 import os
 import warnings
-from conf.settings import *
+import numpy as np
 
-
-def resultEvalaution(stars,class_types = ["QC"]):
+def resultEvalaution(stars, class_types = ["QC"]):
     '''
     This method decide about correction of filtering according matched star type
     
@@ -125,16 +124,25 @@ def plotStarsPicture(stars, option="show", hist_bins = None, vario_bins = None, 
     if not (option in OPTIONS):
         raise Exception("Invalid plot option")
 
-    for num,star in enumerate(stars[:num_plots]):
+    for num, star in enumerate(stars[:num_plots]):
         num_rows = 1
+        
+        xlabel = star.lightCurve.meta.get( "xlabel", "JD")
+        xlabel_unit = star.lightCurve.meta.get( "xlabel_unit", "days")
+        ylabel = star.lightCurve.meta.get( "ylabel", "Magnitude")
+        ylabel_unit = star.lightCurve.meta.get( "ylabel_unit", "mag")
+        color = star.lightCurve.meta.get( "color", "")
+        invert_axis = star.lightCurve.meta.get( "invert_yaxis", True)
         
         if (star.lightCurve != None):    
             fig = plt.figure(figsize=(20, 6))
             ax1 = fig.add_subplot(31+num_rows*100)
-            ax1.set_xlabel("Magnitude [mag] + %.02f mag" % star.lightCurve.mag.mean())
+            ax1.set_xlabel("({ylabel} + {mean} ) {ylabel_unit}".format( mean = star.lightCurve.mag.mean(),
+                                                                                     ylabel = ylabel,
+                                                                                     ylabel_unit = ylabel_unit))
             ax1.set_ylabel("Normalized counts")
           
-            hist,indices = star.getHistogram( bins = hist_bins)
+            hist, indices = star.getHistogram( bins = hist_bins)
             
             ax1.set_title("Abbe index: %.2f" %star.getAbbe(),loc="left")
             
@@ -142,25 +150,27 @@ def plotStarsPicture(stars, option="show", hist_bins = None, vario_bins = None, 
             center = (indices[:-1] + indices[1:]) / 2
             ax1.bar(center, hist, align='center', width=width,color="blue")
  
-            ax2 = fig.add_subplot(33+num_rows*100)
-            
-            ax2.set_xlabel("JD [days]")
-            ax2.set_ylabel("Magnitude [mag]" )
+            ax2 = fig.add_subplot(33 + num_rows*100)
+            if invert_axis:
+                ax2.set_ylim( np.max(star.lightCurve.mag), np.min(star.lightCurve.mag)) 
+            ax2.set_xlabel( "%s [%s]" % (xlabel, xlabel_unit) )
+            ax2.set_ylabel( "%s [%s]" % (ylabel, ylabel_unit) )
             ax2.errorbar(star.lightCurve.time,star.lightCurve.mag, yerr=star.lightCurve.err,fmt='o', ecolor='r')
         
             ax3 = fig.add_subplot(32+num_rows*100)
-            if not star.starClass: star.starClass = ""
-            ax3.set_title("Star: {0}: {1}".format(star.name,star.starClass))
-            ax3.set_xlabel("log(h [days])")
+            if not star.starClass: star.starClass = "unlabeled"
+            if color:
+                color = " %s - band" % color
+            ax3.set_title("Star: {0} ({1}) {2}".format(star.name, star.starClass, color))
+            ax3.set_xlabel("log {value} [{unit}])".format( value = xlabel, unit = xlabel_unit))
             ax3.set_ylabel("log (I_i - I_j)^2")
             x_v, y_v= star.getVariogram( bins = vario_bins)
             ax3.plot(x_v,y_v,"b--")
             
         else:
-            warnings.warn("There are no light curve for plotting")
-        
-        
-        
+            warnings.warn("There are no light curve to plot")
+            break
+
         if (option=="save"):
             if (save_loc == None):
                 save_loc = ""
@@ -168,9 +178,8 @@ def plotStarsPicture(stars, option="show", hist_bins = None, vario_bins = None, 
                 if not os.path.exists(save_loc):         
                     os.makedirs(save_loc)
             
-              
             plt.tight_layout()    
-            fig.savefig(save_loc+"/"+star.getIdentName()+".png")
+            fig.savefig(save_loc+"/"+star.name+".png")
         else:
             try:
                 plt.tight_layout()

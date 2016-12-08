@@ -162,7 +162,6 @@ def main(argv = None):
     
     
     except Exception, e:
-        raise
         indent = len(program_name) * " "
         sys.stderr.write(program_name + ": " + repr(e) + "\n")
         sys.stderr.write(indent + "  for help use --help")

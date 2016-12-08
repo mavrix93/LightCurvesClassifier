@@ -19,28 +19,47 @@ class LightCurve:
     ERR_COL = 2
     MIN_LENGHT = 20     #Minimal amount of observations in light curve in order to be accepted
 
-    def __init__(self, param):
+    def __init__(self, param, meta):
         '''
-        DESCRIP:    Light curve object contains two arrays (time and magnitude). 
-        INPUT:      Option I:
-                        List (numpy array) of 3 lists(time,mag,err) where time, mag and err length is N
-                    Option II:
-                        List (numpy array) of N lists(time, mag  and err per obs) 
+        Parameters:
+        -----------
+            param : list, array, string
+                Light curve data or path to the file of light curve.
+                
+                   Option I:
+                        List (numpy array) of 3 lists(time, mag, err) 
+                        
+                    Option II:                    
+                        List (numpy array) of N lists (time, mag  and err) one per obs
+                        
                     Option III:
-                        Name of file (with path) where column 1:time, column 2:magnitudes
+                        Name of file (with path) where columns times, magnitudes, errors
+                        
+            meta : dict
+                Optional metadata of the light curve. Recommended are these keys:
+                
+                    xlabel - name of the first array
+                    
+                    xlabel_unit - unit of the first array
+                    
+                    ylabel - name of the second array
+                    
+                    ylabel_unit - unit of the second array
+                    
+                    color - filter name of the light curve
         '''
 
         if (type(param) is list or type(param) is tuple):
             param = np.array(param)
         
-        #Light curve could be made from:
-        #OPTION 1:    Name of the file (in this case default path will be used) or whole path contains file name
+        # Light curve could be made from:
+        # OPTION 1:    Name of the file (in this case default path will be used) or whole path contains file name
         if (type(param) is str or type(param) is unicode): 
             self.openLC(param)
             
-        #OPTION 2:    List of three lists (time,mag,err)    
+        # OPTION 2:    List of three lists (time,mag,err)    
         elif (type(param) is np.ndarray):
-            #Transpose if there are list of tuples (time, mag,err)
+            #T ranspose if there are list of tuples (time, mag,err)
             if (len(param) > 3):
                 param = param.transpose()
 
@@ -59,12 +78,12 @@ class LightCurve:
         else:
             raise Exception("Wrong object parameters\nLightCurve object is not created")
             
-        #Delete all bad values in light curve
+        # Delete all bad values in light curve
         bad_values_postions = np.where(self.mag == self.BAD_VALUES)
         self.mag = np.delete(self.mag,bad_values_postions) 
         self.time = np.delete(self.time,bad_values_postions) 
         self.err = np.delete(self.err,bad_values_postions)
-          
+        self.meta = meta
      
     def __str__(self):
         txt = "Time\tMag\tErr\n"
@@ -79,7 +98,7 @@ class LightCurve:
         '''In case of string param in constructor --> open light curve file''' 
            
         
-        #Try to open the file
+        # Try to open the file
         try:
             a = np.loadtxt(fileWithPath,usecols=(self.TIME_COL,self.MAG_COL,self.ERR_COL),skiprows=0)
         except IndexError:

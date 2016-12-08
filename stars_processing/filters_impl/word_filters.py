@@ -27,7 +27,7 @@ class CurvesShapeFilter(ComparativeSubFilter, SymbolicRepresentation):
         @param alphabet_size: Range of of used letters          
         '''
         
-        SymbolicRepresentation.__init__(self, filter_attribute = self.KEY_NAME, days_per_bin=days_per_bin,alphabet_size=alphabet_size)
+        SymbolicRepresentation.__init__(self, filter_attribute = self.KEY_NAME, days_per_bin=lc_days_per_bin,alphabet_size=lc_alphabet_size)
         
         
     def prepareStar(self, star):

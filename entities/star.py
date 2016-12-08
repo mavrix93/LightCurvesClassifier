@@ -258,13 +258,15 @@ class Star(object):
         return star_name
   
     
-    def putLightCurve(self, lc):
+    def putLightCurve(self, lc, meta = {}) :
         '''Add light curve to the star'''
         
         # It's possible to give non light curve object and create it additionally
-        if (lc.__class__.__name__  != "LightCurve" and lc != None):  
-            lc = LightCurve(lc)
+        if not isinstance(lc, LightCurve) and lc != None: 
+            lc = LightCurve(lc, meta = meta)
+        
         self.lightCurve = lc
+    
         
     def putLettersCurve(self,lc):
         '''Put string curve (word) to the star''' 
