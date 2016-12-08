@@ -3,15 +3,22 @@ Created on Jan 5, 2016
 
 @author: Martin Vo
 '''
-from db_tier.TAP_query import TapClient
 from db_tier.base_query import LightCurvesDb
 import collections
 from db_tier.vizier_tap_base import VizierTapBase
 
 
-class MachoDb(VizierTapBase, TapClient, LightCurvesDb):
+class MachoDb(VizierTapBase, LightCurvesDb):
     '''
     Client for Macho database  
+    
+    EXAMPLES:
+    ---------
+        queries = [ {"ra" : 0.4797, "dec": -67.1290, "delta" : 10},
+                    {"Field" : 1 , "Tile": 3441, "Seqn" : 25}]
+        client = StarsProvider().getProvider( obtain_method = "MachoDb", obtain_params = queries)
+        stars = client.getStarsWithCurves()
+        
     '''
    
     TABLE = "II/247/machovar"
@@ -22,7 +29,7 @@ class MachoDb(VizierTapBase, TapClient, LightCurvesDb):
     
     LC_META = {"color" : "V"}
     
-    IDENT_MAP = {"macho" :  ["Field", "Tile", "Seqn"] }
+    IDENT_MAP = {"MachoDb" :  ("Field", "Tile", "Seqn") }
     MORE_MAP = collections.OrderedDict((("Class" , "var_type"),
                                         ("Vmag" , "v_mag"),
                                         ("Rmag" , "r_mag"),

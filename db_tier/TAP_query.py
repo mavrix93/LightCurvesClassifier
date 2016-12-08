@@ -63,9 +63,11 @@ class TapClient(LightCurvesDb):
         self.conditions = tap_params["conditions"]
         self.select = tap_params["select"] 
         
+        
         query = self._get_select_text()+self._get_from_text()+self._get_where_text()
         verbose(query, 4, settings.VERBOSITY)
         verbose("TAP query is about to start", 3, settings.VERBOSITY)
+        
         
         # Run query
         try:
@@ -82,6 +84,7 @@ class TapClient(LightCurvesDb):
  
         verbose("TAP query is done",3, settings.VERBOSITY) 
         job.delete()
+        
         return retrieve_data  
     
     
@@ -118,9 +121,9 @@ class TapClient(LightCurvesDb):
             if type(condition[1]) is tuple:
                 condition = (condition[0], condition[1][0], condition[1][1])
             if (len(condition)==3):            
-                where_text += "({0} BETWEEN {1} AND '{2}') AND ".format( *condition )
+                where_text += "({0} BETWEEN {1} AND {2}) AND ".format( *condition )
             elif (len(condition)==2):
-                where_text += "({0} = '{1}') AND ".format(*condition)
+                where_text += "({0} = {1}) AND ".format(*condition)
             else:
                 raise QueryInputError("Unresolved TAP query condition: %s" %condition)
         where_text = where_text[:-4]    
@@ -138,8 +141,14 @@ class TapClient(LightCurvesDb):
         return (ra - delta / 3600. , ra + delta / 3600.), (dec - delta / 3600. , dec + delta / 3600.)
     
     def _quoteIfNeeded(self, value):
-        if isinstance(value, str ) and [ let in value for let in self.QUOTING]:
-            return '"%s"' % value
+        
+        if isinstance(value, str ):
+            value = str(value).strip()
+        
+            need_quoting = True in [ let in value for let in self.QUOTING]
+            
+            if need_quoting and not value.startswith("'") and not value.startswith('"'):
+                return "'%s'" % value
         return value
             
  

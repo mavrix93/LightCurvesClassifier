@@ -6,45 +6,42 @@ Created on Dec 7, 2016
 
 import collections
 import requests
-import numpy as np
 
-from db_tier.TAP_query import TapClient
 from db_tier.base_query import LightCurvesDb
+from db_tier.vizier_tap_base import VizierTapBase
 
-class AsasArchive( TapClient, LightCurvesDb):
+class AsasArchive( VizierTapBase, LightCurvesDb):
     '''
-    classdocs
+    Asas archive of variable stars
+    
+    EXAMPLE:
+    --------
+        queries = [ {"ASAS" : "000030-3937.5"},
+                     {"ra" : 0.4797, "dec": -67.1290, "delta" : 10}]
+        client = StarsProvider().getProvider( obtain_method = "AsasArchive", obtain_params = queries)        
+        stars = client1.getStarsWithCurves( do_per = True )
     '''
     TAP_URL = "http://tapvizier.u-strasbg.fr/TAPVizieR/tap"
     LC_URL = "http://cdsarc.u-strasbg.fr/viz-bin/nph-Plot/Vgraph/txt?II%2f264%2f.%2f{asas_id}&P=0"
-    
-    
+      
     TABLE = "II/264/asas3"
     
     RA = "_RA" # Deg
     DEC = "_DE" # Deg
-    NAME = "ASAS"
-    LC_FILE = NAME
+    NAME = "{ASAS}"
     
     LC_META = {"color" : "V"}
-    
-    TIME_COL = 0
-    MAG_COL = 1
-    ERR_COL = 2
-    
-    ERR_MAG_RATIO = 1.
-    DELIM = " "
-    
+
     IDENT_MAP = {"asas" :  "ASAS"}
     MORE_MAP = collections.OrderedDict((("Per", "period"),
                                         ("Class" , "var_type"),
                                         ("Jmag" , "j_mag"),
                                         ("Kmag" , "k_mag"),
-                                        ("Hmag" , "h_mag")))
+                                        ("Hmag" , "h_mag"),
+                                        ("LC" , "lc_file")))
 
-    def _getLightCurve(self, file_name, star, do_per = False):
-        url = self.LC_URL.format(asas_id = file_name )
-        
+    def _getLightCurve(self, star, do_per = False, *args, **kwars):
+        url = self.LC_URL.format(asas_id = star.name )
         if do_per:    
             per = star.more.get( "period", None )  
             if per:      

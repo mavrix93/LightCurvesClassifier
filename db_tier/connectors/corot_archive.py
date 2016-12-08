@@ -5,34 +5,35 @@ Created on Dec 7, 2016
 '''
 
 import collections
-from entities.star import Star
 import os
 import requests
 import cStringIO
 import pyfits
 
-from db_tier.TAP_query import TapClient
 from db_tier.base_query import LightCurvesDb
-from utils.data_analysis import to_ekvi_PAA, to_PAA
-from entities.exceptions import QueryInputError
+from utils.data_analysis import to_ekvi_PAA
+from db_tier.vizier_tap_base import VizierTapBase
 
 
 
-class CorotBrightArchive( TapClient, LightCurvesDb ):
+class CorotBrightArchive( VizierTapBase, LightCurvesDb ):
     '''
     CoRoT connector. TAP query and downloading the light curve fits are ran
     on Vizier catalog.
+    
+    EXAMPLES:
+    ---------
+        queries = [ {"ra": 102.707, "dec" : -0.54089, "delta" : 10},
+                    {"CoRot" : 116}]       
+        client = StarsProvider().getProvider( obtain_method = "CorotBrightArchive", obtain_params = queries)
+        stars = client.getStarsWithCurves(max_bins = 10000 )
+            
     '''
 
-    TAP_URL = "http://tapvizier.u-strasbg.fr/TAPVizieR/tap"
-    FILES_URL = "http://vizier.u-strasbg.fr/viz-bin/nph-Cat?-plus=-%2b&B/corot/files/"
-    
-    
+    LC_URL = "http://vizier.u-strasbg.fr/viz-bin/nph-Cat?-plus=-%2b&B/corot/files/"
     TABLE = "B/corot/Bright_star"
-    
-    RA = "RAJ2000" # Deg
-    DEC = "DEJ2000" # Deg
-    NAME = "Star"
+  
+    NAME = "{Star}"
     LC_FILE = "FileName"
     
     LC_META = {"xlabel" : "Terrestrial time",
@@ -41,14 +42,8 @@ class CorotBrightArchive( TapClient, LightCurvesDb ):
                "ylabel_unit" : "Electrons per second",
                "color" : "N/A",
                "invert_yaxis" : False}
-    
-    TIME_COL = 0
-    MAG_COL = 1
-    ERR_COL = 2
-    
-    ERR_MAG_RATIO = 1.
-    
-    IDENT_MAP = collections.OrderedDict((("vizier", "Star"), ("corot", "CoRoT")))
+ 
+    IDENT_MAP = collections.OrderedDict((("VizierDb", "Star"), ("CorotBrightArchive", "CoRoT")))
     MORE_MAP = collections.OrderedDict((("(B-V)", "b_v_mag"),
                                         ("SpT" , "spectral_type"),
                                         ("Vmag" , "v_mag"),
@@ -57,8 +52,24 @@ class CorotBrightArchive( TapClient, LightCurvesDb ):
 
             
     def _getLightCurve(self, file_name, max_bins = 1e3, *args, **kwargs):
+        """
+        Obtain light curve 
         
-        response = requests.get( os.path.join(self.FILES_URL, file_name))
+        Parameters:
+        -----------
+            file_name : str
+                Path to the light curve file from root url
+                 
+            max_bins : int
+                Maximal number of dimension of the light curve
+                
+        Returns:
+        --------
+            Tuple of times, mags, errors lists
+        """
+        
+        response = requests.get( os.path.join(self.LC_URL, file_name))
+
         
         _fits = cStringIO.StringIO(response.content)
         fits = pyfits.open( _fits )
@@ -78,12 +89,25 @@ class CorotBrightArchive( TapClient, LightCurvesDb ):
             
         fits.close()
         _fits.close()
+        
         return red_time, red_mag, red_err
     
             
 class CorotFaintArchive( CorotBrightArchive ):
+    """
+    Corot archive of faint stars
+    
+        
+    EXAMPLES:
+    ---------
+        queries = [ { "Corot" : "102706554"},
+                    {"ra": 100.94235, "dec" : -00.89651, "delta" : 10}]        
+        client = StarsProvider().getProvider( obtain_method = "CorotFaintArchive", obtain_params = queries)
+        stars = client.getStarsWithCurves(max_bins = 10000 )    
+    """
+    
     TABLE = "B/corot/Faint_star"
-    IDENT_MAP = {"corot" : "CoRoT"}
+    IDENT_MAP = {"CorotFaintArchive" : "CoRoT"}
     NAME = "CoRoT"
     
     MORE_MAP = collections.OrderedDict((("SpT" , "spectral_type"),

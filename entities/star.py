@@ -17,8 +17,9 @@ from entities.exceptions import FailToParseName
 import os
 
 
-#TODO: Get rid of sax attributes and put sax words, scores and matches into more dict  
-#TODO: Think more about getting rid of methods for computing things such as histrogram, variogram etc.
+# TODO: Get rid of sax attributes and put sax words, scores and matches into more dict  
+# TODO: Think more about getting rid of methods for computing things such
+# as histrogram, variogram etc. --> put them inot data_analysis module
 
 class Star(object):
     '''
@@ -27,8 +28,7 @@ class Star(object):
     and add parameters additionally
     '''    
     
-    EPS = 0.000138              # Max distance in degrees to consider two stars as equal
-    BINS = 100      # Default value for histogram and variogram transformation
+    EPS = 0.000138              # Max distance in degrees to consider two stars equal
     
                
     def __init__(self, ident = {}, name = None, ra = None, dec = None, more = {}, starClass = None):
@@ -41,7 +41,15 @@ class Star(object):
                 identifiers for the star (e.g. 'name') which can be used
                 as an unique identifier for querying the star. For example:
                 
-                    ident = {"ogle":{"name" : "LMC_SC1_1", "field" : 1, "starid" : 1,"target" : "lmc"},...}
+                    ident = {"OgleII" : {"name" : "LMC_SC1_1","db_ident" : {"field_num" : 1, "starid" : 1,"target" : "lmc"},...}
+                
+                CONVENTION:
+                -----------
+                    Please keep convention as is shown above. Star is able to be
+                    queried again automatically if ident key is name of database
+                    connector and it contains dictionary called "db_ident".
+                    This dictionary contains unique query for the star in the database. 
+                
                 
             name : str
                 Optional name of the star across the all databases
@@ -191,7 +199,7 @@ class Star(object):
             warn("Star {0} has no light curve".format( self.name ))
             return None
         if not bins:
-            bins = self.BINS
+            bins = len(self.lightCurve.time)
         
         x = to_ekvi_PAA(self.lightCurve.time, self.lightCurve.mag, bins)[1]
         return abbe(x, len(self.lightCurve.time))
