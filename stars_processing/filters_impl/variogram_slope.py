@@ -3,11 +3,9 @@ Created on May 18, 2016
 
 @author: Martin Vo
 '''
-from utils.helpers import progressbar
 import numpy as np
 from stars_processing.filters_tools.base_filter import BaseFilter, Learnable
 from utils.commons import returns,accepts
-from entities.star import Star
 
 
 # TODO: Need to upgraded
@@ -15,7 +13,6 @@ class VariogramSlope(BaseFilter, Learnable):
     '''
     This filter sorting stars according slopes of their variograms
     '''
-
 
     def __init__(self,  variogram_days_bin, decider, 
                  plot_save_path = None, plot_save_name = "",*args, **kwargs):

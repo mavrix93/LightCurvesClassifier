@@ -11,11 +11,14 @@ from sklearn.naive_bayes import GaussianNB
 from astroML.classification.gmm_bayes import GMMBayes
 from sklearn.qda import QDA
 
-from stars_processing.deciders.base_decider import BaseDesider
+from stars_processing.deciders.base_decider import BaseDecider
 from utils.helpers import checkDepth
 from conf import deciders_settings
+from entities.exceptions import QueryInputError, LearningError
+from sklearn import svm
+from sklearn import tree
 
-class SupervisedBase(BaseDesider):
+class SupervisedBase(BaseDecider):
     """
     Base class for sklearn library supervised classes transformed to the package
     content. It is not intended to use this directly, but thru certain method
@@ -68,16 +71,19 @@ class SupervisedBase(BaseDesider):
         self.y = np.array(y)
         
         if not self.X.any() or not self.y.any():
-            raise Exception("There are no data to learn on")
+            raise QueryInputError("No stars have attributes which are needed by filter")
         
-        self.learner.fit( self.X, self.y)
+        try:
+            self.learner.fit( self.X, self.y)
+        except:
+            raise LearningError("Could not learn decider on dataset:\nX = %s\n\nlabels = %s" %(self.X, self.y))
         
     def evaluate( self, coords ): 
         # TODO:
         # if coords != np.ndarray: coords = np.array( coords )
         # checkDepth(coords, 2)
-        
-        a =  self.learner.predict_proba(coords)[:,1]
+        prediction =  self.learner.predict_proba(coords)
+        a = prediction[:,1]
         checkDepth(a, 1)        
         return a
     
@@ -105,3 +111,36 @@ class QDADec(SupervisedBase):
         if not treshold:
             treshold = deciders_settings.TRESHOLD
         SupervisedBase.__init__( self, clf = QDA, treshold = treshold)
+        
+class SVCDec( SupervisedBase ):      
+    def __init__(self, treshold = 0.5):
+        """
+        Parameters:
+        -----------
+            treshold: float
+                Border probability value (objects with probability higher then this
+                value is considered as searched object)
+        """
+        
+        self.treshold = treshold
+        self.learner = svm.SVC()
+        
+    def evaluate( self, coords ): 
+        return self.learner.predict(coords)
+
+
+class TreeDec( SupervisedBase ):      
+    def __init__(self, treshold = 0.5):
+        """
+        Parameters:
+        -----------
+            treshold: float
+                Border probability value (objects with probability higher then this
+                value is considered as searched object)
+        """
+        
+        self.treshold = treshold
+        self.learner = tree.DecisionTreeClassifier()
+        
+    def evaluate( self, coords ): 
+        return self.learner.predict(coords)

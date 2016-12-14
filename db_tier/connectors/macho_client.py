@@ -7,7 +7,8 @@ from db_tier.base_query import LightCurvesDb
 import collections
 from db_tier.vizier_tap_base import VizierTapBase
 
-
+# TODO: Convert coo query from degrees to h:m:s, d:m:s
+# NOTE: Please note that coordinates query is not available now
 class MachoDb(VizierTapBase, LightCurvesDb):
     '''
     Client for Macho database  
@@ -17,8 +18,7 @@ class MachoDb(VizierTapBase, LightCurvesDb):
         queries = [ {"ra" : 0.4797, "dec": -67.1290, "delta" : 10},
                     {"Field" : 1 , "Tile": 3441, "Seqn" : 25}]
         client = StarsProvider().getProvider( obtain_method = "MachoDb", obtain_params = queries)
-        stars = client.getStarsWithCurves()
-        
+        stars = client.getStarsWithCurves()        
     '''
    
     TABLE = "II/247/machovar"
@@ -27,7 +27,9 @@ class MachoDb(VizierTapBase, LightCurvesDb):
     NAME = "{Field}.{Tile}.{Seqn}"
     LC_FILE = ""
     
-    LC_META = {"color" : "V"}
+    LC_META = {"xlabel" : "Time",
+               "xlabel_unit" : "MJD (JD-2400000.5)",
+               "origin" : "MACHO"}
     
     IDENT_MAP = {"MachoDb" :  ("Field", "Tile", "Seqn") }
     MORE_MAP = collections.OrderedDict((("Class" , "var_type"),
@@ -37,4 +39,4 @@ class MachoDb(VizierTapBase, LightCurvesDb):
                                         ("bPer" , "period_b")))
 
 
-
+    

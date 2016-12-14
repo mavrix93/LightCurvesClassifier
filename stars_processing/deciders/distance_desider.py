@@ -7,9 +7,9 @@ Created on Oct 1, 2016
 
 import numpy as np
 
-from stars_processing.deciders.base_decider import BaseDesider
+from stars_processing.deciders.base_decider import BaseDecider
 
-class DistanceDesider(BaseDesider):
+class DistanceDesider(BaseDecider):
     
     def __init__(self, border, treshold = 0.5):
         """

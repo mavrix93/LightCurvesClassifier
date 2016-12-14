@@ -13,7 +13,7 @@ from warnings import warn
 import numpy as np
 from utils.data_analysis import  to_ekvi_PAA,abbe, histogram, variogram,\
     compute_bins, cart_distance
-from entities.exceptions import FailToParseName
+from entities.exceptions import FailToParseName, QueryInputError
 import os
 
 
@@ -81,7 +81,7 @@ class Star(object):
         self.dec = dec 
         self.more = more
         
-        self.lightCurve = None
+        self.light_curves = []
         self.curveWord = ""
         self.histWord = ""
         self.varioWord = ""
@@ -91,9 +91,9 @@ class Star(object):
         self.scoreList = []
         
         if not name:
-            self.name = self.getIdentName()
+            self._name = self.getIdentName()
         else:
-            self.name = name
+            self._name = name
         
         
     def __len__(self):
@@ -196,7 +196,7 @@ class Star(object):
         @return: Abbe value of star (light curve)
         '''
         if (self.lightCurve == None):
-            warn("Star {0} has no light curve".format( self.name ))
+            warn("Star {0} has no light curve".format( self._name ))
             return None
         if not bins:
             bins = len(self.lightCurve.time)
@@ -204,8 +204,9 @@ class Star(object):
         x = to_ekvi_PAA(self.lightCurve.time, self.lightCurve.mag, bins)[1]
         return abbe(x, len(self.lightCurve.time))
 
+        
                 
-    def saveStar(self, path=".", ident_convention = None):
+    def saveLcToDat(self, path= ".", ident_convention = None):
         '''
         Save star's light curve into the file
         
@@ -265,55 +266,43 @@ class Star(object):
             star_name += "_%s_%s" % (key, self.ident[db_key][key])
         return star_name
   
+  
+    @property
+    def lightCurve(self):
+        if self.light_curves:
+            return self.light_curves[0]
+        return None
+    
+    @lightCurve.setter
+    def lightCurve(self, lc):
+        self.putLightCurve( lc )
+  
     
     def putLightCurve(self, lc, meta = {}) :
         '''Add light curve to the star'''
+        if lc == None:
+            raise QueryInputError("Given light curve is NoneType")
         
-        # It's possible to give non light curve object and create it additionally
-        if not isinstance(lc, LightCurve) and lc != None: 
-            lc = LightCurve(lc, meta = meta)
+        if hasattr( lc , "__iter__" ) and len(lc) and isinstance(lc[0], LightCurve):
+            self.light_curves += lc
         
-        self.lightCurve = lc
+        elif not isinstance(lc, LightCurve) and len(lc): 
+            self.light_curves.append( LightCurve(lc, meta = meta) )
+        
+        elif lc:
+            self.light_curves.append( lc )
+        
+        
+    @property
+    def name(self):
+        if self._name:
+            return self._name
+        return self.getIdentName()
     
+    @name.setter
+    def name(self, name):
+        self._name = name
         
-    def putLettersCurve(self,lc):
-        '''Put string curve (word) to the star''' 
-        self.curveWord = lc    
-        
-    def putLettersHist(self,hist):
-        self.histWord = hist
-        
-    def putLettersVario(self,vario):
-        self.varioWord = vario
-        
-    def putMatchStar(self,star):
-        '''Put match star'''
-        self.matchStar=star
-        
-    def putScore(self,score):
-        '''Put score of match'''
-        self.matchScore = score
-        
-    def putIntoScoreList(self,score):
-        self.scoreList.append(score)
-        
-        
-    def getName(self):
-        if self.ident.keys():
-            for key in self.ident.keys():
-                
-                name = self.ident[ key ].get("name", None)
-                if name:
-                    return name
-                
-            for key in self.ident.keys():
-                ident = self.ident[ key ].get("identifier", None)
-                
-                if ident:
-                    return ident
-        return "Unresolved"
-    
-  
     
 
         

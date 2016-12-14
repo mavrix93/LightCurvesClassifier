@@ -17,7 +17,7 @@ from entities.exceptions import QueryInputError
 
 class ComparingFilter(BaseFilter, Learnable):
     '''
-    This class is responsible for comparing stars according to implementations
+    This class is responsible for comparing light curves of stars according to implementations
     of comparing subfilters 
     '''
     

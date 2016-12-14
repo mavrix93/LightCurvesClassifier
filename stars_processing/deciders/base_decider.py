@@ -16,13 +16,13 @@ import collections
 
 
 
-class BaseDesider(object):
+class BaseDecider(object):
     """
-    A desider class works with "coordinates" (specification) of objects. It can
+    A decider class works with "coordinates" (specification) of objects. It can
     learn identify inspected group of objects according to "coordinates" of 
     searched objects and other objects.
     
-    All desider classes have to inherit this abstract class. That means that they
+    All decider classes have to inherit this abstract class. That means that they
     need to implement several methods: "learn" and "evaluate". Also all of them
     have to have "treshold" attribute. To be explained read comments below.
     

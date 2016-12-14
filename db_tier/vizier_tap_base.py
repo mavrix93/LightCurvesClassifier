@@ -8,6 +8,7 @@ import requests
 from entities.star import Star
 from entities.exceptions import QueryInputError
 from db_tier.TAP_query import TapClient
+from entities.light_curve import LightCurve
 
 class VizierTapBase( TapClient ):
     '''
@@ -266,8 +267,7 @@ class VizierTapBase( TapClient ):
             if lc_opt:
                 star.putLightCurve( self._getLightCurve( star = star,
                                                          file_name = raw_star_dict.get(self.LC_FILE, None), 
-                                                         **kwargs  ),
-                                   meta = self.LC_META )
+                                                         **kwargs  ))
             stars.append(star)
         return stars
     
@@ -305,16 +305,29 @@ class VizierTapBase( TapClient ):
         time = []
         mag = []
         err = []
+        lcs = []
         for line in response.iter_lines():
             line = line.strip()
+            
             if not line.startswith( (" ", "#") ):
                 parts = line.split( self.DELIM )
                 if len(parts) == 3:
                     time.append( float(parts[ self.TIME_COL ]))
                     mag.append( float(parts[ self.MAG_COL ]))
                     err.append( float(parts[ self.ERR_COL ]) / self.ERR_MAG_RATIO)
+            else:
+                if line.startswith( "# m = -1"):
+                    meta = self.LC_META.copy()
+                    meta["color"] = "B"
+                elif line.startswith( "# m = -2"):
+                    lcs.append( LightCurve( [time, mag, err], meta))
+                    time, mag, err = [], [], []
+
+                    meta = self.LC_META.copy()
+                    meta["color"] = "R"
+        lcs.append( LightCurve( [time, mag, err], meta))
             
-        return time, mag, err
+        return lcs
             
     
         

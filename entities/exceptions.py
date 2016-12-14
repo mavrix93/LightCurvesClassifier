@@ -42,3 +42,6 @@ class NotFilterTypeClass(Exception):
 class StarAttributeNotSpecified(AttributeError):
     pass
 
+class LearningError(Exception):
+    pass
+

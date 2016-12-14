@@ -16,7 +16,7 @@ class ColorIndexFilter(BaseFilter, Learnable):
     def __init__(self, colors = ["b_mag", "v_mag", "i_mag"],
                  decider = None, pass_not_found = False, raise_if_not = False,
                  plot_save_path = None, plot_save_name = "",
-                 without_notfound = False, *args, **kwargs):
+                 without_notfound = True, *args, **kwargs):
         '''
         Parameters:
         -----------
@@ -115,8 +115,7 @@ class ColorIndexFilter(BaseFilter, Learnable):
            
             if not None in colors:
                 coords.append( [ float(c) for c in colors] )  
-            else:
-                
+            else:                
                 if self.raise_if_not:
                     raise Exception("Star %s has no color index." % star.ident)
                 

@@ -19,7 +19,7 @@ class AsasArchive( VizierTapBase, LightCurvesDb):
         queries = [ {"ASAS" : "000030-3937.5"},
                      {"ra" : 0.4797, "dec": -67.1290, "delta" : 10}]
         client = StarsProvider().getProvider( obtain_method = "AsasArchive", obtain_params = queries)        
-        stars = client1.getStarsWithCurves( do_per = True )
+        stars = client.getStarsWithCurves( do_per = True )
     '''
     TAP_URL = "http://tapvizier.u-strasbg.fr/TAPVizieR/tap"
     LC_URL = "http://cdsarc.u-strasbg.fr/viz-bin/nph-Plot/Vgraph/txt?II%2f264%2f.%2f{asas_id}&P=0"
@@ -30,9 +30,10 @@ class AsasArchive( VizierTapBase, LightCurvesDb):
     DEC = "_DE" # Deg
     NAME = "{ASAS}"
     
-    LC_META = {"color" : "V"}
+    LC_META = {"color" : "V",
+               "origin" : "ASAS"}
 
-    IDENT_MAP = {"asas" :  "ASAS"}
+    IDENT_MAP = {"asas" :  ("ASAS")}
     MORE_MAP = collections.OrderedDict((("Per", "period"),
                                         ("Class" , "var_type"),
                                         ("Jmag" , "j_mag"),
@@ -46,8 +47,8 @@ class AsasArchive( VizierTapBase, LightCurvesDb):
             per = star.more.get( "period", None )  
             if per:      
                 url = url[:-1] + "%f" % per
-                self.LC_META = {"xlabel" : "Period",
-                           "xlabel_unit" : "phase"}
+                self.LC_META["xlabel"] = "Period"
+                self.LC_META["xlabel_unit"] = "phase"
             
         response = requests.get( url )
         time = []

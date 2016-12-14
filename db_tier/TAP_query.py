@@ -20,7 +20,7 @@ class TapClient(LightCurvesDb):
     
     # Default conversion rate of coordinates from degrees
     COO_UNIT_CONV = 1
-    QUOTING = [" ", "/", "_"]
+    QUOTING = [" ", "/", "_","-", ".", "+"]
     
 
      
@@ -142,13 +142,13 @@ class TapClient(LightCurvesDb):
     
     def _quoteIfNeeded(self, value):
         
-        if isinstance(value, str ):
-            value = str(value).strip()
+        value = str(value).strip()
+    
+        need_quoting = True in [ let in value for let in self.QUOTING]
         
-            need_quoting = True in [ let in value for let in self.QUOTING]
-            
-            if need_quoting and not value.startswith("'") and not value.startswith('"'):
-                return "'%s'" % value
+        if need_quoting and not value.startswith("'") and not value.startswith('"'):
+            return "'%s'" % value
+        
         return value
             
  

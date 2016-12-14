@@ -10,6 +10,41 @@ import matplotlib.pyplot as plt
 import os
 import warnings
 import numpy as np
+import random
+import string
+
+from db_tier.connectors.file_manager import FileManager
+
+
+def saveStars( stars, path = ".", clobber = True):
+    """
+    Save Star objects into fits files
+    
+    Parameters:
+    -----------
+        stars : list, iterable
+            Star objects to be saved
+            
+        path : str
+            Relative path to the file where fits are stored
+            
+    Returns:
+    --------
+        List of names of star files
+    """
+    N = 7
+    file_names = []
+    for star in stars:
+        file_name = star.name
+        if not file_name:
+            file_name = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(N))
+        FileManager.writeToFITS( os.path.join( path, file_name +".fits"), star, clobber)
+        
+        file_names.append(file_name)
+    
+    return file_names
+
+
 
 def resultEvalaution(stars, class_types = ["QC"]):
     '''
@@ -111,7 +146,7 @@ def getStarsLabels(stars,opt="names",db=None):
 
 #**********    Plotting    ********
 
-def plotStarsPicture(stars, option="show", hist_bins = None, vario_bins = None, center=True, save_loc=None, num_plots = None):
+def plotStarsPicture(stars, option="show", hist_bins = 10, vario_bins = 10, center=True, save_loc=None, num_plots = None):
     '''
     This function plot three graphs for all stars: Light curve, histogram
     and variogram. Additionally Abbe value will be displayed
@@ -125,19 +160,22 @@ def plotStarsPicture(stars, option="show", hist_bins = None, vario_bins = None, 
         raise Exception("Invalid plot option")
 
     for num, star in enumerate(stars[:num_plots]):
-        num_rows = 1
         
-        xlabel = star.lightCurve.meta.get( "xlabel", "JD")
-        xlabel_unit = star.lightCurve.meta.get( "xlabel_unit", "days")
-        ylabel = star.lightCurve.meta.get( "ylabel", "Magnitude")
-        ylabel_unit = star.lightCurve.meta.get( "ylabel_unit", "mag")
-        color = star.lightCurve.meta.get( "color", "")
-        invert_axis = star.lightCurve.meta.get( "invert_yaxis", True)
         
-        if (star.lightCurve != None):    
-            fig = plt.figure(figsize=(20, 6))
-            ax1 = fig.add_subplot(31+num_rows*100)
-            ax1.set_xlabel("({ylabel} + {mean} ) {ylabel_unit}".format( mean = star.lightCurve.mag.mean(),
+        
+        num_rows = len(star.light_curves)
+        fig = plt.figure(figsize=(20, 6))
+        for row_num, lc in  enumerate(star.light_curves):
+            xlabel = lc.meta.get( "xlabel", "JD")
+            xlabel_unit = lc.meta.get( "xlabel_unit", "days")
+            ylabel = lc.meta.get( "ylabel", "Magnitude")
+            ylabel_unit = lc.meta.get( "ylabel_unit", "mag")
+            color = lc.meta.get( "color", "")
+            invert_axis = lc.meta.get( "invert_yaxis", True)
+
+            
+            ax1 = fig.add_subplot(31+num_rows*100 + 3*row_num)
+            ax1.set_xlabel("({ylabel} + {mean} ) {ylabel_unit}".format( mean = lc.mag.mean(),
                                                                                      ylabel = ylabel,
                                                                                      ylabel_unit = ylabel_unit))
             ax1.set_ylabel("Normalized counts")
@@ -150,26 +188,24 @@ def plotStarsPicture(stars, option="show", hist_bins = None, vario_bins = None, 
             center = (indices[:-1] + indices[1:]) / 2
             ax1.bar(center, hist, align='center', width=width,color="blue")
  
-            ax2 = fig.add_subplot(33 + num_rows*100)
+            ax2 = fig.add_subplot(33 + num_rows*100 + 3*row_num)
             if invert_axis:
-                ax2.set_ylim( np.max(star.lightCurve.mag), np.min(star.lightCurve.mag)) 
+                ax2.set_ylim( np.max(lc.mag), np.min(lc.mag)) 
             ax2.set_xlabel( "%s [%s]" % (xlabel, xlabel_unit) )
             ax2.set_ylabel( "%s [%s]" % (ylabel, ylabel_unit) )
-            ax2.errorbar(star.lightCurve.time,star.lightCurve.mag, yerr=star.lightCurve.err,fmt='o', ecolor='r')
+            ax2.errorbar(lc.time, lc.mag, yerr=lc.err,fmt='o', ecolor='r')
         
-            ax3 = fig.add_subplot(32+num_rows*100)
-            if not star.starClass: star.starClass = "unlabeled"
-            if color:
-                color = " %s - band" % color
-            ax3.set_title("Star: {0} ({1}) {2}".format(star.name, star.starClass, color))
-            ax3.set_xlabel("log {value} [{unit}])".format( value = xlabel, unit = xlabel_unit))
-            ax3.set_ylabel("log (I_i - I_j)^2")
-            x_v, y_v= star.getVariogram( bins = vario_bins)
-            ax3.plot(x_v,y_v,"b--")
-            
-        else:
-            warnings.warn("There are no light curve to plot")
-            break
+            if vario_bins != False:
+                ax3 = fig.add_subplot(32+num_rows*100 + 3*row_num)
+                if not star.starClass: star.starClass = "unlabeled"
+                if color:
+                    color = " %s - band" % color
+                ax3.set_title("Star: {0} ({1}) {2}".format(star.name, lc.meta.get("origin", ""), color))
+                ax3.set_xlabel("log {value} [{unit}])".format( value = xlabel, unit = xlabel_unit))
+                ax3.set_ylabel("log (I_i - I_j)^2")
+                x_v, y_v= star.getVariogram( bins = vario_bins)
+                ax3.plot(x_v,y_v,"b--")
+    
 
         if (option=="save"):
             if (save_loc == None):

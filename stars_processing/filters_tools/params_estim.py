@@ -3,7 +3,7 @@ Created on Jul 22, 2016
 
 @author: Martin Vo
 '''
-from utils.helpers import progressbar, clean_path
+from utils.helpers import progressbar, clean_path, create_folder
 from utils.output_process_modules import saveIntoFile
 from conf import settings
 import os
@@ -16,7 +16,7 @@ import json
 
 class DeciderEstimation(object):
     
-    def __init__(self, searched, others, star_filter, tuned_params, log_path,
+    def __init__(self, searched, others, star_filter, tuned_params, log_path = None,
                  save_filter_name = None,**kwargs):
         '''
          tuned_params, decider,
@@ -37,13 +37,13 @@ class DeciderEstimation(object):
         self.save_filter_name = save_filter_name
         
         self.params = kwargs
-          
-        
-        if not os.path.isdir( log_path ):
-            raise Exception("There is no folder %s" % log_path)
+        if log_path:
+            create_folder( log_path )
+            if not os.path.isdir( log_path ):
+                raise Exception("There is no folder %s" % log_path)
         
   
-    def fit( self ):
+    def fit( self, save = True ):
         precisions = []
         filters = []
         stats = []
@@ -65,10 +65,9 @@ class DeciderEstimation(object):
             z = collections.OrderedDict(tun_param).copy()
             z.update( collections.OrderedDict(st) )
             
-
-            StatusResolver.save_query([z], FI_NAME = clean_path(self.save_filter_name) +"_log.dat", PATH = self.log_path, DELIM = "\t" )
+            if save:
+                StatusResolver.save_query([z], FI_NAME = clean_path(self.save_filter_name) +"_log.dat", PATH = self.log_path, DELIM = "\t" )
             
-        
         best_id = np.argmax( precisions )
         
         print "*"*30
@@ -78,5 +77,7 @@ class DeciderEstimation(object):
             pass
         print "Statistic:\n%s\n" % json.dumps( stats[ best_id ] , indent=4)
             
+        if save:
+            saveIntoFile( filters[best_id] , path = settings.FILTERS_PATH, fileName = self.save_filter_name)
         
-        saveIntoFile( filters[best_id] , path = settings.FILTERS_PATH, fileName = self.save_filter_name)
+        return filters[best_id]

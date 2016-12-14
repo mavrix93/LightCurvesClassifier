@@ -18,7 +18,7 @@ from db_tier.vizier_tap_base import VizierTapBase
 
 class CorotBrightArchive( VizierTapBase, LightCurvesDb ):
     '''
-    CoRoT connector. TAP query and downloading the light curve fits are ran
+    CoRoT connector. TAP query and downloading of the light curve fits are executed
     on Vizier catalog.
     
     EXAMPLES:
@@ -41,6 +41,7 @@ class CorotBrightArchive( VizierTapBase, LightCurvesDb ):
                "ylabel" : "Flux",
                "ylabel_unit" : "Electrons per second",
                "color" : "N/A",
+               "origin" : "CoRoT",
                "invert_yaxis" : False}
  
     IDENT_MAP = collections.OrderedDict((("VizierDb", "Star"), ("CorotBrightArchive", "CoRoT")))

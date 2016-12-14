@@ -18,8 +18,17 @@ class LightCurve:
     MAG_COL = 1
     ERR_COL = 2
     MIN_LENGHT = 20     #Minimal amount of observations in light curve in order to be accepted
+    
+    PREC_DEG = 3
+    
+    DEFAULT_META = {"xlabel" : "HJD",
+                    "xlabel_unit" : "days",
+                    "ylabel" : "Magnitudes",
+                    "ylabel_unit" : "mag",
+                    "color" : "N/A"
+                     }
 
-    def __init__(self, param, meta):
+    def __init__(self, param, meta = {}):
         '''
         Parameters:
         -----------
@@ -47,6 +56,8 @@ class LightCurve:
                     ylabel_unit - unit of the second array
                     
                     color - filter name of the light curve
+                    
+                    origin - db name
         '''
 
         if (type(param) is list or type(param) is tuple):
@@ -80,9 +91,15 @@ class LightCurve:
             
         # Delete all bad values in light curve
         bad_values_postions = np.where(self.mag == self.BAD_VALUES)
-        self.mag = np.delete(self.mag,bad_values_postions) 
-        self.time = np.delete(self.time,bad_values_postions) 
-        self.err = np.delete(self.err,bad_values_postions)
+        self.mag = np.round( np.delete(self.mag, bad_values_postions) , self.PREC_DEG)
+        self.time = np.round( np.delete(self.time, bad_values_postions) , self.PREC_DEG) 
+        self.err = np.round( np.delete(self.err, bad_values_postions) , self.PREC_DEG)
+        
+        # Set default meta values
+        for key in self.DEFAULT_META:
+            if not meta.get(key):
+                meta[key] = self.DEFAULT_META[key]
+                        
         self.meta = meta
      
     def __str__(self):

@@ -3,7 +3,7 @@ from os.path import join
 from stars_processing.filters_tools.base_filter import BaseFilter,\
     ComparativeSubFilter
 from db_tier.base_query import StarsCatalogue
-from stars_processing.deciders.base_decider import BaseDesider
+from stars_processing.deciders.base_decider import BaseDecider
 
 
 #*********    Global variables    **********
@@ -78,4 +78,4 @@ DATABASES = {"local" : join(DB_FILE_PATH, "local.db"),
 IMPLEMENTED_CLASSES = { "filters" : ( FILTERS_IMPL_PATH, BaseFilter ),
                         "connectors" : ( DB_CONNECTORS, StarsCatalogue ),
                         "sub_filters" : (FILTERS_IMPL_PATH, ComparativeSubFilter),
-                        "deciders" : (DECIDERS_PATH, BaseDesider) }
+                        "deciders" : (DECIDERS_PATH, BaseDecider) }

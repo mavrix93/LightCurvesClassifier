@@ -43,7 +43,7 @@ class CurvesShapeFilter(ComparativeSubFilter, SymbolicRepresentation):
         
         word_size = compute_bins(star.lightCurve.time,self.days_per_bin)
         sax = SAX(word_size,self.alphabet_size)
-        star[self.KEY_NAME] =  sax.to_letter_rep(star.lightCurve.mag)[0]
+        star.more[self.KEY_NAME] =  sax.to_letter_rep(star.lightCurve.mag)[0]
         return star
     
     

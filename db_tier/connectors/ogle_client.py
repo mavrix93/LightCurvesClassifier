@@ -35,6 +35,7 @@ class OgleII(LightCurvesDb):
     stars object (with lc, coordinates, name...)
     '''
     
+    DB_IDENT = "OgleII"
     
     ROOT = "http://ogledb.astrouw.edu.pl/~ogle/photdb"
     TARGETS = ["lmc","smc","bul","sco"]
@@ -42,6 +43,13 @@ class OgleII(LightCurvesDb):
     QUERY_TYPE = "bvi"
     MAX_REPETITIONS = 3
     MAX_TIMEOUT = 60
+    
+    LC_META = {"xlabel" : "hjd",
+               "xlabel_unit" : "days",
+               "ylabel" : "magnitude",
+               "ylabel_unit" : "mag",
+               "color" : "V",
+               "origin" : "OgleII"}
     
     #Query possibilities (combination of necessary values)       
     #Check types of given parameters 
@@ -297,9 +305,6 @@ class OgleII(LightCurvesDb):
                             values["more"] = more
                             star = Star(**values)
                             
-                            og_ident = self.getIdentName(star)
-                            star.ident["ogle"]["name"] = og_ident
-                            
                             stars.append(star)            
                             values = {}
                             more = {}
@@ -331,18 +336,18 @@ class OgleII(LightCurvesDb):
                             elif (idx==5):
                                 more["b_mag"] = value
                             
-                            
-                    
                     #If first line of star info
                     if (field_starid):
-                        ident = {}
+                        field = field_starid.group("field")
+                        starid = field_starid.group("starid")
+                        
                         idx = 0
                         og = {}
-                        og["field"] =field_starid.group("field")
-                        og["starid"] =field_starid.group("starid")
+                        og["field"] = field
+                        og["starid"] = starid
                         og["target"] = self.db_target
-                        ident["ogle"] = og
-                        values["ident"] = ident
+                        values["ident"] = {self.DB_IDENT : {"db_ident" : og, "name" : field +"_"+starid }}
+                        
                     #Try to match tmpdir (once in result) where query data is saved    
                     tmpdir = tmpdir_pattern.match(line)
                     if (tmpdir):
@@ -365,10 +370,10 @@ class OgleII(LightCurvesDb):
             
         
             #Make post request in order to obtain light curves
-            self._make_tmpdir(star.ident["ogle"]["field"].lower(), star.ident["ogle"]["starid"])
+            self._make_tmpdir(star.ident[self.DB_IDENT]["db_ident"]["field"].lower(), star.ident[self.DB_IDENT]["db_ident"]["starid"])
          
             #Specific url path to lc into server
-            url = "%s/data/%s/%s_i_%s.dat" % (self.ROOT, self.tmpdir, star.ident["ogle"]["field"].lower(), star.ident["ogle"]["starid"])
+            url = "%s/data/%s/%s_i_%s.dat" % (self.ROOT, self.tmpdir, star.ident[self.DB_IDENT]["db_ident"]["field"].lower(), star.ident[self.DB_IDENT]["db_ident"]["starid"])
                         
             #Parse result and download  (if post is successful)
             result = urllib2.urlopen(url)
@@ -378,7 +383,7 @@ class OgleII(LightCurvesDb):
                     parts = line.strip().split(" ")
                     star_curve.append([float(parts[0]),float(parts[1]),float(parts[2])])
                 if (star_curve and len(star_curve) != 0): 
-                    star.putLightCurve(np.array(star_curve))
+                    star.putLightCurve(np.array(star_curve), meta = self.LC_META)
                     star.starClass = self.stars_class
             ready_stars.append(star)
             i += 1        
@@ -413,60 +418,8 @@ class OgleII(LightCurvesDb):
         self.valmax_ra = ra +self.delta /15.0
         self.valmin_decl = dec -self.delta
         self.valmax_decl = dec +self.delta
-
-            
-    @staticmethod
-    def getIdentName(star):
-        try:
-            ident = star.ident["ogle"]
-        except KeyError:
-            warn("The star does not have OGLE identificator from which name could be made")
-            return None
-        if ident["field"].find("_") != -1:
-            return "%s_%s" %(ident["field"],ident["starid"])
-        
-        return "%s_SC%s_%s" %(ident["target"].upper(),ident["field"],ident["starid"])
     
-    
-    
-    
-def testCandidates(mag,std,target,f1,s1,f2,s2):
-    p1 = {
-        "field": f1,
-        "starid": s1,
-        "target": target
-         }
-    
-    p2 = {
-        "field": f2,
-        "starid": s2,
-        "target": target
-         }
-    
-    try:          
-        st1 = OgleII(p1).getStarsWithCurves()[0]
-    except IndexError:
-        return f2, s2
-    try:
-        st2 = OgleII(p2).getStarsWithCurves()[0]
-    except IndexError:
-        return f1, s1
-    
-    diff_mag1 = abs(np.mean(st1.lightCurve.mag)-mag)/mag
-    diff_mag2 = abs(np.mean(st2.lightCurve.mag)-mag)/mag
-    diff_std1 = abs(np.std(st1.lightCurve.mag)-std)/std
-    diff_std2 = abs(np.std(st2.lightCurve.mag)-std)/std
-    
-    diff_1 = (diff_mag1**2 + diff_std1**2)**0.5
-    diff_2 = (diff_mag2**2 + diff_std2**2)**0.5
-    
-    if (diff_1 != 0 or diff_2 != 0):
-        warn("Any of two candidates have no exactly the same light curve")
-    
-    if diff_1 < diff_2:
-        return f1, s1
-    return  f2, s2
-
+ 
 def parseCooFromStarcat(coo):
     '''
     This  method parse coordinate objects from starcat identifier
@@ -501,55 +454,6 @@ def parseCooFromStarcat(coo):
 
   
 
-
-
-def parseIdent(db_ident, lc = None):
-    '''
-    Method for parsing star name in field_starid format. In case of underscore
-    symbol between field and starid file name can be easily parsed. If there
-    are not underscore (example II) there are generaly two possibilities.
-    This will be resolved by obtaining light curve of the file and these
-    two candidates form OgleII db.
-    
-    @param file_path --> str: Path with OgleII identificator of file
-    EXAMPLE: path/LMC_SC10173573.dat or path/LMC_SC10_173573.dat
-    
-    @return --> tuple: Field and starid
-    EXAMPLE: (LMC_SC10,173573)
-    '''  
-    
-    underscores_num = db_ident.count("_")
-    
-    #Case of for example LMC_SC10173573
-    if underscores_num == 1:    
-        try:         
-            if lc == None:
-                raise FailToParseName("For resolving this identificator the light curve needs to be specified")   
-            number = re.findall("\d+", db_ident)[0]
-            field_str = re.findall("\D+_\D+", db_ident)[0]
-            
-            target = re.findall("\D+_",field_str)[0][:-1].lower()
-            field1 = field_str+str(number[0])
-            field2 = field_str+str(number[:2])
-
-            mag = np.mean(lc.mag)
-            std = np.std(lc.mag)
-
-            field,starid = testCandidates(mag,std,target,field1,number[1:],field2, number[2:])
-            
-            return field, starid
-            
-        except:       
-            raise FailToParseName("Star identifier has not been resolved")
-    else:
-        pat = re.compile("(?P<field>\D+_SC\d+)_(?P<starid>\d+)")
-        
-        try:
-            m = pat.match(db_ident)
-            return m.group(1),m.group(2)
-        except AttributeError:
-            raise FailToParseName("Star identifier has not been resolved")
-
     
     
 def clean_starcat(starcat):
@@ -570,61 +474,3 @@ def clean_starcat(starcat):
     return starcat
             
         
-
-
-def updateStar(star):
-    '''
-    This method download coordinates and light curve of given star (in Ogle db) 
-    via its field and star id name
-    
-    @param star: Star object which contains field and star id
-    @return: Star object appended by coordinates and light curve
-    '''
-    target = "lmc"
-    try:
-        if (star.field[:3] == "SMC"):
-            target = "smc"
-    except TypeError:
-        pass
-    
-    star = _updateInfo(star,target)
-    if not star.lightCurve: star = _updateLc(star,target)
-    
-    return star
-    
-def _updateInfo(star,target):
-    query = {
-        "field": star.ident["ogle"]["field"],
-        "starid": star.ident["ogle"]["starid"],
-        "target": star.ident["ogle"]["target"]
-         }
-    provider = OgleII(query)
-    provider._post_query()
-    stars = provider.stars
-    
-    if len(stars) >0:
-        st =  stars[0]
-        star.ra = st.ra
-        star.dec = st.dec
-        try:
-            star.more["bvi"] = st.more["bvi"]
-        except KeyError:
-            warn("Bvi cannot be obtained")
-    return star
-
-def _updateLc(star,target):
-    query = {
-        "field": star.ident["ogle"]["field"],
-        "starid": star.ident["ogle"]["starid"],
-        "target": star.ident["ogle"]["target"]
-         }
-    res_stars = OgleII(query).getStarsWithCurves()
-    if len(res_stars) ==0:
-        warn("Light curve has not been found")
-        return star
-    lc =res_stars[0].lightCurve
-    if lc: star.putLightCurve(lc)
-    return star
-
-    
-    

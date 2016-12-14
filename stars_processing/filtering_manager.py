@@ -30,7 +30,7 @@ class FilteringManager(object):
     '''
 
 
-    def __init__(self, stars=[]):
+    def __init__(self, stars=[] ):
         '''
         @param stars: Stars which will be filtered
         '''

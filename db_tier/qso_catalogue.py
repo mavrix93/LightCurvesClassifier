@@ -9,8 +9,6 @@ from entities.star import Star
 from entities.declination import Declination
 from entities.right_ascension import RightAscension
 import warnings
-from utils.advanced_query import updateStar
-from utils.stars import plotStarsPicture
 from db_tier.base_query import StarsCatalogue
 
 class OgleQso(StarsCatalogue):

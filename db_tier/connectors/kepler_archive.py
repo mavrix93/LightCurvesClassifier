@@ -4,6 +4,7 @@ Created on Nov 30, 2016
 @author: Martin Vo
 '''
 import kplr
+import numpy as np
 
 from entities.light_curve import LightCurve
 from entities.star import Star
@@ -40,6 +41,15 @@ class KeplerArchive( LightCurvesDb ):
                     "kic_imag" : "i_mag",
                     "kic_gmag" : "g_mag",
                     "kic_teff" : "teff"}
+    
+    
+    LC_META = {"xlabel" : "TIME",
+               "xlabel_unit" : "BJD - 2454833", 
+               "ylabel" : "Flux",
+               "ylabel_unit" : "electrons per second",
+               "color" : "N/A",
+               "origin" : "Kepler",
+               "invert_yaxis" : False}
 
 
     def __init__(self, obtain_params):
@@ -104,7 +114,7 @@ class KeplerArchive( LightCurvesDb ):
             _stars = self.client.stars( **query )
             
         else:
-            raise InvalidQueryError("Unresolved query parameters")
+            raise InvalidQueryError("Unresolved query parameters:\n%s" % que)
 
         stars = []
         
@@ -139,7 +149,7 @@ class KeplerArchive( LightCurvesDb ):
                 star.name = value
         
         if lc:    
-            star.lightCurve = self._getLightCurve( _star, lim = 1 ) 
+            star.lightCurve, star.name = self._getLightCurve( _star, lim = 1 ) 
         star.ident = ident
         star.more =  more
         return star       
@@ -147,16 +157,23 @@ class KeplerArchive( LightCurvesDb ):
     def _getLightCurve(self, star, lim = None ):
         """Obtain light curve"""
         
-        lcs = star.get_light_curves(short_cadence=False)[ :lim]
+        raw_lcs = star.get_light_curves(short_cadence=False)[ :lim]
         
-        time, flux, ferr, quality = [], [], [], []
-        for lc in lcs:
+        ready_lcs = []
+        
+        for lc in raw_lcs:
             with lc.open() as f:
+                obj_name = f[0].header.get("OBJECT")
                 hdu_data = f[1].data
-                time += hdu_data["time"].tolist()
-                flux += hdu_data["sap_flux"].tolist()
-                ferr += hdu_data["sap_flux_err"].tolist()
-                quality += hdu_data["sap_quality"].tolist()
+                time = hdu_data["time"].tolist()
+                flux = hdu_data["sap_flux"].tolist()
+                ferr = hdu_data["sap_flux_err"].tolist()
+            
+            
                 
-        return LightCurve( [time, flux, ferr] )
+            ready_lcs.append( LightCurve( [[x for x in time if not np.isnan(x)],
+                                           [x for x in flux if not np.isnan(x)],
+                                           [x for x in ferr if not np.isnan(x)]], meta = self.LC_META ) )
+            
+        return ready_lcs, obj_name
         

@@ -5,8 +5,6 @@ Created on May 12, 2016
 '''
 from utils.data_analysis import to_ekvi_PAA
 from utils.commons import returns,accepts
-from entities.star import Star
-from utils.helpers import progressbar
 from stars_processing.filters_tools.base_filter import BaseFilter, Learnable
 
 class CurveDensityFilter(BaseFilter, Learnable):
@@ -43,7 +41,7 @@ class CurveDensityFilter(BaseFilter, Learnable):
         
         for star in stars:
             if star.lightCurve:
-                x,y = to_ekvi_PAA(star.lightCurve.time, star.lightCurve.mag)
+                x, y = to_ekvi_PAA(star.lightCurve.time, star.lightCurve.mag)
                 ren = x.max() - x.min()
                 coo.append( [float(len(x))/ren] )
             else:

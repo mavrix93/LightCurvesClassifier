@@ -18,7 +18,7 @@ import json
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from utils.helpers import create_folder
+from utils.helpers import create_folder, progressbar
 from db_tier.connectors.local_db_client import LocalDbClient
 from db_tier.stars_provider import StarsProvider
 from conf.package_reader import PackageReader
@@ -32,6 +32,8 @@ __all__ = []
 __version__ = 0.3
 __date__ = '2016-09-23'
 __updated__ = '2016-11-08'
+
+debug = True
 
 def main(argv = None):
     '''Command line options.'''
@@ -326,6 +328,8 @@ def main(argv = None):
         print "It is done.\nLog file and plots have been saved into %s " % opts.log
 
     except Exception, e:
+        if debug:
+            raise
         indent = len(program_name) * " "
         sys.stderr.write(program_name + ": " + repr(e) + "\n")
         sys.stderr.write(indent + "  for help use --help")
@@ -481,7 +485,7 @@ def _getStarsFromRemoteDb( query ):
      
     stars = []
     
-    for query in queries:
+    for query in progressbar(queries, "Querying stars: "):
         starsProvider = StarsProvider().getProvider(obtain_method = db_key,
                                             obtain_params = query)
         

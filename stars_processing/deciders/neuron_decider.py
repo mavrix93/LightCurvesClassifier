@@ -1,7 +1,7 @@
 '''
 Created on Oct 28, 2016
 
-@author: martin
+@author: Martin Vo
 '''
 
 from pybrain.tools.shortcuts import buildNetwork
@@ -9,10 +9,10 @@ from pybrain.datasets import SupervisedDataSet
 from pybrain.supervised.trainers import BackpropTrainer
 
 import numpy as np
-from stars_processing.deciders.base_decider import BaseDesider
+from stars_processing.deciders.base_decider import BaseDecider
 from conf import deciders_settings
 
-class NeuronDecider(BaseDesider):
+class NeuronDecider(BaseDecider):
     """
     The class is responsible for learning to recognize certain group of objects.
     
@@ -45,11 +45,11 @@ class NeuronDecider(BaseDesider):
     
     OUTPUT_NEURONS = 1
     
-    def __init__(self, treshold = None, hiden_neurons = None):
+    def __init__(self, treshold = None, hidden_neurons = None):
         '''
         Parameters:
         -----------
-            hiden_neurons: int
+            hidden_neurons: int
                 Number of hiden neurons
                 
         Note:
@@ -59,10 +59,10 @@ class NeuronDecider(BaseDesider):
         if not treshold:
             treshold = deciders_settings.TRESHOLD
         
-        if not hiden_neurons:
-            hiden_neurons = deciders_settings.HIDDEN_NEURONS
+        if not hidden_neurons:
+            hidden_neurons = deciders_settings.HIDDEN_NEURONS
             
-        self.hiden_neurons = hiden_neurons
+        self.hiden_neurons = hidden_neurons
         
         self.input_neuron = None
         self.X = None

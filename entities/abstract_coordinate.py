@@ -16,6 +16,8 @@ class AbstractCoordinate(object):
     
     HOURS_DESIG = ["hours","hour","h"]
     RADIANS_DESIG = ["radians","rad"]
+    
+    ROUND_DEG = 6
 
     def __init__(self, degrees,coo_format,MIN_VALUE,MAX_VALUE,HOUR_TO_DEGREE_VALUE):
         
@@ -33,7 +35,12 @@ class AbstractCoordinate(object):
         self.MAX_VALUE = MAX_VALUE
         self.HOUR_TO_DEGREE_VALUE = HOUR_TO_DEGREE_VALUE
         
-        self.degrees = self._verificate_value(degrees)
+        degrees = self._verificate_value(degrees)
+        
+        if degrees:
+            self.degrees = np.round( self._verificate_value(degrees), self.ROUND_DEG)
+        else:
+            self.degrees = None
     
     def __str__(self):
         if self.degrees: return "%.4f degrees" %(self.degrees)
@@ -44,6 +51,9 @@ class AbstractCoordinate(object):
     '''
     def _verificate_value(self,value):
             MAX_ANGLE = 60
+            
+            if not value:
+                return None
             
             #Case of None coordinate value
             if (value == None):

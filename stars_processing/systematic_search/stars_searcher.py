@@ -16,6 +16,7 @@ import warnings
 from db_tier.local_stars_db.stars_mapper import StarsMapper
 from conf import settings
 import collections
+from utils.stars import saveStars
 
 # TODO: Think more about propriety of location of this class
 # TODO: Make this class general for every db manager
@@ -120,7 +121,7 @@ class StarsSearcher():
         
         verbose(star,2, VERBOSITY)
         
-        lc_path = star.saveStar(self.save_path)
+        lc_path = saveStars( [star], self.save_path)[0]
         
         mapper = StarsMapper( self.db_key )
         if not mapper.uploadStar(star, cut_path(lc_path, "light_curves")):
@@ -241,7 +242,7 @@ class StarsSearcher():
                         except Exception as err:
                             self.failProcedure(query,err)
                             warn("Something went wrong during filtering")
-                    query["name"] = one_star.getName()
+                    query["name"] = one_star.name
                     self.statusFile(query, status)
         
         print "\n************\t\tQuery is done\t\t************"    
