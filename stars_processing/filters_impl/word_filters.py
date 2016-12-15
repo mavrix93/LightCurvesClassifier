@@ -4,33 +4,50 @@ Created on Mar 20, 2016
 @author: Martin Vo
 
 Classes responsible for filtering stars (comparing template stars
-with tested stars) via their words (data transformed into the symbolic representation)
+with tested stars) via their words (data transformed into
+symbolic representation)
 '''
 
-from stars_processing.filters_tools.symbolic_representation import SymbolicRepresentation
-from stars_processing.filters_tools.sax import SAX
-from utils.data_analysis import compute_bins
 from stars_processing.filters_tools.base_filter import ComparativeSubFilter
+from stars_processing.filters_tools.sax import SAX
+from stars_processing.filters_tools.symbolic_representation import SymbolicRepresentation
+from utils.data_analysis import compute_bins
+
 
 class CurvesShapeFilter(ComparativeSubFilter, SymbolicRepresentation):
     '''
-    This filter implementation sort stars according to their string (symbolic) 
-    representation of light curve. Template for filtering is build up as a list 
+    This filter implementation sort stars according to their string (symbolic)
+    representation of light curve. Template for filtering is build up as a list
     of reference stars which light curves will be taken for comparing
+
+    Attributes:
+    -----------
+        lc_days_per_bin : float
+            Ratio which decides about length of the word
+
+        lc_alphabet_size : int
+            Range of of used letters
+
+        slide : bool
+            If True, words with different lengths are dynamically compared
+            by sliding shorter word thru longer
     '''
-    
-    KEY_NAME = "curve_word"
-    
+
     def __init__(self, lc_days_per_bin, lc_alphabet_size, **kwargs):
         '''
-        @param days_per_bin: Ratio which decides about length of the word (symbolic representation of light curve)
-        @param alphabet_size: Range of of used letters          
+        Parameters:
+        -----------
+            lc_days_per_bin : float
+                Ratio which decides about length of the word
+
+            lc_alphabet_size : int
+                Range of of used letters
         '''
-        
-        SymbolicRepresentation.__init__(self, filter_attribute = self.KEY_NAME, days_per_bin=lc_days_per_bin,alphabet_size=lc_alphabet_size)
-        
-        
-    def prepareStar(self, star):
+        self.lc_days_per_bin = lc_days_per_bin
+        self.lc_alphabet_size = lc_alphabet_size
+        self.slide = True
+
+    def getWord(self, star):
         '''
         Parameters:
         -----------
@@ -38,70 +55,107 @@ class CurvesShapeFilter(ComparativeSubFilter, SymbolicRepresentation):
 
         Returns:
         --------
-            Star enchanted by light curve world
-        ''' 
-        
-        word_size = compute_bins(star.lightCurve.time,self.days_per_bin)
-        sax = SAX(word_size,self.alphabet_size)
-        star.more[self.KEY_NAME] =  sax.to_letter_rep(star.lightCurve.mag)[0]
-        return star
-    
-    
+            String representation of light curve
+        '''
+        word_size = compute_bins(star.lightCurve.time, self.lc_days_per_bin)
+        self.sax = SAX(word_size, self.lc_alphabet_size)
+        return self.sax.to_letter_rep(star.lightCurve.mag)[0]
+
+
 class HistShapeFilter(ComparativeSubFilter, SymbolicRepresentation):
     '''
-    This filter implementation sort stars according to their string (symbolic) 
-    representation of histogram. Template for filtering is build up as a list 
+    This filter implementation sort stars according to their string (symbolic)
+    representation of histogram. Template for filtering is build up as a list
     of reference stars which histograms will be taken for comparing
+
+    Attributes:
+    -----------
+        hist_bins : int
+            Length of result histogram
+
+        hist_alphabet_size : int
+            Range of of used letters
+
+        slide : bool
+            If True, words with different lengths are dynamically compared
+            by sliding shorter word thru longer
     '''
-    
-    KEY_NAME = "histogram_word"
-    
-    def __init__(self,hist_days_per_bin,hist_alphabet_size, **kwargs):
+
+    def __init__(self, hist_bins, hist_alphabet_size, **kwargs):
         '''
-        @param wordSize: Length of symbol representation of histogram
-        @param alphabet_size: Range of of used letters     
+        Parameters:
+        -----------
+            hist_bins : int
+                Length of result histogram
+
+            hist_alphabet_size : int
+                Range of of used letters
         '''
-        SymbolicRepresentation.__init__(self, filter_attribute= self.KEY_NAME, days_per_bin = hist_days_per_bin,alphabet_size= hist_alphabet_size)
-        
-        
-    def prepareStar(self,star):
+        self.hist_bins = hist_bins
+        self.hist_alphabet_size = hist_alphabet_size
+        self.slide = False
+
+    def getWord(self, star):
         '''
+        Parameters:
+        -----------
+            Star object with light curve
+
         Returns:
         --------
-            Star enchanted by histogram world
-        ''' 
-   
-        hist = star.getHistogram(days_per_bin=self.days_per_bin)[0]
-        sax = SAX(len(hist),self.alphabet_size)
-        star.more[ self.KEY_NAME ] = sax.to_letter_rep(hist)[0]
-        return star   
-    
+            String representation of light curve's histogram
+        '''
+        hist = star.lightCurve.getHistogram(bins=self.hist_bins)[0]
+        self.sax = SAX(len(hist), self.hist_alphabet_size)
+        return self.sax.to_letter_rep(hist)[0]
+
+
 class VariogramShapeFilter(ComparativeSubFilter, SymbolicRepresentation):
     '''
-    This filter implementation sort stars according to their string (symbolic) 
-    representation of light curve. Template for filtering is build up as a list 
+    This filter implementation sort stars according to their string (symbolic)
+    representation of light curve. Template for filtering is build up as a list
     of reference stars which light curves will be taken for comparing
+
+    Attributes:
+    -----------
+        vario_days_per_bin : float
+            Ratio which decides about length of the word
+
+        vario_alphabet_size : int
+            Range of of used letters
+
+        slide : bool
+            If True, words with different lengths are dynamically compared
+            by sliding shorter word thru longer
     '''
-    
-    KEY_NAME = "variogram_word"
-    
+
     def __init__(self, vario_days_per_bin, vario_alphabet_size, **kwargs):
         '''
-        @param letterPerDayRatio: Ratio which decides about length of word (symbolic representation of light curve)
-        @param alphabet_ize: Range of of used letters         
+        Parameters:
+        -----------
+            vario_days_per_bin : float
+                Ratio which decides about length of the word
+
+            vario_alphabet_size : int
+                Range of of used letters
         '''
-        
-        SymbolicRepresentation.__init__(self, filter_attribute= self.KEY_NAME,days_per_bin= vario_days_per_bin,alphabet_size= vario_alphabet_size)
-        
-    
-    def prepareStar(self,star):
+        self.vario_days_per_bin = vario_days_per_bin
+        self.vario_alphabet_size = vario_alphabet_size
+        self.slide = False
+
+    def getWord(self, star):
         '''
+        Parameters:
+        -----------
+            Star object with light curve
+
         Returns:
         --------
-            Star enchanted by variogram world
-        ''' 
-        
-        vario = star.getVariogram(days_per_bin=self.days_per_bin)[1]
-        sax = SAX(len(vario),self.alphabet_size)
-        star.more[self.KEY_NAME] = sax.to_letter_rep(vario)[0]
-        return star
+            String representation of light curve's variogram
+        '''
+
+        bins = compute_bins(star.lightCurve.time, self.vario_days_per_bin)
+        vario = star.lightCurve.getVariogram(bins=bins)[1]
+
+        self.sax = SAX(len(vario), self.vario_alphabet_size)
+        return self.sax.to_letter_rep(vario)[0]
