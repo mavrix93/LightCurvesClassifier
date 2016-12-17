@@ -6,47 +6,47 @@ Created on Feb 29, 2016
 
 from conf.package_reader import PackageReader
 
+
 class StarsProvider(object):
     '''
-    Star provider can return one of stars data client to obtain data thru common
-    method "getStarsWithCurves". There are class attribute to link stars providers
-    with key word. 
-    Also thru initializing of a stars providers query validity will be performed
+    Stars provider is an interface between end-user and database connectors. All
+    database connectors have to inherit `StarsCatalog` class.
+
+    Attributes
+    ----------
+    STARS_PROVIDER : dict
+
     '''
-    
-    def __init__(self):
-        self.STARS_PROVIDERS = self._mapProviders(PackageReader().getClasses( "connectors" ))
-        
-    
-    def getProvider(self,obtain_method = "",**kwargs):
+
+    STARS_PROVIDERS = PackageReader().getClassesDict("connectors")
+
+    @classmethod
+    def getProvider(self, obtain_method="", obtain_params=[], **kwargs):
         '''
-        @param obtain_method: Query dictionary
-        @param obtain_params:  Key word for query method
-        @return: Unified stars provider object
-        
-        In case of no kwargs provider object will be returned
+        Get database connector via name of its class
+
+        Parameters
+        -----------
+        obtain_method : str
+            Name of connector class
+        obtain_params :  list of dicts
+            List of queries
+
+        Returns
+        --------
+        instance
+            Constructed database connector or uninstanced  if there is
+            no queries
         '''
-        if not obtain_method in self.STARS_PROVIDERS:
-            raise AttributeError("Unresolved stars provider\nAvaible stars providers: %s"%self.STARS_PROVIDERS)
-        
-        if ("obtain_params" in kwargs): kwargs = kwargs["obtain_params"]
+
+        if obtain_method not in self.STARS_PROVIDERS:
+            raise AttributeError(
+                "Unresolved stars provider\nAvaible stars providers: %s" % self.STARS_PROVIDERS)
+
+        if not obtain_params:
+            obtain_params = kwargs["obtain_params"]
         provider = self.STARS_PROVIDERS[obtain_method]
-        
-        if len(kwargs) == 0:
+
+        if len(obtain_params) == 0:
             return provider
-        return provider(kwargs)
-    
-    def _mapProviders( self, available_providers ):
-        providers = {}
-        
-        for provider in available_providers:
-            providers[ provider.__name__ ] = provider
-            
-        return providers
-    
-    
-
-        
-        
-
-    
+        return provider(obtain_params)

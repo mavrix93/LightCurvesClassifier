@@ -16,6 +16,18 @@ class SAX(object):
     Symbolic Aggregate approXimation method.  It translates
     series of data to a words, which can then be compared with other
     such words in symbolic distance space.
+
+    Attributes
+    -----------
+    word_size : int
+        Number of letters in transformed word
+
+    alphabet_size : int
+        Size of alphabet counted from A (3 means A, B, C)
+
+    scaling_factor : int, float
+        Scaling factor can be used to scale result dissimilarity of
+        two words created from light curves of different lengths
     """
 
     MIN_ALPH_SIZE = 3
@@ -25,13 +37,17 @@ class SAX(object):
 
     def __init__(self, word_size=8, alphabet_size=10, scaling_factor=1):
         """
-        Parameters:
+        Parameters
         -----------
-            word_size : int
-                Number of letters in transformed word
+        word_size : int
+            Number of letters in transformed word
 
-            alphabet_size : int
-                Size of alphabet counted from A (3 means A, B, C)
+        alphabet_size : int
+            Size of alphabet counted from A (3 means A, B, C)
+
+        scaling_factor : int, float
+            Scaling factor can be used to scale result dissimilarity of
+            two words created from light curves of different lengths
         """
         if alphabet_size < self.MIN_ALPH_SIZE or alphabet_size > self.MAX_ALPH_SIZE:
             raise DictionarySizeIsNotSupported("%i " % alphabet_size)

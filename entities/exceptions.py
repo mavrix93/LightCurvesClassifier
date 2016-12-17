@@ -1,10 +1,3 @@
-'''
-Created on Mar 2, 2016
-
-@author: Martin Vo
-'''
-
-
 class InvalidFilesPath(IOError):
     pass
 

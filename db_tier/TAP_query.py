@@ -1,9 +1,3 @@
-'''
-Created on Jan 5, 2016
-
-@author: Martin Vo
-'''
-
 from astropy.coordinates.sky_coordinate import SkyCoord
 from gavo import votable
 from gavo.votable.tapquery import RemoteError, WrongStatus, NetworkError
@@ -17,9 +11,16 @@ from utils.helpers import verbose
 class TapClient(LightCurvesDb):
     '''
     Common class for all TAP db clients
+
+    Attributes
+    ----------
+    COO_UNIT_CONV : int, float
+        Conversion rate of coordinates from degrees
+
+    QUOTING : list, tuple
+        Expressions with any of these symbols are quoted
     '''
 
-    # Default conversion rate of coordinates from degrees
     COO_UNIT_CONV = 1
     QUOTING = [" ", "/", "_", "-", ".", "+"]
 
@@ -27,30 +28,30 @@ class TapClient(LightCurvesDb):
         '''
         Post query according to given parameters
 
-        Parameters:
+        Parameters
         -----------
-            tap_params : dict 
-                Tap query parameters. It has to contains four keys.
+        tap_params : dict 
+            Tap query parameters. It has to contains four keys.
 
-                    Dict keys:
-                    ----------
-                        URL :str
-                            Url of tap server
+            Dict keys:
+                URL(str)
+                    Url of tap server
 
-                        table : str
-                            Name of table for query
+                table(str)
+                    Name of table for query
 
-                        select : str, list
-                            Select string or list of column names
+                select(str/list)
+                    Select string or list of column names
 
-                        conditions : list, tuple
-                            For each condition in the list of conditions there
-                            is a tuple - ("name of column", "condition") or
-                            ("name of column", "lower value", "upper value" for
-                            search in the range
+                conditions(list/tuple)
+                    For each condition in the list of conditions there
+                    is a tuple - ("name of column", "condition") or
+                    ("name of column", "lower value", "upper value" for
+                    search in the range
 
-        Returns:
-        -------
+        Returns
+        --------
+        list of lists
             Result from the query as nested lists
         '''
 
@@ -68,7 +69,6 @@ class TapClient(LightCurvesDb):
         verbose(query, 4, settings.VERBOSITY)
         verbose("TAP query is about to start", 3, settings.VERBOSITY)
 
-        print query
         # Run query
         try:
             job = votable.ADQLTAPJob(self.URL, query, timeout=1)

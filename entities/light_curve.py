@@ -1,8 +1,4 @@
-'''
-Created on Jan 7, 2016
-
-@author: Martin Vo
-'''
+from entities.exceptions import StarAttributeError
 import matplotlib.pyplot as plt
 import numpy as np
 from utils.data_analysis import compute_bins
@@ -10,7 +6,30 @@ from utils.data_analysis import histogram, variogram, to_ekvi_PAA,\
     abbe
 
 
-class LightCurve:
+class LightCurve(object):
+    """
+    Attributes
+    ----------
+    meta : dict
+        Optional metadata of the light curve. Recommended are
+        these keys:
+
+            xlabel - name of the first array
+
+            xlabel_unit - unit of the first array
+
+            ylabel - name of the second array
+
+            ylabel_unit - unit of the second array
+
+            color - filter name of the light curve
+
+            origin - db name
+
+            invert_yaxis - True/False if y axis is inverted
+    BAD_VALUES : iterable
+        List of banned values in light curve
+    """
 
     DEFAULT_META = {"xlabel": "HJD",
                     "xlabel_unit": "days",
@@ -19,38 +38,38 @@ class LightCurve:
                     "color": "N/A"
                     }
 
+    BAD_VALUES = (np.NaN, None, "", "-99", "-99.0")
+
     def __init__(self, param, meta={}):
         '''
-        Parameters:
+        Parameters
         -----------
-            param : list, array, string
-                Light curve data or path to the file of light curve.
+        param : list, array, string
+            Light curve data or path to the file of light curve.
 
-                   Option I:
-                        List (numpy array) of 3 lists(time, mag, err)
+               Option I:
+                    List (numpy array) of 3 lists(time, mag, err)
 
-                    Option II:
-                        List (numpy array) of N lists (time, mag  and err)
-                        one per obs
+                Option II:
+                    List (numpy array) of N lists (time, mag  and err)
+                    one per obs
+        meta : dict
+            Optional metadata of the light curve. Recommended are
+            these keys:
 
+                xlabel - name of the first array
 
-            meta : dict
-                Optional metadata of the light curve. Recommended are
-                these keys:
+                xlabel_unit - unit of the first array
 
-                    xlabel - name of the first array
+                ylabel - name of the second array
 
-                    xlabel_unit - unit of the first array
+                ylabel_unit - unit of the second array
 
-                    ylabel - name of the second array
+                color - filter name of the light curve
 
-                    ylabel_unit - unit of the second array
+                origin - db name
 
-                    color - filter name of the light curve
-
-                    origin - db name
-
-                    invert_yaxis - True/False if y axis is inverted
+                invert_yaxis - True/False if y axis is inverted
         '''
 
         if (type(param) is list or type(param) is tuple):
@@ -69,13 +88,16 @@ class LightCurve:
             else:
                 param[2] = np.array(param[2])
 
-            self.time = param[0]
-            self.mag = param[1]
-            self.err = param[2]
+            self.time, self.mag, self.err = self._cleanLC(param[0],
+                                                          param[1], param[2])
         else:
             raise Exception(
                 "Wrong object parameters\nLightCurve object is not created")
 
+        if not (len(self.time) == len(self.mag) == len(self.err)):
+            raise StarAttributeError("""Invalid light curve. Size of time, mag
+            and err lists have to be the some. Got %i, %i, %i""" %
+                                     (len(self.time), len(self.mag),  len(self.err)))
         # Set default meta values
         for key in self.DEFAULT_META:
             if not meta.get(key):
@@ -105,23 +127,24 @@ class LightCurve:
         '''Get standard deviation of magnitudes'''
         return np.std(self.mag)
 
-    def getHistogram(self, bins=None, centred=True, normed=True):
+    def getHistogram(self, bins=10, centred=True, normed=True):
         '''
         Distribution of magnitudes of light curve
 
-        Parameters:
+        Parameters
         -----------
-            bins : int
-                Number of values in histogram
+        bins : int
+            Number of values in histogram
 
-            centred : bool
-                If True values will be shifted (mean value into the zero)
+        centred : bool
+            If True values will be shifted (mean value into the zero)
 
-            normed : bool
-                If True values will be normed (according to standard deviation)
+        normed : bool
+            If True values will be normed (according to standard deviation)
 
-        Returns:
+        Returns
         --------
+        tuple/None
             Tuple of counts and bins (ranges) or None if
             there are no light curve
         '''
@@ -132,15 +155,15 @@ class LightCurve:
         Variogram is function which shows variability of time series
         in different time lags
 
-        Parameters:
+        Parameters
         -----------
-            bins : int
-                Number of bins for result variogram
+        bins : int
+            Number of bins for result variogram
 
-        Returns:
-        --------f
-            Tuple of two numpy arrays
-                -time lags and magnitude slope for the certain lag
+        Returns
+        --------
+        tuple of two numpy arrays
+            Time lags and magnitude slope for the certain lag
         '''
         if days_per_bin and not bins:
             bins = compute_bins(self.time, days_per_bin)
@@ -151,17 +174,26 @@ class LightCurve:
         '''
         Compute Abbe value of the light curve
 
-        Parameters:
+        Parameters
         -----------
-            bins : int
-                Percentage number of bins from original dimension
+        bins : int
+            Number of bins from original dimension
 
-        Returns:
+        Returns
         --------
+        float
             Abbe value of the light curve
         '''
-        if not bins:
-            bins = len(self.lightCurve.time)
-
-        x = to_ekvi_PAA(self.time, self.mag, bins)[1]
+        if bins:
+            x = to_ekvi_PAA(self.time, self.mag, bins)[1]
         return abbe(x, len(x))
+
+    def _cleanLC(self, time, mag, err):
+        cl_time, cl_mag, cl_err = [], [], []
+        for t, m, e in zip(time, mag, err):
+            if not (t in self.BAD_VALUES or m in self.BAD_VALUES or
+                    e in self.BAD_VALUES):
+                cl_time.append(t)
+                cl_mag.append(m)
+                cl_err.append(e)
+        return cl_time, cl_mag, cl_err

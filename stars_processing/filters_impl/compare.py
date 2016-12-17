@@ -1,40 +1,54 @@
-'''
-Created on Apr 12, 2016
 
-@author: Martin Vo
-'''
-import copy
-import warnings
-
-from conf import settings
-from entities.exceptions import QueryInputError
 import numpy as np
 from stars_processing.filters_tools.base_filter import BaseFilter, Learnable
-from utils.helpers import verbose,  checkDepth
+from utils.helpers import checkDepth
 
 
 class ComparingFilter(BaseFilter, Learnable):
     '''
-    This class is responsible for comparing light curves of stars according to implementations
-    of comparing subfilters 
+    This class is responsible for comparing light curves of stars according
+    to implementations of particular sub-filters
+
+    Attributes
+    -----------
+    compar_filters : iterable
+        List of comparative filter classes
+
+    compar_stars : iterable
+        List of Star objects which represent searched group of star objects
+
+    decider : Decider object
+        This object learns to recognize and then find searched star objects
+
+    plot_save_path : str, NoneType
+        Path to the folder where plots are saved if not None, else
+        plots are showed immediately
+
+    plot_save_name : str, NoneType
+        Name of plotted file
     '''
 
     def __init__(self, compar_filters, compar_stars, decider,
                  plot_save_path=None, plot_save_name="ComparingPlot.png",
                  **filters_params):
         """
-        Parameters:
+        Parameters
         -----------
-            compar_filters : iterable
-                List of comparative filter classes
+        compar_filters : iterable
+            List of comparative filter classes
 
-            compar_stars : iterable
-                List of Star objects which represent searched group of star objects
+        compar_stars : iterable
+            List of Star objects which represent searched group of star objects
 
-            decider : Decider object
-                This object learns to recognize and then find searched star objects 
+        decider : Decider object
+            This object learns to recognize and then find searched star objects
 
+        plot_save_path : str, NoneType
+            Path to the folder where plots are saved if not None, else
+            plots are showed immediately
 
+        plot_save_name : str, NoneType
+            Name of plotted file
         """
         self.compar_filters = [cls(**filters_params) for cls in compar_filters]
         self.comp_stars = compar_stars
@@ -53,13 +67,14 @@ class ComparingFilter(BaseFilter, Learnable):
 
     def applyFilter(self, stars, meth="average"):
         """
-        Parameters:
+        Parameters
         -----------
-            stars: iterable
-                List of Star objects to filter
+        stars: iterable
+            List of Star objects to filter
 
-        Returns:
+        Returns
         --------
+        list
             List of Star objects which passed thru filtering
         """
 
@@ -75,23 +90,24 @@ class ComparingFilter(BaseFilter, Learnable):
         '''
         Apply all filters and get their space coordinates
 
-        Parameters:
+        Parameters
         -----------
-            stars : Star objects
-                Stars to filtering
+        stars : Star objects
+            Stars to filtering
 
-            meth : str
-                Method key for calculating distance from comparative objects
+        meth : str
+            Method key for calculating distance from comparative objects
 
-                average     : take mean distance in each coordinate as
-                              object coordinate
-                closest     : take coordinate with closest distance as
-                              object coordinate
-                probable    : take coordinate with highest probability
-                              of membership. Can be performed just
-                              on learned decider
-        Returns:
+            average     : take mean distance in each coordinate as
+                          object coordinate
+            closest     : take coordinate with closest distance as
+                          object coordinate
+            probable    : take coordinate with highest probability
+                          of membership. Can be performed just
+                          on learned decider
+        Returns
         --------
+        list
             List of coordinates
         '''
         space_coordinates = []
@@ -119,13 +135,14 @@ class ComparingFilter(BaseFilter, Learnable):
         '''
         Calculate distances of inspected star and template stars
 
-        Parameters:
+        Parameters
         -----------
-            star: Star object
-                Star to filter
+        star: Star object
+            Star to filter
 
-        Returns:
+        Returns
         --------
+        list
             List of all distances (coordinates) of inspected star to all
             template stars
         '''
@@ -155,6 +172,7 @@ class ComparingFilter(BaseFilter, Learnable):
         return coordinates
 
     def _findClosestCoord(self, coords):
+        """Get closest coordinates"""
         checkDepth(coords, 2)
 
         best_dist = 1e99
@@ -169,6 +187,7 @@ class ComparingFilter(BaseFilter, Learnable):
         return best_coord
 
     def _findAverageCoord(self, coords):
+        """Get average coordinate"""
         checkDepth(coords, 2)
         x = np.array(coords)
         mean_coord = []

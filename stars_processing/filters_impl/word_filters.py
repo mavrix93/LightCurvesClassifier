@@ -1,8 +1,4 @@
 '''
-Created on Mar 20, 2016
-
-@author: Martin Vo
-
 Classes responsible for filtering stars (comparing template stars
 with tested stars) via their words (data transformed into
 symbolic representation)
@@ -20,28 +16,28 @@ class CurvesShapeFilter(ComparativeSubFilter, SymbolicRepresentation):
     representation of light curve. Template for filtering is build up as a list
     of reference stars which light curves will be taken for comparing
 
-    Attributes:
+    Attributes
     -----------
+    lc_days_per_bin : float
+        Ratio which decides about length of the word
+
+    lc_alphabet_size : int
+        Range of of used letters
+
+    slide : bool
+        If True, words with different lengths are dynamically compared
+        by sliding shorter word thru longer
+    '''
+
+    def __init__(self, lc_days_per_bin, lc_alphabet_size, **kwargs):
+        '''
+        Parameters
+        -----------
         lc_days_per_bin : float
             Ratio which decides about length of the word
 
         lc_alphabet_size : int
             Range of of used letters
-
-        slide : bool
-            If True, words with different lengths are dynamically compared
-            by sliding shorter word thru longer
-    '''
-
-    def __init__(self, lc_days_per_bin, lc_alphabet_size, **kwargs):
-        '''
-        Parameters:
-        -----------
-            lc_days_per_bin : float
-                Ratio which decides about length of the word
-
-            lc_alphabet_size : int
-                Range of of used letters
         '''
         self.lc_days_per_bin = lc_days_per_bin
         self.lc_alphabet_size = lc_alphabet_size
@@ -49,13 +45,13 @@ class CurvesShapeFilter(ComparativeSubFilter, SymbolicRepresentation):
 
     def getWord(self, star):
         '''
-        Parameters:
+        Parameters
         -----------
-            Star object with light curve
+        Star object with light curve
 
-        Returns:
+        Returns
         --------
-            String representation of light curve
+        String representation of light curve
         '''
         word_size = compute_bins(star.lightCurve.time, self.lc_days_per_bin)
         self.sax = SAX(word_size, self.lc_alphabet_size)
@@ -68,28 +64,28 @@ class HistShapeFilter(ComparativeSubFilter, SymbolicRepresentation):
     representation of histogram. Template for filtering is build up as a list
     of reference stars which histograms will be taken for comparing
 
-    Attributes:
+    Attributes
     -----------
+    hist_bins : int
+        Length of result histogram
+
+    hist_alphabet_size : int
+        Range of of used letters
+
+    slide : bool
+        If True, words with different lengths are dynamically compared
+        by sliding shorter word thru longer
+    '''
+
+    def __init__(self, hist_bins, hist_alphabet_size, **kwargs):
+        '''
+        Parameters
+        -----------
         hist_bins : int
             Length of result histogram
 
         hist_alphabet_size : int
             Range of of used letters
-
-        slide : bool
-            If True, words with different lengths are dynamically compared
-            by sliding shorter word thru longer
-    '''
-
-    def __init__(self, hist_bins, hist_alphabet_size, **kwargs):
-        '''
-        Parameters:
-        -----------
-            hist_bins : int
-                Length of result histogram
-
-            hist_alphabet_size : int
-                Range of of used letters
         '''
         self.hist_bins = hist_bins
         self.hist_alphabet_size = hist_alphabet_size
@@ -97,12 +93,13 @@ class HistShapeFilter(ComparativeSubFilter, SymbolicRepresentation):
 
     def getWord(self, star):
         '''
-        Parameters:
+        Parameters
         -----------
-            Star object with light curve
+        Star object with light curve
 
-        Returns:
-        --------
+        Returns
+        -------
+        str
             String representation of light curve's histogram
         '''
         hist = star.lightCurve.getHistogram(bins=self.hist_bins)[0]
@@ -116,28 +113,28 @@ class VariogramShapeFilter(ComparativeSubFilter, SymbolicRepresentation):
     representation of light curve. Template for filtering is build up as a list
     of reference stars which light curves will be taken for comparing
 
-    Attributes:
+    Attributes
     -----------
+    vario_days_per_bin : float
+        Ratio which decides about length of the word
+
+    vario_alphabet_size : int
+        Range of of used letters
+
+    slide : bool
+        If True, words with different lengths are dynamically compared
+        by sliding shorter word thru longer
+    '''
+
+    def __init__(self, vario_days_per_bin, vario_alphabet_size, **kwargs):
+        '''
+        Parameters
+        -----------
         vario_days_per_bin : float
             Ratio which decides about length of the word
 
         vario_alphabet_size : int
             Range of of used letters
-
-        slide : bool
-            If True, words with different lengths are dynamically compared
-            by sliding shorter word thru longer
-    '''
-
-    def __init__(self, vario_days_per_bin, vario_alphabet_size, **kwargs):
-        '''
-        Parameters:
-        -----------
-            vario_days_per_bin : float
-                Ratio which decides about length of the word
-
-            vario_alphabet_size : int
-                Range of of used letters
         '''
         self.vario_days_per_bin = vario_days_per_bin
         self.vario_alphabet_size = vario_alphabet_size
@@ -145,12 +142,13 @@ class VariogramShapeFilter(ComparativeSubFilter, SymbolicRepresentation):
 
     def getWord(self, star):
         '''
-        Parameters:
+        Parameters
         -----------
-            Star object with light curve
+        Star object with light curve
 
-        Returns:
+        Returns
         --------
+        str
             String representation of light curve's variogram
         '''
 

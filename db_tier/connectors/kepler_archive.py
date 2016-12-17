@@ -3,6 +3,11 @@ Created on Nov 30, 2016
 
 @author: Martin Vo
 '''
+
+from __future__ import division
+
+
+from astropy.coordinates.sky_coordinate import SkyCoord
 from astroquery.exceptions import InvalidQueryError
 import kplr
 
@@ -11,17 +16,21 @@ from entities.light_curve import LightCurve
 from entities.star import Star
 import numpy as np
 
+# TODO: Delete fits files downloaded to .kplr/data
+
 
 class KeplerArchive(LightCurvesDb):
     '''
-    This is connector to Kepler archive of light curves using kplr package. 
-    So far there are two options of query:
+    This is connector to Kepler archive of light curves using kplr package
 
-        1) By kic number 
-
-        2) By coordinates and radius for square search
-
-    As all LightCurvesDb it have methods for obtaining Star objects with light curves
+    EXAMPLE
+    -------
+    queries = [{"ra": 297.8399, "dec": 46.57427, "delta": 10},
+               {"kic_num": 9787239},
+               {"kic_jkcolor": (0.3, 0.4), "max_records": 5}]
+    client = StarsProvider().getProvider(obtain_method="KeplerArchive",
+                                         obtain_params=queries)
+    stars = client.getStarsWithCurves()
     '''
 
     RA_IDENT = "kic_degree_ra"
@@ -66,23 +75,38 @@ class KeplerArchive(LightCurvesDb):
         self.query = obtain_params
         self.client = kplr.API()
 
+        # Default value to resolve if not area search
+        self.delta = None
+
     def getStarsWithCurves(self):
         """
-        Returns:
+        Returns
         --------
+        list of `Star` objects
             List of Star objects with light curves according to queries
         """
         return self.getStars(lc=True)
 
     def getStars(self, lc=False):
         """
-        Returns:
+        Returns
         --------
+        list of `Star` objects
             List of Star objects according to queries
         """
         stars = []
         for que in self.query:
-            stars += self._getStars(que, lc)
+            _stars = self._getStars(que, lc)
+            if self.delta:
+                nearest = que.get("nearest", False)
+
+                checked_stars = self.coneSearch(SkyCoord(self.ra,
+                                                         self.dec, unit="deg"),
+                                                _stars, self.delta,
+                                                nearest=nearest)
+                stars += checked_stars
+            else:
+                stars += _stars
         return stars
 
     def _getStars(self, que, lc=True):
@@ -92,33 +116,35 @@ class KeplerArchive(LightCurvesDb):
         ra = que.get("ra", None)
         dec = que.get("dec", None)
         delta = que.get("delta", None)
-
         if kic_num:
             _stars = [self.client.star(kic_num)]
-
-        elif ra and dec and delta:
-            try:
-                ra = float(ra)
-                dec = float(dec)
-                delta = float(delta) / 3600.0
-            except:
-                raise InvalidQueryError(
-                    "Coordinates parameters conversion to float has failed")
-
-            query = {"kic_degree_ra": "%f..%f" % (ra - delta / 2, ra + delta / 2),
-                     "kic_dec": "%f..%f" % (dec - delta / 2, dec + delta / 2)}
-
-            _stars = self.client.stars(**query)
-
+            self.delta = None
         else:
-            raise InvalidQueryError("Unresolved query parameters:\n%s" % que)
+            if ra and dec and delta:
+                try:
+                    delta = delta / 3600.0
+                    self.ra, self.dec, self.delta = ra, dec, delta
+                except:
+                    raise InvalidQueryError(
+                        "Coordinates parameters conversion to float has failed")
 
-        stars = []
+                query = {"kic_degree_ra": "%f..%f" % (ra - delta, ra + delta),
+                         "kic_dec": "%f..%f" % (dec - delta, dec + delta)}
 
-        for _star in _stars:
-            stars.append(self._parseStar(_star, lc))
+            else:
+                query = {}
+                for key, value in que.iteritems():
+                    if hasattr(value, "__iter__"):
+                        query[key] = "%s..%s" % (value[0], value[1])
+                    else:
+                        query[key] = value
 
-        return stars
+            try:
+                _stars = self.client.stars(**query)
+            except:
+                raise InvalidQueryError("Unresolved query.\n%s" % query)
+
+        return [self._parseStar(_star, lc) for _star in _stars]
 
     def _parseStar(self, _star, lc):
         """Transform kplr Star object into package Star object"""
@@ -126,7 +152,8 @@ class KeplerArchive(LightCurvesDb):
         star = Star()
         more = {}
         ident = {}
-        for key, value in _star.__dict__.iteritems():
+        data_dict = _star.__dict__
+        for key, value in data_dict.iteritems():
 
             if key in self.STAR_MORE_MAP.keys():
                 more[self.STAR_MORE_MAP[key]] = value
@@ -136,28 +163,26 @@ class KeplerArchive(LightCurvesDb):
                 ident[self.IDENTIFIER[key]]["identifier"] = value
                 ident[self.IDENTIFIER[key]]["name"] = "kic_" + value
 
-            elif key == self.RA_IDENT:
-                ra = value
-
-            elif key == self.DEC_IDENT:
-                dec = value
-
-            elif key == self.NAME:
-                star.name = value
+        ra = data_dict.get(self.RA_IDENT)
+        dec = data_dict.get(self.DEC_IDENT)
+        star.name = "KIC_" + data_dict.get(self.NAME, "")
 
         if lc:
-            star.lightCurve, star.name = self._getLightCurve(_star, lim=1)
+            star.lightCurve, _ = self._getLightCurve(_star, lim=1)
+
         star.coo = (ra, dec)
         star.ident = ident
         star.more = more
+
         return star
 
     def _getLightCurve(self, star, lim=None):
         """Obtain light curve"""
 
-        raw_lcs = star.get_light_curves(short_cadence=False)[:lim]
+        raw_lcs = star.get_light_curves(fetch=False)[:lim]
 
         ready_lcs = []
+        obj_name = None
 
         for lc in raw_lcs:
             with lc.open() as f:
@@ -167,9 +192,15 @@ class KeplerArchive(LightCurvesDb):
                 flux = hdu_data["sap_flux"].tolist()
                 ferr = hdu_data["sap_flux_err"].tolist()
 
-            ready_lcs.append(LightCurve([[x for x in time if not np.isnan(x)],
-                                         [x for x in flux if not np.isnan(
-                                             x)],
-                                         [x for x in ferr if not np.isnan(x)]], meta=self.LC_META))
+            ready_lcs.append(LightCurve(self._cleanLc(time, flux, ferr),
+                                        meta=self.LC_META))
 
         return ready_lcs, obj_name
+
+    def _cleanLc(self, time, flux, err):
+        lc = []
+        for t, f, e in zip(time, flux, err):
+            obs = [t, f, e]
+            if np.NaN not in obs:
+                lc.append(obs)
+        return lc

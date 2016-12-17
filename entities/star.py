@@ -1,9 +1,3 @@
-'''
-Created on Jan 9, 2016
-
-@author: Martin Vo
-'''
-
 from __future__ import division
 
 from astropy.coordinates.sky_coordinate import SkyCoord
@@ -11,7 +5,6 @@ import numpy
 from warnings import warn
 
 import astropy.units as u
-from entities.exceptions import QueryInputError
 from entities.exceptions import StarAttributeError
 from entities.light_curve import LightCurve
 
@@ -21,71 +14,87 @@ class Star(object):
     Star is base object in astronomy. This class is responsible for keeping
     basic informations about stellar objects. It's possible to create empty
     star and add parameters additionally
+
+    Attributes
+    -----------
+    ident : dict
+            Dictionary of identifiers of the star. Each key of the dict
+            is name of a database and its value is another dict of database
+            identifiers for the star (e.g. 'name') which can be used
+            as an unique identifier for querying the star. For example:
+                ident = {"OgleII" : {"name" : "LMC_SC1_1",
+                                    "db_ident" : {"field_num" : 1,
+                                                  "starid" : 1,
+                                                  "target" : "lmc"},
+                                                  ...}
+            Please keep convention as is shown above. Star is able to
+            be queried again automatically if ident key is name of
+            database connector and it contains dictionary called
+            "db_ident". This dictionary contains unique query for
+            the star in the database.
+    name : str
+        Optional name of the star across the all databases
+    coo : astropy.coordinates.sky_coordinate.SkyCoord
+        Coordinate of the star
+    more : dict
+        Additional informations about the star in dictionary. This
+        attribute can be considered as a container. These parameters
+        can be then used for filtering. For example it can contains
+        color indexes:
+            more = { "b_mag" : 17.56, "v_mag" : 16.23 }
+    star_class : str
+        Name of category of the star e.g. 'cepheid', 'RR Lyrae', etc.
+    light_curves : list
+        Light curve objects of the star
+    EPS : float
+        Max distance in degrees to consider two stars equal
     '''
-    EPS = 0.000138        # Max distance in degrees to consider two stars equal
+
+    EPS = 0.000138
 
     def __init__(self, ident={}, name=None, coo=None, more={},
                  starClass=None):
         '''
-        Parameters:
+        Parameters
         -----------
-            ident : dict
-                Dictionary of identifiers of the star. Each key of the dict
-                is name of a database and its value is another dict of database
-                identifiers for the star (e.g. 'name') which can be used
-                as an unique identifier for querying the star. For example:
+        ident : dict
+            Dictionary of identifiers of the star. Each key of the dict
+            is name of a database and its value is another dict of database
+            identifiers for the star (e.g. 'name') which can be used
+            as an unique identifier for querying the star. For example:
 
-                    ident = {"OgleII" : {"name" : "LMC_SC1_1",
-                                        "db_ident" : {"field_num" : 1,
-                                                      "starid" : 1,
-                                                      "target" : "lmc"},
-                                                      ...}
+                ident = {"OgleII" : {"name" : "LMC_SC1_1",
+                                    "db_ident" : {"field_num" : 1,
+                                                  "starid" : 1,
+                                                  "target" : "lmc"},
+                                                  ...}
 
-                CONVENTION:
-                -----------
-                    Please keep convention as is shown above. Star is able to
-                    be queried again automatically if ident key is name of
-                    database connector and it contains dictionary called
-                    "db_ident". This dictionary contains unique query for
-                    the star in the database.
+            Please keep convention as is shown above. Star is able to
+            be queried again automatically if ident key is name of
+            database connector and it contains dictionary called
+            "db_ident". This dictionary contains unique query for
+            the star in the database.
+        name : str
+            Optional name of the star across the all databases
+        coo : SkyCoord object
+            Coordinate of the star
+        more : dict
+            Additional informations about the star in dictionary. This
+            attribute can be considered as a container. These parameters
+            can be then used for filtering. For example it can contains
+            color indexes:
 
-
-            name : str
-                Optional name of the star across the all databases
-
-            coo : SkyCoord object
-                Coordinate of the star
-
-            more : dict
-                Additional informations about the star in dictionary. This
-                attribute can be considered as a container. These parameters
-                can be then used for filtering. For example it can contains
-                color indexes:
-
-                    more = { "b_mag" : 17.56, "v_mag" : 16.23 }
-
-            star_class : str
-                Name of category of the star e.g. 'cepheid', 'RR Lyrae', etc.
-
+                more = { "b_mag" : 17.56, "v_mag" : 16.23 }
+        star_class : str
+            Name of category of the star e.g. 'cepheid', 'RR Lyrae', etc.
         '''
         self.ident = ident
         self.coo = coo
         self.more = more
         self.light_curves = []
-        self.curveWord = ""
-        self.histWord = ""
-        self.varioWord = ""
-        self.matchStar = None
-        self.matchScore = None
         self.starClass = starClass
-        self.scoreList = []
-        if not name:
-            self._name = self.getIdentName()
-        else:
-            self._name = name
 
-    def __len__(self):
-        return 1
+        self.name = name
 
     def __eq__(self, other):
         if not (isinstance(other, Star)):
@@ -132,22 +141,42 @@ class Star(object):
                                         constructing coordinate object""")
         self._coo = given_coo
 
+    @property
+    def lightCurve(self):
+        if self.light_curves:
+            return self.light_curves[0]
+        return None
+
+    @lightCurve.setter
+    def lightCurve(self, lc):
+        self.putLightCurve(lc)
+
+    @property
+    def name(self):
+        if self._name:
+            return self._name
+        return self.getIdentName()
+
+    @name.setter
+    def name(self, name):
+        self._name = name
+
     def getInRange(self, other, eps):
         '''
         This method decides whether other star is in eps range of this star
         according to coordinates
 
-        Parameters:
+        Parameters
         -----------
             other : Star object
                 Star to compare with
-
             eps : float, astropy.unit.quantity.Quantity
                 Range in degrees
 
-        Returns:
+        Returns
         --------
-            True/False
+        bool
+            If in range
         '''
         if not isinstance(eps, u.quantity.Quantity):
             eps = eps * u.deg
@@ -162,26 +191,28 @@ class Star(object):
         '''
         Compute distance between this and other star in degrees
 
-        Parameters:
+        Parameters
         -----------
             other : Star object
                 Another star object to compare with
 
-        Returns:
+        Returns
         --------
+        astropy.coordinates.angles.Angle
             Distance of stars in degrees
         '''
         return self.coo.separation(other.coo)
 
     def getIdentName(self, db_key=None):
         """
-        Parameters:
+        Parameters
         -----------
             db_key : str
                 Database key
 
-        Returns:
+        Returns
         --------
+        str
             Name of the star in given database. If it is not specified,
             the first database will be taken to construct the name
         """
@@ -198,20 +229,11 @@ class Star(object):
             star_name += "_%s_%s" % (key, self.ident[db_key][key])
         return star_name
 
-    @property
-    def lightCurve(self):
-        if self.light_curves:
-            return self.light_curves[0]
-        return None
-
-    @lightCurve.setter
-    def lightCurve(self, lc):
-        self.putLightCurve(lc)
-
     def putLightCurve(self, lc, meta={}):
         '''Add light curve to the star'''
         if not isinstance(lc, numpy.ndarray) and not lc:
-            raise QueryInputError("Invalid light curve: %s" % lc)
+            warn("Invalid light curve: %s\nLight curve not created to star %s" % (
+                lc, self.name))
 
         if hasattr(lc, "__iter__") and len(lc) and isinstance(lc[0], LightCurve):
             self.light_curves += lc
@@ -221,13 +243,3 @@ class Star(object):
 
         elif lc:
             self.light_curves.append(lc)
-
-    @property
-    def name(self):
-        if self._name:
-            return self._name
-        return self.getIdentName()
-
-    @name.setter
-    def name(self, name):
-        self._name = name

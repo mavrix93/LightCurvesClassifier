@@ -13,15 +13,15 @@ from db_tier.vizier_tap_base import VizierTapBase
 # NOTE: Please note that coordinates query is not available now
 class MachoDb(VizierTapBase, LightCurvesDb):
     '''
-    Client for Macho database
+    Client for MACHO database. It inherits `VizierTapBase` - see
+    documentation of this class to class attributes description.
 
-    EXAMPLES:
-    ---------
-        queries = [ {"ra" : 0.4797, "dec": -67.1290, "delta" : 10},
-                    {"Field" : 1 , "Tile": 3441, "Seqn" : 25}]
-        client = StarsProvider().getProvider( obtain_method = "MachoDb",
-                                              obtain_params = queries)
-        stars = client.getStarsWithCurves()
+    EXAMPLES
+    --------
+    queries = [{"Field": 1 , "Tile": 3441, "Seqn": 25}]
+    client = StarsProvider.getProvider(obtain_method="MachoDb",
+                                       obtain_params=queries)
+    stars = client.getStarsWithCurves()
     '''
 
     TABLE = "II/247/machovar"
@@ -34,7 +34,7 @@ class MachoDb(VizierTapBase, LightCurvesDb):
                "xlabel_unit": "MJD (JD-2400000.5)",
                "origin": "MACHO"}
 
-    IDENT_MAP = {"MachoDb":  ("Field", "Tile", "Seqn")}
+    IDENT_MAP = {"MachoDb": ("Field", "Tile", "Seqn")}
     MORE_MAP = collections.OrderedDict((("Class", "var_type"),
                                         ("Vmag", "v_mag"),
                                         ("Rmag", "r_mag"),

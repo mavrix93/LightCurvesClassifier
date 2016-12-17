@@ -17,13 +17,13 @@ from db_tier.base_query import LightCurvesDb
 from entities.exceptions import NoInternetConnection, QueryInputError
 from entities.star import Star
 import numpy as np
-from utils.commons import args_type, mandatory_args, default_values
 from utils.helpers import verbose
 
 
 # Throws:
 # NOTE: This is kind of messy version of db connector. Lots of changes in order
-# to get clean connector need to be done. Anyway it is working.
+# to get clean connector need to be done. Anyway it is working...
+# TODO: Area search returns just one star
 class OgleII(LightCurvesDb):
     '''
     OgleII class is responsible for searching stars in OGLE db according
@@ -65,7 +65,6 @@ class OgleII(LightCurvesDb):
     def oneQuery(self, query):
         # Query parameters
         self.tmpdir = None
-        self.stars = []
         self.field = ""
         self.starid = ""
         self.use_field = "off"
@@ -145,15 +144,15 @@ class OgleII(LightCurvesDb):
         for query in self.queries:
             self.oneQuery(query)
             try:
-                self._post_query()
+                stars = self._post_query()
                 if self.use_ra == "on":
                     checked_stars = []
-                    for star in self.stars:
+                    for star in stars:
                         if self.coneSearch(star.coo, self.coo, self.delta):
                             checked_stars.append(star)
                     res_stars += checked_stars
                 else:
-                    res_stars += self.stars
+                    res_stars += stars
             except URLError:
                 if self.query_err_repetitions < self.MAX_REPETITIONS:
                     self.getStars()
@@ -170,12 +169,12 @@ class OgleII(LightCurvesDb):
         for query in self.queries:
             self.oneQuery(query)
             try:
-                self._post_query()
+                stars = self._post_query()
             except URLError:
                 raise NoInternetConnection(
                     "Connection to OGLEII database failed")
 
-            ready_stars = self._parse_light_curves()
+            ready_stars = self._parse_light_curves(stars)
 
             verbose("Light curves have been saved", 3, settings.VERBOSITY)
 
@@ -255,7 +254,7 @@ class OgleII(LightCurvesDb):
         # TODO: Catch timeout (repeat?)
         except socket.timeout:
             if self.query_err_repetitions < self.MAX_REPETITIONS:
-                self._post_query
+                self._post_query()
             else:
                 raise
 
@@ -263,7 +262,7 @@ class OgleII(LightCurvesDb):
 
         verbose(
             "OGLEII query is done. Parsing result...", 3, settings.VERBOSITY)
-        self.stars = self._parse_result(result)
+        return self._parse_result(result)
 
     def _parse_result(self, result):
         '''Parsing result from retrieved web page'''
@@ -356,13 +355,12 @@ class OgleII(LightCurvesDb):
             stars), 3, settings.VERBOSITY)
         return stars
 
-    def _parse_light_curves(self):
+    def _parse_light_curves(self, stars):
         '''This help method makes query in order to get page with light curve and download them'''
 
         ready_stars = []
-        numStars = len(self.stars)
-        i = 0
-        for star in self.stars:
+        numStars = len(stars)
+        for i, star in enumerate(stars):
             verbose("Parsing query result " + str(i) + "/" +
                     str(numStars), 3, settings.VERBOSITY)
 
@@ -385,7 +383,6 @@ class OgleII(LightCurvesDb):
                 if (star_curve and len(star_curve) != 0):
                     star.putLightCurve(np.array(star_curve), meta=self.LC_META)
             ready_stars.append(star)
-            i += 1
         return ready_stars
 
     def _make_tmpdir(self, field, starid):

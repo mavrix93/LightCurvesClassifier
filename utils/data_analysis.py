@@ -42,7 +42,7 @@ def to_PAA(x, bins):
 
 
 def to_ekvi_PAA(x, y, bins=None, days_per_bin=None):
-    ''' 
+    '''
     This method perform PAA (see above) on y data set, but it will consider
     different time steps between values (in x data set) and return corrected data set
     '''
@@ -61,8 +61,10 @@ def to_ekvi_PAA(x, y, bins=None, days_per_bin=None):
         if bins > len(x):
             bins = len(x)
 
-    if not len(x) == len(y):
-        raise Exception("X and Y have no same length")
+    n_x = len(x)
+    n_y = len(y)
+    if not n_x == n_y:
+        raise Exception("X and Y have no same length (%i and %i" % (n_x, n_y))
 
     # Check if sorted times
     sorting = np.argsort(x)
@@ -85,8 +87,12 @@ def to_ekvi_PAA(x, y, bins=None, days_per_bin=None):
         x_frame_sum += x[i]
         items_in_this_frame += 1
         if (x[i] >= x_beg + frame_len * frame_num):
-            y_aprox.append(y_frame_sum / float(items_in_this_frame))
-            x_aprox.append(x_frame_sum / float(items_in_this_frame))
+            val_y = y_frame_sum / items_in_this_frame
+            val_x = x_frame_sum / items_in_this_frame
+
+            if val_x and val_y:
+                y_aprox.append(val_x)
+                x_aprox.append(val_y)
             x_frame_sum = 0
             y_frame_sum = 0
             items_in_this_frame = 0
@@ -169,7 +175,7 @@ def histogram(xx, yy, bins_num=None, centred=True, normed=True):
     @param centred: If True values will be shifted (mean value into the zero)
     @param normed: If True values will be normed (according to standart deviation)
     '''
-    if (bins_num == None):
+    if not bins_num:
         warnings.warn(
             "Number of bins of histogram was not specified. Setting default value.")
         bins_num = 10
@@ -177,12 +183,10 @@ def histogram(xx, yy, bins_num=None, centred=True, normed=True):
     # Fix light curve length in case of non-equidistant time steps
     # between observations
     x = to_ekvi_PAA(xx, yy, bins=len(xx))[1]
-
     # Center values to zero
     if centred:
         x = x - x.mean()
     hist, bins = np.histogram(x, bins=bins_num)
-
     # Norm histogram (number of point up or below the mean value)
     if normed:
         hist = normalize(hist)

@@ -1,8 +1,3 @@
-'''
-Created on Dec 8, 2016
-
-@author: Martin Vo
-'''
 import requests
 
 from db_tier.TAP_query import TapClient
@@ -17,107 +12,107 @@ class VizierTapBase(TapClient):
     situations new connectors will contain just few class attributes and 
     there will not be need to write new or overwrite current methods.
 
-    Attributes:
+    Attributes
     -----------
-        TAP_URL : str
-            Url to tap server
+    TAP_URL : str
+        Url to tap server
 
-        FILES_URL : str
-            Path to light curve files storage
+    FILES_URL : str
+        Path to light curve files storage
 
-        TABLE : str
-            Name of querid table
+    TABLE : str
+        Name of querid table
 
-        RA : str
-            Name of right ascension column. It should be in degrees, anyway it is
-            necessary to convert them
+    RA : str
+        Name of right ascension column. It should be in degrees, anyway it is
+        necessary to convert them
 
-        DEC : str
-            Name of declination column. It should be in degrees, anyway it is
-            necessary to convert them
+    DEC : str
+        Name of declination column. It should be in degrees, anyway it is
+        necessary to convert them
 
-        NAME : preformated str
-            Preformated string with dictionary keys.
+    NAME : preformated str
+        Preformated string with dictionary keys.
 
-            EXAMPLE:
-            --------
-                "{Field}.{Tile}.{Seqn}"
+        EXAMPLE
+        --------
+            "{Field}.{Tile}.{Seqn}"
 
-            Keys represent name of columns
+        Keys represent name of columns
 
-        LC_FILE : str
-            Column name which can be used for obtaining light curve files.
-            By default it is set to None that means that is not necessary
-            to include any other column in order to get light curves
+    LC_FILE : str
+        Column name which can be used for obtaining light curve files.
+        By default it is set to None that means that is not necessary
+        to include any other column in order to get light curves
 
-        LC_META : dict
-            Meta data for light curve.
+    LC_META : dict
+        Meta data for light curve.
 
-            Example:
-            --------
-                {"xlabel" : "Terrestrial time",
-               "xlabel_unit" : "days",
-               "ylabel" : "Flux",
-               "ylabel_unit" : "Electrons per second",
-               "color" : "N/A",
-               "invert_yaxis" : False}
+        Example
+        --------
+            {"xlabel" : "Terrestrial time",
+           "xlabel_unit" : "days",
+           "ylabel" : "Flux",
+           "ylabel_unit" : "Electrons per second",
+           "color" : "N/A",
+           "invert_yaxis" : False}
 
-            Light curve is expected by default (magnitudes and Julian days)
+        Light curve is expected by default (magnitudes and Julian days)
 
-        TIME_COL : int
-            Number (starts with 0) of times column in data file
+    TIME_COL : int
+        Number (starts with 0) of times column in data file
 
-        MAG_COL : int
-            Number (starts with 0) of magnitudes column in data file
+    MAG_COL : int
+        Number (starts with 0) of magnitudes column in data file
 
-        ERR_COL : int
-            Number (starts with 0) of errors column in data file
+    ERR_COL : int
+        Number (starts with 0) of errors column in data file
 
-        ERR_MAG_RATIO : float:
-            Ratio between error and magnitude values
+    ERR_MAG_RATIO : float:
+        Ratio between error and magnitude values
 
-            Note:
-                Added because of Corot Archive of Faint Stars.
+        Note:
+            Added because of Corot Archive of Faint Stars.
 
-        IDENT_MAP : ordered dict
-            Ordered dictionary of "name of database" : "column name/s
-            of identifiers"
+    IDENT_MAP : ordered dict
+        Ordered dictionary of "name of database" : "column name/s
+        of identifiers"
 
-            EXAMPLE:
-            --------
-                {"MachoDb" :  ("Field", "Tile", "Seqn") }
+        Example
+        --------
+            IDENT_MAP = {"MachoDb" :  ("Field", "Tile", "Seqn") }
 
-                This allows NAME attribute to access these keys (see above)
-                and construct unique identifier for the star.
+            This allows NAME attribute to access these keys (see above)
+            and construct unique identifier for the star.
 
-            For one item dictionaries can be used simple dictionary, because
-            there is no need to keep order of items.
+        For one item dictionaries can be used simple dictionary, because
+        there is no need to keep order of items.
 
-        MORE_MAP : ordered dict
-            Ordered dictionary of "column names" : "key in new dictionary which
-            is be stored in Star object"
+    MORE_MAP : ordered dict
+        Ordered dictionary of "column names" : "key in new dictionary which
+        is be stored in Star object"
 
-            EXAMPLE:
-            --------
-                collections.OrderedDict((("Per", "period"),
-                                        ("Class" , "var_type"),
-                                        ("Jmag" , "j_mag"),
-                                        ("Kmag" , "k_mag"),
-                                        ("Hmag" , "h_mag")))
+        Example
+        --------
+            MORE_MAP = collections.OrderedDict((("Per", "period"),
+                                                ("Class" , "var_type"),
+                                                ("Jmag" , "j_mag"),
+                                                ("Kmag" , "k_mag"),
+                                                ("Hmag" , "h_mag")))
 
 
-    METHODS:
+    Methods
     --------
-        This class inherits TapClient which brings methods for creating,
-        posting and returning tap queries. Methods of this class manage
-        results and create Star objects and light curves.
+    This class inherits TapClient which brings methods for creating,
+    posting and returning tap queries. Methods of this class manage
+    results and create Star objects and light curves.
 
-        There is no need overwrite methods in inherited classes in the most
-        cases. Anyway obtaining light curves can be different for many
-        databases. In this case it would be sufficient to just implement
-        new _getLightCurve method.
+    There is no need overwrite methods in inherited classes in the most
+    cases. Anyway obtaining light curves can be different for many
+    databases. In this case it would be sufficient to just implement
+    new _getLightCurve method.
 
-        Brief description of methods can be found below at their declaration.
+    Brief description of methods can be found below at their declaration.
     '''
 
     # Common attribute for all vizier tap connectors
@@ -140,11 +135,11 @@ class VizierTapBase(TapClient):
 
     def __init__(self, queries):
         '''
-        Parameters:
+        Parameters
         -----------
-            queries : list, dict
-                List of queries. Each query is dictionary of query parameters
-                and its values
+        queries : list, dict
+            List of queries. Each query is dictionary of query parameters
+            and its values
         '''
         # Case of just one query
         if type(queries) is dict:
@@ -156,13 +151,14 @@ class VizierTapBase(TapClient):
         '''
         Get star objects
 
-        Parameters:
+        Parameters
         ----------
-            lc : bool
-                Star is appended by light curve if True
+        lc : bool
+            Star is appended by light curve if True
 
-        Returns:
-        --------
+        Returns
+        -------
+        list
             List of stars
         '''
         select = set([self.RA, self.DEC, self.LC_FILE] + self.MORE_MAP.keys())
@@ -212,8 +208,19 @@ class VizierTapBase(TapClient):
         '''
         Get star objects with light curves
 
-        Returns:
+        Parameters
+        ----------
+        kwargs : dict
+            Optional parameters which have effect just if certain database
+            provides this option.
+
+            For example CoRoT archive contains very large light curves,
+            so the dimension of light curve can be reduced by `max_bins`
+            keyword.
+
+        Returns
         --------
+        list
             List of stars with their light curves
         '''
         return self.getStars(lc=True, **kwargs)
@@ -222,19 +229,20 @@ class VizierTapBase(TapClient):
         """
         Create Star objects from query result
 
-        Parameters:
-        -----------
-            data : list
-                Result from query
+        Parameters
+        ----------
+        data : list
+            Result from query
 
-            keys : list
-                Name of columns of data
+        keys : list
+            Name of columns of data
 
-            lc_opt : bool
-                Obtain light curves if True
+        lc_opt : bool
+            Obtain light curves if True
 
-        Returns:
+        Returns
         --------
+        list
             List of Star objects
         """
         stars = []
@@ -277,22 +285,23 @@ class VizierTapBase(TapClient):
     def _getLightCurve(self, star, do_per=False, period_key="period",
                        **kwargs):
         """
-        Obtain light curve
+        Obtain the light curve
 
-        Parameters:
+        Parameters
         -----------
-            star : Star instance
-                 Star boy object constructed from query looking
-                 for his light curve :)
+        star : Star instance
+             Star boy object constructed from query looking
+             for his light curve :)
 
-            do_per : bool
-                If True phase curve is returned instead
+        do_per : bool
+            If True phase curve is returned instead
 
-            period_key : str
-                Key in star.more dictionary for value of period length
+        period_key : str
+            Key in star.more dictionary for value of period length
 
-        Returns:
-        --------
+        Returns
+        -------
+        tuple
             Tuple of times, mags, errors lists
         """
         if do_per:

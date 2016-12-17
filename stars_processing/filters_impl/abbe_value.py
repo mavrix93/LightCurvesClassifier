@@ -1,13 +1,5 @@
-'''
-Created on Mar 20, 2016
-
-@author: Martin Vo
-'''
-
-from utils.commons import returns, accepts
 from stars_processing.filters_tools.base_filter import BaseFilter, Learnable
-
-from utils.data_analysis import to_ekvi_PAA, abbe
+from utils.commons import returns, accepts
 
 
 class AbbeValueFilter(BaseFilter, Learnable):
@@ -15,10 +7,42 @@ class AbbeValueFilter(BaseFilter, Learnable):
     '''
     Filter implementation which denies stars with lower value then a limit
     of Abbe value
+
+    Attributes
+    ----------
+    bins : int
+        Dimension of reduced light curve from which Abbe value
+        is calculated
+
+    decider : Decider instance
+        Classifier object
+
+    plot_save_path : str, NoneType
+        Path to the folder where plots are saved if not None, else
+        plots are showed immediately
+
+    plot_save_name : str, NoneType
+        Name of plotted file
     '''
+
     def __init__(self, bins=None, decider=None, plot_save_path=None,
                  plot_save_name=None, *args, **kwargs):
         '''
+        Parameters
+        ----------
+        bins : int
+            Dimension of reduced light curve from which Abbe value
+            is calculated
+
+        decider : Decider instance
+            Classifier object
+
+        plot_save_path : str, NoneType
+            Path to the folder where plots are saved if not None, else
+            plots are showed immediately
+
+        plot_save_name : str, NoneType
+            Name of plotted file
         '''
         self.bins = bins
         self.decider = decider
@@ -30,28 +54,34 @@ class AbbeValueFilter(BaseFilter, Learnable):
     @returns(list)
     def applyFilter(self, stars):
         '''
-        Filter stars according to Abbe values
+        Filter stars by Abbe value filter
 
-        @param stars: List of star objects (containing light curves)
+        Parameters
+        ----------
+        stars : list
+            List of `Star` objects (containing light curves)
 
-        @return: List of star-like objects passed thru filtering
+        Returns
+        -------
+        list
+            List of star-like objects passed thru filtering
         '''
-
         abbe_values = self.getSpaceCoords(stars)
-        return [ star for star, passed in zip( stars, self.decider.filter( abbe_values )) if passed]
-
+        return [star for star, passed in zip(stars,
+                                             self.decider.filter(abbe_values)) if passed]
 
     def getSpaceCoords(self, stars):
         """
         Get list of Abbe values
 
-        Parameters:
+        Parameters
         -----------
-            stars : list of Star objects
-                Stars with color magnitudes in their 'more' attribute
+        stars : list of Star objects
+            Stars with color magnitudes in their 'more' attribute
 
-        Returns:
+        Returns
         -------
+        list
             List of list of floats
         """
         abbe_values = []

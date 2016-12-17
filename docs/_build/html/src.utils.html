@@ -1,0 +1,435 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>src.utils package &#8212; Light Curve Classifier 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="src-utils-package">
+<h1>src.utils package<a class="headerlink" href="#src-utils-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-src.utils.commons">
+<span id="src-utils-commons-module"></span><h2>src.utils.commons module<a class="headerlink" href="#module-src.utils.commons" title="Permalink to this headline">¶</a></h2>
+<p>Created on Feb 29, 2016</p>
+<p>&#64;author: Martin Vo</p>
+<p>There are common functions and decorators mainly for query classes</p>
+<dl class="function">
+<dt id="src.utils.commons.accepts">
+<code class="descclassname">src.utils.commons.</code><code class="descname">accepts</code><span class="sig-paren">(</span><em>*accepted_arg_types</em><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.commons.accepts" title="Permalink to this definition">¶</a></dt>
+<dd><p>A decorator to validate the parameter types of a given function.
+It is passed a tuple of types. eg. (&lt;type &#8216;tuple&#8217;&gt;, &lt;type &#8216;int&#8217;&gt;)</p>
+<dl class="docutils">
+<dt>Note: It doesn&#8217;t do a deep check, for example checking through a</dt>
+<dd>tuple of types. The argument passed must only be types.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.utils.commons.args_type">
+<code class="descclassname">src.utils.commons.</code><code class="descname">args_type</code><span class="sig-paren">(</span><em>**decls</em><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.commons.args_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decorator to check argument types</p>
+<dl class="docutils">
+<dt>Usage:  &#64;args_type(name=&#8221;str&#8221;,age=(int,float))</dt>
+<dd><dl class="first last docutils">
+<dt>def func(...):</dt>
+<dd>...</dd>
+</dl>
+</dd>
+</dl>
+<p>&#64;param func: Function which arguments should be checked</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.utils.commons.default_values">
+<code class="descclassname">src.utils.commons.</code><code class="descname">default_values</code><span class="sig-paren">(</span><em>**decls</em><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.commons.default_values" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decorator to add default values to certain arguments if missing</p>
+<dl class="docutils">
+<dt>Usage:  &#64;default_values(name=&#8221;Unknown&#8221;,age=0)</dt>
+<dd><dl class="first last docutils">
+<dt>def func(...):</dt>
+<dd>...</dd>
+</dl>
+</dd>
+</dl>
+<p>&#64;param func: Function which arguments should be treated</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.utils.commons.mandatory_args">
+<code class="descclassname">src.utils.commons.</code><code class="descname">mandatory_args</code><span class="sig-paren">(</span><em>*args_options</em><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.commons.mandatory_args" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decorator to check presence of mandatory arguments</p>
+<dl class="docutils">
+<dt>Usage:  &#64;default_values((&#8220;name&#8221;,&#8221;age&#8221;),(&#8220;nick_name&#8221;,&#8221;sex&#8221;))</dt>
+<dd><blockquote class="first">
+<div><dl class="docutils">
+<dt>def func(...):</dt>
+<dd>...</dd>
+</dl>
+</div></blockquote>
+<ul class="last simple">
+<li>Method func have to have variables &#8220;name&#8221; and &#8220;age or &#8220;nickname&#8221;,&#8221;sex&#8221;</li>
+</ul>
+</dd>
+</dl>
+<p>&#64;param func: Function which arguments should be treated</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.utils.commons.returns">
+<code class="descclassname">src.utils.commons.</code><code class="descname">returns</code><span class="sig-paren">(</span><em>*accepted_return_type_tuple</em><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.commons.returns" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validates the return type. Since there&#8217;s only ever one
+return type, this makes life simpler. Along with the
+accepts() decorator, this also only does a check for
+the top argument. For example you couldn&#8217;t check
+(&lt;type &#8216;tuple&#8217;&gt;, &lt;type &#8216;int&#8217;&gt;, &lt;type &#8216;str&#8217;&gt;).
+In that case you could only check if it was a tuple.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-src.utils.data_analysis">
+<span id="src-utils-data-analysis-module"></span><h2>src.utils.data_analysis module<a class="headerlink" href="#module-src.utils.data_analysis" title="Permalink to this headline">¶</a></h2>
+<p>Created on Mar 9, 2016</p>
+<p>&#64;author: Martin Vo</p>
+<p>There are functions for processing data series</p>
+<dl class="function">
+<dt id="src.utils.data_analysis.abbe">
+<code class="descclassname">src.utils.data_analysis.</code><code class="descname">abbe</code><span class="sig-paren">(</span><em>x</em>, <em>n</em><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.data_analysis.abbe" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculation of Abbe value</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.utils.data_analysis.cart_distance">
+<code class="descclassname">src.utils.data_analysis.</code><code class="descname">cart_distance</code><span class="sig-paren">(</span><em>x</em>, <em>y</em><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.data_analysis.cart_distance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate cartesian distance</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.utils.data_analysis.compute_bins">
+<code class="descclassname">src.utils.data_analysis.</code><code class="descname">compute_bins</code><span class="sig-paren">(</span><em>x_time</em>, <em>days_per_bin</em><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.data_analysis.compute_bins" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute number of bins for given time series according to given ratio
+of number of days per one bin</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.utils.data_analysis.histogram">
+<code class="descclassname">src.utils.data_analysis.</code><code class="descname">histogram</code><span class="sig-paren">(</span><em>xx</em>, <em>yy</em>, <em>bins_num=None</em>, <em>centred=True</em>, <em>normed=True</em><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.data_analysis.histogram" title="Permalink to this definition">¶</a></dt>
+<dd><p>&#64;param bins_num: Number of values in histogram
+&#64;param centred: If True values will be shifted (mean value into the zero)
+&#64;param normed: If True values will be normed (according to standart deviation)</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.utils.data_analysis.normalize">
+<code class="descclassname">src.utils.data_analysis.</code><code class="descname">normalize</code><span class="sig-paren">(</span><em>x</em>, <em>eps=1e-06</em><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.data_analysis.normalize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function will normalize an array (give it a mean of 0, and a
+standard deviation of 1) unless it&#8217;s standard deviation is below
+epsilon, in which case it returns an array of zeros the length
+of the original array.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.utils.data_analysis.sort_pairs">
+<code class="descclassname">src.utils.data_analysis.</code><code class="descname">sort_pairs</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>rev=False</em><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.data_analysis.sort_pairs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sort two numpy arrays according to the first</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.utils.data_analysis.to_PAA">
+<code class="descclassname">src.utils.data_analysis.</code><code class="descname">to_PAA</code><span class="sig-paren">(</span><em>x</em>, <em>bins</em><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.data_analysis.to_PAA" title="Permalink to this definition">¶</a></dt>
+<dd><p>Funciton performs Piecewise Aggregate Approximation on data set, reducing
+the dimension of the dataset x to w discrete levels. returns the reduced
+dimension data set, as well as the indicies corresponding to the original
+data for each reduced dimension</p>
+<p>&#64;param x: 1D serie of values
+&#64;param bins:</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.utils.data_analysis.to_ekvi_PAA">
+<code class="descclassname">src.utils.data_analysis.</code><code class="descname">to_ekvi_PAA</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>bins=None</em>, <em>days_per_bin=None</em><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.data_analysis.to_ekvi_PAA" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method perform PAA (see above) on y data set, but it will consider
+different time steps between values (in x data set) and return corrected data set</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.utils.data_analysis.variogram">
+<code class="descclassname">src.utils.data_analysis.</code><code class="descname">variogram</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>bins=None</em>, <em>log_opt=True</em><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.data_analysis.variogram" title="Permalink to this definition">¶</a></dt>
+<dd><p>Variogram of function shows variability of function in various time steps</p>
+<p>&#64;param x: List/array of time values
+&#64;param y: List/array of measured values
+&#64;param bins: Number of values in a variogram
+&#64;param : log_opt: Option if variogram values return in logarithm values</p>
+<p>&#64;return: Variogram as two numpy arrays</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-src.utils.helpers">
+<span id="src-utils-helpers-module"></span><h2>src.utils.helpers module<a class="headerlink" href="#module-src.utils.helpers" title="Permalink to this headline">¶</a></h2>
+<p>Created on Apr 12, 2016</p>
+<p>&#64;author: Martin Vo</p>
+<dl class="function">
+<dt id="src.utils.helpers.checkDepth">
+<code class="descclassname">src.utils.helpers.</code><code class="descname">checkDepth</code><span class="sig-paren">(</span><em>a</em>, <em>deep_level</em><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.helpers.checkDepth" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="src.utils.helpers.clean_path">
+<code class="descclassname">src.utils.helpers.</code><code class="descname">clean_path</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.helpers.clean_path" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="src.utils.helpers.create_folder">
+<code class="descclassname">src.utils.helpers.</code><code class="descname">create_folder</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.helpers.create_folder" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="src.utils.helpers.cut_path">
+<code class="descclassname">src.utils.helpers.</code><code class="descname">cut_path</code><span class="sig-paren">(</span><em>path</em>, <em>last_folder</em><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.helpers.cut_path" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="src.utils.helpers.get_borders">
+<code class="descclassname">src.utils.helpers.</code><code class="descname">get_borders</code><span class="sig-paren">(</span><em>xx</em>, <em>yy</em>, <em>Z</em>, <em>lim=0.5</em><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.helpers.get_borders" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="src.utils.helpers.get_combinations">
+<code class="descclassname">src.utils.helpers.</code><code class="descname">get_combinations</code><span class="sig-paren">(</span><em>keys</em>, <em>*lists</em><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.helpers.get_combinations" title="Permalink to this definition">¶</a></dt>
+<dd><blockquote>
+<div>get_combinations( [&#8220;key1&#8221;, &#8220;key2&#8221;, &#8220;key3&#8221;], [1,2,3], [&#8220;m&#8221;, &#8220;n&#8221;, &#8220;k&#8221;], [77,88,99,55,22]</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.utils.helpers.progressbar">
+<code class="descclassname">src.utils.helpers.</code><code class="descname">progressbar</code><span class="sig-paren">(</span><em>it</em>, <em>prefix=''</em>, <em>size=60</em><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.helpers.progressbar" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="src.utils.helpers.subDictInDict">
+<code class="descclassname">src.utils.helpers.</code><code class="descname">subDictInDict</code><span class="sig-paren">(</span><em>sub_dict</em>, <em>dict_list</em>, <em>remove_keys=[]</em><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.helpers.subDictInDict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return list of dictionaries which contain condition in sub_dict</p>
+<p>&#64;param sub_dict:  Single dictionary
+&#64;param dict_list: List of dictionaries
+&#64;param remove_keys: List of keys which are removed from dictionaries</p>
+<p>EXAMPLE:
+subDictInDict({&#8220;x&#8221;:1},[{&#8220;x&#8221;:2,&#8221;y&#8221;:5,..},{&#8220;x&#8221;:1,&#8221;z&#8221;:2,..}, ..} &#8211;&gt; [{&#8220;x&#8221;:1, &#8220;z&#8221;:2, ..},..]</p>
+<p>In this example list of dictionaries which contain x = 1 is returned</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.utils.helpers.unpack_objects">
+<code class="descclassname">src.utils.helpers.</code><code class="descname">unpack_objects</code><span class="sig-paren">(</span><em>params</em><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.helpers.unpack_objects" title="Permalink to this definition">¶</a></dt>
+<dd><p class="rubric">EXAMPLE</p>
+<dl class="docutils">
+<dt>unpack_objects({&#8220;a&#8221;:5, &#8220;b&#8221;: [{&#8220;aa&#8221;:55, &#8220;bb&#8221;: AbbeValueFilter(1)}, {&#8220;cc&#8221;: star}]})</dt>
+<dd>&#8211;&gt; {&#8216;a&#8217;: 5, &#8216;b&#8217;: {&#8216;aa&#8217;: 55, &#8216;bb&#8217;: {&#8216;abbe_lim&#8217;: 1}}}</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.utils.helpers.verbose">
+<code class="descclassname">src.utils.helpers.</code><code class="descname">verbose</code><span class="sig-paren">(</span><em>txt</em>, <em>verbosity</em>, <em>verb_level=2</em><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.helpers.verbose" title="Permalink to this definition">¶</a></dt>
+<dd><p>&#64;param txt: Message which will be showed
+&#64;param verb_level: Level of verbosity:</p>
+<blockquote>
+<div>0 - All messages will be showed
+1 - Just messages witch verbosity 1 an 2 will be showed
+2 - Just messages witch verbosity 2 will be showed</div></blockquote>
+<p>&#64;param verb_level: Set verbosity level</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-src.utils.output_process_modules">
+<span id="src-utils-output-process-modules-module"></span><h2>src.utils.output_process_modules module<a class="headerlink" href="#module-src.utils.output_process_modules" title="Permalink to this headline">¶</a></h2>
+<p>Created on Feb 5, 2016</p>
+<p>&#64;author: Martin Vo</p>
+<dl class="function">
+<dt id="src.utils.output_process_modules.loadFromFile">
+<code class="descclassname">src.utils.output_process_modules.</code><code class="descname">loadFromFile</code><span class="sig-paren">(</span><em>file_name='saved_object.pickle'</em><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.output_process_modules.loadFromFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Open object from file</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.utils.output_process_modules.saveIntoFile">
+<code class="descclassname">src.utils.output_process_modules.</code><code class="descname">saveIntoFile</code><span class="sig-paren">(</span><em>obj</em>, <em>path='.'</em>, <em>fileName='saved_object.pickle'</em>, <em>folder_name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.output_process_modules.saveIntoFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>This  method serialize object (save it into file)</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-src.utils.stars">
+<span id="src-utils-stars-module"></span><h2>src.utils.stars module<a class="headerlink" href="#module-src.utils.stars" title="Permalink to this headline">¶</a></h2>
+<p>Created on Mar 18, 2016</p>
+<p>&#64;author: Martin Vo</p>
+<p>There are common functions for list of star objects (evaluation, plotting...)</p>
+<dl class="function">
+<dt id="src.utils.stars.count_types">
+<code class="descclassname">src.utils.stars.</code><code class="descname">count_types</code><span class="sig-paren">(</span><em>stars</em><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.stars.count_types" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return dictionary of name star type and its number in given list</p>
+<p>&#64;param stars: List of star objects resolved with class attribute &#8216;starClass&#8217;</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.utils.stars.getStarsLabels">
+<code class="descclassname">src.utils.stars.</code><code class="descname">getStarsLabels</code><span class="sig-paren">(</span><em>stars</em>, <em>opt='names'</em>, <em>db=None</em><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.stars.getStarsLabels" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method returns list of star names for given list of star objects</p>
+<p>&#64;param stars: List of star objects
+&#64;param opt: Option for format of retrieving star names</p>
+<p>&#64;return: List of star names</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.utils.stars.get_sorted_stars">
+<code class="descclassname">src.utils.stars.</code><code class="descname">get_sorted_stars</code><span class="sig-paren">(</span><em>stars</em><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.stars.get_sorted_stars" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get dictionary of star type and list of stars of this kind</p>
+<p>&#64;param stars: List of star objects resolved with class attribute &#8216;starClass&#8217;</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.utils.stars.plotStarsPicture">
+<code class="descclassname">src.utils.stars.</code><code class="descname">plotStarsPicture</code><span class="sig-paren">(</span><em>stars</em>, <em>option='show'</em>, <em>hist_bins=10</em>, <em>vario_bins=10</em>, <em>center=True</em>, <em>save_loc=None</em>, <em>num_plots=None</em>, <em>abbe_bins=20</em><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.stars.plotStarsPicture" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function plot three graphs for all stars: Light curve, histogram
+and variogram. Additionally Abbe value will be displayed</p>
+<p>&#64;param stars: List of star objects to be plot
+&#64;param option: Option whether plots will be saved or just showed</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.utils.stars.resultEvalaution">
+<code class="descclassname">src.utils.stars.</code><code class="descname">resultEvalaution</code><span class="sig-paren">(</span><em>stars, class_types=['QC']</em><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.stars.resultEvalaution" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method decide about correction of filtering according matched star type</p>
+<p>&#64;param stars: Inspected list of stars (with attribute starClass)
+&#64;param class_types: Name of class types which we will searching for in all stars</p>
+<p>&#64;return: Number of stars which have class_type and stars which do not have it</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.utils.stars.saveStars">
+<code class="descclassname">src.utils.stars.</code><code class="descname">saveStars</code><span class="sig-paren">(</span><em>stars</em>, <em>path='.'</em>, <em>clobber=True</em><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.stars.saveStars" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save Star objects into fits files</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>stars</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">list, iterable</span><dd>Star objects to be saved</dd>
+<dt>path</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">str</span><dd>Relative path to the file where fits are stored</dd>
+</dl>
+</div></blockquote>
+<blockquote>
+<div>List of names of star files</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.utils.stars.whichIsNotIn">
+<code class="descclassname">src.utils.stars.</code><code class="descname">whichIsNotIn</code><span class="sig-paren">(</span><em>first_list</em>, <em>second_list</em><span class="sig-paren">)</span><a class="headerlink" href="#src.utils.stars.whichIsNotIn" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method decides which items from first list is not in the second list</p>
+<p>&#64;return: List of unique items</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-src.utils">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-src.utils" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">src.utils package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-src.utils.commons">src.utils.commons module</a></li>
+<li><a class="reference internal" href="#module-src.utils.data_analysis">src.utils.data_analysis module</a></li>
+<li><a class="reference internal" href="#module-src.utils.helpers">src.utils.helpers module</a></li>
+<li><a class="reference internal" href="#module-src.utils.output_process_modules">src.utils.output_process_modules module</a></li>
+<li><a class="reference internal" href="#module-src.utils.stars">src.utils.stars module</a></li>
+<li><a class="reference internal" href="#module-src.utils">Module contents</a></li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/src.utils.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016, Martin Vo.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      
+      |
+      <a href="_sources/src.utils.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

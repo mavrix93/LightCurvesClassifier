@@ -9,40 +9,37 @@
 @contact:    mavrix@seznam.cz
 '''
 
-import sys
-import os
-import warnings
-from optparse import OptionParser
 import json
+from optparse import OptionParser
+import os
+import sys
+import warnings
 
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-from entities.exceptions import InvalidFilesPath
 from conf import settings
 from conf.filter_loader import FilterLoader
-from stars_processing.systematic_search.status_resolver import StatusResolver
-from stars_processing.systematic_search.stars_searcher import StarsSearcher
 from db_tier.stars_provider import StarsProvider
+from entities.exceptions import InvalidFilesPath
+from stars_processing.systematic_search.stars_searcher import StarsSearcher
+from stars_processing.systematic_search.status_resolver import StatusResolver
 
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
 __all__ = []
 __version__ = 0.3
 __date__ = '2016-09-05'
-__updated__ = '2016-11-03'
+__updated__ = '2016-12-17'
 
 
-
-def main(argv = None):
-    '''Command line options.'''
-    
+def main(argv=None):
     program_info = """ABOUT
     The program downloads light curves from astronomical databases
     which pass thru given filters (or all).
 
     Database to query:
     ------------------
-        Database is specified by '-d' and name of connector class. 
+        Database is specified by '-d' and name of connector class.
         
         Note:
             There is a overview of available connectors at the end (if it is
@@ -50,7 +47,7 @@ def main(argv = None):
         
     
     Status file:
-    ------------    
+    ------------
         Queries can be specified in the file where first
         row starts with '#' and then there are keys for query a database.
         Next rows consist of searched values. All columns are separated
@@ -60,7 +57,7 @@ def main(argv = None):
             Example files can be find in data/inputs/examples
         
     Getting filter:
-    ---------------    
+    ---------------
         Filter is loaded from prepared filter object (learned). If it is desired
         to load filter with certain parameters it can be also created by
         tuning tool by giving one combination of parameters.
@@ -141,76 +138,73 @@ def main(argv = None):
             
             ./filter_stars.py -i query.txt -o out/ -d "OgleII" -f abbe_filter.conf -f vario_slope.pickel
         """
-    
+
     program_name = os.path.basename(sys.argv[0])
     program_version = "v0.2"
     program_build_date = "%s" % __updated__
 
-    
-    program_version_string = '%%prog %s (%s)' % (program_version, program_build_date)
-    program_longdesc = "Run script without params to get info about the program and list of available databases"  
+    program_version_string = '%%prog %s (%s)' % (
+        program_version, program_build_date)
+    program_longdesc = "Run script without params to get info about the program and list of available databases"
     program_license = "Copyright 2016 Martin Vo"
-
 
     if argv is None:
         argv = sys.argv[1:]
     try:
         # setup option parser
-        parser = OptionParser( version = program_version_string,
-                               epilog = program_longdesc,
-                               description = program_license)
-        parser.add_option( "-o", "--output", dest = "output",
-                           help = "Path to the directory for output files from data/light_curves", type = str )
-        parser.add_option( "-i", "--input", dest = "input",
-                           help = "Path to the query file" )
-        parser.add_option( "-d", "--database", dest = "db",
-                           help = "Searched database" )
-        parser.add_option( "-f", "--filter", dest = "filt", action = "append", default = [],
-                           help = "Name of the filter file in filters folder (see settings file)")
+        parser = OptionParser(version=program_version_string,
+                              epilog=program_longdesc,
+                              description=program_license)
+        parser.add_option("-o", "--output", dest="output",
+                          help="Path to the directory for output files from data/light_curves", type=str)
+        parser.add_option("-i", "--input", dest="input",
+                          help="Path to the query file")
+        parser.add_option("-d", "--database", dest="db",
+                          help="Searched database")
+        parser.add_option("-f", "--filter", dest="filt", action="append", default=[],
+                          help="Name of the filter file in filters folder (see settings file)")
 
-        
         # set defaults
-        parser.set_defaults( output = "." )
-        
+        parser.set_defaults(output=".")
+
         # process options
         opts, args = parser.parse_args(argv)
-        
+
         if not len(argv):
             print program_info, "\n"
-            print json.dumps(  StarsProvider().STARS_PROVIDERS.keys())    
+            print json.dumps(StarsProvider().STARS_PROVIDERS.keys())
             print "Run with '-h' in order to show params help\n"
             return False
-        
+
         if opts.db not in StarsProvider().STARS_PROVIDERS:
             print "Error: " + "Unresolved database %s \n" % opts.db
-            print json.dumps(  StarsProvider().STARS_PROVIDERS.keys())      
+            print json.dumps(StarsProvider().STARS_PROVIDERS.keys())
             return False
-        
+
         #-------    Core    ------
-        
-        UNFOUND_LIM = 2        
-     
-     
+
+        UNFOUND_LIM = 2
+
         if opts.input.startswith("HERE:"):
-            inp = opts.input[5:] 
+            inp = opts.input[5:]
         else:
-            inp = os.path.join( settings.INPUTS_PATH, opts.input )
-     
-        resolver = StatusResolver( status_file_path = inp )
+            inp = os.path.join(settings.INPUTS_PATH, opts.input)
+
+        resolver = StatusResolver(status_file_path=inp)
         queries = resolver.getQueries()
-        
-        star_filters = _load_filters( opts.filt )
-        
-        print sum_txt( opts.db, opts.input,len( resolver.status_queries ), [filt.__class__.__name__ for filt in star_filters] , opts.output )
-        
-        searcher = StarsSearcher( star_filters,
-                                  SAVE_PATH = opts.output,
-                                  SAVE_LIM = 1,
-                                  OBTH_METHOD = opts.db,
-                                  UNFOUND_LIM = UNFOUND_LIM)
-        searcher.queryStars( queries )
-        
-        print "\nResults and status file were saved into %s folder in %s"% (opts.output, settings.LC_FOLDER)
+
+        star_filters = _load_filters(opts.filt)
+
+        print sum_txt(opts.db, opts.input, len(resolver.status_queries), [filt.__class__.__name__ for filt in star_filters], opts.output)
+
+        searcher = StarsSearcher(star_filters,
+                                 SAVE_PATH=opts.output,
+                                 SAVE_LIM=1,
+                                 OBTH_METHOD=opts.db,
+                                 UNFOUND_LIM=UNFOUND_LIM)
+        searcher.queryStars(queries)
+
+        print "\nResults and status file were saved into %s folder in %s" % (opts.output, settings.LC_FOLDER)
 
     except Exception, e:
         indent = len(program_name) * " "
@@ -218,9 +212,10 @@ def main(argv = None):
         sys.stderr.write(indent + "  for help use --help")
         return 2
 
+
 def sum_txt(db, input, num_queries, star_filters, out):
     '''Get info text before querying'''
-    
+
     sumup_txt = '''
     \n\nDownloading from %s database is about to start..
 The query file from %s was loaded properly and there were found %i queries.
@@ -229,37 +224,36 @@ The result light curves will be saved into %s
     \n\n''' % (db, input, num_queries, ", ".join(star_filters), out)
     return sumup_txt
 
-def _load_filters( filt_input ):
-    SET_TYPES = ( list, tuple )
-    
+
+def _load_filters(filt_input):
+    SET_TYPES = (list, tuple)
+
     # In case of single filter
     if not type(filt_input) in SET_TYPES:
-        filt_input = [ filt_input ]
-           
-    star_filters = []    
-    for filter_path in filt_input: 
+        filt_input = [filt_input]
+
+    star_filters = []
+    for filter_path in filt_input:
         if filter_path:
             if settings.JUST_FILTER_OBJECT:
                 object_file = True
-                       
-            elif filter_path.split( "." )[-1] == settings.OBJECT_SUFFIX:
+
+            elif filter_path.split(".")[-1] == settings.OBJECT_SUFFIX:
                 object_file = True
             else:
                 object_file = False
-            try:    
-                star_filters.append( FilterLoader( filter_path , object_file ).getFilter() )
+            try:
+                star_filters.append(
+                    FilterLoader(filter_path, object_file).getFilter())
             except InvalidFilesPath:
-                raise InvalidFilesPath("There are no filter %s in data/star_filters" % filter_path)
+                raise InvalidFilesPath(
+                    "There are no filter %s in data/star_filters" % filter_path)
         else:
             return [[]]
-      
+
     return star_filters
 
 
-
-
-
-
-if __name__ == "__main__":    
+if __name__ == "__main__":
     warnings.filterwarnings("ignore", category=DeprecationWarning)
     sys.exit(main())

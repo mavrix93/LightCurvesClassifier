@@ -1,12 +1,5 @@
-'''
-Created on May 18, 2016
-
-@author: Martin Vo
-'''
-
 import abc
 import os
-import sys
 import warnings
 
 from utils.commons import returns, accepts
@@ -23,6 +16,19 @@ class BaseFilter(object):
     @accepts(list)
     @returns(list)
     def applyFilter(self, stars):
+        '''
+        Filter stars
+
+        Parameters
+        ----------
+        stars : list
+            List of `Star` objects (containing light curves)
+
+        Returns
+        -------
+        list
+            List of star-like objects passed thru filtering
+        '''
         raise NotImplementedError
 
     # TODO: Check whether these lists contains object of Star class type
@@ -43,23 +49,43 @@ class Learnable(object):
 
     Also after learning the 'learned' attribute is set to 'True' if exists.
 
-    Moreover plot is saved if class has  plot_save_path attribute is not None or ""
+    Moreover plot is saved if class has  plot_save_path attribute
+    is not None or ''
     """
 
     def getSpaceCoords(self, stars):
-        """        
-        Parameters:
+        """
+        Parameters
         -----------
-            stars : list of Star objects
+        stars : list of Star objects
 
-        Returns:
+        Returns
         --------
+        list of lists
             List of list of numbers (coordinates)
         """
         raise NotImplementedError(
             "getSpaceCoords need to be implemented in all  Learnable classes")
 
     def learn(self, searched_stars, contamination_stars, learn_num=""):
+        """
+        Teach filter to recognize searched stars
+
+        Parameters
+        ----------
+        searched_stars : list of `Star` objects
+            Searched stars to learn
+
+        contamination_stars : list of `Star` objects
+            Contamination stars to learn
+
+        learn_num : str, int
+            Optional identifier for the learning
+
+        Returns
+        -------
+            None
+        """
         self.decider.learn(self.getSpaceCoords(searched_stars),
                            self.getSpaceCoords(contamination_stars))
 
@@ -69,7 +95,7 @@ class Learnable(object):
         try:
             self.labels
         except AttributeError:
-            self.labels = ["" for i in self.decider.X]
+            self.labels = ["" for _ in self.decider.X]
 
         try:
             self.plot_save_path
@@ -79,7 +105,8 @@ class Learnable(object):
         try:
             img_name = clean_path(self.plot_save_name) + "_%s" % str(learn_num)
             self.decider.plotHist(
-                title, self.labels, file_name=img_name, save_path=self.plot_save_path)
+                title, self.labels, file_name=img_name,
+                save_path=self.plot_save_path)
 
             if len(self.labels) == 2:
                 self.decider.plotProbabSpace(save_path=self.plot_save_path,
@@ -89,7 +116,7 @@ class Learnable(object):
                                              title=title)
         except Exception as err:
             # TODO: Load from settings file
-            #path = settings.TO_THE_DATA_FOLDER
+            # path = settings.TO_THE_DATA_FOLDER
             path = "."
             VERB = 2
 
@@ -105,8 +132,38 @@ class Learnable(object):
             warnings.warn("Could not be able to set self.learned = True")
 
     def getStatistic(self, s_stars, c_stars):
+        """
+        Parameters
+        ----------
+        s_stars : list of `Star` objects
+            Searched stars
 
+        c_stars : list of `Star` objects
+            Contamination stars
+
+        Returns
+        -------
+        statistic information : dict
+
+            precision (float)
+                True positive / (true positive + false positive)
+
+            true_positive_rate (float)
+                Proportion of positives that are correctly identified as such
+
+            true_negative_rate :(float)
+                Proportion of negatives that are correctly identified as such
+
+            false_positive_rate (float)
+                Proportion of positives that are incorrectly identified
+                as negatives
+
+            false_negative_rate (float)
+                Proportion of negatives that are incorrectly identified
+                as positives
+        """
         searched_stars_coords = self.getSpaceCoords(s_stars)
         contamination_stars_coords = self.getSpaceCoords(c_stars)
 
-        return self.decider.getStatistic(searched_stars_coords, contamination_stars_coords)
+        return self.decider.getStatistic(searched_stars_coords,
+                                         contamination_stars_coords)

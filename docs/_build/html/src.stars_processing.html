@@ -1,0 +1,221 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>src.stars_processing package &#8212; Light Curve Classifier 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="src-stars-processing-package">
+<h1>src.stars_processing package<a class="headerlink" href="#src-stars-processing-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="src.stars_processing.deciders.html">src.stars_processing.deciders package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="src.stars_processing.deciders.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="src.stars_processing.deciders.unsupervised.html">src.stars_processing.deciders.unsupervised package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="src.stars_processing.deciders.unsupervised.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="src.stars_processing.deciders.unsupervised.html#src-stars-processing-deciders-unsupervised-k-means-decider-module">src.stars_processing.deciders.unsupervised.k_means_decider module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="src.stars_processing.deciders.unsupervised.html#src-stars-processing-deciders-unsupervised-unsupervised-base-module">src.stars_processing.deciders.unsupervised.unsupervised_base module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="src.stars_processing.deciders.unsupervised.html#module-contents">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="src.stars_processing.deciders.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src.stars_processing.deciders.html#module-src.stars_processing.deciders.base_decider">src.stars_processing.deciders.base_decider module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src.stars_processing.deciders.html#module-src.stars_processing.deciders.distance_desider">src.stars_processing.deciders.distance_desider module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src.stars_processing.deciders.html#module-src.stars_processing.deciders.neuron_decider">src.stars_processing.deciders.neuron_decider module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src.stars_processing.deciders.html#module-src.stars_processing.deciders.supervised_deciders">src.stars_processing.deciders.supervised_deciders module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src.stars_processing.deciders.html#module-src.stars_processing.deciders">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="src.stars_processing.filters_impl.html">src.stars_processing.filters_impl package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="src.stars_processing.filters_impl.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src.stars_processing.filters_impl.html#module-src.stars_processing.filters_impl.abbe_value">src.stars_processing.filters_impl.abbe_value module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src.stars_processing.filters_impl.html#module-src.stars_processing.filters_impl.color_index">src.stars_processing.filters_impl.color_index module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src.stars_processing.filters_impl.html#module-src.stars_processing.filters_impl.compare">src.stars_processing.filters_impl.compare module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src.stars_processing.filters_impl.html#module-src.stars_processing.filters_impl.curve_density">src.stars_processing.filters_impl.curve_density module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src.stars_processing.filters_impl.html#module-src.stars_processing.filters_impl.variogram_slope">src.stars_processing.filters_impl.variogram_slope module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src.stars_processing.filters_impl.html#module-src.stars_processing.filters_impl.word_filters">src.stars_processing.filters_impl.word_filters module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src.stars_processing.filters_impl.html#module-src.stars_processing.filters_impl">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="src.stars_processing.filters_tools.html">src.stars_processing.filters_tools package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="src.stars_processing.filters_tools.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src.stars_processing.filters_tools.html#module-src.stars_processing.filters_tools.base_filter">src.stars_processing.filters_tools.base_filter module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src.stars_processing.filters_tools.html#module-src.stars_processing.filters_tools.params_estim">src.stars_processing.filters_tools.params_estim module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src.stars_processing.filters_tools.html#module-src.stars_processing.filters_tools.sax">src.stars_processing.filters_tools.sax module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src.stars_processing.filters_tools.html#module-src.stars_processing.filters_tools.symbolic_representation">src.stars_processing.filters_tools.symbolic_representation module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src.stars_processing.filters_tools.html#module-src.stars_processing.filters_tools">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="src.stars_processing.systematic_search.html">src.stars_processing.systematic_search package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="src.stars_processing.systematic_search.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src.stars_processing.systematic_search.html#src-stars-processing-systematic-search-stars-searcher-module">src.stars_processing.systematic_search.stars_searcher module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src.stars_processing.systematic_search.html#module-src.stars_processing.systematic_search.status_resolver">src.stars_processing.systematic_search.status_resolver module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src.stars_processing.systematic_search.html#module-src.stars_processing.systematic_search">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-src.stars_processing.filtering_manager">
+<span id="src-stars-processing-filtering-manager-module"></span><h2>src.stars_processing.filtering_manager module<a class="headerlink" href="#module-src.stars_processing.filtering_manager" title="Permalink to this headline">¶</a></h2>
+<p>Created on Mar 18, 2016</p>
+<p>&#64;author: Martin Vo</p>
+<p>IDEA OF ORGANIZATION OF FILTERING:</p>
+<ul>
+<li><p class="first">this class perform all filtering</p>
+</li>
+<li><dl class="first docutils">
+<dt>every filter class is inherited from parent &#8220;BaseFilter&#8221; class</dt>
+<dd><dl class="first last docutils">
+<dt>-&gt; every filter will contain method for filtering stars (with same name), so</dt>
+<dd><p class="first last">it is possible to perform applying filters at once in this class</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</li>
+</ul>
+<dl class="class">
+<dt id="src.stars_processing.filtering_manager.FilteringManager">
+<em class="property">class </em><code class="descclassname">src.stars_processing.filtering_manager.</code><code class="descname">FilteringManager</code><span class="sig-paren">(</span><em>stars=[]</em><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.filtering_manager.FilteringManager" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>This class is responsible for filtering stars according to given filters
+(their own implementation of filtering)
+Class is initialized with inspected stars as argument. Additionally stars
+can be added thru add method. Each filter has its own implementation
+of preparing</p>
+<dl class="method">
+<dt id="src.stars_processing.filtering_manager.FilteringManager.addStars">
+<code class="descname">addStars</code><span class="sig-paren">(</span><em>stars</em><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.filtering_manager.FilteringManager.addStars" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add list of stars or one star to the list of stars for filtering</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.stars_processing.filtering_manager.FilteringManager.loadFilter">
+<code class="descname">loadFilter</code><span class="sig-paren">(</span><em>stars_filter</em><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.filtering_manager.FilteringManager.loadFilter" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method load reference stars which will be used as template for filtering</p>
+<dl class="docutils">
+<dt>&#64;param stars_filter: This is stars filter object responsible for filtering</dt>
+<dd>stars according to its own criterion</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.stars_processing.filtering_manager.FilteringManager.performFiltering">
+<code class="descname">performFiltering</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.filtering_manager.FilteringManager.performFiltering" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply all filters to stars and return stars which passed thru all filters</p>
+<p>&#64;return: Stars which passed thru filtering</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-src.stars_processing">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-src.stars_processing" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">src.stars_processing package</a><ul>
+<li><a class="reference internal" href="#subpackages">Subpackages</a></li>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-src.stars_processing.filtering_manager">src.stars_processing.filtering_manager module</a></li>
+<li><a class="reference internal" href="#module-src.stars_processing">Module contents</a></li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/src.stars_processing.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016, Martin Vo.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      
+      |
+      <a href="_sources/src.stars_processing.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

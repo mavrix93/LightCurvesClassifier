@@ -1,0 +1,645 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>src.stars_processing.deciders package &#8212; Light Curve Classifier 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="src-stars-processing-deciders-package">
+<h1>src.stars_processing.deciders package<a class="headerlink" href="#src-stars-processing-deciders-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="src.stars_processing.deciders.unsupervised.html">src.stars_processing.deciders.unsupervised package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="src.stars_processing.deciders.unsupervised.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src.stars_processing.deciders.unsupervised.html#src-stars-processing-deciders-unsupervised-k-means-decider-module">src.stars_processing.deciders.unsupervised.k_means_decider module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src.stars_processing.deciders.unsupervised.html#src-stars-processing-deciders-unsupervised-unsupervised-base-module">src.stars_processing.deciders.unsupervised.unsupervised_base module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src.stars_processing.deciders.unsupervised.html#module-contents">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-src.stars_processing.deciders.base_decider">
+<span id="src-stars-processing-deciders-base-decider-module"></span><h2>src.stars_processing.deciders.base_decider module<a class="headerlink" href="#module-src.stars_processing.deciders.base_decider" title="Permalink to this headline">¶</a></h2>
+<p>Created on Sep 28, 2016</p>
+<p>&#64;author: Martin Vo</p>
+<dl class="class">
+<dt id="src.stars_processing.deciders.base_decider.BaseDecider">
+<em class="property">class </em><code class="descclassname">src.stars_processing.deciders.base_decider.</code><code class="descname">BaseDecider</code><span class="sig-paren">(</span><em>treshold=0.5</em><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.deciders.base_decider.BaseDecider" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>A decider class works with &#8220;coordinates&#8221; (specification) of objects. It can
+learn identify inspected group of objects according to &#8220;coordinates&#8221; of
+searched objects and other objects.</p>
+<p>All decider classes have to inherit this abstract class. That means that they
+need to implement several methods: &#8220;learn&#8221; and &#8220;evaluate&#8221;. Also all of them
+have to have &#8220;treshold&#8221; attribute. To be explained read comments below.</p>
+<dl class="attribute">
+<dt id="src.stars_processing.deciders.base_decider.BaseDecider.treshold">
+<code class="descname">treshold</code><a class="headerlink" href="#src.stars_processing.deciders.base_decider.BaseDecider.treshold" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>float</em> &#8211; Probability (1.0  means 100 %) level. All objects with probability of
+membership to the group higher then the treshold are considered
+as members.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.stars_processing.deciders.base_decider.BaseDecider.evaluate">
+<code class="descname">evaluate</code><span class="sig-paren">(</span><em>star_coords</em><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.deciders.base_decider.BaseDecider.evaluate" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>star_coords</strong> (<em>list</em>) &#8211; Coordinates of inspected star got from sub-filters</li>
+<li><strong>Returns</strong> &#8211; </li>
+<li><strong>--------</strong> &#8211; </li>
+<li><strong>of lists</strong> (<em>list</em>) &#8211; Probability that inspected star belongs to the searched
+group of objects</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.stars_processing.deciders.base_decider.BaseDecider.evaluateList">
+<code class="descname">evaluateList</code><span class="sig-paren">(</span><em>stars_coords</em><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.deciders.base_decider.BaseDecider.evaluateList" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>stars_coords</strong> (<em>list</em>) &#8211; Coordinates of inspected stars (e.g. obtained from sub-filters)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Probabilities that inspected stars belongs to the searched
+group of objects</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.stars_processing.deciders.base_decider.BaseDecider.filter">
+<code class="descname">filter</code><span class="sig-paren">(</span><em>stars_coords</em><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.deciders.base_decider.BaseDecider.filter" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>stars_coords</strong> (<em>list</em>) &#8211; Coordinates of inspected stars</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">List of True/False whether coordinates belong to the searched group of objects</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.stars_processing.deciders.base_decider.BaseDecider.getBestCoord">
+<code class="descname">getBestCoord</code><span class="sig-paren">(</span><em>stars_coords</em><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.deciders.base_decider.BaseDecider.getBestCoord" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>stars_coords</strong> (<em>list</em>) &#8211; Coordinates of inspected stars got from sub-filters</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Coordinates with highest probability of membership to the
+searched group (one list of coordinates)</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.stars_processing.deciders.base_decider.BaseDecider.getStatistic">
+<code class="descname">getStatistic</code><span class="sig-paren">(</span><em>right_coords</em>, <em>wrong_coords</em><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.deciders.base_decider.BaseDecider.getStatistic" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>right_coords</strong> (<em>list</em>) &#8211; Parameter-space coordinates of searched objects</li>
+<li><strong>wrong_coords</strong> (<em>list</em>) &#8211; Parameter-space coordinates of other objects</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><p><strong>statistic information</strong> &#8211;</p>
+<dl class="docutils">
+<dt>precision (float)</dt>
+<dd><p class="first last">True positive / (true positive + false positive)</p>
+</dd>
+<dt>true_positive_rate (float)</dt>
+<dd><p class="first last">Proportion of positives that are correctly identified as such</p>
+</dd>
+<dt>true_negative_rate :(float)</dt>
+<dd><p class="first last">Proportion of negatives that are correctly identified as such</p>
+</dd>
+<dt>false_positive_rate (float)</dt>
+<dd><p class="first last">Proportion of positives that are incorrectly identified
+as negatives</p>
+</dd>
+<dt>false_negative_rate (float)</dt>
+<dd><p class="first last">Proportion of negatives that are incorrectly identified
+as positives</p>
+</dd>
+</dl>
+</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">dict</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.stars_processing.deciders.base_decider.BaseDecider.learn">
+<code class="descname">learn</code><span class="sig-paren">(</span><em>right_coords</em>, <em>wrong_coords</em><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.deciders.base_decider.BaseDecider.learn" title="Permalink to this definition">¶</a></dt>
+<dd><p>After executing this method the decider object is capable to recognize
+objects according their &#8220;coordinates&#8221; via &#8220;filter&#8221; method.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>right_coords</strong> (<em>list</em>) &#8211; &#8220;Coordinates&#8221; of searched objects</li>
+<li><strong>wrong_coords</strong> (<em>list</em>) &#8211; &#8220;Coordinates&#8221; of other objects</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">None</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">NoneType</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.stars_processing.deciders.base_decider.BaseDecider.plotHist">
+<code class="descname">plotHist</code><span class="sig-paren">(</span><em>title=''</em>, <em>labels=[]</em>, <em>bins=None</em>, <em>save_path=None</em>, <em>file_name='hist.png'</em><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.deciders.base_decider.BaseDecider.plotHist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot histogram</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>title</strong> (<em>str</em>) &#8211; Title for the plot</li>
+<li><strong>labels</strong> (<em>list</em><em>, </em><em>tuple of str</em>) &#8211; Labels for axis</li>
+<li><strong>save_path</strong> (<em>str</em><em>, </em><em>NoneType</em>) &#8211; Path to the folder where plots are saved if not None, else
+plots are showed immediately</li>
+<li><strong>bins</strong> (<em>int</em><em>, </em><em>NoneType</em>) &#8211; Number of bins for histogram</li>
+<li><strong>file_name</strong> (<em>str</em>) &#8211; Name of the plot file</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">None</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.stars_processing.deciders.base_decider.BaseDecider.plotProbabSpace">
+<code class="descname">plotProbabSpace</code><span class="sig-paren">(</span><em>xlim=None</em>, <em>ylim=None</em>, <em>OFFSET=0.4</em>, <em>save_path=None</em>, <em>x_lab=''</em>, <em>y_lab=''</em>, <em>title=''</em>, <em>file_name='plot.png'</em><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.deciders.base_decider.BaseDecider.plotProbabSpace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot probability space</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>xlim</strong> (<em>tuple</em>) &#8211; Tuple of min and max value for x-axis</li>
+<li><strong>ylim</strong> (<em>tuple</em>) &#8211; Tuple of min and max value for y-axis</li>
+<li><strong>OFFSET</strong> (<em>float</em>) &#8211; Percentage value of overflowing boundaries set by xlim and ylim</li>
+<li><strong>save_path</strong> (<em>str</em><em>, </em><em>NoneType</em>) &#8211; Path to the folder where plots are saved if not None, else
+plots are showed immediately</li>
+<li><strong>x_lab</strong> (<em>str</em>) &#8211; Label for x-axis</li>
+<li><strong>y_lab</strong> (<em>str</em>) &#8211; Label for y-axis</li>
+<li><strong>title</strong> (<em>str</em>) &#8211; Title for the plot</li>
+<li><strong>file_name</strong> (<em>str</em>) &#8211; Name of the plot file</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">None</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-src.stars_processing.deciders.distance_desider">
+<span id="src-stars-processing-deciders-distance-desider-module"></span><h2>src.stars_processing.deciders.distance_desider module<a class="headerlink" href="#module-src.stars_processing.deciders.distance_desider" title="Permalink to this headline">¶</a></h2>
+<p>Created on Oct 1, 2016</p>
+<p>&#64;author: Martin Vo</p>
+<dl class="class">
+<dt id="src.stars_processing.deciders.distance_desider.DistanceDesider">
+<em class="property">class </em><code class="descclassname">src.stars_processing.deciders.distance_desider.</code><code class="descname">DistanceDesider</code><span class="sig-paren">(</span><em>border</em>, <em>treshold=0.5</em><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.deciders.distance_desider.DistanceDesider" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">stars_processing.deciders.base_decider.BaseDecider</span></code></p>
+<dl class="method">
+<dt id="src.stars_processing.deciders.distance_desider.DistanceDesider.evaluate">
+<code class="descname">evaluate</code><span class="sig-paren">(</span><em>star_coords</em><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.deciders.distance_desider.DistanceDesider.evaluate" title="Permalink to this definition">¶</a></dt>
+<dd><blockquote>
+<div><dl class="docutils">
+<dt>star_coords</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">list</span><dd>Coordinates of inspected star got from subfilters</dd>
+</dl>
+</div></blockquote>
+<blockquote>
+<div>Probability that inspected star belongs to the searched group of objects</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.stars_processing.deciders.distance_desider.DistanceDesider.learn">
+<code class="descname">learn</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.deciders.distance_desider.DistanceDesider.learn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Nothing to learn</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-src.stars_processing.deciders.neuron_decider">
+<span id="src-stars-processing-deciders-neuron-decider-module"></span><h2>src.stars_processing.deciders.neuron_decider module<a class="headerlink" href="#module-src.stars_processing.deciders.neuron_decider" title="Permalink to this headline">¶</a></h2>
+<p>Created on Oct 28, 2016</p>
+<p>&#64;author: Martin Vo</p>
+<dl class="class">
+<dt id="src.stars_processing.deciders.neuron_decider.NeuronDecider">
+<em class="property">class </em><code class="descclassname">src.stars_processing.deciders.neuron_decider.</code><code class="descname">NeuronDecider</code><span class="sig-paren">(</span><em>treshold=None</em>, <em>hidden_neurons=None</em><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.deciders.neuron_decider.NeuronDecider" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">stars_processing.deciders.base_decider.BaseDecider</span></code></p>
+<p>The class is responsible for learning to recognize certain group of objects.</p>
+<dl class="attribute">
+<dt id="src.stars_processing.deciders.neuron_decider.NeuronDecider.hiden_neurons">
+<code class="descname">hiden_neurons</code><a class="headerlink" href="#src.stars_processing.deciders.neuron_decider.NeuronDecider.hiden_neurons" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> &#8211; Number of hiden neurons.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.stars_processing.deciders.neuron_decider.NeuronDecider.OUTPUT_NEURONS">
+<code class="descname">OUTPUT_NEURONS</code><a class="headerlink" href="#src.stars_processing.deciders.neuron_decider.NeuronDecider.OUTPUT_NEURONS" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> &#8211; Number of output neurons.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.stars_processing.deciders.neuron_decider.NeuronDecider.input_neuron">
+<code class="descname">input_neuron</code><a class="headerlink" href="#src.stars_processing.deciders.neuron_decider.NeuronDecider.input_neuron" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> &#8211; Number of input neurons.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.stars_processing.deciders.neuron_decider.NeuronDecider.X_train">
+<code class="descname">X_train</code><a class="headerlink" href="#src.stars_processing.deciders.neuron_decider.NeuronDecider.X_train" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>numpy array of array of floats</em> &#8211; Each item of the array contains specific &#8220;coordinates&#8221; of the train
+object in array.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.stars_processing.deciders.neuron_decider.NeuronDecider.X_test">
+<code class="descname">X_test</code><a class="headerlink" href="#src.stars_processing.deciders.neuron_decider.NeuronDecider.X_test" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>numpy array of array of floats</em> &#8211; Each item of the array contains specific &#8220;coordinates&#8221; of the test
+object in array.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.stars_processing.deciders.neuron_decider.NeuronDecider.y_train">
+<code class="descname">y_train</code><a class="headerlink" href="#src.stars_processing.deciders.neuron_decider.NeuronDecider.y_train" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>numpy array of ints</em> &#8211; Each item of the array contains a number of the group which the train
+object belongs. Position in the array
+corresponds to item in X_train.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.stars_processing.deciders.neuron_decider.NeuronDecider.y_test">
+<code class="descname">y_test</code><a class="headerlink" href="#src.stars_processing.deciders.neuron_decider.NeuronDecider.y_test" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>numpy array of ints</em> &#8211; Each item of the array contains a number of the group which the test
+object belongs. Position in the array
+corresponds to item in X_test.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">OUTPUT_NEURONS</code><em class="property"> = 1</em></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="src.stars_processing.deciders.neuron_decider.NeuronDecider.evaluate">
+<code class="descname">evaluate</code><span class="sig-paren">(</span><em>coords</em><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.deciders.neuron_decider.NeuronDecider.evaluate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find if inspected parameter-space coordinates belongs to searched
+object</p>
+<dl class="docutils">
+<dt>coords</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">list of lists</span><dd>Parameter-space coordinates of inspected objects</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Probabilities of membership to searched group objects</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">numpy.array</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.stars_processing.deciders.neuron_decider.NeuronDecider.getTrainer">
+<code class="descname">getTrainer</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.deciders.neuron_decider.NeuronDecider.getTrainer" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><dl class="docutils">
+<dt>Learned net object, empty SupervisedDataSet which can be loaded</dt>
+<dd>by sample of inspected objects</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">pybrain net instance, SupervisedDataSet</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.stars_processing.deciders.neuron_decider.NeuronDecider.learn">
+<code class="descname">learn</code><span class="sig-paren">(</span><em>searched</em>, <em>others</em><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.deciders.neuron_decider.NeuronDecider.learn" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method loads lists of specific values of searched objects and
+others. Then the sample will be  divided into train and
+test samples according to user.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>searched</strong> (<em>iterable</em>) &#8211; List of searched objects values (their &#8220;coordinates&#8221;)</li>
+<li><strong>others</strong> (<em>iterable</em>) &#8211; List of other objects values (their &#8220;coordinates&#8221;)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">None</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">NoneType</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.stars_processing.deciders.neuron_decider.NeuronDecider.train">
+<code class="descname">train</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.deciders.neuron_decider.NeuronDecider.train" title="Permalink to this definition">¶</a></dt>
+<dd><p>Train neuron grid by training sample</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-src.stars_processing.deciders.supervised_deciders">
+<span id="src-stars-processing-deciders-supervised-deciders-module"></span><h2>src.stars_processing.deciders.supervised_deciders module<a class="headerlink" href="#module-src.stars_processing.deciders.supervised_deciders" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="src.stars_processing.deciders.supervised_deciders.GMMBayesDec">
+<em class="property">class </em><code class="descclassname">src.stars_processing.deciders.supervised_deciders.</code><code class="descname">GMMBayesDec</code><span class="sig-paren">(</span><em>treshold=None</em><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.deciders.supervised_deciders.GMMBayesDec" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#src.stars_processing.deciders.supervised_deciders.SupervisedBase" title="src.stars_processing.deciders.supervised_deciders.SupervisedBase"><code class="xref py py-class docutils literal"><span class="pre">src.stars_processing.deciders.supervised_deciders.SupervisedBase</span></code></a></p>
+<p>Sklearn implementation of Bayesian Regression</p>
+<p><a class="reference external" href="http://scikit-learn.org/stable/modules/linear_model.html#bayesian-regression">http://scikit-learn.org/stable/modules/linear_model.html#bayesian-regression</a></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="src.stars_processing.deciders.supervised_deciders.GaussianNBDec">
+<em class="property">class </em><code class="descclassname">src.stars_processing.deciders.supervised_deciders.</code><code class="descname">GaussianNBDec</code><span class="sig-paren">(</span><em>treshold=None</em><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.deciders.supervised_deciders.GaussianNBDec" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#src.stars_processing.deciders.supervised_deciders.SupervisedBase" title="src.stars_processing.deciders.supervised_deciders.SupervisedBase"><code class="xref py py-class docutils literal"><span class="pre">src.stars_processing.deciders.supervised_deciders.SupervisedBase</span></code></a></p>
+<p>Sklearn implementation of Gaussian Naive Bayes</p>
+<p><a class="reference external" href="http://scikit-learn.org/stable/modules/naive_bayes.html#gaussian-naive-bayes">http://scikit-learn.org/stable/modules/naive_bayes.html#gaussian-naive-bayes</a></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="src.stars_processing.deciders.supervised_deciders.LDADec">
+<em class="property">class </em><code class="descclassname">src.stars_processing.deciders.supervised_deciders.</code><code class="descname">LDADec</code><span class="sig-paren">(</span><em>treshold=None</em><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.deciders.supervised_deciders.LDADec" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#src.stars_processing.deciders.supervised_deciders.SupervisedBase" title="src.stars_processing.deciders.supervised_deciders.SupervisedBase"><code class="xref py py-class docutils literal"><span class="pre">src.stars_processing.deciders.supervised_deciders.SupervisedBase</span></code></a></p>
+<p>Sklearn implementation of Linear Discriminant Analysis</p>
+<p><a class="reference external" href="http://scikit-learn.org/stable/modules/lda_qda.html">http://scikit-learn.org/stable/modules/lda_qda.html</a></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="src.stars_processing.deciders.supervised_deciders.QDADec">
+<em class="property">class </em><code class="descclassname">src.stars_processing.deciders.supervised_deciders.</code><code class="descname">QDADec</code><span class="sig-paren">(</span><em>treshold=None</em><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.deciders.supervised_deciders.QDADec" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#src.stars_processing.deciders.supervised_deciders.SupervisedBase" title="src.stars_processing.deciders.supervised_deciders.SupervisedBase"><code class="xref py py-class docutils literal"><span class="pre">src.stars_processing.deciders.supervised_deciders.SupervisedBase</span></code></a></p>
+<p>Sklearn implementation of Quadratic Discriminant Analysis</p>
+<p><a class="reference external" href="http://scikit-learn.org/stable/modules/lda_qda.html">http://scikit-learn.org/stable/modules/lda_qda.html</a></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="src.stars_processing.deciders.supervised_deciders.SVCDec">
+<em class="property">class </em><code class="descclassname">src.stars_processing.deciders.supervised_deciders.</code><code class="descname">SVCDec</code><span class="sig-paren">(</span><em>treshold=0.5</em><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.deciders.supervised_deciders.SVCDec" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#src.stars_processing.deciders.supervised_deciders.SupervisedBase" title="src.stars_processing.deciders.supervised_deciders.SupervisedBase"><code class="xref py py-class docutils literal"><span class="pre">src.stars_processing.deciders.supervised_deciders.SupervisedBase</span></code></a></p>
+<p>Sklearn implementation of Support Vector Machines</p>
+<p><a class="reference external" href="http://scikit-learn.org/stable/modules/svm.html">http://scikit-learn.org/stable/modules/svm.html</a></p>
+<dl class="method">
+<dt id="src.stars_processing.deciders.supervised_deciders.SVCDec.evaluate">
+<code class="descname">evaluate</code><span class="sig-paren">(</span><em>coords</em><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.deciders.supervised_deciders.SVCDec.evaluate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="src.stars_processing.deciders.supervised_deciders.SupervisedBase">
+<em class="property">class </em><code class="descclassname">src.stars_processing.deciders.supervised_deciders.</code><code class="descname">SupervisedBase</code><span class="sig-paren">(</span><em>clf</em>, <em>treshold=0.5</em><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.deciders.supervised_deciders.SupervisedBase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">stars_processing.deciders.base_decider.BaseDecider</span></code></p>
+<p>Base class for <cite>sklearn</cite> library supervised classes transformed
+to the package content. It is not intended to use this directly,
+but thru certain method subclasses.</p>
+<dl class="attribute">
+<dt id="src.stars_processing.deciders.supervised_deciders.SupervisedBase.treshold">
+<code class="descname">treshold</code><a class="headerlink" href="#src.stars_processing.deciders.supervised_deciders.SupervisedBase.treshold" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>float</em> &#8211; Border probability value (objects with probability higher then this
+value is considered as searched object)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.stars_processing.deciders.supervised_deciders.SupervisedBase.learner">
+<code class="descname">learner</code><a class="headerlink" href="#src.stars_processing.deciders.supervised_deciders.SupervisedBase.learner" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>sklearn object</em> &#8211; Learner object for desired method of supervised learning</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.stars_processing.deciders.supervised_deciders.SupervisedBase.evaluate">
+<code class="descname">evaluate</code><span class="sig-paren">(</span><em>coords</em><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.deciders.supervised_deciders.SupervisedBase.evaluate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get probability of membership</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>coords</strong> (<em>list of lists</em>) &#8211; List of prameter space coordinates</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">List of probabilities</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list of floats</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.stars_processing.deciders.supervised_deciders.SupervisedBase.learn">
+<code class="descname">learn</code><span class="sig-paren">(</span><em>right_coords</em>, <em>wrong_coords</em><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.deciders.supervised_deciders.SupervisedBase.learn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Learn to recognize objects</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>right_coords</strong> (<em>iterable</em>) &#8211; List of coordinates (list of numbers) of searched objects</li>
+<li><strong>wrong_coords</strong> (<em>iterable</em>) &#8211; List of coordinates (list of numbers) of contamination objects</li>
+<li><strong>Returns</strong> &#8211; </li>
+<li><strong>--------</strong> &#8211; </li>
+<li><strong>NoneType</strong> &#8211; None</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="src.stars_processing.deciders.supervised_deciders.TreeDec">
+<em class="property">class </em><code class="descclassname">src.stars_processing.deciders.supervised_deciders.</code><code class="descname">TreeDec</code><span class="sig-paren">(</span><em>treshold=0.5</em><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.deciders.supervised_deciders.TreeDec" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#src.stars_processing.deciders.supervised_deciders.SupervisedBase" title="src.stars_processing.deciders.supervised_deciders.SupervisedBase"><code class="xref py py-class docutils literal"><span class="pre">src.stars_processing.deciders.supervised_deciders.SupervisedBase</span></code></a></p>
+<p>Sklearn implementation of Decision Trees</p>
+<p><a class="reference external" href="http://scikit-learn.org/stable/modules/tree.html">http://scikit-learn.org/stable/modules/tree.html</a></p>
+<dl class="method">
+<dt id="src.stars_processing.deciders.supervised_deciders.TreeDec.evaluate">
+<code class="descname">evaluate</code><span class="sig-paren">(</span><em>coords</em><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.deciders.supervised_deciders.TreeDec.evaluate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-src.stars_processing.deciders">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-src.stars_processing.deciders" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">src.stars_processing.deciders package</a><ul>
+<li><a class="reference internal" href="#subpackages">Subpackages</a></li>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-src.stars_processing.deciders.base_decider">src.stars_processing.deciders.base_decider module</a></li>
+<li><a class="reference internal" href="#module-src.stars_processing.deciders.distance_desider">src.stars_processing.deciders.distance_desider module</a></li>
+<li><a class="reference internal" href="#module-src.stars_processing.deciders.neuron_decider">src.stars_processing.deciders.neuron_decider module</a></li>
+<li><a class="reference internal" href="#module-src.stars_processing.deciders.supervised_deciders">src.stars_processing.deciders.supervised_deciders module</a></li>
+<li><a class="reference internal" href="#module-src.stars_processing.deciders">Module contents</a></li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/src.stars_processing.deciders.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016, Martin Vo.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      
+      |
+      <a href="_sources/src.stars_processing.deciders.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

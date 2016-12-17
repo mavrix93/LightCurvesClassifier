@@ -1,0 +1,182 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>src.stars_processing.systematic_search package &#8212; Light Curve Classifier 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="src-stars-processing-systematic-search-package">
+<h1>src.stars_processing.systematic_search package<a class="headerlink" href="#src-stars-processing-systematic-search-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="src-stars-processing-systematic-search-stars-searcher-module">
+<h2>src.stars_processing.systematic_search.stars_searcher module<a class="headerlink" href="#src-stars-processing-systematic-search-stars-searcher-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-src.stars_processing.systematic_search.status_resolver">
+<span id="src-stars-processing-systematic-search-status-resolver-module"></span><h2>src.stars_processing.systematic_search.status_resolver module<a class="headerlink" href="#module-src.stars_processing.systematic_search.status_resolver" title="Permalink to this headline">¶</a></h2>
+<p>Created on Jul 19, 2016</p>
+<p>&#64;author: Martin Vo</p>
+<dl class="class">
+<dt id="src.stars_processing.systematic_search.status_resolver.StatusResolver">
+<em class="property">class </em><code class="descclassname">src.stars_processing.systematic_search.status_resolver.</code><code class="descname">StatusResolver</code><span class="sig-paren">(</span><em>status_file_path</em><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.systematic_search.status_resolver.StatusResolver" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>This class is responsible for status files generated thru systematic searches
+into databases and for reading files of planned queries.</p>
+<dl class="attribute">
+<dt id="src.stars_processing.systematic_search.status_resolver.StatusResolver.DELIMITER">
+<code class="descname">DELIMITER</code><em class="property"> = ';'</em><a class="headerlink" href="#src.stars_processing.systematic_search.status_resolver.StatusResolver.DELIMITER" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="src.stars_processing.systematic_search.status_resolver.StatusResolver.NUM_STATUS_INFO">
+<code class="descname">NUM_STATUS_INFO</code><em class="property"> = 4</em><a class="headerlink" href="#src.stars_processing.systematic_search.status_resolver.StatusResolver.NUM_STATUS_INFO" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="src.stars_processing.systematic_search.status_resolver.StatusResolver.getQueries">
+<code class="descname">getQueries</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.systematic_search.status_resolver.StatusResolver.getQueries" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get status file as list of queries</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.stars_processing.systematic_search.status_resolver.StatusResolver.getUnsearchedQuery">
+<code class="descname">getUnsearchedQuery</code><span class="sig-paren">(</span><em>search_plan_file</em><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.systematic_search.status_resolver.StatusResolver.getUnsearchedQuery" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return list of queries which were not searched according to status file
+and file of planed queries</p>
+<p>&#64;param search_plan_file: Path to the file of planned queries
+&#64;return: List of query dictionaries</p>
+<p>FORMAT OF PLAN QUERIES FILE is the same as status file except 3 last
+columns (without found,filtred and passed)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.stars_processing.systematic_search.status_resolver.StatusResolver.getWithStatus">
+<code class="descname">getWithStatus</code><span class="sig-paren">(</span><em>stat</em><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.systematic_search.status_resolver.StatusResolver.getWithStatus" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return all queries with desired status</p>
+<p>&#64;param stat: Dictionary with status column name and its value</p>
+<p>EXAMPLE:</p>
+<p>getStatus({&#8220;passed&#8221; : True}) &#8211;&gt; [{&#8220;field&#8221;:1,&#8221;starid&#8221;:1, &#8220;target&#8221;:&#8221;lmc&#8221;}, .. , {...}]</p>
+<p>This example generates all stars which passed thru filtering</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="src.stars_processing.systematic_search.status_resolver.StatusResolver.get_with_status">
+<em class="property">static </em><code class="descname">get_with_status</code><span class="sig-paren">(</span><em>queries</em>, <em>stat={'passed': True}</em><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.systematic_search.status_resolver.StatusResolver.get_with_status" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return all queries with desired status</p>
+<p>&#64;param stat: Dictionary with status column name and its value
+&#64;param queries: List of query dictionaries</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="src.stars_processing.systematic_search.status_resolver.StatusResolver.save_query">
+<em class="property">static </em><code class="descname">save_query</code><span class="sig-paren">(</span><em>query</em>, <em>FI_NAME='query_file.txt'</em>, <em>PATH='.'</em>, <em>DELIM=None</em>, <em>overwrite=False</em><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.systematic_search.status_resolver.StatusResolver.save_query" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save queries into the file which can be loaded for another query</p>
+<p>&#64;param query: List of dictionaries which contains query params</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-src.stars_processing.systematic_search">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-src.stars_processing.systematic_search" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">src.stars_processing.systematic_search package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#src-stars-processing-systematic-search-stars-searcher-module">src.stars_processing.systematic_search.stars_searcher module</a></li>
+<li><a class="reference internal" href="#module-src.stars_processing.systematic_search.status_resolver">src.stars_processing.systematic_search.status_resolver module</a></li>
+<li><a class="reference internal" href="#module-src.stars_processing.systematic_search">Module contents</a></li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/src.stars_processing.systematic_search.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016, Martin Vo.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      
+      |
+      <a href="_sources/src.stars_processing.systematic_search.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
