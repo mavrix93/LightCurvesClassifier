@@ -1,9 +1,3 @@
-'''
-Created on Feb 29, 2016
-
-@author: Martin Vo
-'''
-
 from conf.package_reader import PackageReader
 
 

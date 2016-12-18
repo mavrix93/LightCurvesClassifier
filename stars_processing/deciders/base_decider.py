@@ -1,9 +1,3 @@
-'''
-Created on Sep 28, 2016
-
-@author: Martin Vo
-'''
-
 from __future__ import division
 
 import abc
@@ -76,7 +70,7 @@ class BaseDecider(object):
         star_coords : list
             Coordinates of inspected star got from sub-filters
 
-        Returns:
+        Returns
         --------
         list of lists
             Probability that inspected star belongs to the searched

@@ -55,7 +55,7 @@ class SupervisedBase(BaseDecider):
         wrong_coords: iterable
             List of coordinates (list of numbers) of contamination objects
 
-        Returns:
+        Returns
         --------
         NoneType
             None
@@ -169,6 +169,19 @@ class SVCDec(SupervisedBase):
         self.learner = svm.SVC()
 
     def evaluate(self, coords):
+        """
+        Get probability of membership
+
+        Parameters
+        ----------
+        coords : list of lists
+            List of prameter space coordinates
+
+        Returns
+        -------
+        list of floats
+            List of probabilities
+        """
         return self.learner.predict(coords)
 
 
@@ -181,7 +194,7 @@ class TreeDec(SupervisedBase):
 
     def __init__(self, treshold=0.5):
         """
-        Parameters:
+        Parameters
         -----------
             treshold: float
                 Border probability value (objects with probability higher then this
@@ -192,4 +205,17 @@ class TreeDec(SupervisedBase):
         self.learner = tree.DecisionTreeClassifier()
 
     def evaluate(self, coords):
+        """
+        Get probability of membership
+
+        Parameters
+        ----------
+        coords : list of lists
+            List of prameter space coordinates
+
+        Returns
+        -------
+        list of floats
+            List of probabilities
+        """
         return self.learner.predict(coords)

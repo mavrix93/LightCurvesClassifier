@@ -1,14 +1,5 @@
 #!/usr/bin/env python
 # encoding: utf-8
-
-'''
-@author:     Martin Vo
-
-@copyright:  All rights reserved.
-
-@contact:    mavrix@seznam.cz
-'''
-
 import json
 from optparse import OptionParser
 import os
@@ -31,7 +22,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 __all__ = []
 __version__ = 0.3
 __date__ = '2016-09-23'
-__updated__ = '2016-12-17'
+__updated__ = '2016-12-18'
 
 debug = True
 
@@ -159,7 +150,7 @@ def main(argv=None):
             tuning.
             
       
-    Examples:
+    Examples
     ---------
         Example 1:
             File tuned_params.txt:
@@ -254,7 +245,6 @@ def main(argv=None):
 
         if not len(argv):
             print program_info, "\n"
-            print "Databases accessible via LOCAL:db_key:query_file:\n\t%s\n" % json.dumps(settings.DATABASES, indent=4)
             print "Databases accessible via QUERY:db_key:query_file:\n\t%s\n" % json.dumps(PackageReader().getClassesDict("connectors").keys(), indent=4)
             print "Stars path accessible via STARS_PATH key:\n\t%s\n" % json.dumps(settings.STARS_PATH, indent=4)
             print "Available filters:\n\t%s\n" % json.dumps(PackageReader().getClassesDict("filters").keys(), indent=4)
@@ -308,7 +298,7 @@ def main(argv=None):
             split_n = len(searched) / 2
             addit_params["compar_stars"] = searched[split_n:]
             searched = searched[: split_n]
-            addit_params["compar_filters"] = getSubFilters(tuned_params[0])
+            addit_params["compar_filters"] = _getSubFilters(tuned_params[0])
 
         es = DeciderEstimation(searched=searched,
                                others=_getStars(opts.cont),
@@ -378,23 +368,23 @@ def _getStarsFromFolder(single_path):
     Get stars from folder/s. If path is iterable (case that more folders were
     given, light curves from that all folder will be loaded
 
-    Parameters:
+    Parameters
     -----------
         single_path : str
             Name of the folder of lightcurves from "light_curve" directory (specified
             in settings). 
 
-    Returns:
+    Returns
     --------
         stars : List of Star objects
             Stars from the folder
     """
 
-    p, restr = check_sample_name(single_path)
+    p, restr = _check_sample_name(single_path)
     try:
         st = StarsProvider().getProvider(obtain_method="FileManager",
                                          path=p).getStarsWithCurves()
-        stars = split_stars(st, restr)
+        stars = _split_stars(st, restr)
 
     except KeyError:
         raise Exception("\n\nThere no folder with light curves named %s.\nAvailable light curve folders %s" % (
@@ -413,23 +403,23 @@ def _getStarsFromRemoteDb(query):
     This method parsing the query text in order to return desired stars
     from remote database.
 
-    Parameters:
+    Parameters
     -----------
         query : str
-            Query text contains db_key and query file separated by ':' 
+            Query text contains db_key and query file separated by ':'
 
-    Returns:
+    Returns
     --------
-        List of Star objects 
+        List of Star objects
 
-    Example:
-    --------
+    Example
+    -------
         _getStarsFromRemoteDb("OgleII:query_file.txt") --> [Star objects]
 
         query_file.txt:
             #starid;field;target
             1;1;lmc
-            10;1;smc  
+            10;1;smc
     """
 
     try:
@@ -452,7 +442,7 @@ def _getStarsFromRemoteDb(query):
     return stars
 
 
-def split_stars(stars, restr):
+def _split_stars(stars, restr):
     random.shuffle(stars)
     num = None
     if type(restr) == float:
@@ -465,7 +455,7 @@ def split_stars(stars, restr):
     return stars[:num]
 
 
-def getSubFilters(params):
+def _getSubFilters(params):
     sub_filters = []
     for subf in PackageReader().getClasses("sub_filters"):
         try:
@@ -479,7 +469,7 @@ def getSubFilters(params):
     return sub_filters
 
 
-def check_sample_name(star_class):
+def _check_sample_name(star_class):
 
     if "%" in star_class:
         parts = star_class.split("%")

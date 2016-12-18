@@ -1,9 +1,3 @@
-'''
-Created on Nov 30, 2016
-
-@author: Martin Vo
-'''
-
 from __future__ import division
 
 
@@ -60,8 +54,8 @@ class KeplerArchive(LightCurvesDb):
 
     def __init__(self, obtain_params):
         '''
-        Parameters:
-        -----------
+        Parameters
+        ----------
             obtain_params : list, iterable
                 Array of dictionaries of queries. There have to be one of these
                 set of keys in the dictionary:

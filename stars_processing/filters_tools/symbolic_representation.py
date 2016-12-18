@@ -1,9 +1,3 @@
-'''
-Created on Mar 19, 2016
-
-@author: Martin Vo
-'''
-
 import abc
 
 import numpy as np
@@ -18,7 +12,20 @@ class SymbolicRepresentation(object):
 
     def compareTwoStars(self, star, comp_star):
         """
-        Compare two stars according to filter implementation
+        Compare two stars according to a filter implementation
+
+        Parameters
+        ----------
+        star : `Star` instance
+            Star to compare
+
+        comp_star : `Star` instance
+            Star to compare
+
+        Returns
+        -------
+        float
+            Dissimilarity of two stars
         """
         curve_len = np.max(
             [len(star.lightCurve.mag), len(comp_star.lightCurve.mag)])

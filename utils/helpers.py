@@ -1,23 +1,20 @@
-'''
-Created on Apr 12, 2016
-
-@author: Martin Vo
-'''
-import sys
-import matplotlib.pyplot as plt
-import os
 import itertools
+import os
+import sys
 
 
-def clean_path( path ):
-    cleaned_name = path[ path.rfind("/")+1 : ] 
-    
+def clean_path(path):
+    """Get name  from path as last item without dot"""
+    cleaned_name = path[path.rfind("/") + 1:]
+
     if "." in cleaned_name:
-        cleaned_name = cleaned_name[ :cleaned_name.rfind(".")]
-        
+        cleaned_name = cleaned_name[:cleaned_name.rfind(".")]
+
     return cleaned_name
 
+
 def checkDepth(a, deep_level):
+    """Check if input list has desired level of nested lists"""
     lev = 0
     while True:
         try:
@@ -26,153 +23,148 @@ def checkDepth(a, deep_level):
         except:
             break
     if not lev == deep_level:
-        raise Exception("Wrong input nested level. Excepted %i, got %i\n %s" % (deep_level, lev, a))
-        
-
-def unpack_objects(params):
-    """
-    EXAMPLE:
-        unpack_objects({"a":5, "b": [{"aa":55, "bb": AbbeValueFilter(1)}, {"cc": star}]})
-            --> {'a': 5, 'b': {'aa': 55, 'bb': {'abbe_lim': 1}}}
-    """
- 
-    if type(params) is dict:
-        for key in params:
-            value = params[key]
-            try:
-                params[key] = value.__dict__
-                params[key] = unpack_objects(params[key])
-            except AttributeError:                
-                if type(value) is list:                    
-                    params[key] = unpack_objects(value)
-                    if len(params[key] ) == 1:
-                        params[key] =  params[key][0]
-                elif type(value) is dict:
-                    params[key] = unpack_objects(value)
-                 
-    elif type(params) is list:
-        for i,value in enumerate(params):
-            try:
-                params[i] = value.__dict__
-                params[i] = unpack_objects(params[i])
-            except AttributeError:  
-                if type(value) is list: 
-                    params[i] = unpack_objects(value)
-                    if len(params[i]) == 1:
-                        params[i] = params[i][0]
-                elif type(value) is dict:
-                    params[i] = unpack_objects(value)
-    return params
-      
-    
+        raise Exception(
+            "Wrong input nested level. Excepted %i, got %i\n %s" % (deep_level,
+                                                                    lev, a))
 
 
-
-def subDictInDict(sub_dict, dict_list, remove_keys = [] ):
+def subDictInDict(sub_dict, dict_list, remove_keys=[]):
     '''
-    Return list of dictionaries which contain condition in sub_dict
-    
-    @param sub_dict:  Single dictionary
-    @param dict_list: List of dictionaries
-    @param remove_keys: List of keys which are removed from dictionaries
-    
-    EXAMPLE:
+    Parameters
+    ----------
+    sub_dict : dict
+        Single dictionary
+
+    dict_list : list
+        List of dictionaries
+
+    remove_keys : list
+        List of keys which are removed from dictionaries
+
+    Example
+    ------
     subDictInDict({"x":1},[{"x":2,"y":5,..},{"x":1,"z":2,..}, ..} --> [{"x":1, "z":2, ..},..]
-    
+
     In this example list of dictionaries which contain x = 1 is returned
+
+    Returns
+    -------
+    list
+        List of dictionaries which contain condition in sub_dict
     '''
     assert len(sub_dict.keys()) == 1
-    
+
     key = sub_dict.keys()[0]
     matched_dicts = []
     for one_dict in dict_list:
         d = one_dict.copy()
-        
+
         for k in remove_keys:
-            d.pop( k )
-                    
+            d.pop(k)
+
         if str(one_dict[key]) == str(sub_dict[key]):
-            matched_dicts.append(d )
+            matched_dicts.append(d)
     return matched_dicts
 
-#TODO: Get rid of this
-def get_borders(xx,yy,Z,lim=0.5):
-    cs = plt.contour(xx,yy,Z, [lim])
-    p = cs.collections[0].get_paths()[0]
-    v = p.vertices
-    return v[:,0],v[:,1]
 
-
-
-def verbose(txt,verbosity,verb_level=2):
+def verbose(txt, verbosity, verb_level=2):
     '''
-    @param txt: Message which will be showed
-    @param verb_level: Level of verbosity:
+    Parameters
+    ----------
+    txt : str
+        Message which will be showed
+
+    verb_level : int
+        Level of verbosity:
+
         0 - All messages will be showed
         1 - Just messages witch verbosity 1 an 2 will be showed
-        2 - Just messages witch verbosity 2 will be showed   
-    @param verb_level: Set verbosity level    
+        2 - Just messages witch verbosity 2 will be showed
+
+    verb_level : int
+        Verbosity level
+
+    Returns
+    -------
+        None
     '''
     if verbosity <= verb_level:
         print txt
-        
 
-def progressbar(it, prefix = "", size = 60):
+
+def progressbar(it, prefix="", size=60):
+    """
+    Parameters
+    ----------
+    it : list
+        List of values
+
+    prefix : str
+        Text which is displayed before progressbar
+
+    size : int
+        Number of items in progressbar
+
+    Returns
+    -------
+        None
+    """
     count = len(it)
-    
+
     if count > 0:
         def _show(_i):
-            x = int(size*_i/count)
-            sys.stdout.write("%s[%s%s] %i/%i\r" % (prefix, "#"*x, "."*(size-x), _i, count))
+            x = int(size * _i / count)
+            sys.stdout.write("%s[%s%s] %i/%i\r" %
+                             (prefix, "#" * x, "." * (size - x), _i, count))
             sys.stdout.flush()
-        
+
         _show(0)
         for i, item in enumerate(it):
             yield item
-            _show(i+1)
+            _show(i + 1)
         sys.stdout.write("\n")
         sys.stdout.flush()
-        
-        
+
+
 def create_folder(path):
+    """Create folder if it not exists"""
     if not os.path.exists(path):
         os.makedirs(path)
         return True
     return False
-        
- 
-def cut_path( path, last_folder):
-    split_id = None
-    for i,it in enumerate(path.split("/")):
-        if it == last_folder:
-            split_id =  i 
-    if split_id:      
-        return os.path.join( *path.split("/")[ split_id + 1:] )
-    
-    return None
-    
-def get_combinations( keys, *lists):
-    """  
-    Example:
+
+
+def get_combinations(keys, *lists):
+    """
+    Make combinations from given lists
+
+    Parameters
+    ----------
+    keys : list
+        Name of consequent columns (lists)
+
+    lists : list of lists
+        Combinations
+
+    Example
     --------
         get_combinations( ["key1", "key2", "key3"], [1,2,3], ["m", "n", "k"], [77,88,99,55,22]
+
+    Returns
+    -------
+    list
+        All combinations
     """
-    
+
     queries = []
-    
+
     if not len(keys) == len(lists):
-        raise Exception("Length of header have to be the same of number of lists for combinations")
-    
+        raise Exception(
+            "Length of header have to be the same of number of lists for combinations")
+
     for comb in list(itertools.product(*lists)):
         this_query = {}
         for i, key in enumerate(keys):
             this_query[key] = comb[i]
-        queries.append( this_query )
+        queries.append(this_query)
     return queries
-
-
-
-            
-            
-        
-       

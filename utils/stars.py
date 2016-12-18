@@ -1,8 +1,4 @@
 '''
-Created on Mar 18, 2016
-
-@author: Martin Vo
-
 There are common functions for list of star objects (evaluation, plotting...)
 '''
 
@@ -20,16 +16,20 @@ def saveStars(stars, path=".", clobber=True):
     """
     Save Star objects into fits files
 
-    Parameters:
+    Parameters
     -----------
-        stars : list, iterable
-            Star objects to be saved
+    stars : list, iterable
+        Star objects to be saved
 
-        path : str
-            Relative path to the file where fits are stored
+    path : str
+        Relative path to the file where fits are stored
 
-    Returns:
-    --------
+    clobber : bool
+        Files are overwritten if True
+
+    Returns
+    -------
+    list
         List of names of star files
     """
     N = 7
@@ -47,109 +47,38 @@ def saveStars(stars, path=".", clobber=True):
     return file_names
 
 
-def resultEvalaution(stars, class_types=["QC"]):
-    '''
-    This method decide about correction of filtering according matched star type
-
-    @param stars: Inspected list of stars (with attribute starClass)
-    @param class_types: Name of class types which we will searching for in all stars
-
-    @return: Number of stars which have class_type and stars which do not have it
-    '''
-    right_stars = []
-    wrong_stars = []
-    for star in stars:
-        if (star.starClass in class_types):
-            right_stars.append(star)
-        else:
-            wrong_stars.append(star)
-    print "Good identification: ", len(right_stars), "\tBad identification: ", len(wrong_stars)
-
-    return right_stars, wrong_stars
-
-
-def count_types(stars):
-    """
-    Return dictionary of name star type and its number in given list
-
-    @param stars: List of star objects resolved with class attribute 'starClass'
-    """
-    x = {}
-    for st in stars:
-        star_type = st.starClass
-
-        if not star_type in x:
-            x[star_type] = 1
-        else:
-            x[star_type] += 1
-    return x
-
-
-def get_sorted_stars(stars):
-    """
-    Get dictionary of star type and list of stars of this kind
-
-    @param stars: List of star objects resolved with class attribute 'starClass'
-    """
-
-    x = {}
-    for st in stars:
-        star_type = st.starClass
-
-        if not star_type in x:
-            x[star_type] = [st]
-        else:
-            x[star_type].append(st)
-    return x
-
-
-def whichIsNotIn(first_list, second_list):
-    '''
-    This method decides which items from first list is not in the second list
-
-    @return: List of unique items
-    '''
-    rest_items = []
-    for item1 in first_list:
-        if not item1 in second_list:
-            rest_items.append(item1)
-    return rest_items
-
-
-def getStarsLabels(stars, opt="names", db=None):
-    '''
-    This method returns list of star names for given list of star objects
-
-    @param stars: List of star objects
-    @param opt: Option for format of retrieving star names
-
-    @return: List of star names
-    '''
-    OPTIONS = ["names", "types"]
-
-    if not opt in OPTIONS:
-        raise AttributeError("There are no option %s for getStarsLabels" % opt)
-
-    labels = []
-    for star in stars:
-        if opt == "names":
-            labels.append(star.ident[db]["name"])
-        if opt == "types":
-            labels.append(
-                str(star.ident[db]["name"]) + ": " + str(star.starClass))
-    return labels
-
-
-# **********    Plotting    ********
 # TODO: Need to be upgraded
 def plotStarsPicture(stars, option="show", hist_bins=10, vario_bins=10,
                      center=True, save_loc=None, num_plots=None, abbe_bins=20):
     '''
     This function plot three graphs for all stars: Light curve, histogram
-    and variogram. Additionally Abbe value will be displayed
+    and variogram. Additionally Abbe value will be displayed.
 
-    @param stars: List of star objects to be plot
-    @param option: Option whether plots will be saved or just showed
+    Parameters
+    ----------
+    stars : list of `Star`s
+        List of star objects to be plot
+
+    option : str
+        Option whether plots will be saved or just showed
+
+    hist_bins : int
+        Dimension of histogram
+
+    vario_bins : int
+        Dimension of variogram
+
+    center : bool
+        Centering of histogram
+
+    save_loc : str, NoneType
+        Location where images will be saved
+
+    num_plots : int, NoneType
+        Number of plots
+
+    abbe_bins : int
+        Dimension of reduced light curve for calculating Abbe value
     '''
 
     OPTIONS = ["show", "save"]

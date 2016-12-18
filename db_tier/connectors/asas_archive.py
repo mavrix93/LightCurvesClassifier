@@ -1,9 +1,3 @@
-'''
-Created on Dec 7, 2016
-
-@author: Martin Vo
-'''
-
 import collections
 import requests
 
@@ -16,7 +10,7 @@ class AsasArchive(VizierTapBase, LightCurvesDb):
     Asas archive of variable stars. It inherits `VizierTapBase` - see
     documentation of this class to class attributes description.
 
-    EXAMPLE
+    Example
     -------
     queries = [{"ASAS": "000030-3937.5"},
                {"ra": 0.4797, "dec": -67.1290, "delta": 10}]

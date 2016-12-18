@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>src.stars_processing.systematic_search package &#8212; Light Curve Classifier 1.0 documentation</title>
+    <title>src.stars_processing.systematic_search package &#8212; LightCurveClassifier 1.0 documentation</title>
     
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -51,14 +51,24 @@
 </div>
 <div class="section" id="module-src.stars_processing.systematic_search.status_resolver">
 <span id="src-stars-processing-systematic-search-status-resolver-module"></span><h2>src.stars_processing.systematic_search.status_resolver module<a class="headerlink" href="#module-src.stars_processing.systematic_search.status_resolver" title="Permalink to this headline">¶</a></h2>
-<p>Created on Jul 19, 2016</p>
-<p>&#64;author: Martin Vo</p>
 <dl class="class">
 <dt id="src.stars_processing.systematic_search.status_resolver.StatusResolver">
 <em class="property">class </em><code class="descclassname">src.stars_processing.systematic_search.status_resolver.</code><code class="descname">StatusResolver</code><span class="sig-paren">(</span><em>status_file_path</em><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.systematic_search.status_resolver.StatusResolver" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
 <p>This class is responsible for status files generated thru systematic searches
 into databases and for reading files of planned queries.</p>
+<dl class="attribute">
+<dt id="src.stars_processing.systematic_search.status_resolver.StatusResolver.status_header">
+<code class="descname">status_header</code><a class="headerlink" href="#src.stars_processing.systematic_search.status_resolver.StatusResolver.status_header" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>list</em> &#8211; Column names of status file</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.stars_processing.systematic_search.status_resolver.StatusResolver.status_queries">
+<code class="descname">status_queries</code><a class="headerlink" href="#src.stars_processing.systematic_search.status_resolver.StatusResolver.status_queries" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>list</em> &#8211; Rows of status file</p>
+</dd></dl>
+
 <dl class="attribute">
 <dt id="src.stars_processing.systematic_search.status_resolver.StatusResolver.DELIMITER">
 <code class="descname">DELIMITER</code><em class="property"> = ';'</em><a class="headerlink" href="#src.stars_processing.systematic_search.status_resolver.StatusResolver.DELIMITER" title="Permalink to this definition">¶</a></dt>
@@ -73,42 +83,108 @@ into databases and for reading files of planned queries.</p>
 <dt id="src.stars_processing.systematic_search.status_resolver.StatusResolver.getQueries">
 <code class="descname">getQueries</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.systematic_search.status_resolver.StatusResolver.getQueries" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get status file as list of queries</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">List of dictionary queries</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">list</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
-<dl class="method">
+<dl class="classmethod">
 <dt id="src.stars_processing.systematic_search.status_resolver.StatusResolver.getUnsearchedQuery">
-<code class="descname">getUnsearchedQuery</code><span class="sig-paren">(</span><em>search_plan_file</em><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.systematic_search.status_resolver.StatusResolver.getUnsearchedQuery" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return list of queries which were not searched according to status file
-and file of planed queries</p>
-<p>&#64;param search_plan_file: Path to the file of planned queries
-&#64;return: List of query dictionaries</p>
-<p>FORMAT OF PLAN QUERIES FILE is the same as status file except 3 last
-columns (without found,filtred and passed)</p>
+<em class="property">classmethod </em><code class="descname">getUnsearchedQuery</code><span class="sig-paren">(</span><em>search_plan_file</em><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.systematic_search.status_resolver.StatusResolver.getUnsearchedQuery" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return list of queries which have not been queried yet.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>Search_plan_file</strong> (<em>str</em>) &#8211; Path to the file of planned queries</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">List of query dictionaries</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">FORMAT OF PLAN QUERIES FILE is the same as status file except 3 last
+columns (without found, filtered and passed)</p>
+</div>
 </dd></dl>
 
 <dl class="method">
 <dt id="src.stars_processing.systematic_search.status_resolver.StatusResolver.getWithStatus">
 <code class="descname">getWithStatus</code><span class="sig-paren">(</span><em>stat</em><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.systematic_search.status_resolver.StatusResolver.getWithStatus" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return all queries with desired status</p>
-<p>&#64;param stat: Dictionary with status column name and its value</p>
-<p>EXAMPLE:</p>
+<dd><p>Get queries with given query status</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>stat</strong> (<em>dict</em>) &#8211; Dictionary with status column name and its value</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Example</p>
 <p>getStatus({&#8220;passed&#8221; : True}) &#8211;&gt; [{&#8220;field&#8221;:1,&#8221;starid&#8221;:1, &#8220;target&#8221;:&#8221;lmc&#8221;}, .. , {...}]</p>
 <p>This example generates all stars which passed thru filtering</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Returns all queries with desired status</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">list</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="staticmethod">
 <dt id="src.stars_processing.systematic_search.status_resolver.StatusResolver.get_with_status">
 <em class="property">static </em><code class="descname">get_with_status</code><span class="sig-paren">(</span><em>queries</em>, <em>stat={'passed': True}</em><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.systematic_search.status_resolver.StatusResolver.get_with_status" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return all queries with desired status</p>
-<p>&#64;param stat: Dictionary with status column name and its value
-&#64;param queries: List of query dictionaries</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>stat</strong> (<em>dict</em>) &#8211; Dictionary with status column name and its value</li>
+<li><strong>queries</strong> (<em>list</em>) &#8211; List of query dictionaries</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Returns all queries with desired status</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="staticmethod">
 <dt id="src.stars_processing.systematic_search.status_resolver.StatusResolver.save_query">
-<em class="property">static </em><code class="descname">save_query</code><span class="sig-paren">(</span><em>query</em>, <em>FI_NAME='query_file.txt'</em>, <em>PATH='.'</em>, <em>DELIM=None</em>, <em>overwrite=False</em><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.systematic_search.status_resolver.StatusResolver.save_query" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="descname">save_query</code><span class="sig-paren">(</span><em>query</em>, <em>fi_name='query_file.txt'</em>, <em>PATH='.'</em>, <em>DELIM=None</em>, <em>overwrite=False</em><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.systematic_search.status_resolver.StatusResolver.save_query" title="Permalink to this definition">¶</a></dt>
 <dd><p>Save queries into the file which can be loaded for another query</p>
-<p>&#64;param query: List of dictionaries which contains query params</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>query</strong> (<em>list</em>) &#8211; List of dictionaries which contains query params</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </dd></dl>

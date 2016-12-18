@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>src.db_tier.connectors package &#8212; Light Curve Classifier 1.0 documentation</title>
+    <title>src.db_tier.connectors package &#8212; LightCurveClassifier 1.0 documentation</title>
     
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -48,15 +48,13 @@
 </div>
 <div class="section" id="module-src.db_tier.connectors.asas_archive">
 <span id="src-db-tier-connectors-asas-archive-module"></span><h2>src.db_tier.connectors.asas_archive module<a class="headerlink" href="#module-src.db_tier.connectors.asas_archive" title="Permalink to this headline">¶</a></h2>
-<p>Created on Dec 7, 2016</p>
-<p>&#64;author: Martin Vo</p>
 <dl class="class">
 <dt id="src.db_tier.connectors.asas_archive.AsasArchive">
 <em class="property">class </em><code class="descclassname">src.db_tier.connectors.asas_archive.</code><code class="descname">AsasArchive</code><span class="sig-paren">(</span><em>queries</em><span class="sig-paren">)</span><a class="headerlink" href="#src.db_tier.connectors.asas_archive.AsasArchive" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">db_tier.vizier_tap_base.VizierTapBase</span></code>, <code class="xref py py-class docutils literal"><span class="pre">db_tier.base_query.LightCurvesDb</span></code></p>
 <p>Asas archive of variable stars. It inherits <cite>VizierTapBase</cite> - see
 documentation of this class to class attributes description.</p>
-<p class="rubric">EXAMPLE</p>
+<p class="rubric">Example</p>
 <dl class="docutils">
 <dt>queries = [{&#8220;ASAS&#8221;: &#8220;000030-3937.5&#8221;},</dt>
 <dd>{&#8220;ra&#8221;: 0.4797, &#8220;dec&#8221;: -67.1290, &#8220;delta&#8221;: 10}]</dd>
@@ -114,8 +112,6 @@ documentation of this class to class attributes description.</p>
 </div>
 <div class="section" id="module-src.db_tier.connectors.corot_archive">
 <span id="src-db-tier-connectors-corot-archive-module"></span><h2>src.db_tier.connectors.corot_archive module<a class="headerlink" href="#module-src.db_tier.connectors.corot_archive" title="Permalink to this headline">¶</a></h2>
-<p>Created on Dec 7, 2016</p>
-<p>&#64;author: Martin Vo</p>
 <dl class="class">
 <dt id="src.db_tier.connectors.corot_archive.CorotBrightArchive">
 <em class="property">class </em><code class="descclassname">src.db_tier.connectors.corot_archive.</code><code class="descname">CorotBrightArchive</code><span class="sig-paren">(</span><em>queries</em><span class="sig-paren">)</span><a class="headerlink" href="#src.db_tier.connectors.corot_archive.CorotBrightArchive" title="Permalink to this definition">¶</a></dt>
@@ -173,14 +169,13 @@ documentation of this class to class attributes description.</p>
 <em class="property">class </em><code class="descclassname">src.db_tier.connectors.corot_archive.</code><code class="descname">CorotFaintArchive</code><span class="sig-paren">(</span><em>queries</em><span class="sig-paren">)</span><a class="headerlink" href="#src.db_tier.connectors.corot_archive.CorotFaintArchive" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#src.db_tier.connectors.corot_archive.CorotBrightArchive" title="src.db_tier.connectors.corot_archive.CorotBrightArchive"><code class="xref py py-class docutils literal"><span class="pre">src.db_tier.connectors.corot_archive.CorotBrightArchive</span></code></a></p>
 <p>Corot archive of faint stars</p>
-<blockquote>
-<div><dl class="docutils">
+<p class="rubric">Examples</p>
+<dl class="docutils">
 <dt>queries = [ { &#8220;Corot&#8221;</dt>
  <span class="classifier-delimiter">:</span> <span class="classifier">&#8220;102706554&#8221;},</span><dd>{&#8220;ra&#8221;: 100.94235, &#8220;dec&#8221; : -00.89651, &#8220;delta&#8221; : 10}]</dd>
 </dl>
 <p>client = StarsProvider().getProvider( obtain_method = &#8220;CorotFaintArchive&#8221;, obtain_params = queries)
 stars = client.getStarsWithCurves(max_bins = 10000 )</p>
-</div></blockquote>
 <dl class="attribute">
 <dt id="src.db_tier.connectors.corot_archive.CorotFaintArchive.ERR_COL">
 <code class="descname">ERR_COL</code><em class="property"> = 5</em><a class="headerlink" href="#src.db_tier.connectors.corot_archive.CorotFaintArchive.ERR_COL" title="Permalink to this definition">¶</a></dt>
@@ -231,48 +226,68 @@ stars = client.getStarsWithCurves(max_bins = 10000 )</p>
 </div>
 <div class="section" id="module-src.db_tier.connectors.file_manager">
 <span id="src-db-tier-connectors-file-manager-module"></span><h2>src.db_tier.connectors.file_manager module<a class="headerlink" href="#module-src.db_tier.connectors.file_manager" title="Permalink to this headline">¶</a></h2>
-<p>Created on Jan 27, 2016</p>
-<p>&#64;author: Martin Vo</p>
 <dl class="class">
 <dt id="src.db_tier.connectors.file_manager.FileManager">
 <em class="property">class </em><code class="descclassname">src.db_tier.connectors.file_manager.</code><code class="descname">FileManager</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#src.db_tier.connectors.file_manager.FileManager" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">db_tier.base_query.LightCurvesDb</span></code></p>
 <p>This class is responsible for managing light curve files</p>
-<blockquote>
-<div><dl class="docutils">
-<dt>path</dt>
- <span class="classifier-delimiter">:</span> <span class="classifier">str</span><dd>Path key of folder of light curves registered in settings.
+<dl class="attribute">
+<dt id="src.db_tier.connectors.file_manager.FileManager.path">
+<code class="descname">path</code><a class="headerlink" href="#src.db_tier.connectors.file_manager.FileManager.path" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str</em> &#8211; Path key of folder of light curves registered in settings.
 If path starts with &#8220;HERE:&#8221; such as &#8220;HERE:path/to/the/folder&#8221;,
-relative path is taken.</dd>
-<dt>star_class</dt>
- <span class="classifier-delimiter">:</span> <span class="classifier">str</span><dd>Name of the loaded star-like type (e.g. Cepheids)</dd>
-<dt>suffix</dt>
- <span class="classifier-delimiter">:</span> <span class="classifier">str</span><dd><p class="first">Suffix of light curve files in the folder. If suffix is &#8220;fits&#8221;,
+relative path is taken.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.db_tier.connectors.file_manager.FileManager.star_class">
+<code class="descname">star_class</code><a class="headerlink" href="#src.db_tier.connectors.file_manager.FileManager.star_class" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str</em> &#8211; Name of the loaded star-like type (e.g. Cepheids)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.db_tier.connectors.file_manager.FileManager.suffix">
+<code class="descname">suffix</code><a class="headerlink" href="#src.db_tier.connectors.file_manager.FileManager.suffix" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str</em> &#8211; Suffix of light curve files in the folder. If suffix is &#8220;fits&#8221;,
 files are loaded as fits files, otherwise files are considered
 as .dat files of light curve such as:</p>
-<blockquote class="last">
+<blockquote>
 <div>#time    mag    err
 12    13.45    0.38</div></blockquote>
-</dd>
-<dt>files_limit</dt>
- <span class="classifier-delimiter">:</span> <span class="classifier">int, str</span><dd>Number of files which will be loaded</dd>
-<dt>db_ident</dt>
- <span class="classifier-delimiter">:</span> <span class="classifier">str</span><dd><p class="first">Name of the database to which the file name will be assigned</p>
-<dl class="last docutils">
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.db_tier.connectors.file_manager.FileManager.files_limit">
+<code class="descname">files_limit</code><a class="headerlink" href="#src.db_tier.connectors.file_manager.FileManager.files_limit" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int, str</em> &#8211; Number of files which will be loaded</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.db_tier.connectors.file_manager.FileManager.db_ident">
+<code class="descname">db_ident</code><a class="headerlink" href="#src.db_tier.connectors.file_manager.FileManager.db_ident" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str</em> &#8211; Name of the database to which the file name will be assigned</p>
+<dl class="docutils">
 <dt>EXAMPLE:</dt>
 <dd><p class="first">For the file &#8220;my_macho_star.dat&#8221; and given db_ident as &#8220;macho&#8221;
 makes Star object:</p>
 <p class="last">star.ident[&#8220;macho&#8221;] &#8211;&gt; my_macho_star</p>
 </dd>
 </dl>
-</dd>
-<dt>files_to_load</dt>
- <span class="classifier-delimiter">:</span> <span class="classifier">iterable of str</span><dd>List of file names which should be loaded from the given folder.
-If it is not specified all files will be loaded</dd>
-<dt>object_file_name</dt>
- <span class="classifier-delimiter">:</span> <span class="classifier">str</span><dd>Name of the pickle file which contains list of star objects</dd>
-</dl>
-</div></blockquote>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.db_tier.connectors.file_manager.FileManager.files_to_load">
+<code class="descname">files_to_load</code><a class="headerlink" href="#src.db_tier.connectors.file_manager.FileManager.files_to_load" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>iterable of str</em> &#8211; List of file names which should be loaded from the given folder.
+If it is not specified all files will be loaded</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.db_tier.connectors.file_manager.FileManager.object_file_name">
+<code class="descname">object_file_name</code><a class="headerlink" href="#src.db_tier.connectors.file_manager.FileManager.object_file_name" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str</em> &#8211; Name of the pickle file which contains list of star objects</p>
+</dd></dl>
+
 <dl class="attribute">
 <dt id="src.db_tier.connectors.file_manager.FileManager.DB_ORIGIN">
 <code class="descname">DB_ORIGIN</code><em class="property"> = 'DB_ORIGIN'</em><a class="headerlink" href="#src.db_tier.connectors.file_manager.FileManager.DB_ORIGIN" title="Permalink to this definition">¶</a></dt>
@@ -335,18 +350,16 @@ If it is not specified all files will be loaded</dd>
 <p>If there are object_file_name in query dictionary, the object file
 of list of stars is loaded. In other case files from given path of
 the folder is loaded into star objects.</p>
-<blockquote>
-<div><dl class="docutils">
-<dt>star_class</dt>
- <span class="classifier-delimiter">:</span> <span class="classifier">str</span><dd>Type of object star objects</dd>
-</dl>
-</div></blockquote>
-<blockquote>
-<div><dl class="docutils">
-<dt>stars</dt>
- <span class="classifier-delimiter">:</span> <span class="classifier">list of Star objects</span><dd>Star objects with light curves</dd>
-</dl>
-</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Star objects with light curves</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">list of <cite>Star</cite> objects</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="staticmethod">
@@ -365,8 +378,6 @@ the folder is loaded into star objects.</p>
 </div>
 <div class="section" id="module-src.db_tier.connectors.kepler_archive">
 <span id="src-db-tier-connectors-kepler-archive-module"></span><h2>src.db_tier.connectors.kepler_archive module<a class="headerlink" href="#module-src.db_tier.connectors.kepler_archive" title="Permalink to this headline">¶</a></h2>
-<p>Created on Nov 30, 2016</p>
-<p>&#64;author: Martin Vo</p>
 <dl class="class">
 <dt id="src.db_tier.connectors.kepler_archive.KeplerArchive">
 <em class="property">class </em><code class="descclassname">src.db_tier.connectors.kepler_archive.</code><code class="descname">KeplerArchive</code><span class="sig-paren">(</span><em>obtain_params</em><span class="sig-paren">)</span><a class="headerlink" href="#src.db_tier.connectors.kepler_archive.KeplerArchive" title="Permalink to this definition">¶</a></dt>
@@ -446,8 +457,6 @@ the folder is loaded into star objects.</p>
 </div>
 <div class="section" id="module-src.db_tier.connectors.macho_client">
 <span id="src-db-tier-connectors-macho-client-module"></span><h2>src.db_tier.connectors.macho_client module<a class="headerlink" href="#module-src.db_tier.connectors.macho_client" title="Permalink to this headline">¶</a></h2>
-<p>Created on Jan 5, 2016</p>
-<p>&#64;author: Martin Vo</p>
 <dl class="class">
 <dt id="src.db_tier.connectors.macho_client.MachoDb">
 <em class="property">class </em><code class="descclassname">src.db_tier.connectors.macho_client.</code><code class="descname">MachoDb</code><span class="sig-paren">(</span><em>queries</em><span class="sig-paren">)</span><a class="headerlink" href="#src.db_tier.connectors.macho_client.MachoDb" title="Permalink to this definition">¶</a></dt>
@@ -500,8 +509,6 @@ client = StarsProvider.getProvider(obtain_method=&#8221;MachoDb&#8221;,</p>
 </div>
 <div class="section" id="module-src.db_tier.connectors.ogle_client">
 <span id="src-db-tier-connectors-ogle-client-module"></span><h2>src.db_tier.connectors.ogle_client module<a class="headerlink" href="#module-src.db_tier.connectors.ogle_client" title="Permalink to this headline">¶</a></h2>
-<p>Created on Jan 6, 2016</p>
-<p>&#64;author: Martin Vo</p>
 <dl class="class">
 <dt id="src.db_tier.connectors.ogle_client.OgleII">
 <em class="property">class </em><code class="descclassname">src.db_tier.connectors.ogle_client.</code><code class="descname">OgleII</code><span class="sig-paren">(</span><em>queries</em><span class="sig-paren">)</span><a class="headerlink" href="#src.db_tier.connectors.ogle_client.OgleII" title="Permalink to this definition">¶</a></dt>

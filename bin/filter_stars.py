@@ -1,14 +1,5 @@
 #!/usr/bin/env python
 # encoding: utf-8
-
-'''
-@author:     Martin Vo
-
-@copyright:  All rights reserved.
-
-@contact:    mavrix@seznam.cz
-'''
-
 import json
 from optparse import OptionParser
 import os
@@ -29,7 +20,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 __all__ = []
 __version__ = 0.3
 __date__ = '2016-09-05'
-__updated__ = '2016-12-17'
+__updated__ = '2016-12-18'
 
 
 def main(argv=None):
@@ -111,10 +102,10 @@ def main(argv=None):
         It is possible to continue with unfinished query. If query file has
         three more columns generated during the filtering about status of
         particular queries the program will find last finished query and it will
-        continues form that point. 
+        continues form that point.
 
-    Examples:
-    --------    
+    Examples
+    --------
         *Just downloading a light curves:
         
             For Ogle query file (named query.txt):
@@ -181,7 +172,7 @@ def main(argv=None):
             print json.dumps(StarsProvider().STARS_PROVIDERS.keys())
             return False
 
-        #-------    Core    ------
+        # -------    Core    ------
 
         UNFOUND_LIM = 2
 
@@ -195,13 +186,13 @@ def main(argv=None):
 
         star_filters = _load_filters(opts.filt)
 
-        print sum_txt(opts.db, opts.input, len(resolver.status_queries), [filt.__class__.__name__ for filt in star_filters], opts.output)
+        print _sum_txt(opts.db, opts.input, len(resolver.status_queries), [filt.__class__.__name__ for filt in star_filters], opts.output)
 
         searcher = StarsSearcher(star_filters,
-                                 SAVE_PATH=opts.output,
-                                 SAVE_LIM=1,
-                                 OBTH_METHOD=opts.db,
-                                 UNFOUND_LIM=UNFOUND_LIM)
+                                 save_path=opts.output,
+                                 save_lim=1,
+                                 obth_method=opts.db,
+                                 unfound_lim=UNFOUND_LIM)
         searcher.queryStars(queries)
 
         print "\nResults and status file were saved into %s folder in %s" % (opts.output, settings.LC_FOLDER)
@@ -213,7 +204,7 @@ def main(argv=None):
         return 2
 
 
-def sum_txt(db, input, num_queries, star_filters, out):
+def _sum_txt(db, input, num_queries, star_filters, out):
     '''Get info text before querying'''
 
     sumup_txt = '''

@@ -1,8 +1,3 @@
-'''
-Created on Jan 5, 2016
-
-@author: Martin Vo
-'''
 import collections
 
 from db_tier.base_query import LightCurvesDb

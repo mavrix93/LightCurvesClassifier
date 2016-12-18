@@ -1,8 +1,3 @@
-'''
-Created on Dec 7, 2016
-
-@author: Martin Vo
-'''
 from __future__ import division
 
 import cStringIO
@@ -60,7 +55,7 @@ class CorotBrightArchive(VizierTapBase, LightCurvesDb):
         """
         Obtain light curve
 
-        Parameters:
+        Parameters
         -----------
             file_name : str
                 Path to the light curve file from root url
@@ -68,7 +63,7 @@ class CorotBrightArchive(VizierTapBase, LightCurvesDb):
             max_bins : int
                 Maximal number of dimension of the light curve
 
-        Returns:
+        Returns
         --------
             Tuple of times, magnitudes, errors lists
         """
@@ -120,7 +115,7 @@ class CorotFaintArchive(CorotBrightArchive):
     Corot archive of faint stars
 
 
-    EXAMPLES:
+    Examples
     ---------
         queries = [ { "Corot" : "102706554"},
                     {"ra": 100.94235, "dec" : -00.89651, "delta" : 10}]        

@@ -1,5 +1,6 @@
 import os
 from os.path import join
+import sys
 
 from db_tier.base_query import StarsCatalogue
 from stars_processing.deciders.base_decider import BaseDecider
@@ -18,10 +19,12 @@ JUST_FILTER_OBJECT = True
 OBJECT_SUFFIX = "pickle"
 CONF_FILE_SEPARATOR = "="
 
-#**********    Folders    *********
+# **********    Folders    *********
 # Directory of data and src folders
 ROOT_DIR = join(
     os.path.dirname(os.path.realpath(__file__)), os.pardir, os.pardir)
+
+sys.path.append(join(ROOT_DIR, "src"))
 
 # Data folder
 TO_THE_DATA_FOLDER = join(ROOT_DIR, "data")
@@ -41,21 +44,22 @@ TUNING_LOGS = join(TO_THE_DATA_FOLDER, "tuning_logs")
 # Folder of database files
 DB_FILE_PATH = join(TO_THE_DATA_FOLDER, "databases")
 
-#***********    Source packages    *********
+# ***********    Source packages    *********
 # Base directory of source package
-BASE_DIR = join(os.pardir)
+BASE_DIR = os.pardir
 
 # Package of filters implementations
 FILTERS_IMPL_PATH = join(BASE_DIR, "stars_processing", "filters_impl")
 
+
 # Package of connectors implementations
-DB_CONNECTORS = join(BASE_DIR, "db_tier", "connectors")
+DB_CONNECTORS = join("db_tier", "connectors")
 
 # Package of deciders implementations
 DECIDERS_PATH = join(BASE_DIR, "stars_processing", "deciders")
 
 
-#*********    Registration of paths    **********
+# *********    Registration of paths    **********
 # Folders of light curves keys - paths
 STARS_PATH = {"stars": join(LC_FOLDER, "some_stars"),
               "quasars": join(LC_FOLDER, "quasars"),
@@ -69,11 +73,6 @@ STARS_PATH = {"stars": join(LC_FOLDER, "some_stars"),
               "crossmatch": join(LC_FOLDER, "crossmatch")
               }
 
-# Folders of local database files
-DATABASES = {"local": join(DB_FILE_PATH, "local.db"),
-             "milliquas": join(DB_FILE_PATH, "milliquas.db"),
-             "ogleII": join(DB_FILE_PATH, "ogleII.db"),
-             "og_milli_crossmatch": join(DB_FILE_PATH, "og_milli_crossmatch.db")}
 
 # Listen folders of implemented classes
 IMPLEMENTED_CLASSES = {"filters": (FILTERS_IMPL_PATH, BaseFilter),

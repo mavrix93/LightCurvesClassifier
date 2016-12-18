@@ -1,8 +1,4 @@
 '''
-Created on Mar 9, 2016
-
-@author: Martin Vo
-
 There are functions for processing data series
 '''
 
@@ -16,13 +12,26 @@ import numpy as np
 
 def to_PAA(x, bins):
     """
-    Funciton performs Piecewise Aggregate Approximation on data set, reducing
+    Function performs Piecewise Aggregate Approximation on data set, reducing
     the dimension of the dataset x to w discrete levels. returns the reduced
     dimension data set, as well as the indicies corresponding to the original
     data for each reduced dimension
 
-    @param x: 1D serie of values
-    @param bins: 
+    Parameters
+    ----------
+    x : list, array, iterable
+        1D serie of values
+
+    bins : int
+        Dimension of reduced data
+
+    Returns
+    -------
+    numpy.array
+        Approximated data serie
+
+    list
+        Indices
     """
 
     n = len(x)
@@ -38,13 +47,36 @@ def to_PAA(x, bins):
         indices.append((frameStart, int(frameStart + step)))
         i += 1
         frameStart = int(i * stepFloat)
-    return (np.array(approximation), indices)
+    return np.array(approximation), indices
 
 
 def to_ekvi_PAA(x, y, bins=None, days_per_bin=None):
     '''
     This method perform PAA (see above) on y data set, but it will consider
-    different time steps between values (in x data set) and return corrected data set
+    different time steps between values (in x data set) and return corrected
+    data set.
+
+    Parameters
+    ----------
+    x : list, numpy.array, iterable
+        Times which is treated as template for transformation `y` values
+
+    y : list, numpy.array, iterable
+        List of values
+
+    bins : int
+        Dimension of result data
+
+    days_per_bin : float
+        This value can be used for calculating bins
+
+    Returns
+    -------
+    list
+        Reduced `x` data
+
+    list
+        Reduced `y` data
     '''
 
     if isinstance(x, list):
@@ -106,6 +138,16 @@ def normalize(x, eps=1e-6):
     standard deviation of 1) unless it's standard deviation is below
     epsilon, in which case it returns an array of zeros the length
     of the original array.
+
+    Parameters
+    ----------
+    x : numpy.array, list, iterable
+        Input data serie
+
+    Returns
+    -------
+    numpy.arrray
+        Normalized data serie
     """
 
     X = np.asanyarray(x)
@@ -118,7 +160,20 @@ def normalize(x, eps=1e-6):
 
 def abbe(x, n):
     '''
-    Calculation of Abbe value    
+    Calculation of Abbe value
+
+    Parameters
+    ----------
+    x : numpy.array
+        Input data serie
+
+    n : int
+        Dimension of original data (before dimension reduction)
+
+    Returns
+    -------
+    float
+        Abbe value
     '''
 
     sum1 = ((x[1:] - x[:-1])**2).sum()
@@ -130,12 +185,24 @@ def variogram(x, y, bins=None, log_opt=True):
     '''
     Variogram of function shows variability of function in various time steps
 
-    @param x: List/array of time values
-    @param y: List/array of measured values
-    @param bins: Number of values in a variogram
-    @param : log_opt: Option if variogram values return in logarithm values
+    Parameters
+    ----------
+    x : list, numpy.array, iterable
+        Time values
 
-    @return: Variogram as two numpy arrays
+    y : list, numpy.array
+        Measured values
+
+    bins : int
+        Number of values in a variogram
+
+    log_opt : bool
+        Option if variogram values return in logarithm values
+
+    Returns
+    -------
+    tuple
+        Variogram as two numpy arrays
     '''
     if not bins:
         bins = 12
@@ -171,9 +238,30 @@ def variogram(x, y, bins=None, log_opt=True):
 
 def histogram(xx, yy, bins_num=None, centred=True, normed=True):
     '''
-    @param bins_num: Number of values in histogram
-    @param centred: If True values will be shifted (mean value into the zero)
-    @param normed: If True values will be normed (according to standart deviation)
+    Parameters
+    ----------
+    xx : numpy.array
+        Input x data
+
+    yy : numpy.array
+        Input y data
+
+    bins_num : int
+        Number of values in histogram
+
+    centred : bool
+        If True values will be shifted (mean value into the zero)
+
+    normed : bool
+        If True values will be normed (according to standard deviation)
+
+    Returns
+    -------
+    numpy.array
+        Number of values in particular ranges
+
+    numpy.array
+        Ranges
     '''
     if not bins_num:
         warnings.warn(
@@ -213,6 +301,14 @@ def compute_bins(x_time, days_per_bin):
     '''
     Compute number of bins for given time series according to given ratio
     of number of days per one bin
+
+    Parameters
+    ----------
+    x_time : numpy.array, list
+        List of times
+
+    days_per_bin : float
+        Transformation rate for diemension reduction
     '''
 
     BORDER_AREA = 5
@@ -233,9 +329,3 @@ def compute_bins(x_time, days_per_bin):
         num_bins = 5
 
     return num_bins
-
-
-def cart_distance(x, y):
-    ''' Calculate cartesian distance '''
-
-    return np.sqrt(x**2 + y**2)

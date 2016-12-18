@@ -12,14 +12,6 @@ src.tools.prepare_package module
     :undoc-members:
     :show-inheritance:
 
-src.tools.view_db module
-------------------------
-
-.. automodule:: src.tools.view_db
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 
 Module contents
 ---------------

@@ -1,8 +1,3 @@
-'''
-Created on Dec 15, 2016
-
-@author: Martin Vo
-'''
 import unittest
 
 from db_tier.stars_provider import StarsProvider

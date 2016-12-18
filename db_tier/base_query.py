@@ -34,7 +34,7 @@ class StarsCatalogue(object):
         nearest : bool
             Nearest star to the center of searching is returned if it is True
 
-        Returns:
+        Returns
         --------
         list
             List of `Star` objects

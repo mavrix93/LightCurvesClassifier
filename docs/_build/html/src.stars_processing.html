@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>src.stars_processing package &#8212; Light Curve Classifier 1.0 documentation</title>
+    <title>src.stars_processing package &#8212; LightCurveClassifier 1.0 documentation</title>
     
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -48,16 +48,6 @@
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="src.stars_processing.deciders.html">src.stars_processing.deciders package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="src.stars_processing.deciders.html#subpackages">Subpackages</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="src.stars_processing.deciders.unsupervised.html">src.stars_processing.deciders.unsupervised package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="src.stars_processing.deciders.unsupervised.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="src.stars_processing.deciders.unsupervised.html#src-stars-processing-deciders-unsupervised-k-means-decider-module">src.stars_processing.deciders.unsupervised.k_means_decider module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="src.stars_processing.deciders.unsupervised.html#src-stars-processing-deciders-unsupervised-unsupervised-base-module">src.stars_processing.deciders.unsupervised.unsupervised_base module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="src.stars_processing.deciders.unsupervised.html#module-contents">Module contents</a></li>
-</ul>
-</li>
-</ul>
-</li>
 <li class="toctree-l2"><a class="reference internal" href="src.stars_processing.deciders.html#submodules">Submodules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="src.stars_processing.deciders.html#module-src.stars_processing.deciders.base_decider">src.stars_processing.deciders.base_decider module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="src.stars_processing.deciders.html#module-src.stars_processing.deciders.distance_desider">src.stars_processing.deciders.distance_desider module</a></li>
@@ -101,23 +91,6 @@
 </div>
 <div class="section" id="module-src.stars_processing.filtering_manager">
 <span id="src-stars-processing-filtering-manager-module"></span><h2>src.stars_processing.filtering_manager module<a class="headerlink" href="#module-src.stars_processing.filtering_manager" title="Permalink to this headline">¶</a></h2>
-<p>Created on Mar 18, 2016</p>
-<p>&#64;author: Martin Vo</p>
-<p>IDEA OF ORGANIZATION OF FILTERING:</p>
-<ul>
-<li><p class="first">this class perform all filtering</p>
-</li>
-<li><dl class="first docutils">
-<dt>every filter class is inherited from parent &#8220;BaseFilter&#8221; class</dt>
-<dd><dl class="first last docutils">
-<dt>-&gt; every filter will contain method for filtering stars (with same name), so</dt>
-<dd><p class="first last">it is possible to perform applying filters at once in this class</p>
-</dd>
-</dl>
-</dd>
-</dl>
-</li>
-</ul>
 <dl class="class">
 <dt id="src.stars_processing.filtering_manager.FilteringManager">
 <em class="property">class </em><code class="descclassname">src.stars_processing.filtering_manager.</code><code class="descname">FilteringManager</code><span class="sig-paren">(</span><em>stars=[]</em><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.filtering_manager.FilteringManager" title="Permalink to this definition">¶</a></dt>
@@ -127,27 +100,69 @@
 Class is initialized with inspected stars as argument. Additionally stars
 can be added thru add method. Each filter has its own implementation
 of preparing</p>
+<dl class="attribute">
+<dt id="src.stars_processing.filtering_manager.FilteringManager.stars">
+<code class="descname">stars</code><a class="headerlink" href="#src.stars_processing.filtering_manager.FilteringManager.stars" title="Permalink to this definition">¶</a></dt>
+<dd><p>list of <cite>Star</cite> objects &#8211; Stars to be filtered</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.stars_processing.filtering_manager.FilteringManager.filters">
+<code class="descname">filters</code><a class="headerlink" href="#src.stars_processing.filtering_manager.FilteringManager.filters" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>list of filters</em> &#8211; Filters which are used to filtering given stars</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="src.stars_processing.filtering_manager.FilteringManager.addStars">
 <code class="descname">addStars</code><span class="sig-paren">(</span><em>stars</em><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.filtering_manager.FilteringManager.addStars" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add list of stars or one star to the list of stars for filtering</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>stars</strong> (list of <cite>Star</cite> objects) &#8211; Stars to be filtered</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="src.stars_processing.filtering_manager.FilteringManager.loadFilter">
 <code class="descname">loadFilter</code><span class="sig-paren">(</span><em>stars_filter</em><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.filtering_manager.FilteringManager.loadFilter" title="Permalink to this definition">¶</a></dt>
-<dd><p>This method load reference stars which will be used as template for filtering</p>
-<dl class="docutils">
-<dt>&#64;param stars_filter: This is stars filter object responsible for filtering</dt>
-<dd>stars according to its own criterion</dd>
-</dl>
+<dd><p>Load filters</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>stars_filter</strong> (<em>list of filters</em>) &#8211; Star filters object responsible for filtering stars</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="src.stars_processing.filtering_manager.FilteringManager.performFiltering">
 <code class="descname">performFiltering</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.filtering_manager.FilteringManager.performFiltering" title="Permalink to this definition">¶</a></dt>
-<dd><p>Apply all filters to stars and return stars which passed thru all filters</p>
-<p>&#64;return: Stars which passed thru filtering</p>
+<dd><p>Apply all filters to stars and return stars which passed
+thru all filters</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Stars which passed thru filtering</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">list of <a href="#id1"><span class="problematic" id="id2">`</span></a>Star`s</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </dd></dl>

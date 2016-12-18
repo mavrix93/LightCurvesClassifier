@@ -1,13 +1,6 @@
 src.stars_processing.deciders package
 =====================================
 
-Subpackages
------------
-
-.. toctree::
-
-    src.stars_processing.deciders.unsupervised
-
 Submodules
 ----------
 

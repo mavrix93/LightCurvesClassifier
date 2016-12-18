@@ -1,181 +1,224 @@
-'''
-Created on Jul 19, 2016
+import ast
+import os
 
-@author: Martin Vo
-'''
-
+from conf import settings
+from entities.exceptions import InvalidFilesPath
 import numpy as np
 from utils.helpers import subDictInDict
-from entities.exceptions import InvalidFilesPath
-import os
-import ast
-from conf import settings
+
 
 class StatusResolver(object):
     '''
     This class is responsible for status files generated thru systematic searches
     into databases and for reading files of planned queries.
-    '''
-    
-    NUM_STATUS_INFO = 4         #Number of status info columns +1
-    DELIMITER = settings.FILE_DELIM
 
+    Attributes
+    ----------
+    status_header : list
+        Column names of status file
+
+    status_queries : list
+        Rows of status file
+    '''
+
+    NUM_STATUS_INFO = 4  # Number of status info columns +1
+    DELIMITER = settings.FILE_DELIM
 
     def __init__(self, status_file_path):
         '''
-        @param status_file_path: Path to the status file
-        
-        FORMAT OF STATUS FILE:
-        #first_query_param    second_query_param    other_query_param    found    filtered    passed
-        value1    value2    other_value    True/False    True/False    True/False
-        ...
-        
-        This file will be generate automatically during systematic search.
-        '''
-        
-        self.status_header, self.status_queries = self._readFile(status_file_path)
+        Parameters
+        ----------
+        status_file_path : str
+            Path to the status file
 
-        
+            FORMAT OF STATUS FILE:
+            #first_query_param    second_query_param    other_query_param    found    filtered    passed
+            value1    value2    other_value    True/False    True/False    True/False
+            ...
+
+            This file is generated automatically during systematic search.
+        '''
+
+        self.status_header, self.status_queries = self._readFile(
+            status_file_path)
+
+    @classmethod
     def getUnsearchedQuery(self, search_plan_file):
         '''
-        Return list of queries which were not searched according to status file
-        and file of planed queries
-        
-        @param search_plan_file: Path to the file of planned queries
-        @return: List of query dictionaries   
-        
+        Return list of queries which have not been queried yet.
+
+        Parameters
+        ----------
+        Search_plan_file : str
+            Path to the file of planned queries
+
+        Returns
+        -------
+        list
+            List of query dictionaries
+
+        Note
+        ----
         FORMAT OF PLAN QUERIES FILE is the same as status file except 3 last
-        columns (without found,filtred and passed) 
+        columns (without found, filtered and passed)
         '''
-        
         plan_header, plan_queries = self._readFile(search_plan_file)
 
         header_restr = self.status_header[:-self.NUM_STATUS_INFO]
-        col_num = len(header_restr)   
-        queries_restr =  np.hsplit(self.status_queries,np.array([col_num]))[0]
-        status_dict = self._getDictQuery(header_restr,queries_restr)
-        
+        col_num = len(header_restr)
+        queries_restr = np.hsplit(self.status_queries, np.array([col_num]))[0]
+        status_dict = self._getDictQuery(header_restr, queries_restr)
+
         plan_dict = self._getDictQuery(plan_header, plan_queries)
-        
+
         return self._getDiff(plan_dict, status_dict)
-  
-  
+
     def getWithStatus(self, stat):
         '''
-        Return all queries with desired status
-        
-        @param stat: Dictionary with status column name and its value
-        
-        EXAMPLE:
-        
+        Get queries with given query status
+
+        Parameters
+        ----------
+        stat : dict
+            Dictionary with status column name and its value
+
+        Example
+        --------
         getStatus({"passed" : True}) --> [{"field":1,"starid":1, "target":"lmc"}, .. , {...}] 
-        
+
         This example generates all stars which passed thru filtering
+
+        Returns
+        -------
+        list
+            Returns all queries with desired status
         '''
-        
-        status_dict = self._getDictQuery(self.status_header, self.status_queries)
-        return subDictInDict( stat, status_dict, ["passed", "filtered", "found"])
-    
-    
+
+        status_dict = self._getDictQuery(
+            self.status_header, self.status_queries)
+        return subDictInDict(stat, status_dict, ["passed", "filtered", "found"])
+
     def getQueries(self):
         '''
         Get status file as list of queries
-        '''        
+
+        Returns
+        -------
+        list
+            List of dictionary queries
+        '''
         return self._getDictQuery(self.status_header, self.status_queries)
-    
-        
+
     @staticmethod
-    def save_query(query, FI_NAME = "query_file.txt", PATH = ".", DELIM = None, overwrite = False):
+    def save_query(query, fi_name="query_file.txt", PATH=".", DELIM=None,
+                   overwrite=False):
         '''
         Save queries into the file which can be loaded for another query
-        
-        @param query: List of dictionaries which contains query params
+
+        Parameters
+        ----------
+        query : list
+            List of dictionaries which contains query params
+
+        Returns
+        -------
+            None
         '''
-        
+
         header = query[0].keys()
-        path = os.path.join( PATH, FI_NAME )
-        
+        path = os.path.join(PATH, fi_name)
+
         if not DELIM:
             DELIM = settings.FILE_DELIM
-        
+
         try:
             if overwrite:
-                query_file = open( path ,"w+")
+                query_file = open(path, "w+")
             else:
-                query_file = open( path ,"a+")
-            
+                query_file = open(path, "a+")
+
         except IOError as err:
             raise InvalidFilesPath(err)
-        
+
         n = len(header)
-        if not query_file.readline().startswith("#"):            
-            query_file.write("#")  
+        if not query_file.readline().startswith("#"):
+            query_file.write("#")
             for i, head in enumerate(header):
-                
+
                 delim = DELIM
-                if i >= n-1: delim = ""
-                
+                if i >= n - 1:
+                    delim = ""
+
                 query_file.write(head + delim)
             query_file.write("\n")
-        
+
         for que in query:
             if len(que) != len(header):
-                raise Exception("Number of header params and values have to be the same.\nGot %s and %s" % (que, header))
+                raise Exception(
+                    "Number of header params and values have to be the same.\nGot %s and %s" % (que, header))
             for i, key in enumerate(que):
                 delim = DELIM
-                if i >= n-1: delim = ""
-                
-                query_file.write( str(que[key])+ delim)
+                if i >= n - 1:
+                    delim = ""
+
+                query_file.write(str(que[key]) + delim)
             query_file.write("\n")
-           
+
         query_file.close()
-        
-        
+
     @staticmethod
-    def get_with_status(queries, stat = {"passed": True}):
+    def get_with_status(queries, stat={"passed": True}):
         '''
         Return all queries with desired status
-        
-        @param stat: Dictionary with status column name and its value
-        @param queries: List of query dictionaries
+
+        Parameters
+        ----------
+        stat : dict
+            Dictionary with status column name and its value
+
+        queries : list
+            List of query dictionaries
+
+        Returns
+        -------
+        list
+            Returns all queries with desired status
         '''
         return subDictInDict(stat, queries)
-    
-    
-    def _readFile(self,path):
+
+    def _readFile(self, path):
         '''Get header and data from the file'''
-        
+
         header = self._readHeader(path)
-        
+
         data = self._getFileData(path)
         # data = np.genfromtxt(path,dtype="|S5", delimiter = self.DELIMITER)
-        # data = self._correctData(data, header)  
-               
+        # data = self._correctData(data, header)
+
         if len(header) != len(data[0]):
-            raise Exception("Number of header params and values have to be the same.\nGot %s and %s" % (data[0], header))
+            raise Exception(
+                "Number of header params and values have to be the same.\nGot %s and %s" % (data[0], header))
         return header, data
-    
-    
-    def _readHeader(self,status_file_path):
-        '''Get keys from header in a list'''        
-        
+
+    def _readHeader(self, status_file_path):
+        '''Get keys from header in a list'''
+
         with open(status_file_path, 'r') as f:
-            header_line = f.readline()[1:].rstrip('\n')    #Skip first symbol ('#') and the  '\n'  
-          
-        return [head.strip() for head in header_line.split( self.DELIMITER )]
-    
-        
-    def _getDiff(self,desir_dicts, comp_dicts):
+            # Skip first symbol ('#') and the  '\n'
+            header_line = f.readline()[1:].rstrip('\n')
+
+        return [head.strip() for head in header_line.split(self.DELIMITER)]
+
+    def _getDiff(self, desir_dicts, comp_dicts):
         '''Get dictionaries from list of desir_dicts which is not present list of comp_dicts'''
-        
+
         diff_dicts = []
         for query in desir_dicts:
             if not query in comp_dicts:
-                diff_dicts.append(query)                
+                diff_dicts.append(query)
         return diff_dicts
-    
-    
-    def _getDictQuery(self,header,queries):
+
+    def _getDictQuery(self, header, queries):
         '''Get header list and contents of the status file as list of dictionaries'''
         queries_list = []
         for query in queries:
@@ -183,7 +226,7 @@ class StatusResolver(object):
                 query = [query]
             queries_list.append(dict(zip(header, self._readInStr(query))))
         return queries_list
-    
+
     def _readInStr(self, words):
         x = []
         for word in words:
@@ -192,48 +235,39 @@ class StatusResolver(object):
             except:
                 x.append(word)
         return x
-    
+
     def _correctData(self, data, header):
         try:
             len(data[0])
-            assert not isinstance( data[0], str)
+            assert not isinstance(data[0], str)
         except:
             # Check if just one value
             try:
                 len(data)
             except:
-                return [[data]] 
-            
+                return [[data]]
+
             # One line
             if len(data) == len(header):
                 return [data]
-            
+
             # One column
             else:
-                return [ [i] for i in data ]
+                return [[i] for i in data]
         return data
-    
-    
+
     def _getFileData(self, path):
-        
+
         fi = open(path)
-        
+
         data = []
         for line in fi.readlines():
             line = line.strip()
-            
+
             if not line.startswith("#"):
-                parts = line.split( self.DELIMITER )
-                
+                parts = line.split(self.DELIMITER)
+
                 parts = self._readInStr(parts)
-                data.append( parts )
+                data.append(parts)
         fi.close
         return data
-
-            
-    
-    
-
-
-
-        

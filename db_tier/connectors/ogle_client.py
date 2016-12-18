@@ -1,9 +1,3 @@
-'''
-Created on Jan 6, 2016
-
-@author: Martin Vo
-'''
-
 from astropy.coordinates.sky_coordinate import SkyCoord
 import re
 import socket
@@ -192,7 +186,7 @@ class OgleII(LightCurvesDb):
         '''
         This method execute query in OGLE db
 
-        Returns:
+        Returns
         --------
             List of stars meeting query parameters
         '''

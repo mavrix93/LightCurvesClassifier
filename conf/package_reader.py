@@ -99,7 +99,6 @@ class PackageReader(object):
         set
             Set of module names in the package
         """
-
         _, pathname, _ = imp.find_module(package_name)
 
         # Use a set because some may be both source and compiled.

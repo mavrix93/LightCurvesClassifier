@@ -1,9 +1,3 @@
-'''
-Created on Oct 28, 2016
-
-@author: Martin Vo
-'''
-
 from pybrain.datasets import SupervisedDataSet
 from pybrain.supervised.trainers import BackpropTrainer
 from pybrain.tools.shortcuts import buildNetwork

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
-# Light Curve Classifier documentation build configuration file, created by
-# sphinx-quickstart on Sat Dec 17 10:11:26 2016.
+# LightCurveClassifier documentation build configuration file, created by
+# sphinx-quickstart on Sat Dec 17 21:22:54 2016.
 #
 # This file is execfile()d with the current directory set to its
 # containing dir.
@@ -17,10 +17,11 @@
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
 # import os
-# import sys
-# sys.path.insert(0, os.path.abspath('.'))
 import sys
-sys.path.insert(0,"/home/martin/workspace/LightCurvesClassifier")
+# sys.path.insert(0, os.path.abspath('.'))
+sys.path.insert(0, "/home/martin/workspace/LightCurvesClassifier")
+sys.path.insert(1, "/home/martin/workspace/LightCurvesClassifier/src")
+
 # -- General configuration ------------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
@@ -30,9 +31,9 @@ sys.path.insert(0,"/home/martin/workspace/LightCurvesClassifier")
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-# Add any paths that contain templates here, relative to this directory.
 extensions = ['sphinx.ext.autodoc', 'sphinx.ext.napoleon']
 
+# Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 
 # The suffix(es) of source filenames.
@@ -45,7 +46,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'Light Curve Classifier'
+project = u'LightCurveClassifier'
 copyright = u'2016, Martin Vo'
 author = u'Martin Vo'
 
@@ -126,7 +127,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'LightCurveClassifier.tex', u'Light Curve Classifier Documentation',
+    (master_doc, 'LightCurveClassifier.tex', u'LightCurveClassifier Documentation',
      u'Martin Vo', 'manual'),
 ]
 
@@ -136,7 +137,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'lightcurveclassifier', u'Light Curve Classifier Documentation',
+    (master_doc, 'lightcurveclassifier', u'LightCurveClassifier Documentation',
      [author], 1)
 ]
 
@@ -147,7 +148,7 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'LightCurveClassifier', u'Light Curve Classifier Documentation',
+    (master_doc, 'LightCurveClassifier', u'LightCurveClassifier Documentation',
      author, 'LightCurveClassifier', 'One line description of project.',
      'Miscellaneous'),
 ]

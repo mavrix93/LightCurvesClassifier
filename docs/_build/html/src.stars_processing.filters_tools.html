@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>src.stars_processing.filters_tools package &#8212; Light Curve Classifier 1.0 documentation</title>
+    <title>src.stars_processing.filters_tools package &#8212; LightCurveClassifier 1.0 documentation</title>
     
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -180,24 +180,67 @@ as positives</p>
 </div>
 <div class="section" id="module-src.stars_processing.filters_tools.params_estim">
 <span id="src-stars-processing-filters-tools-params-estim-module"></span><h2>src.stars_processing.filters_tools.params_estim module<a class="headerlink" href="#module-src.stars_processing.filters_tools.params_estim" title="Permalink to this headline">¶</a></h2>
-<p>Created on Jul 22, 2016</p>
-<p>&#64;author: Martin Vo</p>
 <dl class="class">
 <dt id="src.stars_processing.filters_tools.params_estim.DeciderEstimation">
 <em class="property">class </em><code class="descclassname">src.stars_processing.filters_tools.params_estim.</code><code class="descname">DeciderEstimation</code><span class="sig-paren">(</span><em>searched</em>, <em>others</em>, <em>star_filter</em>, <em>tuned_params</em>, <em>log_path=None</em>, <em>save_filter_name=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.filters_tools.params_estim.DeciderEstimation" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dl class="attribute">
+<dt id="src.stars_processing.filters_tools.params_estim.DeciderEstimation.searched">
+<code class="descname">searched</code><a class="headerlink" href="#src.stars_processing.filters_tools.params_estim.DeciderEstimation.searched" title="Permalink to this definition">¶</a></dt>
+<dd><p>list of <cite>Star</cite> objects &#8211; Searched stars</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.stars_processing.filters_tools.params_estim.DeciderEstimation.others">
+<code class="descname">others</code><a class="headerlink" href="#src.stars_processing.filters_tools.params_estim.DeciderEstimation.others" title="Permalink to this definition">¶</a></dt>
+<dd><p>list of <cite>Star</cite> objects &#8211; Contamination stars</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.stars_processing.filters_tools.params_estim.DeciderEstimation.star_filter">
+<code class="descname">star_filter</code><a class="headerlink" href="#src.stars_processing.filters_tools.params_estim.DeciderEstimation.star_filter" title="Permalink to this definition">¶</a></dt>
+<dd><p><cite>BaseFilter</cite> object &#8211; Filter object (uninstancied)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.stars_processing.filters_tools.params_estim.DeciderEstimation.tuned_params">
+<code class="descname">tuned_params</code><a class="headerlink" href="#src.stars_processing.filters_tools.params_estim.DeciderEstimation.tuned_params" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>list of dicts</em> &#8211; List of parameters to tune</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.stars_processing.filters_tools.params_estim.DeciderEstimation.log_path">
+<code class="descname">log_path</code><a class="headerlink" href="#src.stars_processing.filters_tools.params_estim.DeciderEstimation.log_path" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str, NoneType</em> &#8211; Path to the folder where log file will be saved</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.stars_processing.filters_tools.params_estim.DeciderEstimation.save_filter_name">
+<code class="descname">save_filter_name</code><a class="headerlink" href="#src.stars_processing.filters_tools.params_estim.DeciderEstimation.save_filter_name" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str, NoneType</em> &#8211; Name of filter file if it is not None</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="src.stars_processing.filters_tools.params_estim.DeciderEstimation.fit">
-<code class="descname">fit</code><span class="sig-paren">(</span><em>save=True</em><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.filters_tools.params_estim.DeciderEstimation.fit" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">fit</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.filters_tools.params_estim.DeciderEstimation.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find best combination of filter parameters</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Filter created from the best parameters</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><cite>BaseFilter</cite> instance</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 </dd></dl>
 
 </div>
 <div class="section" id="module-src.stars_processing.filters_tools.sax">
 <span id="src-stars-processing-filters-tools-sax-module"></span><h2>src.stars_processing.filters_tools.sax module<a class="headerlink" href="#module-src.stars_processing.filters_tools.sax" title="Permalink to this headline">¶</a></h2>
-<p>Created on Mar 23, 2016</p>
-<p>&#64;author: Martin Vo</p>
 <dl class="exception">
 <dt id="src.stars_processing.filters_tools.sax.DictionarySizeIsNotSupported">
 <em class="property">exception </em><code class="descclassname">src.stars_processing.filters_tools.sax.</code><code class="descname">DictionarySizeIsNotSupported</code><a class="headerlink" href="#src.stars_processing.filters_tools.sax.DictionarySizeIsNotSupported" title="Permalink to this definition">¶</a></dt>
@@ -219,6 +262,31 @@ Symbolic Aggregate approXimation method.  It translates
 series of data to a words, which can then be compared with other
 such words in symbolic distance space.</p>
 <dl class="attribute">
+<dt id="src.stars_processing.filters_tools.sax.SAX.word_size">
+<code class="descname">word_size</code><a class="headerlink" href="#src.stars_processing.filters_tools.sax.SAX.word_size" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> &#8211; Number of letters in transformed word</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.stars_processing.filters_tools.sax.SAX.alphabet_size">
+<code class="descname">alphabet_size</code><a class="headerlink" href="#src.stars_processing.filters_tools.sax.SAX.alphabet_size" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> &#8211; Size of alphabet counted from A (3 means A, B, C)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.stars_processing.filters_tools.sax.SAX.scaling_factor">
+<code class="descname">scaling_factor</code><a class="headerlink" href="#src.stars_processing.filters_tools.sax.SAX.scaling_factor" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int, float</em> &#8211; Scaling factor can be used to scale result dissimilarity of
+two words created from light curves of different lengths</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.stars_processing.filters_tools.sax.SAX.beta">
+<code class="descname">beta</code><a class="headerlink" href="#src.stars_processing.filters_tools.sax.SAX.beta" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>list</em> &#8211; Breakpoints for given alphabets size</p>
+</dd></dl>
+
+<dl class="attribute">
 <dt id="src.stars_processing.filters_tools.sax.SAX.A_OFFSET">
 <code class="descname">A_OFFSET</code><em class="property"> = 97</em><a class="headerlink" href="#src.stars_processing.filters_tools.sax.SAX.A_OFFSET" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -236,53 +304,106 @@ such words in symbolic distance space.</p>
 <dl class="method">
 <dt id="src.stars_processing.filters_tools.sax.SAX.alphabetize">
 <code class="descname">alphabetize</code><span class="sig-paren">(</span><em>paaX</em><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.filters_tools.sax.SAX.alphabetize" title="Permalink to this definition">¶</a></dt>
-<dd><p>Converts the Piecewise Aggregate Approximation of x to a series of letters.</p>
+<dd><p>Converts the Piecewise Aggregate Approximation of x
+to a series of letters.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>paaX</strong> (<em>list</em><em>, </em><em>iterable</em>) &#8211; Data series (list of numbers)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">SAX word</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
-
-<dl class="method">
-<dt id="src.stars_processing.filters_tools.sax.SAX.batch_compare">
-<code class="descname">batch_compare</code><span class="sig-paren">(</span><em>xStrings</em>, <em>refString</em><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.filters_tools.sax.SAX.batch_compare" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
 
 <dl class="method">
 <dt id="src.stars_processing.filters_tools.sax.SAX.build_letter_compare_dict">
 <code class="descname">build_letter_compare_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.filters_tools.sax.SAX.build_letter_compare_dict" title="Permalink to this definition">¶</a></dt>
-<dd><p>Builds up the lookup table to determine numeric distance between two letters
-given an alphabet size.</p>
+<dd><p>Builds up the lookup table to determine numeric distance
+between two letters given an alphabet size.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="src.stars_processing.filters_tools.sax.SAX.compare_letters">
 <code class="descname">compare_letters</code><span class="sig-paren">(</span><em>la</em>, <em>lb</em><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.filters_tools.sax.SAX.compare_letters" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compare two letters based on letter distance return distance between</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>la</strong> (<em>str</em>) &#8211; First letter</li>
+<li><strong>lb</strong> (<em>str</em>) &#8211; Second letter</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Distance between two letters</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="src.stars_processing.filters_tools.sax.SAX.compare_strings">
 <code class="descname">compare_strings</code><span class="sig-paren">(</span><em>sA</em>, <em>sB</em><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.filters_tools.sax.SAX.compare_strings" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compares two strings based on individual letter distances.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>sA</strong> (<em>str</em>) &#8211; Word to compare</li>
+<li><strong>aB</strong> (<em>str</em>) &#8211; Word to compare</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Dissimilarity of two words</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
-
-<dl class="method">
-<dt id="src.stars_processing.filters_tools.sax.SAX.setScalingFactor">
-<code class="descname">setScalingFactor</code><span class="sig-paren">(</span><em>scalingFactor</em><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.filters_tools.sax.SAX.setScalingFactor" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="src.stars_processing.filters_tools.sax.SAX.set_window_size">
-<code class="descname">set_window_size</code><span class="sig-paren">(</span><em>windowSize</em><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.filters_tools.sax.SAX.set_window_size" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="src.stars_processing.filters_tools.sax.SAX.sliding_window">
-<code class="descname">sliding_window</code><span class="sig-paren">(</span><em>x</em>, <em>windowSize</em>, <em>overlappingFraction=None</em><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.filters_tools.sax.SAX.sliding_window" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
 
 <dl class="method">
 <dt id="src.stars_processing.filters_tools.sax.SAX.to_letter_rep">
 <code class="descname">to_letter_rep</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.filters_tools.sax.SAX.to_letter_rep" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function takes a series of data, x, and transforms it
 to a string representation.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>x</strong> (<em>list</em><em>, </em><em>iterable</em>) &#8211; Data series</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><ul class="simple">
+<li><em>str</em> &#8211; SAX word</li>
+<li><em>list</em> &#8211; Indices</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </dd></dl>
@@ -290,8 +411,6 @@ to a string representation.</p>
 </div>
 <div class="section" id="module-src.stars_processing.filters_tools.symbolic_representation">
 <span id="src-stars-processing-filters-tools-symbolic-representation-module"></span><h2>src.stars_processing.filters_tools.symbolic_representation module<a class="headerlink" href="#module-src.stars_processing.filters_tools.symbolic_representation" title="Permalink to this headline">¶</a></h2>
-<p>Created on Mar 19, 2016</p>
-<p>&#64;author: Martin Vo</p>
 <dl class="class">
 <dt id="src.stars_processing.filters_tools.symbolic_representation.SymbolicRepresentation">
 <em class="property">class </em><code class="descclassname">src.stars_processing.filters_tools.symbolic_representation.</code><code class="descname">SymbolicRepresentation</code><a class="headerlink" href="#src.stars_processing.filters_tools.symbolic_representation.SymbolicRepresentation" title="Permalink to this definition">¶</a></dt>
@@ -299,7 +418,25 @@ to a string representation.</p>
 <dl class="method">
 <dt id="src.stars_processing.filters_tools.symbolic_representation.SymbolicRepresentation.compareTwoStars">
 <code class="descname">compareTwoStars</code><span class="sig-paren">(</span><em>star</em>, <em>comp_star</em><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.filters_tools.symbolic_representation.SymbolicRepresentation.compareTwoStars" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compare two stars according to filter implementation</p>
+<dd><p>Compare two stars according to a filter implementation</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>star</strong> (<cite>Star</cite> instance) &#8211; Star to compare</li>
+<li><strong>comp_star</strong> (<cite>Star</cite> instance) &#8211; Star to compare</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Dissimilarity of two stars</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </dd></dl>

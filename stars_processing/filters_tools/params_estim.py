@@ -107,7 +107,7 @@ class DeciderEstimation(object):
             z.update(collections.OrderedDict(st))
 
             if self.save_filter_name:
-                StatusResolver.save_query([z], FI_NAME=clean_path(
+                StatusResolver.save_query([z], fi_name=clean_path(
                     self.save_filter_name) + "_log.dat", PATH=self.log_path,
                     DELIM="\t")
 
@@ -124,6 +124,6 @@ class DeciderEstimation(object):
         if self.save_filter_name:
             saveIntoFile(
                 filters[best_id], path=settings.FILTERS_PATH,
-                fileName=self.save_filter_name)
+                file_name=self.save_filter_name)
 
         return filters[best_id]

@@ -1,9 +1,3 @@
-'''
-Created on Jan 27, 2016
-
-@author: Martin Vo
-'''
-
 import glob
 import os
 import pyfits
@@ -24,44 +18,42 @@ from utils.output_process_modules import loadFromFile
 class FileManager(LightCurvesDb):
     '''This class is responsible for managing light curve files
 
-    Attributes:
+    Attributes
     -----------
-        path : str
-            Path key of folder of light curves registered in settings.
-            If path starts with "HERE:" such as "HERE:path/to/the/folder",
-            relative path is taken.
+    path : str
+        Path key of folder of light curves registered in settings.
+        If path starts with "HERE:" such as "HERE:path/to/the/folder",
+        relative path is taken.
 
-        star_class : str
-            Name of the loaded star-like type (e.g. Cepheids)
+    star_class : str
+        Name of the loaded star-like type (e.g. Cepheids)
 
-        suffix : str
-            Suffix of light curve files in the folder. If suffix is "fits",
-            files are loaded as fits files, otherwise files are considered
-            as .dat files of light curve such as:
+    suffix : str
+        Suffix of light curve files in the folder. If suffix is "fits",
+        files are loaded as fits files, otherwise files are considered
+        as .dat files of light curve such as:
 
-                #time    mag    err
-                12    13.45    0.38
+            #time    mag    err
+            12    13.45    0.38
 
-        files_limit : int, str
-            Number of files which will be loaded
+    files_limit : int, str
+        Number of files which will be loaded
 
-        db_ident : str
-            Name of the database to which the file name will be assigned
+    db_ident : str
+        Name of the database to which the file name will be assigned
 
-            EXAMPLE:
-                For the file "my_macho_star.dat" and given db_ident as "macho"
-                makes Star object:
+        EXAMPLE:
+            For the file "my_macho_star.dat" and given db_ident as "macho"
+            makes Star object:
 
-                star.ident["macho"] --> my_macho_star
+            star.ident["macho"] --> my_macho_star
 
-        files_to_load : iterable of str
-            List of file names which should be loaded from the given folder.
-            If it is not specified all files will be loaded
+    files_to_load : iterable of str
+        List of file names which should be loaded from the given folder.
+        If it is not specified all files will be loaded
 
-        object_file_name : str
-            Name of the pickle file which contains list of star objects
-
-
+    object_file_name : str
+        Name of the pickle file which contains list of star objects
     '''
 
     DEFAULT_SUFFIX = "dat"
@@ -89,8 +81,8 @@ class FileManager(LightCurvesDb):
                db_ident=str)
     def __init__(self, obtain_params):
         '''
-        Parameters:
-        -----------
+        Parameters
+        ----------
         obtain_params : dict
             Query dictionary (see class Attributes doc above)
         '''
@@ -127,15 +119,10 @@ class FileManager(LightCurvesDb):
         of list of stars is loaded. In other case files from given path of
         the folder is loaded into star objects.
 
-        Attributes:
-        -----------
-            star_class : str
-                Type of object star objects
-
-        Return:
+        Returns
         --------
-            stars : list of Star objects
-                Star objects with light curves
+        list of `Star` objects
+            Star objects with light curves
         '''
 
         if self.object_file_name:
@@ -214,12 +201,12 @@ class FileManager(LightCurvesDb):
         '''
         Load Light curve from dat file of light curve
 
-        Parameters:
+        Parameters
         -----------
             file_with_path : str
                 Name of the light curve file with its path
 
-        Returns:
+        Returns
         --------
             List of tuples of (time, mag, err)
         '''
@@ -275,8 +262,6 @@ class FileManager(LightCurvesDb):
         return file_path[file_path.rfind("/") + 1:end]
 
     def _loadFromFITS(self, star_paths, files_lim=None):
-        """      
-        """
         stars = []
         for path in star_paths:
             stars.append(self._createStarFromFITS(path))
