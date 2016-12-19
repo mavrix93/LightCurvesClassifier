@@ -1,0 +1,663 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>src.stars_processing.filters_impl package &#8212; LightCurveClassifier 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="src-stars-processing-filters-impl-package">
+<h1>src.stars_processing.filters_impl package<a class="headerlink" href="#src-stars-processing-filters-impl-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-src.stars_processing.filters_impl.abbe_value">
+<span id="src-stars-processing-filters-impl-abbe-value-module"></span><h2>src.stars_processing.filters_impl.abbe_value module<a class="headerlink" href="#module-src.stars_processing.filters_impl.abbe_value" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="src.stars_processing.filters_impl.abbe_value.AbbeValueFilter">
+<em class="property">class </em><code class="descclassname">src.stars_processing.filters_impl.abbe_value.</code><code class="descname">AbbeValueFilter</code><span class="sig-paren">(</span><em>bins=None</em>, <em>decider=None</em>, <em>plot_save_path=None</em>, <em>plot_save_name=None</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.filters_impl.abbe_value.AbbeValueFilter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">stars_processing.filters_tools.base_filter.BaseFilter</span></code>, <code class="xref py py-class docutils literal"><span class="pre">stars_processing.filters_tools.base_filter.Learnable</span></code></p>
+<p>Filter implementation which denies stars with lower value then a limit
+of Abbe value</p>
+<dl class="attribute">
+<dt id="src.stars_processing.filters_impl.abbe_value.AbbeValueFilter.bins">
+<code class="descname">bins</code><a class="headerlink" href="#src.stars_processing.filters_impl.abbe_value.AbbeValueFilter.bins" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> &#8211; Dimension of reduced light curve from which Abbe value
+is calculated</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.stars_processing.filters_impl.abbe_value.AbbeValueFilter.decider">
+<code class="descname">decider</code><a class="headerlink" href="#src.stars_processing.filters_impl.abbe_value.AbbeValueFilter.decider" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>Decider instance</em> &#8211; Classifier object</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.stars_processing.filters_impl.abbe_value.AbbeValueFilter.plot_save_path">
+<code class="descname">plot_save_path</code><a class="headerlink" href="#src.stars_processing.filters_impl.abbe_value.AbbeValueFilter.plot_save_path" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str, NoneType</em> &#8211; Path to the folder where plots are saved if not None, else
+plots are showed immediately</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.stars_processing.filters_impl.abbe_value.AbbeValueFilter.plot_save_name">
+<code class="descname">plot_save_name</code><a class="headerlink" href="#src.stars_processing.filters_impl.abbe_value.AbbeValueFilter.plot_save_name" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str, NoneType</em> &#8211; Name of plotted file</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.stars_processing.filters_impl.abbe_value.AbbeValueFilter.applyFilter">
+<code class="descname">applyFilter</code><span class="sig-paren">(</span><em>*function_args</em>, <em>**function_args_dict</em><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.filters_impl.abbe_value.AbbeValueFilter.applyFilter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filter stars by Abbe value filter</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>stars</strong> (<em>list</em>) &#8211; List of <cite>Star</cite> objects (containing light curves)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">List of star-like objects passed thru filtering</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.stars_processing.filters_impl.abbe_value.AbbeValueFilter.getSpaceCoords">
+<code class="descname">getSpaceCoords</code><span class="sig-paren">(</span><em>stars</em><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.filters_impl.abbe_value.AbbeValueFilter.getSpaceCoords" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get list of Abbe values</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>stars</strong> (<em>list of Star objects</em>) &#8211; Stars with color magnitudes in their &#8216;more&#8217; attribute</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">List of list of floats</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-src.stars_processing.filters_impl.color_index">
+<span id="src-stars-processing-filters-impl-color-index-module"></span><h2>src.stars_processing.filters_impl.color_index module<a class="headerlink" href="#module-src.stars_processing.filters_impl.color_index" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="src.stars_processing.filters_impl.color_index.ColorIndexFilter">
+<em class="property">class </em><code class="descclassname">src.stars_processing.filters_impl.color_index.</code><code class="descname">ColorIndexFilter</code><span class="sig-paren">(</span><em>colors=['b_mag', 'v_mag', 'i_mag'], decider=None, pass_not_found=False, raise_if_not=False, plot_save_path=None, plot_save_name='', without_notfound=True, *args, **kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.filters_impl.color_index.ColorIndexFilter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">stars_processing.filters_tools.base_filter.BaseFilter</span></code>, <code class="xref py py-class docutils literal"><span class="pre">stars_processing.filters_tools.base_filter.Learnable</span></code></p>
+<p>Filter star according their color indexes</p>
+<dl class="attribute">
+<dt id="src.stars_processing.filters_impl.color_index.ColorIndexFilter.colors">
+<code class="descname">colors</code><a class="headerlink" href="#src.stars_processing.filters_impl.color_index.ColorIndexFilter.colors" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>list of strings</em> &#8211; List of magnitudes which will be used. They are keys to color indexes
+in star&#8217;s object attribute &#8216;more&#8217;, where can be stored anything</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.stars_processing.filters_impl.color_index.ColorIndexFilter.decider">
+<code class="descname">decider</code><a class="headerlink" href="#src.stars_processing.filters_impl.color_index.ColorIndexFilter.decider" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>Decider object</em> &#8211; Instanced decider object which is able to be learned on train sample</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.stars_processing.filters_impl.color_index.ColorIndexFilter.pass_not_found">
+<code class="descname">pass_not_found</code><a class="headerlink" href="#src.stars_processing.filters_impl.color_index.ColorIndexFilter.pass_not_found" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>bool</em> &#8211; If False stars without color index will be denied</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.stars_processing.filters_impl.color_index.ColorIndexFilter.raise_if_not">
+<code class="descname">raise_if_not</code><a class="headerlink" href="#src.stars_processing.filters_impl.color_index.ColorIndexFilter.raise_if_not" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>bool</em> &#8211; If True it throws exception whenever a star has no color index</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.stars_processing.filters_impl.color_index.ColorIndexFilter.plot_save_path">
+<code class="descname">plot_save_path</code><a class="headerlink" href="#src.stars_processing.filters_impl.color_index.ColorIndexFilter.plot_save_path" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str, NoneType</em> &#8211; Location for saving plot of probabilities after learning. If None,
+plot will not be saved, but showed</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.stars_processing.filters_impl.color_index.ColorIndexFilter.without_notfound">
+<code class="descname">without_notfound</code><a class="headerlink" href="#src.stars_processing.filters_impl.color_index.ColorIndexFilter.without_notfound" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>bool</em> &#8211; If False coordinates of stars which have no color indexes will
+be returned as well, but with None instead of coordinates (list of
+values)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.stars_processing.filters_impl.color_index.ColorIndexFilter.labels">
+<code class="descname">labels</code><a class="headerlink" href="#src.stars_processing.filters_impl.color_index.ColorIndexFilter.labels" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>list of strings</em> &#8211; Labels of color-diagram axis</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.stars_processing.filters_impl.color_index.ColorIndexFilter.applyFilter">
+<code class="descname">applyFilter</code><span class="sig-paren">(</span><em>*function_args</em>, <em>**function_args_dict</em><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.filters_impl.color_index.ColorIndexFilter.applyFilter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filter stars</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>stars</strong> (<em>list</em>) &#8211; List of <cite>Star</cite> objects (containing light curves)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">List of star-like objects passed thru filtering</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.stars_processing.filters_impl.color_index.ColorIndexFilter.getSpaceCoords">
+<code class="descname">getSpaceCoords</code><span class="sig-paren">(</span><em>stars</em><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.filters_impl.color_index.ColorIndexFilter.getSpaceCoords" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get list of desired colors</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>stars</strong> (<em>list of Star objects</em>) &#8211; Stars with color magnitudes in their &#8216;more&#8217; attribute</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">List of list of floats</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-src.stars_processing.filters_impl.compare">
+<span id="src-stars-processing-filters-impl-compare-module"></span><h2>src.stars_processing.filters_impl.compare module<a class="headerlink" href="#module-src.stars_processing.filters_impl.compare" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="src.stars_processing.filters_impl.compare.ComparingFilter">
+<em class="property">class </em><code class="descclassname">src.stars_processing.filters_impl.compare.</code><code class="descname">ComparingFilter</code><span class="sig-paren">(</span><em>compar_filters</em>, <em>compar_stars</em>, <em>decider</em>, <em>plot_save_path=None</em>, <em>plot_save_name='ComparingPlot.png'</em>, <em>**filters_params</em><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.filters_impl.compare.ComparingFilter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">stars_processing.filters_tools.base_filter.BaseFilter</span></code>, <code class="xref py py-class docutils literal"><span class="pre">stars_processing.filters_tools.base_filter.Learnable</span></code></p>
+<p>This class is responsible for comparing light curves of stars according
+to implementations of particular sub-filters</p>
+<dl class="attribute">
+<dt id="src.stars_processing.filters_impl.compare.ComparingFilter.compar_filters">
+<code class="descname">compar_filters</code><a class="headerlink" href="#src.stars_processing.filters_impl.compare.ComparingFilter.compar_filters" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>iterable</em> &#8211; List of comparative filter classes</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.stars_processing.filters_impl.compare.ComparingFilter.compar_stars">
+<code class="descname">compar_stars</code><a class="headerlink" href="#src.stars_processing.filters_impl.compare.ComparingFilter.compar_stars" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>iterable</em> &#8211; List of Star objects which represent searched group of star objects</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.stars_processing.filters_impl.compare.ComparingFilter.decider">
+<code class="descname">decider</code><a class="headerlink" href="#src.stars_processing.filters_impl.compare.ComparingFilter.decider" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>Decider object</em> &#8211; This object learns to recognize and then find searched star objects</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.stars_processing.filters_impl.compare.ComparingFilter.plot_save_path">
+<code class="descname">plot_save_path</code><a class="headerlink" href="#src.stars_processing.filters_impl.compare.ComparingFilter.plot_save_path" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str, NoneType</em> &#8211; Path to the folder where plots are saved if not None, else
+plots are showed immediately</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.stars_processing.filters_impl.compare.ComparingFilter.plot_save_name">
+<code class="descname">plot_save_name</code><a class="headerlink" href="#src.stars_processing.filters_impl.compare.ComparingFilter.plot_save_name" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str, NoneType</em> &#8211; Name of plotted file</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.stars_processing.filters_impl.compare.ComparingFilter.applyFilter">
+<code class="descname">applyFilter</code><span class="sig-paren">(</span><em>stars</em>, <em>meth='average'</em><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.filters_impl.compare.ComparingFilter.applyFilter" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>stars</strong> (<em>iterable</em>) &#8211; List of Star objects to filter</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">List of Star objects which passed thru filtering</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.stars_processing.filters_impl.compare.ComparingFilter.getSpaceCoords">
+<code class="descname">getSpaceCoords</code><span class="sig-paren">(</span><em>stars</em>, <em>meth='average'</em><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.filters_impl.compare.ComparingFilter.getSpaceCoords" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply all filters and get their space coordinates</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>stars</strong> (<em>Star objects</em>) &#8211; Stars to filtering</li>
+<li><strong>meth</strong> (<em>str</em>) &#8211; <p>Method key for calculating distance from comparative objects</p>
+<dl class="docutils">
+<dt>average</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">take mean distance in each coordinate as</span><dd>object coordinate</dd>
+<dt>closest</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">take coordinate with closest distance as</span><dd>object coordinate</dd>
+<dt>probable</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">take coordinate with highest probability</span><dd>of membership. Can be performed just
+on learned decider</dd>
+</dl>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">List of coordinates</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-src.stars_processing.filters_impl.curve_density">
+<span id="src-stars-processing-filters-impl-curve-density-module"></span><h2>src.stars_processing.filters_impl.curve_density module<a class="headerlink" href="#module-src.stars_processing.filters_impl.curve_density" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="src.stars_processing.filters_impl.curve_density.CurveDensityFilter">
+<em class="property">class </em><code class="descclassname">src.stars_processing.filters_impl.curve_density.</code><code class="descname">CurveDensityFilter</code><span class="sig-paren">(</span><em>decider</em>, <em>plot_save_path=None</em>, <em>plot_save_name=''</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.filters_impl.curve_density.CurveDensityFilter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">stars_processing.filters_tools.base_filter.BaseFilter</span></code>, <code class="xref py py-class docutils literal"><span class="pre">stars_processing.filters_tools.base_filter.Learnable</span></code></p>
+<p>This filter throw out stars with low density light curves. It means light
+curves with huge non observing gaps or light curves with low amount
+of observations</p>
+<dl class="attribute">
+<dt id="src.stars_processing.filters_impl.curve_density.CurveDensityFilter.decider">
+<code class="descname">decider</code><a class="headerlink" href="#src.stars_processing.filters_impl.curve_density.CurveDensityFilter.decider" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>Decider instance</em> &#8211; Classifier object</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.stars_processing.filters_impl.curve_density.CurveDensityFilter.plot_save_path">
+<code class="descname">plot_save_path</code><a class="headerlink" href="#src.stars_processing.filters_impl.curve_density.CurveDensityFilter.plot_save_path" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str, NoneType</em> &#8211; Path to the folder where plots are saved if not None, else
+plots are showed immediately</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.stars_processing.filters_impl.curve_density.CurveDensityFilter.plot_save_name">
+<code class="descname">plot_save_name</code><a class="headerlink" href="#src.stars_processing.filters_impl.curve_density.CurveDensityFilter.plot_save_name" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str, NoneType</em> &#8211; Name of plotted file</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.stars_processing.filters_impl.curve_density.CurveDensityFilter.applyFilter">
+<code class="descname">applyFilter</code><span class="sig-paren">(</span><em>*function_args</em><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.filters_impl.curve_density.CurveDensityFilter.applyFilter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filter stars</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>stars</strong> (<em>list</em>) &#8211; List of <cite>Star</cite> objects (containing light curves)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">List of star-like objects passed thru filtering</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.stars_processing.filters_impl.curve_density.CurveDensityFilter.getSpaceCoords">
+<code class="descname">getSpaceCoords</code><span class="sig-paren">(</span><em>stars</em><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.filters_impl.curve_density.CurveDensityFilter.getSpaceCoords" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get list of curve densities</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>stars</strong> (<em>list of Star objects</em>) &#8211; Stars with color magnitudes in their &#8216;more&#8217; attribute</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">List of list of floats</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-src.stars_processing.filters_impl.variogram_slope">
+<span id="src-stars-processing-filters-impl-variogram-slope-module"></span><h2>src.stars_processing.filters_impl.variogram_slope module<a class="headerlink" href="#module-src.stars_processing.filters_impl.variogram_slope" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="src.stars_processing.filters_impl.variogram_slope.VariogramSlope">
+<em class="property">class </em><code class="descclassname">src.stars_processing.filters_impl.variogram_slope.</code><code class="descname">VariogramSlope</code><span class="sig-paren">(</span><em>variogram_days_bin</em>, <em>decider</em>, <em>plot_save_path=None</em>, <em>plot_save_name=''</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.filters_impl.variogram_slope.VariogramSlope" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">stars_processing.filters_tools.base_filter.BaseFilter</span></code>, <code class="xref py py-class docutils literal"><span class="pre">stars_processing.filters_tools.base_filter.Learnable</span></code></p>
+<p>This filter sorting stars according slopes of their variograms</p>
+<dl class="attribute">
+<dt id="src.stars_processing.filters_impl.variogram_slope.VariogramSlope.variogram_days_bin">
+<code class="descname">variogram_days_bin</code><a class="headerlink" href="#src.stars_processing.filters_impl.variogram_slope.VariogramSlope.variogram_days_bin" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>float</em> &#8211; Rate between light curve dimension and days</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.stars_processing.filters_impl.variogram_slope.VariogramSlope.bins">
+<code class="descname">bins</code><a class="headerlink" href="#src.stars_processing.filters_impl.variogram_slope.VariogramSlope.bins" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> &#8211; Dimension of reduced light curve from which Abbe value
+is calculated</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.stars_processing.filters_impl.variogram_slope.VariogramSlope.decider">
+<code class="descname">decider</code><a class="headerlink" href="#src.stars_processing.filters_impl.variogram_slope.VariogramSlope.decider" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>Decider instance</em> &#8211; Classifier object</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.stars_processing.filters_impl.variogram_slope.VariogramSlope.plot_save_path">
+<code class="descname">plot_save_path</code><a class="headerlink" href="#src.stars_processing.filters_impl.variogram_slope.VariogramSlope.plot_save_path" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str, NoneType</em> &#8211; Path to the folder where plots are saved if not None, else
+plots are showed immediately</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.stars_processing.filters_impl.variogram_slope.VariogramSlope.plot_save_name">
+<code class="descname">plot_save_name</code><a class="headerlink" href="#src.stars_processing.filters_impl.variogram_slope.VariogramSlope.plot_save_name" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str, NoneType</em> &#8211; Name of plotted file</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.stars_processing.filters_impl.variogram_slope.VariogramSlope.applyFilter">
+<code class="descname">applyFilter</code><span class="sig-paren">(</span><em>*function_args</em>, <em>**function_args_dict</em><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.filters_impl.variogram_slope.VariogramSlope.applyFilter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filter stars</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>stars</strong> (<em>list</em>) &#8211; List of <cite>Star</cite> objects (containing light curves)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">List of star-like objects passed thru filtering</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.stars_processing.filters_impl.variogram_slope.VariogramSlope.getSpaceCoords">
+<code class="descname">getSpaceCoords</code><span class="sig-paren">(</span><em>stars</em><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.filters_impl.variogram_slope.VariogramSlope.getSpaceCoords" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get list of desired colors</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>stars</strong> (<em>list of Star objects</em>) &#8211; Stars with color magnitudes in their &#8216;more&#8217; attribute</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">List of list of floats</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-src.stars_processing.filters_impl.word_filters">
+<span id="src-stars-processing-filters-impl-word-filters-module"></span><h2>src.stars_processing.filters_impl.word_filters module<a class="headerlink" href="#module-src.stars_processing.filters_impl.word_filters" title="Permalink to this headline">¶</a></h2>
+<p>Classes responsible for filtering stars (comparing template stars
+with tested stars) via their words (data transformed into
+symbolic representation)</p>
+<dl class="class">
+<dt id="src.stars_processing.filters_impl.word_filters.CurvesShapeFilter">
+<em class="property">class </em><code class="descclassname">src.stars_processing.filters_impl.word_filters.</code><code class="descname">CurvesShapeFilter</code><span class="sig-paren">(</span><em>lc_days_per_bin</em>, <em>lc_alphabet_size</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.filters_impl.word_filters.CurvesShapeFilter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">stars_processing.filters_tools.base_filter.ComparativeSubFilter</span></code>, <code class="xref py py-class docutils literal"><span class="pre">stars_processing.filters_tools.symbolic_representation.SymbolicRepresentation</span></code></p>
+<p>This filter implementation sort stars according to their string (symbolic)
+representation of light curve. Template for filtering is build up as a list
+of reference stars which light curves will be taken for comparing</p>
+<dl class="attribute">
+<dt id="src.stars_processing.filters_impl.word_filters.CurvesShapeFilter.lc_days_per_bin">
+<code class="descname">lc_days_per_bin</code><a class="headerlink" href="#src.stars_processing.filters_impl.word_filters.CurvesShapeFilter.lc_days_per_bin" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>float</em> &#8211; Ratio which decides about length of the word</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.stars_processing.filters_impl.word_filters.CurvesShapeFilter.lc_alphabet_size">
+<code class="descname">lc_alphabet_size</code><a class="headerlink" href="#src.stars_processing.filters_impl.word_filters.CurvesShapeFilter.lc_alphabet_size" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> &#8211; Range of of used letters</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.stars_processing.filters_impl.word_filters.CurvesShapeFilter.slide">
+<code class="descname">slide</code><a class="headerlink" href="#src.stars_processing.filters_impl.word_filters.CurvesShapeFilter.slide" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>bool</em> &#8211; If True, words with different lengths are dynamically compared
+by sliding shorter word thru longer</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.stars_processing.filters_impl.word_filters.CurvesShapeFilter.getWord">
+<code class="descname">getWord</code><span class="sig-paren">(</span><em>star</em><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.filters_impl.word_filters.CurvesShapeFilter.getWord" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>object with light curve</strong> (<a class="reference internal" href="src.entities.html#src.entities.star.Star" title="src.entities.star.Star"><em>Star</em></a>) &#8211; </td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">String representation of light curve</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="src.stars_processing.filters_impl.word_filters.HistShapeFilter">
+<em class="property">class </em><code class="descclassname">src.stars_processing.filters_impl.word_filters.</code><code class="descname">HistShapeFilter</code><span class="sig-paren">(</span><em>hist_bins</em>, <em>hist_alphabet_size</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.filters_impl.word_filters.HistShapeFilter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">stars_processing.filters_tools.base_filter.ComparativeSubFilter</span></code>, <code class="xref py py-class docutils literal"><span class="pre">stars_processing.filters_tools.symbolic_representation.SymbolicRepresentation</span></code></p>
+<p>This filter implementation sort stars according to their string (symbolic)
+representation of histogram. Template for filtering is build up as a list
+of reference stars which histograms will be taken for comparing</p>
+<dl class="attribute">
+<dt id="src.stars_processing.filters_impl.word_filters.HistShapeFilter.hist_bins">
+<code class="descname">hist_bins</code><a class="headerlink" href="#src.stars_processing.filters_impl.word_filters.HistShapeFilter.hist_bins" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> &#8211; Length of result histogram</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.stars_processing.filters_impl.word_filters.HistShapeFilter.hist_alphabet_size">
+<code class="descname">hist_alphabet_size</code><a class="headerlink" href="#src.stars_processing.filters_impl.word_filters.HistShapeFilter.hist_alphabet_size" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> &#8211; Range of of used letters</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.stars_processing.filters_impl.word_filters.HistShapeFilter.slide">
+<code class="descname">slide</code><a class="headerlink" href="#src.stars_processing.filters_impl.word_filters.HistShapeFilter.slide" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>bool</em> &#8211; If True, words with different lengths are dynamically compared
+by sliding shorter word thru longer</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.stars_processing.filters_impl.word_filters.HistShapeFilter.getWord">
+<code class="descname">getWord</code><span class="sig-paren">(</span><em>star</em><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.filters_impl.word_filters.HistShapeFilter.getWord" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>object with light curve</strong> (<a class="reference internal" href="src.entities.html#src.entities.star.Star" title="src.entities.star.Star"><em>Star</em></a>) &#8211; </td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">String representation of light curve&#8217;s histogram</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="src.stars_processing.filters_impl.word_filters.VariogramShapeFilter">
+<em class="property">class </em><code class="descclassname">src.stars_processing.filters_impl.word_filters.</code><code class="descname">VariogramShapeFilter</code><span class="sig-paren">(</span><em>vario_days_per_bin</em>, <em>vario_alphabet_size</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.filters_impl.word_filters.VariogramShapeFilter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">stars_processing.filters_tools.base_filter.ComparativeSubFilter</span></code>, <code class="xref py py-class docutils literal"><span class="pre">stars_processing.filters_tools.symbolic_representation.SymbolicRepresentation</span></code></p>
+<p>This filter implementation sort stars according to their string (symbolic)
+representation of light curve. Template for filtering is build up as a list
+of reference stars which light curves will be taken for comparing</p>
+<dl class="attribute">
+<dt id="src.stars_processing.filters_impl.word_filters.VariogramShapeFilter.vario_days_per_bin">
+<code class="descname">vario_days_per_bin</code><a class="headerlink" href="#src.stars_processing.filters_impl.word_filters.VariogramShapeFilter.vario_days_per_bin" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>float</em> &#8211; Ratio which decides about length of the word</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.stars_processing.filters_impl.word_filters.VariogramShapeFilter.vario_alphabet_size">
+<code class="descname">vario_alphabet_size</code><a class="headerlink" href="#src.stars_processing.filters_impl.word_filters.VariogramShapeFilter.vario_alphabet_size" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> &#8211; Range of of used letters</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.stars_processing.filters_impl.word_filters.VariogramShapeFilter.slide">
+<code class="descname">slide</code><a class="headerlink" href="#src.stars_processing.filters_impl.word_filters.VariogramShapeFilter.slide" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>bool</em> &#8211; If True, words with different lengths are dynamically compared
+by sliding shorter word thru longer</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.stars_processing.filters_impl.word_filters.VariogramShapeFilter.getWord">
+<code class="descname">getWord</code><span class="sig-paren">(</span><em>star</em><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.filters_impl.word_filters.VariogramShapeFilter.getWord" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>object with light curve</strong> (<a class="reference internal" href="src.entities.html#src.entities.star.Star" title="src.entities.star.Star"><em>Star</em></a>) &#8211; </td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">String representation of light curve&#8217;s variogram</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-src.stars_processing.filters_impl">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-src.stars_processing.filters_impl" title="Permalink to this headline">¶</a></h2>
+<p>There are implementations of filters</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">src.stars_processing.filters_impl package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-src.stars_processing.filters_impl.abbe_value">src.stars_processing.filters_impl.abbe_value module</a></li>
+<li><a class="reference internal" href="#module-src.stars_processing.filters_impl.color_index">src.stars_processing.filters_impl.color_index module</a></li>
+<li><a class="reference internal" href="#module-src.stars_processing.filters_impl.compare">src.stars_processing.filters_impl.compare module</a></li>
+<li><a class="reference internal" href="#module-src.stars_processing.filters_impl.curve_density">src.stars_processing.filters_impl.curve_density module</a></li>
+<li><a class="reference internal" href="#module-src.stars_processing.filters_impl.variogram_slope">src.stars_processing.filters_impl.variogram_slope module</a></li>
+<li><a class="reference internal" href="#module-src.stars_processing.filters_impl.word_filters">src.stars_processing.filters_impl.word_filters module</a></li>
+<li><a class="reference internal" href="#module-src.stars_processing.filters_impl">Module contents</a></li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/src.stars_processing.filters_impl.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016, Martin Vo.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      
+      |
+      <a href="_sources/src.stars_processing.filters_impl.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

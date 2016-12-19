@@ -1,0 +1,490 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>src.entities package &#8212; LightCurveClassifier 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="src-entities-package">
+<h1>src.entities package<a class="headerlink" href="#src-entities-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-src.entities.exceptions">
+<span id="src-entities-exceptions-module"></span><h2>src.entities.exceptions module<a class="headerlink" href="#module-src.entities.exceptions" title="Permalink to this headline">¶</a></h2>
+<dl class="exception">
+<dt id="src.entities.exceptions.ArgumentValidationError">
+<em class="property">exception </em><code class="descclassname">src.entities.exceptions.</code><code class="descname">ArgumentValidationError</code><a class="headerlink" href="#src.entities.exceptions.ArgumentValidationError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">exceptions.Exception</span></code></p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="src.entities.exceptions.FailToParseName">
+<em class="property">exception </em><code class="descclassname">src.entities.exceptions.</code><code class="descname">FailToParseName</code><a class="headerlink" href="#src.entities.exceptions.FailToParseName" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">exceptions.Exception</span></code></p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="src.entities.exceptions.InvalidArgumentNumberError">
+<em class="property">exception </em><code class="descclassname">src.entities.exceptions.</code><code class="descname">InvalidArgumentNumberError</code><a class="headerlink" href="#src.entities.exceptions.InvalidArgumentNumberError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">exceptions.Exception</span></code></p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="src.entities.exceptions.InvalidFile">
+<em class="property">exception </em><code class="descclassname">src.entities.exceptions.</code><code class="descname">InvalidFile</code><a class="headerlink" href="#src.entities.exceptions.InvalidFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">exceptions.IOError</span></code></p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="src.entities.exceptions.InvalidFilesPath">
+<em class="property">exception </em><code class="descclassname">src.entities.exceptions.</code><code class="descname">InvalidFilesPath</code><a class="headerlink" href="#src.entities.exceptions.InvalidFilesPath" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">exceptions.IOError</span></code></p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="src.entities.exceptions.InvalidFilteringParams">
+<em class="property">exception </em><code class="descclassname">src.entities.exceptions.</code><code class="descname">InvalidFilteringParams</code><a class="headerlink" href="#src.entities.exceptions.InvalidFilteringParams" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">exceptions.Exception</span></code></p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="src.entities.exceptions.InvalidReturnType">
+<em class="property">exception </em><code class="descclassname">src.entities.exceptions.</code><code class="descname">InvalidReturnType</code><a class="headerlink" href="#src.entities.exceptions.InvalidReturnType" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">exceptions.Exception</span></code></p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="src.entities.exceptions.LearningError">
+<em class="property">exception </em><code class="descclassname">src.entities.exceptions.</code><code class="descname">LearningError</code><a class="headerlink" href="#src.entities.exceptions.LearningError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">exceptions.Exception</span></code></p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="src.entities.exceptions.MandatoryKeyInQueryDictIsMissing">
+<em class="property">exception </em><code class="descclassname">src.entities.exceptions.</code><code class="descname">MandatoryKeyInQueryDictIsMissing</code><a class="headerlink" href="#src.entities.exceptions.MandatoryKeyInQueryDictIsMissing" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">exceptions.Exception</span></code></p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="src.entities.exceptions.NoInternetConnection">
+<em class="property">exception </em><code class="descclassname">src.entities.exceptions.</code><code class="descname">NoInternetConnection</code><a class="headerlink" href="#src.entities.exceptions.NoInternetConnection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">exceptions.Exception</span></code></p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="src.entities.exceptions.NotFilterTypeClass">
+<em class="property">exception </em><code class="descclassname">src.entities.exceptions.</code><code class="descname">NotFilterTypeClass</code><a class="headerlink" href="#src.entities.exceptions.NotFilterTypeClass" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">exceptions.Exception</span></code></p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="src.entities.exceptions.QueryInputError">
+<em class="property">exception </em><code class="descclassname">src.entities.exceptions.</code><code class="descname">QueryInputError</code><a class="headerlink" href="#src.entities.exceptions.QueryInputError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">exceptions.ValueError</span></code></p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="src.entities.exceptions.StarAttributeError">
+<em class="property">exception </em><code class="descclassname">src.entities.exceptions.</code><code class="descname">StarAttributeError</code><a class="headerlink" href="#src.entities.exceptions.StarAttributeError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">exceptions.Exception</span></code></p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="src.entities.exceptions.StarAttributeNotSpecified">
+<em class="property">exception </em><code class="descclassname">src.entities.exceptions.</code><code class="descname">StarAttributeNotSpecified</code><a class="headerlink" href="#src.entities.exceptions.StarAttributeNotSpecified" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">exceptions.AttributeError</span></code></p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-src.entities.light_curve">
+<span id="src-entities-light-curve-module"></span><h2>src.entities.light_curve module<a class="headerlink" href="#module-src.entities.light_curve" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="src.entities.light_curve.LightCurve">
+<em class="property">class </em><code class="descclassname">src.entities.light_curve.</code><code class="descname">LightCurve</code><span class="sig-paren">(</span><em>param</em>, <em>meta={}</em><span class="sig-paren">)</span><a class="headerlink" href="#src.entities.light_curve.LightCurve" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dl class="attribute">
+<dt id="src.entities.light_curve.LightCurve.meta">
+<code class="descname">meta</code><a class="headerlink" href="#src.entities.light_curve.LightCurve.meta" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>dict</em> &#8211; Optional metadata of the light curve. Recommended are
+these keys:</p>
+<blockquote>
+<div><p>xlabel - name of the first array</p>
+<p>xlabel_unit - unit of the first array</p>
+<p>ylabel - name of the second array</p>
+<p>ylabel_unit - unit of the second array</p>
+<p>color - filter name of the light curve</p>
+<p>origin - db name</p>
+<p>invert_yaxis - True/False if y axis is inverted</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.entities.light_curve.LightCurve.BAD_VALUES">
+<code class="descname">BAD_VALUES</code><a class="headerlink" href="#src.entities.light_curve.LightCurve.BAD_VALUES" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>iterable</em> &#8211; List of banned values in light curve</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">BAD_VALUES</code><em class="property"> = (nan, None, '', '-99', '-99.0')</em></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="src.entities.light_curve.LightCurve.DEFAULT_META">
+<code class="descname">DEFAULT_META</code><em class="property"> = {'xlabel_unit': 'days', 'color': 'N/A', 'xlabel': 'HJD', 'ylabel_unit': 'mag', 'ylabel': 'Magnitudes'}</em><a class="headerlink" href="#src.entities.light_curve.LightCurve.DEFAULT_META" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="src.entities.light_curve.LightCurve.getAbbe">
+<code class="descname">getAbbe</code><span class="sig-paren">(</span><em>bins=None</em><span class="sig-paren">)</span><a class="headerlink" href="#src.entities.light_curve.LightCurve.getAbbe" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute Abbe value of the light curve</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>bins</strong> (<em>int</em>) &#8211; Number of bins from original dimension</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Abbe value of the light curve</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">float</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.entities.light_curve.LightCurve.getHistogram">
+<code class="descname">getHistogram</code><span class="sig-paren">(</span><em>bins=10</em>, <em>centred=True</em>, <em>normed=True</em><span class="sig-paren">)</span><a class="headerlink" href="#src.entities.light_curve.LightCurve.getHistogram" title="Permalink to this definition">¶</a></dt>
+<dd><p>Distribution of magnitudes of light curve</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>bins</strong> (<em>int</em>) &#8211; Number of values in histogram</li>
+<li><strong>centred</strong> (<em>bool</em>) &#8211; If True values will be shifted (mean value into the zero)</li>
+<li><strong>normed</strong> (<em>bool</em>) &#8211; If True values will be normed (according to standard deviation)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Tuple of counts and bins (ranges) or None if
+there are no light curve</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">tuple/None</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.entities.light_curve.LightCurve.getMeanMag">
+<code class="descname">getMeanMag</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.entities.light_curve.LightCurve.getMeanMag" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get mean value of magnitudes</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.entities.light_curve.LightCurve.getStdMag">
+<code class="descname">getStdMag</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.entities.light_curve.LightCurve.getStdMag" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get standard deviation of magnitudes</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.entities.light_curve.LightCurve.getVariogram">
+<code class="descname">getVariogram</code><span class="sig-paren">(</span><em>bins=10</em>, <em>days_per_bin=None</em>, <em>log_opt=True</em><span class="sig-paren">)</span><a class="headerlink" href="#src.entities.light_curve.LightCurve.getVariogram" title="Permalink to this definition">¶</a></dt>
+<dd><p>Variogram is function which shows variability of time series
+in different time lags</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>bins</strong> (<em>int</em>) &#8211; Number of bins for result variogram</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Time lags and magnitude slope for the certain lag</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">tuple of two numpy arrays</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.entities.light_curve.LightCurve.plotLC">
+<code class="descname">plotLC</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.entities.light_curve.LightCurve.plotLC" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot light curve</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-src.entities.star">
+<span id="src-entities-star-module"></span><h2>src.entities.star module<a class="headerlink" href="#module-src.entities.star" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="src.entities.star.Star">
+<em class="property">class </em><code class="descclassname">src.entities.star.</code><code class="descname">Star</code><span class="sig-paren">(</span><em>ident={}</em>, <em>name=None</em>, <em>coo=None</em>, <em>more={}</em>, <em>starClass=None</em><span class="sig-paren">)</span><a class="headerlink" href="#src.entities.star.Star" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Star is base object in astronomy. This class is responsible for keeping
+basic informations about stellar objects. It&#8217;s possible to create empty
+star and add parameters additionally</p>
+<dl class="attribute">
+<dt id="src.entities.star.Star.ident">
+<code class="descname">ident</code><a class="headerlink" href="#src.entities.star.Star.ident" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>dict</em> &#8211; Dictionary of identifiers of the star. Each key of the dict
+is name of a database and its value is another dict of database
+identifiers for the star (e.g. &#8216;name&#8217;) which can be used
+as an unique identifier for querying the star. For example:</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>ident = {&#8220;OgleII&#8221;</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">{&#8220;name&#8221;</span> <span class="classifier-delimiter">:</span> <span class="classifier">&#8220;LMC_SC1_1&#8221;,</span><dd><dl class="first last docutils">
+<dt>&#8220;db_ident&#8221;</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">{&#8220;field_num&#8221;</span> <span class="classifier-delimiter">:</span> <span class="classifier">1,</span><dd>&#8220;starid&#8221; : 1,
+&#8220;target&#8221; : &#8220;lmc&#8221;},
+...}</dd>
+</dl>
+</dd>
+</dl>
+</div></blockquote>
+<p>Please keep convention as is shown above. Star is able to
+be queried again automatically if ident key is name of
+database connector and it contains dictionary called
+&#8220;db_ident&#8221;. This dictionary contains unique query for
+the star in the database.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.entities.star.Star.name">
+<code class="descname">name</code><a class="headerlink" href="#src.entities.star.Star.name" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str</em> &#8211; Optional name of the star across the all databases</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.entities.star.Star.coo">
+<code class="descname">coo</code><a class="headerlink" href="#src.entities.star.Star.coo" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>astropy.coordinates.sky_coordinate.SkyCoord</em> &#8211; Coordinate of the star</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.entities.star.Star.more">
+<code class="descname">more</code><a class="headerlink" href="#src.entities.star.Star.more" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>dict</em> &#8211; Additional informations about the star in dictionary. This
+attribute can be considered as a container. These parameters
+can be then used for filtering. For example it can contains
+color indexes:</p>
+<blockquote>
+<div>more = { &#8220;b_mag&#8221; : 17.56, &#8220;v_mag&#8221; : 16.23 }</div></blockquote>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.entities.star.Star.star_class">
+<code class="descname">star_class</code><a class="headerlink" href="#src.entities.star.Star.star_class" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str</em> &#8211; Name of category of the star e.g. &#8216;cepheid&#8217;, &#8216;RR Lyrae&#8217;, etc.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.entities.star.Star.light_curves">
+<code class="descname">light_curves</code><a class="headerlink" href="#src.entities.star.Star.light_curves" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>list</em> &#8211; Light curve objects of the star</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.entities.star.Star.EPS">
+<code class="descname">EPS</code><a class="headerlink" href="#src.entities.star.Star.EPS" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>float</em> &#8211; Max distance in degrees to consider two stars equal</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">EPS</code><em class="property"> = 0.000138</em></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">coo</code></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="src.entities.star.Star.getDistance">
+<code class="descname">getDistance</code><span class="sig-paren">(</span><em>other</em><span class="sig-paren">)</span><a class="headerlink" href="#src.entities.star.Star.getDistance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute distance between this and other star in degrees</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>other</strong> (<em>Star object</em>) &#8211; Another star object to compare with</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Distance of stars in degrees</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">astropy.coordinates.angles.Angle</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.entities.star.Star.getIdentName">
+<code class="descname">getIdentName</code><span class="sig-paren">(</span><em>db_key=None</em><span class="sig-paren">)</span><a class="headerlink" href="#src.entities.star.Star.getIdentName" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>db_key</strong> (<em>str</em>) &#8211; Database key</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Name of the star in given database. If it is not specified,
+the first database will be taken to construct the name</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.entities.star.Star.getInRange">
+<code class="descname">getInRange</code><span class="sig-paren">(</span><em>other</em>, <em>eps</em><span class="sig-paren">)</span><a class="headerlink" href="#src.entities.star.Star.getInRange" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method decides whether other star is in eps range of this star
+according to coordinates</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>other</strong> (<em>Star object</em>) &#8211; Star to compare with</li>
+<li><strong>eps</strong> (<em>float</em><em>, </em><em>astropy.unit.quantity.Quantity</em>) &#8211; Range in degrees</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">If in range</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">bool</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.entities.star.Star.lightCurve">
+<code class="descname">lightCurve</code><a class="headerlink" href="#src.entities.star.Star.lightCurve" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">name</code></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="src.entities.star.Star.putLightCurve">
+<code class="descname">putLightCurve</code><span class="sig-paren">(</span><em>lc</em>, <em>meta={}</em><span class="sig-paren">)</span><a class="headerlink" href="#src.entities.star.Star.putLightCurve" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add light curve to the star</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-src.entities">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-src.entities" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">src.entities package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-src.entities.exceptions">src.entities.exceptions module</a></li>
+<li><a class="reference internal" href="#module-src.entities.light_curve">src.entities.light_curve module</a></li>
+<li><a class="reference internal" href="#module-src.entities.star">src.entities.star module</a></li>
+<li><a class="reference internal" href="#module-src.entities">Module contents</a></li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/src.entities.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016, Martin Vo.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      
+      |
+      <a href="_sources/src.entities.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

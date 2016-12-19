@@ -1,0 +1,513 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>src.stars_processing.filters_tools package &#8212; LightCurveClassifier 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="src-stars-processing-filters-tools-package">
+<h1>src.stars_processing.filters_tools package<a class="headerlink" href="#src-stars-processing-filters-tools-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-src.stars_processing.filters_tools.base_filter">
+<span id="src-stars-processing-filters-tools-base-filter-module"></span><h2>src.stars_processing.filters_tools.base_filter module<a class="headerlink" href="#module-src.stars_processing.filters_tools.base_filter" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="src.stars_processing.filters_tools.base_filter.BaseFilter">
+<em class="property">class </em><code class="descclassname">src.stars_processing.filters_tools.base_filter.</code><code class="descname">BaseFilter</code><a class="headerlink" href="#src.stars_processing.filters_tools.base_filter.BaseFilter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="src.stars_processing.filters_tools.base_filter.BaseFilter.applyFilter">
+<code class="descname">applyFilter</code><span class="sig-paren">(</span><em>*function_args</em>, <em>**function_args_dict</em><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.filters_tools.base_filter.BaseFilter.applyFilter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filter stars</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>stars</strong> (<em>list</em>) &#8211; List of <cite>Star</cite> objects (containing light curves)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">List of star-like objects passed thru filtering</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="src.stars_processing.filters_tools.base_filter.ComparativeSubFilter">
+<em class="property">class </em><code class="descclassname">src.stars_processing.filters_tools.base_filter.</code><code class="descname">ComparativeSubFilter</code><a class="headerlink" href="#src.stars_processing.filters_tools.base_filter.ComparativeSubFilter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="src.stars_processing.filters_tools.base_filter.Learnable">
+<em class="property">class </em><code class="descclassname">src.stars_processing.filters_tools.base_filter.</code><code class="descname">Learnable</code><a class="headerlink" href="#src.stars_processing.filters_tools.base_filter.Learnable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Common class for all filters which are able to call &#8220;learn&#8221; by yourself.
+All these classes need to be able obtain their space coordinates via
+getSpaceCoords. Then the learning is the same (see learn method below).</p>
+<p>Optionally there can be labels on plots if a class has label attribute,
+which is list of string contains label for data.</p>
+<p>Also after learning the &#8216;learned&#8217; attribute is set to &#8216;True&#8217; if exists.</p>
+<p>Moreover plot is saved if class has  plot_save_path attribute
+is not None or &#8216;&#8217;</p>
+<dl class="method">
+<dt id="src.stars_processing.filters_tools.base_filter.Learnable.getSpaceCoords">
+<code class="descname">getSpaceCoords</code><span class="sig-paren">(</span><em>stars</em><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.filters_tools.base_filter.Learnable.getSpaceCoords" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>stars</strong> (<em>list of Star objects</em>) &#8211; </td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">List of list of numbers (coordinates)</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list of lists</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.stars_processing.filters_tools.base_filter.Learnable.getStatistic">
+<code class="descname">getStatistic</code><span class="sig-paren">(</span><em>s_stars</em>, <em>c_stars</em><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.filters_tools.base_filter.Learnable.getStatistic" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>s_stars</strong> (list of <cite>Star</cite> objects) &#8211; Searched stars</li>
+<li><strong>c_stars</strong> (list of <cite>Star</cite> objects) &#8211; Contamination stars</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><p><strong>statistic information</strong> &#8211;</p>
+<dl class="docutils">
+<dt>precision (float)</dt>
+<dd><p class="first last">True positive / (true positive + false positive)</p>
+</dd>
+<dt>true_positive_rate (float)</dt>
+<dd><p class="first last">Proportion of positives that are correctly identified as such</p>
+</dd>
+<dt>true_negative_rate :(float)</dt>
+<dd><p class="first last">Proportion of negatives that are correctly identified as such</p>
+</dd>
+<dt>false_positive_rate (float)</dt>
+<dd><p class="first last">Proportion of positives that are incorrectly identified
+as negatives</p>
+</dd>
+<dt>false_negative_rate (float)</dt>
+<dd><p class="first last">Proportion of negatives that are incorrectly identified
+as positives</p>
+</dd>
+</dl>
+</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">dict</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.stars_processing.filters_tools.base_filter.Learnable.learn">
+<code class="descname">learn</code><span class="sig-paren">(</span><em>searched_stars</em>, <em>contamination_stars</em>, <em>learn_num=''</em><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.filters_tools.base_filter.Learnable.learn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Teach filter to recognize searched stars</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>searched_stars</strong> (list of <cite>Star</cite> objects) &#8211; Searched stars to learn</li>
+<li><strong>contamination_stars</strong> (list of <cite>Star</cite> objects) &#8211; Contamination stars to learn</li>
+<li><strong>learn_num</strong> (<em>str</em><em>, </em><em>int</em>) &#8211; Optional identifier for the learning</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">None</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-src.stars_processing.filters_tools.params_estim">
+<span id="src-stars-processing-filters-tools-params-estim-module"></span><h2>src.stars_processing.filters_tools.params_estim module<a class="headerlink" href="#module-src.stars_processing.filters_tools.params_estim" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="src.stars_processing.filters_tools.params_estim.DeciderEstimation">
+<em class="property">class </em><code class="descclassname">src.stars_processing.filters_tools.params_estim.</code><code class="descname">DeciderEstimation</code><span class="sig-paren">(</span><em>searched</em>, <em>others</em>, <em>star_filter</em>, <em>tuned_params</em>, <em>log_path=None</em>, <em>save_filter_name=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.filters_tools.params_estim.DeciderEstimation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dl class="attribute">
+<dt id="src.stars_processing.filters_tools.params_estim.DeciderEstimation.searched">
+<code class="descname">searched</code><a class="headerlink" href="#src.stars_processing.filters_tools.params_estim.DeciderEstimation.searched" title="Permalink to this definition">¶</a></dt>
+<dd><p>list of <cite>Star</cite> objects &#8211; Searched stars</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.stars_processing.filters_tools.params_estim.DeciderEstimation.others">
+<code class="descname">others</code><a class="headerlink" href="#src.stars_processing.filters_tools.params_estim.DeciderEstimation.others" title="Permalink to this definition">¶</a></dt>
+<dd><p>list of <cite>Star</cite> objects &#8211; Contamination stars</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.stars_processing.filters_tools.params_estim.DeciderEstimation.star_filter">
+<code class="descname">star_filter</code><a class="headerlink" href="#src.stars_processing.filters_tools.params_estim.DeciderEstimation.star_filter" title="Permalink to this definition">¶</a></dt>
+<dd><p><cite>BaseFilter</cite> object &#8211; Filter object (uninstancied)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.stars_processing.filters_tools.params_estim.DeciderEstimation.tuned_params">
+<code class="descname">tuned_params</code><a class="headerlink" href="#src.stars_processing.filters_tools.params_estim.DeciderEstimation.tuned_params" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>list of dicts</em> &#8211; List of parameters to tune</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.stars_processing.filters_tools.params_estim.DeciderEstimation.log_path">
+<code class="descname">log_path</code><a class="headerlink" href="#src.stars_processing.filters_tools.params_estim.DeciderEstimation.log_path" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str, NoneType</em> &#8211; Path to the folder where log file will be saved</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.stars_processing.filters_tools.params_estim.DeciderEstimation.save_filter_name">
+<code class="descname">save_filter_name</code><a class="headerlink" href="#src.stars_processing.filters_tools.params_estim.DeciderEstimation.save_filter_name" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str, NoneType</em> &#8211; Name of filter file if it is not None</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.stars_processing.filters_tools.params_estim.DeciderEstimation.fit">
+<code class="descname">fit</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.filters_tools.params_estim.DeciderEstimation.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find best combination of filter parameters</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Filter created from the best parameters</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><cite>BaseFilter</cite> instance</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-src.stars_processing.filters_tools.sax">
+<span id="src-stars-processing-filters-tools-sax-module"></span><h2>src.stars_processing.filters_tools.sax module<a class="headerlink" href="#module-src.stars_processing.filters_tools.sax" title="Permalink to this headline">¶</a></h2>
+<dl class="exception">
+<dt id="src.stars_processing.filters_tools.sax.DictionarySizeIsNotSupported">
+<em class="property">exception </em><code class="descclassname">src.stars_processing.filters_tools.sax.</code><code class="descname">DictionarySizeIsNotSupported</code><a class="headerlink" href="#src.stars_processing.filters_tools.sax.DictionarySizeIsNotSupported" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">exceptions.ValueError</span></code></p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="src.stars_processing.filters_tools.sax.OverlapSpecifiedIsNotSmallerThanWindowSize">
+<em class="property">exception </em><code class="descclassname">src.stars_processing.filters_tools.sax.</code><code class="descname">OverlapSpecifiedIsNotSmallerThanWindowSize</code><a class="headerlink" href="#src.stars_processing.filters_tools.sax.OverlapSpecifiedIsNotSmallerThanWindowSize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">exceptions.ValueError</span></code></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="src.stars_processing.filters_tools.sax.SAX">
+<em class="property">class </em><code class="descclassname">src.stars_processing.filters_tools.sax.</code><code class="descname">SAX</code><span class="sig-paren">(</span><em>word_size=8</em>, <em>alphabet_size=10</em>, <em>scaling_factor=1</em><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.filters_tools.sax.SAX" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>This class manages symbolic representation of data series via
+Symbolic Aggregate approXimation method.  It translates
+series of data to a words, which can then be compared with other
+such words in symbolic distance space.</p>
+<dl class="attribute">
+<dt id="src.stars_processing.filters_tools.sax.SAX.word_size">
+<code class="descname">word_size</code><a class="headerlink" href="#src.stars_processing.filters_tools.sax.SAX.word_size" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> &#8211; Number of letters in transformed word</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.stars_processing.filters_tools.sax.SAX.alphabet_size">
+<code class="descname">alphabet_size</code><a class="headerlink" href="#src.stars_processing.filters_tools.sax.SAX.alphabet_size" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> &#8211; Size of alphabet counted from A (3 means A, B, C)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.stars_processing.filters_tools.sax.SAX.scaling_factor">
+<code class="descname">scaling_factor</code><a class="headerlink" href="#src.stars_processing.filters_tools.sax.SAX.scaling_factor" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int, float</em> &#8211; Scaling factor can be used to scale result dissimilarity of
+two words created from light curves of different lengths</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.stars_processing.filters_tools.sax.SAX.beta">
+<code class="descname">beta</code><a class="headerlink" href="#src.stars_processing.filters_tools.sax.SAX.beta" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>list</em> &#8211; Breakpoints for given alphabets size</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.stars_processing.filters_tools.sax.SAX.A_OFFSET">
+<code class="descname">A_OFFSET</code><em class="property"> = 97</em><a class="headerlink" href="#src.stars_processing.filters_tools.sax.SAX.A_OFFSET" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="src.stars_processing.filters_tools.sax.SAX.MAX_ALPH_SIZE">
+<code class="descname">MAX_ALPH_SIZE</code><em class="property"> = 20</em><a class="headerlink" href="#src.stars_processing.filters_tools.sax.SAX.MAX_ALPH_SIZE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="src.stars_processing.filters_tools.sax.SAX.MIN_ALPH_SIZE">
+<code class="descname">MIN_ALPH_SIZE</code><em class="property"> = 3</em><a class="headerlink" href="#src.stars_processing.filters_tools.sax.SAX.MIN_ALPH_SIZE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="src.stars_processing.filters_tools.sax.SAX.alphabetize">
+<code class="descname">alphabetize</code><span class="sig-paren">(</span><em>paaX</em><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.filters_tools.sax.SAX.alphabetize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts the Piecewise Aggregate Approximation of x
+to a series of letters.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>paaX</strong> (<em>list</em><em>, </em><em>iterable</em>) &#8211; Data series (list of numbers)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">SAX word</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.stars_processing.filters_tools.sax.SAX.build_letter_compare_dict">
+<code class="descname">build_letter_compare_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.filters_tools.sax.SAX.build_letter_compare_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Builds up the lookup table to determine numeric distance
+between two letters given an alphabet size.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.stars_processing.filters_tools.sax.SAX.compare_letters">
+<code class="descname">compare_letters</code><span class="sig-paren">(</span><em>la</em>, <em>lb</em><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.filters_tools.sax.SAX.compare_letters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compare two letters based on letter distance return distance between</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>la</strong> (<em>str</em>) &#8211; First letter</li>
+<li><strong>lb</strong> (<em>str</em>) &#8211; Second letter</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Distance between two letters</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.stars_processing.filters_tools.sax.SAX.compare_strings">
+<code class="descname">compare_strings</code><span class="sig-paren">(</span><em>sA</em>, <em>sB</em><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.filters_tools.sax.SAX.compare_strings" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compares two strings based on individual letter distances.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>sA</strong> (<em>str</em>) &#8211; Word to compare</li>
+<li><strong>aB</strong> (<em>str</em>) &#8211; Word to compare</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Dissimilarity of two words</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.stars_processing.filters_tools.sax.SAX.to_letter_rep">
+<code class="descname">to_letter_rep</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.filters_tools.sax.SAX.to_letter_rep" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function takes a series of data, x, and transforms it
+to a string representation.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>x</strong> (<em>list</em><em>, </em><em>iterable</em>) &#8211; Data series</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><ul class="simple">
+<li><em>str</em> &#8211; SAX word</li>
+<li><em>list</em> &#8211; Indices</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-src.stars_processing.filters_tools.symbolic_representation">
+<span id="src-stars-processing-filters-tools-symbolic-representation-module"></span><h2>src.stars_processing.filters_tools.symbolic_representation module<a class="headerlink" href="#module-src.stars_processing.filters_tools.symbolic_representation" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="src.stars_processing.filters_tools.symbolic_representation.SymbolicRepresentation">
+<em class="property">class </em><code class="descclassname">src.stars_processing.filters_tools.symbolic_representation.</code><code class="descname">SymbolicRepresentation</code><a class="headerlink" href="#src.stars_processing.filters_tools.symbolic_representation.SymbolicRepresentation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="src.stars_processing.filters_tools.symbolic_representation.SymbolicRepresentation.compareTwoStars">
+<code class="descname">compareTwoStars</code><span class="sig-paren">(</span><em>star</em>, <em>comp_star</em><span class="sig-paren">)</span><a class="headerlink" href="#src.stars_processing.filters_tools.symbolic_representation.SymbolicRepresentation.compareTwoStars" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compare two stars according to a filter implementation</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>star</strong> (<cite>Star</cite> instance) &#8211; Star to compare</li>
+<li><strong>comp_star</strong> (<cite>Star</cite> instance) &#8211; Star to compare</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Dissimilarity of two stars</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-src.stars_processing.filters_tools">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-src.stars_processing.filters_tools" title="Permalink to this headline">¶</a></h2>
+<p>There are managers responsible for stars to have certain parameters for filtering</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">src.stars_processing.filters_tools package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-src.stars_processing.filters_tools.base_filter">src.stars_processing.filters_tools.base_filter module</a></li>
+<li><a class="reference internal" href="#module-src.stars_processing.filters_tools.params_estim">src.stars_processing.filters_tools.params_estim module</a></li>
+<li><a class="reference internal" href="#module-src.stars_processing.filters_tools.sax">src.stars_processing.filters_tools.sax module</a></li>
+<li><a class="reference internal" href="#module-src.stars_processing.filters_tools.symbolic_representation">src.stars_processing.filters_tools.symbolic_representation module</a></li>
+<li><a class="reference internal" href="#module-src.stars_processing.filters_tools">Module contents</a></li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/src.stars_processing.filters_tools.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016, Martin Vo.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      
+      |
+      <a href="_sources/src.stars_processing.filters_tools.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
