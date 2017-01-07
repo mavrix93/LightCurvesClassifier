@@ -27,10 +27,13 @@ class StarsCatalogue(object):
         ----------
         coo : astropy.coordinates.sky_coordinate.SkyCoord
             Center of searching
+
         stars : list of `Star` objects
             Stars returned by query
+
         delta_deg: float, astropy.units.quantity.Quantity
             Radius from center of searching
+
         nearest : bool
             Nearest star to the center of searching is returned if it is True
 

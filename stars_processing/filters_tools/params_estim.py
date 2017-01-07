@@ -7,6 +7,7 @@ import numpy as np
 from stars_processing.systematic_search.status_resolver import StatusResolver
 from utils.helpers import progressbar, clean_path, create_folder
 from utils.output_process_modules import saveIntoFile
+import random
 
 
 class DeciderEstimation(object):
@@ -30,10 +31,14 @@ class DeciderEstimation(object):
 
     save_filter_name : str, NoneType
         Name of filter file if it is not None
+
+    split_ratio : float
+            Percentage number of train sample
     '''
 
     def __init__(self, searched, others, star_filter, tuned_params,
-                 log_path=None, save_filter_name=None, **kwargs):
+                 log_path=None, save_filter_name=None, split_ratio=0.75,
+                 **kwargs):
         '''
         Parameters
         ----------
@@ -54,12 +59,20 @@ class DeciderEstimation(object):
 
         save_filter_name : str, NoneType
             Name of filter file if it is not None
+
+        split_ratio : float
+            Percentage number of train sample
         '''
 
         # TODO: Custom split ratio
 
-        self.searched = searched
-        self.others = others
+        random.shuffle(searched)
+        random.shuffle(others)
+
+        self.searched_train = searched[:int(len(searched) * split_ratio)]
+        self.searched_test = searched[int(len(searched) * split_ratio):]
+        self.others_train = others[:int(len(others) * split_ratio)]
+        self.others_test = others[int(len(others) * split_ratio):]
         self.star_filter = star_filter
         self.tuned_params = tuned_params
         self.log_path = log_path
@@ -96,9 +109,9 @@ class DeciderEstimation(object):
             x.update(self.params)
             filt = self.star_filter(**x)
 
-            filt.learn(self.searched, self.others, learn_num=i)
+            filt.learn(self.searched_train, self.others_train, learn_num=i)
 
-            st = filt.getStatistic(self.searched, self.others)
+            st = filt.getStatistic(self.searched_test, self.others_test)
             precisions.append(st["precision"])
             filters.append(filt)
             stats.append(st)

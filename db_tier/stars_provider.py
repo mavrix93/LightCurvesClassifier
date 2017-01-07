@@ -38,7 +38,7 @@ class StarsProvider(object):
                 "Unresolved stars provider\nAvaible stars providers: %s" % self.STARS_PROVIDERS)
 
         if not obtain_params:
-            obtain_params = kwargs["obtain_params"]
+            obtain_params = kwargs
         provider = self.STARS_PROVIDERS[obtain_method]
 
         if len(obtain_params) == 0:

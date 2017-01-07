@@ -49,33 +49,32 @@ DB_FILE_PATH = join(TO_THE_DATA_FOLDER, "databases")
 BASE_DIR = os.pardir
 
 # Package of filters implementations
-FILTERS_IMPL_PATH = join(BASE_DIR, "stars_processing", "filters_impl")
+FILTERS_IMPL_PATH = join("stars_processing", "filters_impl")
 
 
 # Package of connectors implementations
 DB_CONNECTORS = join("db_tier", "connectors")
 
 # Package of deciders implementations
-DECIDERS_PATH = join(BASE_DIR, "stars_processing", "deciders")
+DECIDERS_PATH = join("stars_processing", "deciders")
 
 
 # *********    Registration of paths    **********
-# Folders of light curves keys - paths
-STARS_PATH = {"stars": join(LC_FOLDER, "some_stars"),
-              "quasars": join(LC_FOLDER, "quasars"),
-              "eyer_quasars": join(LC_FOLDER, "qso_eyer"),
-              "mqs_quasars": join(LC_FOLDER, "mqs_quasars"),
-              "be_eyer": join(LC_FOLDER, "be_eyer"),
-              "dpv": join(LC_FOLDER, "dpv"),
-              "lpv": join(LC_FOLDER, "lpv"),
-              "rr_lyr": join(LC_FOLDER, "rr_lyr"),
-              "cepheids": join(LC_FOLDER, "cepheids"),
-              "crossmatch": join(LC_FOLDER, "crossmatch")
-              }
-
 
 # Listen folders of implemented classes
 IMPLEMENTED_CLASSES = {"filters": (FILTERS_IMPL_PATH, BaseFilter),
                        "connectors": (DB_CONNECTORS, StarsCatalogue),
                        "sub_filters": (FILTERS_IMPL_PATH, ComparativeSubFilter),
                        "deciders": (DECIDERS_PATH, BaseDecider)}
+
+
+# Folders of light curves keys - paths
+class _StarsPaths():
+
+    def __init__(self, root_path):
+        self.root_path = root_path
+
+    def __getitem__(self, item_key):
+        return join(self.root_path, item_key)
+
+STARS_PATH = _StarsPaths(LC_FOLDER)

@@ -6,6 +6,8 @@ import os
 import sys
 import warnings
 
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from conf import settings
 from conf.filter_loader import FilterLoader
 from db_tier.stars_provider import StarsProvider
@@ -14,13 +16,10 @@ from stars_processing.systematic_search.stars_searcher import StarsSearcher
 from stars_processing.systematic_search.status_resolver import StatusResolver
 
 
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-
 __all__ = []
 __version__ = 0.3
 __date__ = '2016-09-05'
-__updated__ = '2016-12-18'
+__updated__ = '2016-12-20'
 
 
 def main(argv=None):

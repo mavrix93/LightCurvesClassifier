@@ -70,15 +70,6 @@ class FileManager(LightCurvesDb):
 
     FITS_SUFFIX = ("fits", "FITS")
 
-    # Query possibilities (combination of necessary values)
-    # Check types of given parameters
-    @mandatory_args(("path",))
-    @args_type(path=str,
-               object_file_name=str,
-               suffix=str,
-               star_class=str,
-               files_limit=(int, str),
-               db_ident=str)
     def __init__(self, obtain_params):
         '''
         Parameters
@@ -91,7 +82,7 @@ class FileManager(LightCurvesDb):
         if raw_path.startswith(self.REL_PATH):
             path = raw_path[len(self.REL_PATH):]
         else:
-            path = settings.STARS_PATH.get(raw_path, None)
+            path = settings.STARS_PATH[raw_path]
 
         if not path:
             raise QueryInputError("Path key: %s is not registered key for light curve files in settings.\nThere these variables: %s" % (

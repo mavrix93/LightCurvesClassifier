@@ -54,7 +54,7 @@ class PackageReader(object):
         searched_classes = []
         for package_module in contents:
             path = os.path.join(
-                package_name, package_module).replace("/", ".")[3:]
+                package_name, package_module).replace("/", ".")
             module_classes = self.getModuleClasses(
                 importlib.import_module(path))
             for module_class in module_classes:

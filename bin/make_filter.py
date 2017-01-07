@@ -1,11 +1,14 @@
 #!/usr/bin/env python
 # encoding: utf-8
+from __future__ import division
 import json
 from optparse import OptionParser
 import os
 import random
 import sys
 import warnings
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from conf import settings
 from conf.package_reader import PackageReader
@@ -16,13 +19,10 @@ from stars_processing.systematic_search.status_resolver import StatusResolver
 from utils.helpers import create_folder, progressbar
 
 
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-
 __all__ = []
 __version__ = 0.3
 __date__ = '2016-09-23'
-__updated__ = '2016-12-18'
+__updated__ = '2017-01-07'
 
 debug = True
 
@@ -32,25 +32,14 @@ def main(argv=None):
 
     program_info = """ABOUT
     The program searches for the most optional parameters for given filters
-    according to sample of searched and other train light curves. 
+    according to sample of searched and other train light curves.
     
     Getting stars
-    -------------        
+    -------------
         Stars can be obtained by three different ways resolved from query text
         according to format:
         
-            1.LOCAL:db_name:query_file_in_inputs_folder
-                --> Local database is queried (according to key in settings.DATABASES)
-                
-                    Example:
-                        LOCAL:milliquas:query_file.txt
-                        
-                    Note:
-                        There is a overview of available local databases
-                        at the end (if it is launched from command line without
-                        parameters)
-                
-            2.QUERY:db_name:query_file_in_inputs_folder
+            1.QUERY:db_name:query_file_in_inputs_folder
                 --> Remote database is queried (db key is name of connector class)
                 
                     Example:
@@ -61,7 +50,7 @@ def main(argv=None):
                         at the end (if it is launched from command line without
                         parameters)
             
-            3.stars_folder_key:number or stars_folder_key%float_number or stars_folder_key
+            2.stars_folder_key:number or stars_folder_key%float_number or stars_folder_key
                 --> Light curves from folder according to first key is loaded
                     (according to settings.STARS_PATH dictionary). All stars are
                     loaded if there is no number and ':', in case of integer after
@@ -77,20 +66,20 @@ def main(argv=None):
                         parameters)
     
     Status file:
-    ------------    
+    ------------
         Parameters to try or queries can be specified in the file where first
         row starts with '#' and then there are names of parameters which can be used
         for finding the most optional parameters of a filter or as query for a database.
         Next rows consist of values to tune or queries. All columns are separated
-        by ';' (can be changed in settings). 
+        by ';' (can be changed in settings).
         
         Note:
             Example files can be find in data/inputs/examples
         
     Getting filter:
-    ---------------    
+    ---------------
         Filter is loaded by name of the filter class in the filter package
-        specified in settings. 
+        specified in settings.
             
             Note:
                 All classes which inherits BaseFilter class located
@@ -108,10 +97,10 @@ def main(argv=None):
         There are 5 main folders:
           
             1. data/inputs/
-                Location of files of queries and files fro tuning parameters 
+                Location of files of queries and files fro tuning parameters
             
             2. data/light_curves/
-                Location of light curve subfolders. 
+                Location of light curve subfolders.
             
             3. data/star_filters/
                 Location where tuned filters is saved (or can be loaded by
@@ -239,6 +228,8 @@ def main(argv=None):
                           help="Decider for learning to recognize objects")
         parser.add_option("-l", "--log", dest="log",  default=".",
                           help="Path to the folder where info about tuning and plot will be saved")
+        parser.add_option("-p", "--split", dest="split_ratio",  default="3:1",
+                          help="Split ratio of given sample of stars for train:test:template (If there are comparing filter there is no need to give template ratio")
 
         # process options
         opts, args = parser.parse_args(argv)
@@ -252,7 +243,7 @@ def main(argv=None):
             print "Run with '-h' in order to show params help\n"
             return False
 
-        #-------    Core    ------
+        # -------    Core    ------
 
         try:
             filt = PackageReader().getClassesDict("filters")[opts.filt]
@@ -293,9 +284,15 @@ def main(argv=None):
         addit_params = {}
         searched = _getStars(opts.searched)
 
+        try:
+            ratios = [int(sp) for sp in opts.split_ratio.split(":")]
+        except ValueError:
+            raise ValueError(
+                "Ratios have to be numbers separated by ':'. Got:\n%s" % opts.split_ratio)
+
         if opts.filt == "ComparingFilter":
-            # TODO: Custom split
-            split_n = len(searched) / 2
+            template_ratio = ratios[-1] / sum(ratios)
+            split_n = int(len(searched) * template_ratio)
             addit_params["compar_stars"] = searched[split_n:]
             searched = searched[: split_n]
             addit_params["compar_filters"] = _getSubFilters(tuned_params[0])
@@ -306,6 +303,7 @@ def main(argv=None):
                                decider=decider,
                                star_filter=filt,
                                log_path=log_path,
+                               split_ratio=ratios[0] / sum(ratios[:2]),
                                plot_save_path=log_path,
                                plot_save_name=opts.file_name,
                                save_filter_name=opts.file_name, **addit_params)

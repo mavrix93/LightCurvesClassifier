@@ -1,28 +1,41 @@
-from astropy.coordinates.sky_coordinate import SkyCoord
 import re
+
+from astropy.coordinates.sky_coordinate import SkyCoord
 import socket
 import urllib
 from urllib2 import URLError
 import urllib2
-from warnings import warn
+import numpy as np
 
 from conf import settings
 from db_tier.base_query import LightCurvesDb
 from entities.exceptions import NoInternetConnection, QueryInputError
 from entities.star import Star
-import numpy as np
 from utils.helpers import verbose
 
 
-# Throws:
 # NOTE: This is kind of messy version of db connector. Lots of changes in order
 # to get clean connector need to be done. Anyway it is working...
-# TODO: Area search returns just one star
 class OgleII(LightCurvesDb):
     '''
     OgleII class is responsible for searching stars in OGLE db according
     to query. Then it can download light curves and saved them or retrieve
-    stars object (with lc, coordinates, name...)
+    stars object (with lc, coordinates, name...).
+
+    Identifier of the stars in OgleII db are: field, starid and target.
+
+    In case of cone search (if coordinates are provided), "nearest" key can
+    be used. If it is True just nearest star to the target point is returned.
+
+    Example:
+    --------
+    que1 = {"target": "lmc", "ra": 5.549147 * 15,
+       "dec": -70.55792, "delta": 5, "nearest": True}
+    que2 = {"field":"LMC_SC1","starid":"152248","target":"lmc"}
+
+    client = StarsProvider().getProvider(
+        obtain_method="OgleII", obtain_params=[que1, que2])
+    stars = client.getStarsWithCurves()
     '''
 
     ROOT = "http://ogledb.astrouw.edu.pl/~ogle/photdb"
@@ -42,19 +55,16 @@ class OgleII(LightCurvesDb):
 
     def __init__(self, queries):
         '''
-        @param query:    Query is dictionary of query parameters. 
-                         In case of containing "starcat" and "target"searching
-                         via starcat will be executed.
-                         Other case searching via coordinates will be done. Moreover
-                         there is possibility to search in magnitude ranges if
-                         "minMag" and "maxMag" is in dictionary
-        @param ra:     Right Ascension value in degrees
-        @param dec:    Declination value in degrees
-
-        EXAMPLE:
-        print OgleII({"field":"LMC_SC1","starid":"152248","target":"lmc"}).getStarsWithCurves()
+        Parameters
+        ----------
+        queries : list, dict, iterable
+            Query is list of dictionaries of query parameters or single
+            dictionary.
         '''
-        self.queries = queries
+        if isinstance(queries, dict):
+            self.queries = [queries]
+        else:
+            self.queries = queries
 
     def oneQuery(self, query):
         # Query parameters
@@ -159,28 +169,25 @@ class OgleII(LightCurvesDb):
     def getStarsWithCurves(self):
         '''Get Star objects with light curves'''
 
-        res_stars = []
+        ready_stars = []
         for query in self.queries:
             self.oneQuery(query)
             try:
-                stars = self._post_query()
+                _stars = self._post_query()
             except URLError:
                 raise NoInternetConnection(
                     "Connection to OGLEII database failed")
 
-            ready_stars = self._parse_light_curves(stars)
-
             verbose("Light curves have been saved", 3, settings.VERBOSITY)
-
             if self.use_ra == "on":
-                checked_stars = []
-                for star in ready_stars:
-                    if self.coneSearch(star.coo, self.coo, self.delta):
-                        checked_stars.append(star)
-                res_stars += checked_stars
+                stars = self.coneSearch(self.coo,
+                                        _stars, self.delta, nearest=query.get("nearest", False))
             else:
-                res_stars += ready_stars
-        return res_stars
+                stars = _stars
+
+            ready_stars += self._parse_light_curves(stars)
+
+        return ready_stars
 
     def _post_query(self):
         '''
@@ -262,6 +269,7 @@ class OgleII(LightCurvesDb):
         '''Parsing result from retrieved web page'''
         # NOTE: Order of particular values is hardcoded, it is possible
         # to read input line with order of displayed values
+        end_text = '<td align="right"><a href="bvi_query.html">New Query</a></td></tr></table>'
 
         stars = []
         values = {}
@@ -285,20 +293,11 @@ class OgleII(LightCurvesDb):
                     # Load star parameters
                     if (idx is not None):
                         # If all star parameters were loaded
-                        end_text = '<td align="right"><a href="bvi_query.html">New Query</a></td></tr></table>'
                         if (idx >= 8 or line.strip() == end_text):
                             idx = None
+
                             # Append star into the stars list and empty star
                             # list
-                            values["more"] = more
-                            values["coo"] = SkyCoord(values.pop("ra"),
-                                                     values.pop("dec"),
-                                                     unit="deg")
-                            star = Star(**values)
-
-                            stars.append(star)
-                            values = {}
-                            more = {}
 
                         else:
                             idx += 1
@@ -328,9 +327,21 @@ class OgleII(LightCurvesDb):
 
                     # If first line of star info
                     if (field_starid):
+                        if idx:
+                            values["more"] = more
+                            values["coo"] = SkyCoord(values.pop("ra"),
+                                                     values.pop("dec"),
+                                                     unit="deg")
+                            star = Star(**values)
+
+                            stars.append(star)
+                            values = {}
+                            more = {}
+
+                        # Next star
+
                         field = field_starid.group("field")
                         starid = field_starid.group("starid")
-
                         idx = 0
                         og = {}
                         og["field"] = field

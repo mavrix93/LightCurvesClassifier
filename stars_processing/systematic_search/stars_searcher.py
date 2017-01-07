@@ -8,7 +8,7 @@ from conf.settings import VERBOSITY, TO_THE_DATA_FOLDER, LC_FOLDER
 from db_tier.stars_provider import StarsProvider
 from entities.exceptions import QueryInputError, InvalidFilesPath
 from stars_processing.filtering_manager import FilteringManager
-from utils.helpers import verbose, progressbar, create_folder, cut_path
+from utils.helpers import verbose, progressbar, create_folder
 from utils.stars import saveStars
 
 
@@ -156,7 +156,7 @@ class StarsSearcher():
         saveStars([star], self.save_path)[0]
 
     # NOTE: Default behavior. It can be overwritten.
-    def failProcedure(self, query, err=None):
+    def failProcedure(self, query, err=""):
         '''
         What to do if a fail occurs
 
