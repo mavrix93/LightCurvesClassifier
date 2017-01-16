@@ -108,10 +108,10 @@ class ColorIndexFilter(BaseFilter, Learnable):
         passed = self.decider.filter(coords_with_colors)
 
         add_stars = []
-        if self.pass_not_found == True:
+        if self.pass_not_found is True:
             add_stars = stars_without_colors
 
-        return [star for this_passed, star in zip(passed, stars_with_colors) if this_passed == True] + add_stars
+        return [star for this_passed, star in zip(passed, stars_with_colors) if this_passed is True] + add_stars
 
     def getSpaceCoords(self, stars):
         """

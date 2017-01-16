@@ -26,7 +26,7 @@ class PackageReader(object):
 
     MODULE_EXTENSIONS = ('.py',)
     NAMES = settings.IMPLEMENTED_CLASSES
-    EXCLUDE = ('__init__',)
+    EXCLUDE = ('lcc',)
 
     def getClasses(self, name):
         """

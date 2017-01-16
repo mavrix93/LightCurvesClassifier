@@ -57,7 +57,7 @@ class StarsCatalogue(object):
         except AttributeError:
             raise QueryInputError("Invalid query coordinates")
 
-        if nearest or str(nearest).capitalize() == "True":
+        if distances and (nearest or str(nearest).capitalize() == "True"):
             return [passed_stars[np.argmin(distances)]]
 
         return passed_stars

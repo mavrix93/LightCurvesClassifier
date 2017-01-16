@@ -94,14 +94,14 @@ class FileManager(LightCurvesDb):
         self.star_class = obtain_params.get(
             "star_class", self.DEFAULT_STARCLASS)
         self.suffix = obtain_params.get("suffix", self.DEFAULT_SUFFIX)
-        file_lim = obtain_params.get("files_limit", None)
+        file_lim = obtain_params.get("files_limit")
         if file_lim:
             self.files_limit = int(file_lim)
         else:
             self.files_limit = None
-        self.db_ident = obtain_params.get("db_ident", None)
-        self.files_to_load = obtain_params.get("files_to_load", None)
-        self.object_file_name = obtain_params.get("object_file_name", None)
+        self.db_ident = obtain_params.get("db_ident")
+        self.files_to_load = obtain_params.get("files_to_load")
+        self.object_file_name = obtain_params.get("object_file_name")
 
     def getStarsWithCurves(self):
         '''Common method for all stars provider

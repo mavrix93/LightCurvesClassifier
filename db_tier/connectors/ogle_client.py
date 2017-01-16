@@ -29,7 +29,7 @@ class OgleII(LightCurvesDb):
 
     Example:
     --------
-    que1 = {"target": "lmc", "ra": 5.549147 * 15,
+    que1 = {"ra": 5.549147 * 15,
        "dec": -70.55792, "delta": 5, "nearest": True}
     que2 = {"field":"LMC_SC1","starid":"152248","target":"lmc"}
 
@@ -39,7 +39,7 @@ class OgleII(LightCurvesDb):
     '''
 
     ROOT = "http://ogledb.astrouw.edu.pl/~ogle/photdb"
-    TARGETS = ["lmc", "smc", "bul", "sco"]
+    TARGETS = ["lmc", "smc", "bul"]
 
     # QUERY_TYPE = "phot"
     QUERY_TYPE = "bvi"
@@ -62,9 +62,27 @@ class OgleII(LightCurvesDb):
             dictionary.
         '''
         if isinstance(queries, dict):
-            self.queries = [queries]
-        else:
-            self.queries = queries
+            queries = [queries]
+
+        todel_queries = []
+        new_queries = []
+        for i, query in enumerate(queries):
+            if "ra" in query and "target" not in query:
+                todel_queries.append(i)
+
+                for target in self.TARGETS:
+                    z = query.copy()
+                    z["target"] = target
+                    new_queries.append(z)
+
+            elif "starid" in query and "target" not in query:
+                if "field" in query:
+                    query["target"] = query["field"][:3].lower()
+                else:
+                    raise QueryInputError("Unresolved target")
+
+        self.queries = [item for i, item in enumerate(
+            queries) if i not in todel_queries] + new_queries
 
     def oneQuery(self, query):
         # Query parameters
@@ -307,7 +325,6 @@ class OgleII(LightCurvesDb):
                                 value = float(value)
                             except:
                                 idx += 1
-
                             # Ra
                             if (idx == 1):
                                 values["ra"] = value * 15
@@ -322,21 +339,22 @@ class OgleII(LightCurvesDb):
                                 more["i_mag"] = value
                                 values["more"] = more
                             # B mag
-                            elif (idx == 5):
+                            elif (idx >= 5):
                                 more["b_mag"] = value
+
+                                values["more"] = more
+                                values["coo"] = SkyCoord(values.pop("ra"),
+                                                         values.pop("dec"),
+                                                         unit="deg")
+                                star = Star(**values)
+                                stars.append(star)
+                                values = {}
+                                more = {}
+
+                                idx = None
 
                     # If first line of star info
                     if (field_starid):
-                        if idx:
-                            values["more"] = more
-                            values["coo"] = SkyCoord(values.pop("ra"),
-                                                     values.pop("dec"),
-                                                     unit="deg")
-                            star = Star(**values)
-
-                            stars.append(star)
-                            values = {}
-                            more = {}
 
                         # Next star
 

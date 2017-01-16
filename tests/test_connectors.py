@@ -24,13 +24,13 @@ class Test(unittest.TestCase):
         self.failIf(np.NaN in stars[1].lightCurve.getHistogram()[1])
         self.failUnless(stars and len(stars) == RESULTS_NUM)
 
-    """def testCorotFaint(self):
+    def testCorotFaint(self):
         queries = [{"Corot": "102706554"},
                    {"ra": 100.94235, "dec": -00.89651, "delta": 10}]
         client = StarsProvider().getProvider(
             obtain_method="CorotFaintArchive", obtain_params=queries)
         stars = client.getStarsWithCurves(max_bins=10000)
-        plotStarsPicture(stars)
+        # plotStarsPicture(stars)
 
     def testCorotBright(self):
         RESULTS_NUM = 2
@@ -45,7 +45,7 @@ class Test(unittest.TestCase):
         self.failIf(None in [st.lightCurve for st in stars])
 
     def testMacho(self):
-        # 
+        #
         RESULTS_NUM = 1
         queries = [{"Field": 1, "Tile": 3441, "Seqn": 25}]
         client = StarsProvider().getProvider(obtain_method="MachoDb",
@@ -55,9 +55,8 @@ class Test(unittest.TestCase):
         self.failUnless(isinstance(stars[0], Star))
 
     def testOgle(self):
-        RESULTS_NUM = 2
         queries = [{"starid": 2, "field_num": 1, "target": "lmc"},
-                   {"ra": 5.545575 * 15, "dec": -70.55272, "delta": 30, "target": "lmc"}]
+                   {"ra": 5.545575 * 15, "dec": -70.55272, "delta": 30}]
         client = StarsProvider().getProvider(obtain_method="OgleII",
                                              obtain_params=queries)
         stars = client.getStarsWithCurves()
@@ -76,7 +75,7 @@ class Test(unittest.TestCase):
 
         self.failIf(len(stars) == 0)
         self.failUnless(isinstance(stars[0], Star))
-        print " ,".join([st.coo.to_string() for st in stars])"""
+        print " ,".join([st.coo.to_string() for st in stars])
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']

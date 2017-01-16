@@ -21,7 +21,7 @@ class VizierTapBase(TapClient):
         Path to light curve files storage
 
     TABLE : str
-        Name of querid table
+        Name of queried table
 
     RA : str
         Name of right ascension column. It should be in degrees, anyway it is
