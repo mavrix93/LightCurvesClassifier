@@ -19,7 +19,7 @@ from stars_processing.systematic_search.status_resolver import StatusResolver
 __all__ = []
 __version__ = 0.3
 __date__ = '2016-09-05'
-__updated__ = '2016-12-20'
+__updated__ = '2017-01-16'
 
 
 def main(argv=None):
@@ -185,7 +185,12 @@ def main(argv=None):
 
         star_filters = _load_filters(opts.filt)
 
-        print _sum_txt(opts.db, opts.input, len(resolver.status_queries), [filt.__class__.__name__ for filt in star_filters], opts.output)
+        if not star_filters:
+            filt_txt = ""
+        else:
+            filt_txt = [filt.__class__.__name__ for filt in star_filters]
+
+        print _sum_txt(opts.db, opts.input, len(resolver.status_queries), filt_txt, opts.output)
 
         searcher = StarsSearcher(star_filters,
                                  save_path=opts.output,
@@ -197,6 +202,7 @@ def main(argv=None):
         print "\nResults and status file were saved into %s folder in %s" % (opts.output, settings.LC_FOLDER)
 
     except Exception, e:
+        raise
         indent = len(program_name) * " "
         sys.stderr.write(program_name + ": " + repr(e) + "\n")
         sys.stderr.write(indent + "  for help use --help")

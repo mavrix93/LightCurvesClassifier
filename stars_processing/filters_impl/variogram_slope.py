@@ -15,65 +15,16 @@ class VariogramSlope(BaseFilter, Learnable):
     bins : int
         Dimension of reduced light curve from which Abbe value
         is calculated
-
-    decider : Decider instance
-        Classifier object
-
-    plot_save_path : str, NoneType
-        Path to the folder where plots are saved if not None, else
-        plots are showed immediately
-
-    plot_save_name : str, NoneType
-        Name of plotted file
     '''
 
-    def __init__(self, variogram_days_bin, decider,
-                 plot_save_path=None, plot_save_name="", *args, **kwargs):
+    def __init__(self, variogram_days_bin, *args, **kwargs):
         '''
         Parameters
         ----------
         variogram_days_bin : float
             Rate between light curve dimension and days
-
-        bins : int
-            Dimension of reduced light curve from which Abbe value
-            is calculated
-
-        decider : Decider instance
-            Classifier object
-
-        plot_save_path : str, NoneType
-            Path to the folder where plots are saved if not None, else
-            plots are showed immediately
-
-        plot_save_name : str, NoneType
-            Name of plotted file
         '''
-        self.decider = decider
         self.variogram_days_bin = variogram_days_bin
-        self.plot_save_path = plot_save_path
-        self.plot_save_name = plot_save_name
-
-    @accepts(list)
-    @returns(list)
-    def applyFilter(self, stars):
-        '''
-        Filter stars
-
-        Parameters
-        ----------
-        stars : list
-            List of `Star` objects (containing light curves)
-
-        Returns
-        -------
-        list
-            List of star-like objects passed thru filtering
-        '''
-        stars_coords = self.getSpaceCoords(stars)
-
-        return [star_coo for star_coo, passed in zip(stars_coords,
-                                                     self.decider.filter(stars_coords)) if passed]
 
     def getSpaceCoords(self, stars):
         """
@@ -87,7 +38,7 @@ class VariogramSlope(BaseFilter, Learnable):
         Returns
         -------
         list
-            List of list of floats
+            Variogram slopes
         """
 
         coords = []

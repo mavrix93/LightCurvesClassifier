@@ -7,13 +7,11 @@ from conf import settings
 from conf.settings import VERBOSITY, TO_THE_DATA_FOLDER, LC_FOLDER
 from db_tier.stars_provider import StarsProvider
 from entities.exceptions import QueryInputError, InvalidFilesPath
-from stars_processing.filtering_manager import FilteringManager
 from utils.helpers import verbose, progressbar, create_folder
 from utils.stars import saveStars
 
 
 # TODO: Think more about propriety of location of this class
-# TODO: Make this class general for every db manager
 class StarsSearcher():
     '''
     The class manages systematic searching in databases. It also can be used
@@ -21,8 +19,8 @@ class StarsSearcher():
 
     Attributes
     ----------
-    filters_list : list, iterable
-        List of star filters
+    stars_filter : FilteringManager object
+        Filter which is prepared filter star objects
 
     save_path : str
         Path from "run" module to the folder where found
@@ -39,13 +37,13 @@ class StarsSearcher():
     DEF_save_lim = 50
     DEF_unfound_lim = 150
 
-    def __init__(self, filters_list, save_path=None, save_lim=None,
+    def __init__(self, stars_filter, save_path=None, save_lim=None,
                  unfound_lim=None, obth_method=None, *args, **kwargs):
         '''
         Parameters
         ----------
-        filters_list : list, iterable
-            List of star filters
+        stars_filter : FilteringManager object
+            Filter which is prepared filter star objects
 
         save_path : str
             Path from "run" module to the folder where found
@@ -65,21 +63,13 @@ class StarsSearcher():
                 save_path))
         if not save_lim:
             save_lim = self.DEF_save_lim
-            warn(
-                "Save limit was not specified.\nSetting default value: %i" % save_lim)
+
         if not unfound_lim:
             unfound_lim = self.DEF_unfound_lim
-            warn(
-                "Max number of failed queries in order to end searching need to be specified.\nSetting default value: %i" % unfound_lim)
+
         if not obth_method:
             raise QueryInputError(
                 "Database for searching need to be specified.")
-
-        self.filteringManager = FilteringManager()
-
-        # Load all filters from given list
-        for filt in filters_list:
-            self.filteringManager.loadFilter(filt)
 
         if save_path.startswith("HERE:"):
             save_path = save_path[5:]
@@ -103,11 +93,16 @@ class StarsSearcher():
         self.unfound_lim = unfound_lim
 
         filt_name = ""
-        for filt in filters_list:
-            filt_name += "_" + filt.__class__.__name__
+        if stars_filter:
+            for filt in stars_filter.descriptors:
+                filt_name += "_" + filt.__class__.__name__
+        else:
+            filt_name = "None"
         self.filt_name = filt_name
+        self.stars_filter = stars_filter
 
         self.not_uploaded = []
+        self.passed_stars = []
 
     def filterStar(self, star, *args, **kwargs):
         '''
@@ -125,10 +120,10 @@ class StarsSearcher():
             If star passed thru filtering
         '''
 
-        self.filteringManager.stars = [star]
-
-        # Get stars passed thru filtering
-        result = self.filteringManager.performFiltering()
+        if self.stars_filter:
+            result = self.stars_filter.filterStars([star])
+        else:
+            result = [star]
 
         if len(result) == 1:
             self.matchOccur(result[0])
@@ -154,6 +149,7 @@ class StarsSearcher():
         '''
         verbose(star, 2, VERBOSITY)
         saveStars([star], self.save_path)[0]
+        self.passed_stars.append(star)
 
     # NOTE: Default behavior. It can be overwritten.
     def failProcedure(self, query, err=""):
@@ -253,13 +249,12 @@ class StarsSearcher():
             status = collections.OrderedDict(
                 (("found", False), ("filtered", False), ("passed", False)))
             try:
+
                 stars = StarsProvider().getProvider(
                     obtain_method=self.obth_method, **query).getStarsWithCurves()
-
             except QueryInputError:
                 raise
             except:
-                raise
                 warn("Couldn't download any light curve")
                 stars = []
 
@@ -287,8 +282,6 @@ class StarsSearcher():
                     if contain_lc:
                         # Try to apply filters to the star
                         try:
-                            # TODO: Case of multiple stars, not just one as
-                            # assumed
                             passed = self.filterStar(one_star, query)
                             status["filtered"] = True
                             status["passed"] = passed
@@ -299,6 +292,7 @@ class StarsSearcher():
                         except IOError as err:
                             raise InvalidFilesPath(err)
                         except Exception as err:
+                            raise
                             self.failProcedure(query, err)
                             warn("Something went wrong during filtering")
                     query["name"] = one_star.name

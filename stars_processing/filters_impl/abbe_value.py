@@ -14,9 +14,6 @@ class AbbeValueFilter(BaseFilter, Learnable):
         Dimension of reduced light curve from which Abbe value
         is calculated
 
-    decider : Decider instance
-        Classifier object
-
     plot_save_path : str, NoneType
         Path to the folder where plots are saved if not None, else
         plots are showed immediately
@@ -25,7 +22,7 @@ class AbbeValueFilter(BaseFilter, Learnable):
         Name of plotted file
     '''
 
-    def __init__(self, bins=None, decider=None, plot_save_path=None,
+    def __init__(self, bins=None, plot_save_path=None,
                  plot_save_name=None, *args, **kwargs):
         '''
         Parameters
@@ -45,30 +42,9 @@ class AbbeValueFilter(BaseFilter, Learnable):
             Name of plotted file
         '''
         self.bins = bins
-        self.decider = decider
 
         self.plot_save_path = plot_save_path
         self.plot_save_name = plot_save_name
-
-    @accepts(list)
-    @returns(list)
-    def applyFilter(self, stars):
-        '''
-        Filter stars by Abbe value filter
-
-        Parameters
-        ----------
-        stars : list
-            List of `Star` objects (containing light curves)
-
-        Returns
-        -------
-        list
-            List of star-like objects passed thru filtering
-        '''
-        abbe_values = self.getSpaceCoords(stars)
-        return [star for star, passed in zip(stars,
-                                             self.decider.filter(abbe_values)) if passed]
 
     def getSpaceCoords(self, stars):
         """

@@ -33,11 +33,11 @@ class DeciderEstimation(object):
         Name of filter file if it is not None
 
     split_ratio : float
-            Percentage number of train sample
+        Percentage number of train sample
     '''
 
     def __init__(self, searched, others, star_filter, tuned_params,
-                 log_path=None, save_filter_name=None, split_ratio=0.75,
+                 log_path=".", save_filter_name=None, split_ratio=0.75,
                  **kwargs):
         '''
         Parameters
@@ -77,9 +77,9 @@ class DeciderEstimation(object):
         self.tuned_params = tuned_params
         self.log_path = log_path
 
-        if not save_filter_name:
+        """if not save_filter_name:
             save_filter_name = star_filter.__class__.__name__ + \
-                "_tunedfilter." + settings.OBJECT_SUFFIX
+                "_tunedfilter." + settings.OBJECT_SUFFIX"""
         self.save_filter_name = save_filter_name
 
         self.params = kwargs

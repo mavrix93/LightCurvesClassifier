@@ -88,6 +88,9 @@ class NeuronDecider(BaseDecider):
         NoneType
             None
         '''
+        if not searched or not others:
+            raise Exception("Decider can't be learned on an empty sample")
+
         # Resolve number of input neurons
         self.input_neurons = len(searched[0])
 

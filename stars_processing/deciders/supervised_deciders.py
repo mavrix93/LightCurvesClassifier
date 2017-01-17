@@ -60,6 +60,9 @@ class SupervisedBase(BaseDecider):
         NoneType
             None
         """
+        if not right_coords or not wrong_coords:
+            raise QueryInputError(
+                "Decider can't be learned on an empty sample")
 
         y = [1 for i in range(len(right_coords))]
         y += [0 for i in range(len(wrong_coords))]

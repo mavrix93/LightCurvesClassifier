@@ -17,9 +17,6 @@ class ComparingFilter(BaseFilter, Learnable):
     compar_stars : iterable
         List of Star objects which represent searched group of star objects
 
-    decider : Decider object
-        This object learns to recognize and then find searched star objects
-
     plot_save_path : str, NoneType
         Path to the folder where plots are saved if not None, else
         plots are showed immediately
@@ -28,9 +25,8 @@ class ComparingFilter(BaseFilter, Learnable):
         Name of plotted file
     '''
 
-    def __init__(self, compar_filters, compar_stars, decider,
-                 plot_save_path=None, plot_save_name="ComparingPlot.png",
-                 **filters_params):
+    def __init__(self, compar_filters, compar_stars, plot_save_path=None,
+                 plot_save_name="ComparingPlot.png", **filters_params):
         """
         Parameters
         -----------
@@ -39,9 +35,6 @@ class ComparingFilter(BaseFilter, Learnable):
 
         compar_stars : iterable
             List of Star objects which represent searched group of star objects
-
-        decider : Decider object
-            This object learns to recognize and then find searched star objects
 
         plot_save_path : str, NoneType
             Path to the folder where plots are saved if not None, else
@@ -52,7 +45,6 @@ class ComparingFilter(BaseFilter, Learnable):
         """
         self.compar_filters = [cls(**filters_params) for cls in compar_filters]
         self.comp_stars = compar_stars
-        self.decider = decider
         self.plot_save_path = plot_save_path
         self.plot_save_name = plot_save_name
 
@@ -64,27 +56,6 @@ class ComparingFilter(BaseFilter, Learnable):
         # TODO: Get mean probability value
         # if search_opt.startswith("average"):
         #     search_opt, self.avg_num = search_opt[ : len("average") ], search_opt[len("average") : ]
-
-    def applyFilter(self, stars, meth="average"):
-        """
-        Parameters
-        -----------
-        stars: iterable
-            List of Star objects to filter
-
-        Returns
-        --------
-        list
-            List of Star objects which passed thru filtering
-        """
-
-        if not self.learned:
-            raise Exception("First you have to learn this compare filter")
-
-        stars_coords = self.getSpaceCoords(stars, meth)
-        passed = self.decider.filter(stars_coords)
-
-        return [star for this_passed, star in zip(passed, stars) if this_passed]
 
     def getSpaceCoords(self, stars, meth="average"):
         '''
@@ -102,9 +73,6 @@ class ComparingFilter(BaseFilter, Learnable):
                           object coordinate
             closest     : take coordinate with closest distance as
                           object coordinate
-            probable    : take coordinate with highest probability
-                          of membership. Can be performed just
-                          on learned decider
         Returns
         --------
         list
@@ -119,12 +87,6 @@ class ComparingFilter(BaseFilter, Learnable):
 
             elif meth == "average":
                 space_coordinates.append(self._findAverageCoord(coords))
-
-            elif meth == "probab":
-                if not self.learned:
-                    raise Exception(
-                        "First you have to learn this compare filter")
-                space_coordinates.append(self.decider.getBestCoord(coords))
 
             else:
                 raise Exception("Unresolved coordinates calculation method")
@@ -156,18 +118,10 @@ class ComparingFilter(BaseFilter, Learnable):
             for filt in self.compar_filters:
                 this_coo_list.append(filt.compareTwoStars(star, comp_star))
 
-            # Return best match if match is sufficient (there is no need to
-            # find best match)
-            if (search_opt == "passing" and self.decider.filter([this_coo_list])):
-                return [this_coo_list]
-
             coordinates.append(this_coo_list)
 
         if search_opt == "passing":
             return False
-
-        elif search_opt == "closest":
-            return self.decider.getBestCoord(coordinates)
 
         return coordinates
 

@@ -1,6 +1,7 @@
 import glob
 import os
 import pyfits
+pyfits.ignore_deprecation_warnings()
 
 from conf import settings
 from conf.settings import VERBOSITY
@@ -141,7 +142,7 @@ class FileManager(LightCurvesDb):
         numberOfFiles = len(starsList)
         if (numberOfFiles == 0):
             raise InvalidFilesPath(
-                "There are no stars in %s with suffix %s" % (self.path, self.suffix))
+                "There are no stars in %s with %s suffix" % (self.path, self.suffix))
 
         verbose("Number of stars in given directory is %i" %
                 numberOfFiles, 3, VERBOSITY)
@@ -280,6 +281,7 @@ class FileManager(LightCurvesDb):
                     starClass=prim_hdu.get(self.FITS_CLASS))
 
         ident = {}
+        more = {}
         for db_name_key in prim_hdu.keys():
             if db_name_key.endswith(DB_NAME_END):
                 db_name = db_name_key[:-len(DB_NAME_END)]
@@ -287,16 +289,19 @@ class FileManager(LightCurvesDb):
                 ident[db_name] = {}
                 ident[db_name]["name"] = prim_hdu[db_name_key]
 
-        for db_ident in prim_hdu.keys():
-            if DB_IDENT_SEP in db_ident:
-                db_name, ident_key = db_ident.split(DB_IDENT_SEP)
+            elif DB_IDENT_SEP in db_name_key:
+                db_name, ident_key = db_name_key.split(DB_IDENT_SEP)
 
                 if not ident[db_name].get("db_ident"):
                     ident[db_name]["db_ident"] = {}
 
-                ident[db_name]["db_ident"][ident_key] = prim_hdu[db_ident]
+                ident[db_name]["db_ident"][ident_key] = prim_hdu[db_name_key]
+
+            elif db_name_key not in ["SIMPLE", "BITPIX", "NAXIS", "EXTEND", self.FITS_RA, self.FITS_DEC, self.FITS_RA_UNIT, self.FITS_DEC_UNIT, self.FITS_NAME, self.FITS_CLASS]:
+                more[db_name_key.lower()] = prim_hdu[db_name_key]
 
         star.ident = ident
+        star.more = more
 
         for lc_hdu in fits[1:]:
             star.putLightCurve(self._createLcFromFits(lc_hdu))
@@ -335,9 +340,9 @@ class FileManager(LightCurvesDb):
 
         prim_hdu.header["IDENT"] = star.name
 
-        prim_hdu.header[self.FITS_RA] = star.coo.ra.degrees
+        prim_hdu.header[self.FITS_RA] = star.coo.ra.degree
         prim_hdu.header[self.FITS_RA_UNIT] = "deg"
-        prim_hdu.header[self.FITS_DEC] = star.coo.dec.degrees
+        prim_hdu.header[self.FITS_DEC] = star.coo.dec.degree
         prim_hdu.header[self.FITS_DEC_UNIT] = "deg"
 
         prim_hdu.header[self.FITS_CLASS] = star.starClass
@@ -376,4 +381,5 @@ class FileManager(LightCurvesDb):
 
             hdu_list.append(lc_hdu)
 
-        hdu_list.writeto(file_name, clobber=clobber)
+        hdu_list.writeto(
+            file_name, clobber=clobber)
