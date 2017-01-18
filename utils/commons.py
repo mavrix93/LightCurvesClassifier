@@ -10,6 +10,39 @@ from entities.exceptions import MandatoryKeyInQueryDictIsMissing,\
     ArgumentValidationError, InvalidArgumentNumberError, InvalidReturnType
 
 
+def check_attribute(attribute, cond, if_not=False):
+    """
+    The class decorator checks if some class attributes has certain value
+
+    Parameters
+    ----------
+    attribute : str
+        Name of the inspected class attribute
+
+    cond : optional
+        Condition to test for the inspected attribute
+
+    id_not : optional
+        Variable which will be returned if condition is not satisfied.
+        If it is 'raise' exception will be raised
+
+    Returns
+    -------
+        Original output of the function if condition is satisfied
+    """
+    def check_cond_deco(fu):
+        @wraps(fu)
+        def wrapper(*args, **kwargs):
+            if getattr(args[0], attribute) == cond:
+                return fu(*args, **kwargs)
+            elif if_not == "raise":
+                raise Exception(
+                    "Condition {0} is not {1}".format(attribute, cond))
+            return if_not
+        return wrapper
+    return check_cond_deco
+
+
 def args_type(**decls):
     """
     Decorator to check argument types

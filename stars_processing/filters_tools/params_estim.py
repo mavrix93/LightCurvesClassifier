@@ -49,7 +49,7 @@ class DeciderEstimation(object):
             Contamination stars
 
         star_filter : `BaseFilter` object
-            Filter object (uninstancied)
+            Filter object 
 
         tuned_params : list of dicts
             List of parameters to tune

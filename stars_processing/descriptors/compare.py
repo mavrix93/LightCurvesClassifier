@@ -1,10 +1,9 @@
 
 import numpy as np
-from stars_processing.filters_tools.base_filter import BaseFilter, Learnable
 from utils.helpers import checkDepth
 
 
-class ComparingFilter(BaseFilter, Learnable):
+class ComparativeBase():
     '''
     This class is responsible for comparing light curves of stars according
     to implementations of particular sub-filters
@@ -25,37 +24,8 @@ class ComparingFilter(BaseFilter, Learnable):
         Name of plotted file
     '''
 
-    def __init__(self, compar_filters, compar_stars, plot_save_path=None,
-                 plot_save_name="ComparingPlot.png", **filters_params):
-        """
-        Parameters
-        -----------
-        compar_filters : iterable
-            List of comparative filter classes
-
-        compar_stars : iterable
-            List of Star objects which represent searched group of star objects
-
-        plot_save_path : str, NoneType
-            Path to the folder where plots are saved if not None, else
-            plots are showed immediately
-
-        plot_save_name : str, NoneType
-            Name of plotted file
-        """
-        self.compar_filters = [cls(**filters_params) for cls in compar_filters]
-        self.comp_stars = compar_stars
-        self.plot_save_path = plot_save_path
-        self.plot_save_name = plot_save_name
-
-        self.labels = [
-            filt.__class__.__name__ + " distance" for filt in self.compar_filters]
-
-        self.learned = False
-
-        # TODO: Get mean probability value
-        # if search_opt.startswith("average"):
-        #     search_opt, self.avg_num = search_opt[ : len("average") ], search_opt[len("average") : ]
+    def loadCompStars(self, comp_stars):
+        self.comp_stars = comp_stars
 
     def getSpaceCoords(self, stars, meth="average"):
         '''
@@ -93,7 +63,7 @@ class ComparingFilter(BaseFilter, Learnable):
 
         return space_coordinates
 
-    def _filtOneStar(self, star, search_opt="all"):
+    def _filtOneStar(self, star, *args, **kwargs):
         '''
         Calculate distances of inspected star and template stars
 
@@ -105,29 +75,19 @@ class ComparingFilter(BaseFilter, Learnable):
         Returns
         --------
         list
-            List of all distances (coordinates) of inspected star to all
-            template stars
+            List of all dissimilarities of inspected star to template stars
         '''
 
         coordinates = []
         # Try every template star
         for comp_star in self.comp_stars:
-            this_coo_list = []
-
-            # Apply all comparative filters
-            for filt in self.compar_filters:
-                this_coo_list.append(filt.compareTwoStars(star, comp_star))
-
-            coordinates.append(this_coo_list)
-
-        if search_opt == "passing":
-            return False
+            coordinates.append(self.compareTwoStars(star, comp_star))
 
         return coordinates
 
     def _findClosestCoord(self, coords):
         """Get closest coordinates"""
-        checkDepth(coords, 2)
+        checkDepth(coords, 1)
 
         best_dist = 1e99
         best_coord = None
@@ -142,7 +102,7 @@ class ComparingFilter(BaseFilter, Learnable):
 
     def _findAverageCoord(self, coords):
         """Get average coordinate"""
-        checkDepth(coords, 2)
+        checkDepth(coords, 1)
         x = np.array(coords)
         mean_coord = []
         for dim in range(x.shape[1]):

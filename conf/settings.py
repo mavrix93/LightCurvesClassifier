@@ -4,7 +4,7 @@ import sys
 
 from db_tier.base_query import StarsCatalogue
 from stars_processing.deciders.base_decider import BaseDecider
-from stars_processing.filters_tools.base_filter import BaseFilter,\
+from stars_processing.filters_tools.base_descriptor import BaseDescriptor,\
     ComparativeSubFilter
 
 
@@ -62,7 +62,7 @@ DECIDERS_PATH = join("stars_processing", "deciders")
 # *********    Registration of paths    **********
 
 # Listen folders of implemented classes
-IMPLEMENTED_CLASSES = {"filters": (FILTERS_IMPL_PATH, BaseFilter),
+IMPLEMENTED_CLASSES = {"filters": (FILTERS_IMPL_PATH, BaseDescriptor),
                        "connectors": (DB_CONNECTORS, StarsCatalogue),
                        "sub_filters": (FILTERS_IMPL_PATH, ComparativeSubFilter),
                        "deciders": (DECIDERS_PATH, BaseDecider)}

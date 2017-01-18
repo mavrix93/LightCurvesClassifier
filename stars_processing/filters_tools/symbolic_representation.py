@@ -1,6 +1,7 @@
 import abc
 
 import numpy as np
+from stars_processing.filters_tools.sax import SAX
 
 
 class SymbolicRepresentation(object):
@@ -9,6 +10,10 @@ class SymbolicRepresentation(object):
     This common class for all filters based on symbolic representation of data.
     Filtering is based on comparing two star objects (their certain attributes)
     '''
+
+    def _getWord(self, x, word_size, alphabet_size):
+        self.sax = SAX(word_size, alphabet_size)
+        return self.sax.to_letter_rep(x)[0]
 
     def compareTwoStars(self, star, comp_star):
         """

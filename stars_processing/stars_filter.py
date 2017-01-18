@@ -1,15 +1,16 @@
-import numpy as np
-import itertools
+from __future__ import division
 import warnings
 
+import numpy as np
+from entities.exceptions import QueryInputError
+from utils.commons import check_attribute
 
-class FilteringManager(object):
+
+class StarsFilter(object):
     """
     This class is responsible for filtering stars according to given filters
     (their own implementation of filtering)
     """
-
-    SPACE_DENSITY = 10
 
     def __init__(self, descriptors, deciders):
 
@@ -18,11 +19,26 @@ class FilteringManager(object):
         if not isinstance(deciders, (list, tuple)):
             deciders = [deciders]
         self.deciders = deciders
+        self.learned = False
 
-    def filterStars(self, stars):
+    @check_attribute("learned", True, "raise")
+    def filterStars(self, stars, pass_method="all", treshold=0.5):
         '''
-        Apply all filters to stars and return stars which passed
-        thru all filters
+        Apply all deciders
+
+        Parameters
+        ----------
+        stars : list, iterable
+            Star objects to be filtered
+
+        pass_method : str
+            Inspected star pass if it fulfill the selected condition.
+            Methods for filtering:
+                all - all probabilities have to be greater then the treshold
+
+                mean - mean probability has to be greater then the treshold
+
+                one - at least one has to be greater then the treshold
 
         Returns
         -------
@@ -31,12 +47,19 @@ class FilteringManager(object):
         '''
         stars_coords = self.assignSpaceCoordinates(stars)
 
-        decisions = []
-        for decider in self.deciders:
-            decisions.append(decider.filter(stars_coords))
+        if pass_method == "all":
+            probabilities = self.evaluateCoordinates(stars_coords, "lowest")
 
-        decisions = np.array(decisions)
-        return [star for i, star in enumerate(stars) if False not in decisions[:, i]]
+        elif pass_method == "mean":
+            probabilities = self.evaluateCoordinates(stars_coords, "mean")
+
+        elif pass_method == "one":
+            probabilities = self.evaluateCoordinates(stars_coords, "highest")
+
+        else:
+            raise QueryInputError("Invalid filtering method")
+
+        return [probab >= treshold for probab in probabilities]
 
     def learn(self, searched, others):
         searched_coords = self.assignSpaceCoordinates(searched)
@@ -47,6 +70,9 @@ class FilteringManager(object):
         for decider in self.deciders:
             decider.learn(searched_coords, others_coords)
 
+        self.learned = True
+
+    @check_attribute("learned", True, "raise")
     def assignSpaceCoordinates(self, stars):
         space_coordinates = []
         for star in stars:
@@ -56,6 +82,46 @@ class FilteringManager(object):
             else:
                 warnings.warn("Not all space coordinates have been obtained")
         return space_coordinates
+
+    @check_attribute("learned", True, "raise")
+    def evaluateCoordinates(self, stars_coords, meth="mean"):
+        '''
+        Get probability of membership calculated from all deciders
+
+        Parameters
+        ----------
+        stars_coords : list, iterable
+            List of coordinates (lists)
+
+        meth : str
+            Method for filtering:
+                mean - mean probability
+
+                highest - highest probability
+
+                lowest - lowest probability
+
+        Returns
+        -------
+        list
+            Probabilities of membership according to selected the method
+        '''
+        decisions = []
+        for decider in self.deciders:
+            decisions.append(decider.evaluate(stars_coords))
+
+        if meth == "mean":
+            return [np.mean(coo) for coo in np.array(decisions).T]
+
+        elif meth == "highest":
+            return [np.max(coo) for coo in np.array(decisions).T]
+
+        elif meth == "lowest":
+            return [np.min(coo) for coo in np.array(decisions).T]
+
+        else:
+            raise QueryInputError(
+                "Invalid method for calculating membership probability")
 
     def _assignSpaceCoordinates(self, star):
         space_coordinate = []
@@ -67,67 +133,7 @@ class FilteringManager(object):
                 return False
         return space_coordinate
 
-    def getProbabSpace(self, save_path=None, file_name="probab_space.dat"):
-
-        if self.coords:
-            all_coords = np.array(self.coords)
-
-            wide_coords = []
-            for i in range(len(self.coords[0])):
-                start = np.min(all_coords[:, i])
-                stop = np.max(all_coords[:, i])
-                wide_coords.append(
-                    np.linspace(start, stop, self.SPACE_DENSITY))
-
-            coordinates = list(itertools.product(*wide_coords))
-
-            if save_path:
-                pass
-
-            return [decider.evaluate(coordinates) for decider in self.deciders]
-
-        """title = self.__class__.__name__ + ": " + \
-            self.decider.__class__.__name__ + "_%s" % str(learn_num)
-
-        try:
-            self.labels
-        except AttributeError:
-            self.labels = ["" for _ in self.decider.X]
-
-        try:
-            self.plot_save_path
-        except AttributeError:
-            self.plot_save_path = None
-
-        try:
-            img_name = clean_path(self.plot_save_name) + "_%s" % str(learn_num)
-            self.decider.plotHist(
-                title, self.labels, file_name=img_name,
-                save_path=self.plot_save_path)
-
-            if len(self.labels) == 2:
-                self.decider.plotProbabSpace(save_path=self.plot_save_path,
-                                             file_name=img_name,
-                                             x_lab=self.labels[0],
-                                             y_lab=self.labels[1],
-                                             title=title)
-        except Exception as err:
-            # TODO: Load from settings file
-            # path = settings.TO_THE_DATA_FOLDER
-            path = "."
-            VERB = 2
-
-            err_log = open(os.path.join(path, "plot_err_occured.log"), "w")
-            err_log.write(str(err))
-            err_log.close()
-            verbose(
-                "Error during plotting.. Log file has been saved into data folder", 1, VERB)
-
-        try:
-            self.learned = True
-        except AttributeError:
-            warnings.warn("Could not be able to set self.learned = True")"""
-
+    @check_attribute("learned", True, "raise")
     def getStatistic(self, s_stars, c_stars):
         """
         Parameters

@@ -1,12 +1,9 @@
 import abc
-import os
-import warnings
 
 from utils.commons import returns, accepts
-from utils.helpers import clean_path, verbose
 
 
-class BaseFilter(object):
+class BaseDescriptor(object):
     __metaclass__ = abc.ABCMeta
     '''
     Base class for all filters. It is something like interface (check whether
@@ -15,20 +12,21 @@ class BaseFilter(object):
 
     @accepts(list)
     @returns(list)
-    def applyFilter(self, stars):
-        '''
-        Filter stars
+    def getSpaceCoords(self, stars):
+        """
+        Get list of parameters coordinates according to descriptor
+        implementation
 
         Parameters
-        ----------
-        stars : list
-            List of `Star` objects (containing light curves)
+        -----------
+        stars : list of Star objects
+            Stars with color magnitudes in their 'more' attribute
 
         Returns
         -------
         list
-            List of star-like objects passed thru filtering
-        '''
+            List of coordinates
+        """
         raise NotImplementedError
 
     # TODO: Check whether these lists contains object of Star class type

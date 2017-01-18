@@ -4,7 +4,7 @@ with tested stars) via their words (data transformed into
 symbolic representation)
 '''
 
-from stars_processing.filters_tools.base_filter import ComparativeSubFilter
+from stars_processing.filters_tools.base_descriptor import ComparativeSubFilter
 from stars_processing.filters_tools.sax import SAX
 from stars_processing.filters_tools.symbolic_representation import SymbolicRepresentation
 from utils.data_analysis import compute_bins

@@ -1,9 +1,9 @@
 import numpy as np
-from stars_processing.filters_tools.base_filter import BaseFilter, Learnable
+from stars_processing.filters_tools.base_descriptor import BaseDescriptor, Learnable
 from utils.commons import returns, accepts
 
 
-class VariogramSlope(BaseFilter, Learnable):
+class VariogramSlope(BaseDescriptor, Learnable):
     '''
     This filter sorting stars according slopes of their variograms
 
