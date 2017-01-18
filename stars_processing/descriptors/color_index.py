@@ -1,9 +1,8 @@
 from entities.exceptions import QueryInputError
-from stars_processing.filters_tools.base_descriptor import BaseDescriptor, Learnable
-from utils.commons import returns, accepts
+from stars_processing.utils.base_descriptor import BaseDescriptor
 
 
-class ColorIndexFilter(BaseDescriptor, Learnable):
+class ColorIndex(BaseDescriptor):
     '''
     Filter star according their color indexes
 

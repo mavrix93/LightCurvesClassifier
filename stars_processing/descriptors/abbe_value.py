@@ -1,7 +1,7 @@
-from stars_processing.filters_tools.base_descriptor import BaseDescriptor
+from stars_processing.utils.base_descriptor import BaseDescriptor
 
 
-class AbbeValueFilter(BaseDescriptor):
+class AbbeValue(BaseDescriptor):
 
     '''
     Filter implementation which denies stars with lower value then a limit

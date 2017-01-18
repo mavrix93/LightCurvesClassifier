@@ -1,18 +1,17 @@
 from stars_processing.utils.compare import ComparativeBase
 from stars_processing.utils.symbolic_representation import SymbolicRepresentation
-from utils.data_analysis import compute_bins
 from stars_processing.utils.base_descriptor import BaseDescriptor
 
 
-class CurvesShape(SymbolicRepresentation, ComparativeBase, BaseDescriptor):
+class HistShape(SymbolicRepresentation, ComparativeBase, BaseDescriptor):
     '''
-    This descriptor which compares light curves of inspected star
-    with the template in symbolic representation
+    This descriptor compares histograms of light curves of inspected star
+    with the template
 
     Attributes
     -----------
-    days_per_bin : float
-        Ratio which decides about length of the word
+    bins : int
+        Length of result histogram
 
     alphabet_size : int
         Range of of used letters
@@ -22,17 +21,21 @@ class CurvesShape(SymbolicRepresentation, ComparativeBase, BaseDescriptor):
         by sliding shorter word thru longer
     '''
 
-    def __init__(self, days_per_bin, alphabet_size, slide=True, **kwargs):
+    def __init__(self, bins, alphabet_size, slide=False, **kwargs):
         '''
         Parameters
         -----------
-        days_per_bin : float
-            Ratio which decides about length of the word
+        hist_bins : int
+            Length of result histogram
 
-        alphabet_size : int
+        hist_alphabet_size : int
             Range of of used letters
+
+        slide : bool
+            If True, words with different lengths are dynamically compared
+            by sliding shorter word thru longer
         '''
-        self.days_per_bin = days_per_bin
+        self.bins = bins
         self.alphabet_size = alphabet_size
         self.slide = slide
 
@@ -43,8 +46,8 @@ class CurvesShape(SymbolicRepresentation, ComparativeBase, BaseDescriptor):
         Star object with light curve
 
         Returns
-        --------
-        String representation of light curve
+        -------
+        str
+            String representation of light curve's histogram
         '''
-        word_size = compute_bins(star.lightCurve.time, self.days_per_bin)
-        return self._getWord(star.lightCurve.mag, word_size, self.alphabet_size)
+        return self._getWord(star.lightCurve.getHistogram(bins=self.bins)[0], self.bins, self.alphabet_size)

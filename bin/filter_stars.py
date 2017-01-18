@@ -9,7 +9,7 @@ import warnings
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from conf import settings
-from conf.filter_loader import FilterLoader
+from tools.filter_loader import FilterLoader
 from db_tier.stars_provider import StarsProvider
 from entities.exceptions import InvalidFilesPath
 from stars_processing.systematic_search.stars_searcher import StarsSearcher

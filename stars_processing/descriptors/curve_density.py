@@ -1,11 +1,10 @@
 from __future__ import division
 
-from stars_processing.filters_tools.base_filter import BaseFilter, Learnable
-from utils.commons import returns, accepts
 from utils.data_analysis import to_ekvi_PAA
+from stars_processing.utils.base_descriptor import BaseDescriptor
 
 
-class CurveDensityFilter(BaseFilter, Learnable):
+class CurveDensity(BaseDescriptor):
     '''
     This filter throw out stars with low density light curves. It means light
     curves with huge non observing gaps or light curves with low amount

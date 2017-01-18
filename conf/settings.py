@@ -4,7 +4,7 @@ import sys
 
 from db_tier.base_query import StarsCatalogue
 from stars_processing.deciders.base_decider import BaseDecider
-from stars_processing.filters_tools.base_descriptor import BaseDescriptor,\
+from stars_processing.utils.base_descriptor import BaseDescriptor,\
     ComparativeSubFilter
 
 

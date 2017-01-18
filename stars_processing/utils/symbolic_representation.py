@@ -1,19 +1,15 @@
 import abc
 
 import numpy as np
-from stars_processing.filters_tools.sax import SAX
+from stars_processing.utils.sax import SAX
 
 
 class SymbolicRepresentation(object):
+    '''
+    This common class for all descriptors based on symbolic representation
+    of data.
+    '''
     __metaclass__ = abc.ABCMeta
-    '''
-    This common class for all filters based on symbolic representation of data.
-    Filtering is based on comparing two star objects (their certain attributes)
-    '''
-
-    def _getWord(self, x, word_size, alphabet_size):
-        self.sax = SAX(word_size, alphabet_size)
-        return self.sax.to_letter_rep(x)[0]
 
     def compareTwoStars(self, star, comp_star):
         """
@@ -39,6 +35,10 @@ class SymbolicRepresentation(object):
         comp_word = self.getWord(comp_star)
         score = self._getDissmilarity(inspected_word, comp_word, curve_len)
         return score
+
+    def _getWord(self, x, word_size, alphabet_size):
+        self.sax = SAX(word_size, alphabet_size)
+        return self.sax.to_letter_rep(x)[0]
 
     def _getDissmilarity(self, inspected_word, filter_word, curve_len):
         '''

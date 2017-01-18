@@ -11,10 +11,10 @@ import warnings
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from conf import settings
-from conf.package_reader import PackageReader
+from tools.package_reader import PackageReader
 from db_tier.stars_provider import StarsProvider
 from entities.exceptions import QueryInputError
-from stars_processing.filters_tools.params_estim import DeciderEstimation
+from tools.params_estim import ParamsEstimation
 from stars_processing.systematic_search.status_resolver import StatusResolver
 from utils.helpers import create_folder, progressbar
 
@@ -297,7 +297,7 @@ def main(argv=None):
             searched = searched[: split_n]
             addit_params["compar_filters"] = _getSubFilters(tuned_params[0])
 
-        es = DeciderEstimation(searched=searched,
+        es = ParamsEstimation(searched=searched,
                                others=_getStars(opts.cont),
                                tuned_params=tuned_params,
                                decider=decider,
