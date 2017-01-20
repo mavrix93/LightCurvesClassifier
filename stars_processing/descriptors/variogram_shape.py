@@ -1,6 +1,6 @@
-from stars_processing.utils.compare import ComparativeBase
-from stars_processing.utils.symbolic_representation import SymbolicRepresentation
-from stars_processing.utils.base_descriptor import BaseDescriptor
+from stars_processing.utilities.compare import ComparativeBase
+from stars_processing.utilities.symbolic_representation import SymbolicRepresentation
+from stars_processing.utilities.base_descriptor import BaseDescriptor
 
 
 class VariogramShape(SymbolicRepresentation, ComparativeBase, BaseDescriptor):
@@ -10,6 +10,9 @@ class VariogramShape(SymbolicRepresentation, ComparativeBase, BaseDescriptor):
 
     Attributes
     -----------
+    comp_stars : list
+        Template stars
+
     days_per_bin : float
         Ratio which decides about length of the word
 
@@ -21,10 +24,13 @@ class VariogramShape(SymbolicRepresentation, ComparativeBase, BaseDescriptor):
         by sliding shorter word thru longer
     '''
 
-    def __init__(self, bins, alphabet_size, slide=False, **kwargs):
+    def __init__(self, comp_stars, bins, alphabet_size, slide=False, **kwargs):
         '''
         Parameters
         -----------
+        comp_stars : list
+            Template stars
+
         bins : int
             Number of bins
 
@@ -35,6 +41,7 @@ class VariogramShape(SymbolicRepresentation, ComparativeBase, BaseDescriptor):
             If True, words with different lengths are dynamically compared
             by sliding shorter word thru longer
         '''
+        self.comp_stars = comp_stars
         self.bins = bins
         self.alphabet_size = alphabet_size
         self.slide = slide

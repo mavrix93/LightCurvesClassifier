@@ -14,7 +14,7 @@ from conf import settings
 from tools.package_reader import PackageReader
 from db_tier.stars_provider import StarsProvider
 from entities.exceptions import QueryInputError
-from tools.params_estim import ParamsEstimation
+from tools.params_estim import ParamsEstimator
 from stars_processing.systematic_search.status_resolver import StatusResolver
 from utils.helpers import create_folder, progressbar
 
@@ -297,7 +297,7 @@ def main(argv=None):
             searched = searched[: split_n]
             addit_params["compar_filters"] = _getSubFilters(tuned_params[0])
 
-        es = ParamsEstimation(searched=searched,
+        es = ParamsEstimator(searched=searched,
                                others=_getStars(opts.cont),
                                tuned_params=tuned_params,
                                decider=decider,

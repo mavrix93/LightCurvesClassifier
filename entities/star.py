@@ -230,7 +230,18 @@ class Star(object):
         return star_name
 
     def putLightCurve(self, lc, meta={}):
-        '''Add light curve to the star'''
+        '''
+        Add light curve to the star
+
+        Parameters
+        ----------
+        lc : list, numpy.ndarray
+            Light curve
+
+        Returns
+        -------
+            None
+        '''
         if not isinstance(lc, numpy.ndarray) and not lc:
             warn("Invalid light curve: %s\nLight curve not created to star %s" % (
                 lc, self.name))

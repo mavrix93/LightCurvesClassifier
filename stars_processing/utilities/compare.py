@@ -66,7 +66,6 @@ class ComparativeBase():
 
             else:
                 raise Exception("Unresolved coordinates calculation method")
-
         return space_coordinates
 
     def _filtOneStar(self, star, *args, **kwargs):
@@ -88,5 +87,4 @@ class ComparativeBase():
         # Try every template star
         for comp_star in self.comp_stars:
             coordinates.append(self.compareTwoStars(star, comp_star))
-
         return coordinates

@@ -45,7 +45,7 @@ class StarsFilter(object):
         list of `Star`s
             Stars which passed thru filtering
         '''
-        stars_coords = self.assignSpaceCoordinates(stars)
+        stars_coords = self.getSpaceCoordinates(stars)
 
         if pass_method == "all":
             probabilities = self.evaluateCoordinates(stars_coords, "lowest")
@@ -62,8 +62,24 @@ class StarsFilter(object):
         return [probab >= treshold for probab in probabilities]
 
     def learn(self, searched, others):
-        searched_coords = self.assignSpaceCoordinates(searched)
-        others_coords = self.assignSpaceCoordinates(others)
+        """
+        Train deciders on given sample of `Star` objects
+
+        Parameters
+        ----------
+        searched : list, tuple
+            Sample of searched group of stars
+
+        others : list, tuple
+            Contamination sample of stars
+
+
+        Returns
+        -------
+            None
+        """
+        searched_coords = self.getSpaceCoordinates(searched)
+        others_coords = self.getSpaceCoordinates(others)
 
         self.coords = searched_coords + others_coords
 
@@ -72,16 +88,36 @@ class StarsFilter(object):
 
         self.learned = True
 
-    @check_attribute("learned", True, "raise")
-    def assignSpaceCoordinates(self, stars):
+    def getSpaceCoordinates(self, stars):
+        """
+        Get params space coordinates according to descriptors
+
+        Parameters
+        ----------
+        stars : list, tuple
+            List of `Star` objects
+
+        Returns
+        -------
+        list
+            Coordinates of the stars
+        """
         space_coordinates = []
         for star in stars:
-            coords = self._assignSpaceCoordinates(star)
+            coords = self._getSpaceCoordinates(star)
             if coords:
                 space_coordinates.append(coords)
             else:
                 warnings.warn("Not all space coordinates have been obtained")
+
         return space_coordinates
+
+    def evaluateStars(self, stars, meth="mean"):
+        """
+
+        """
+        stars_coords = self.getSpaceCoordinates(stars)
+        return self.evaluateCoordinates(stars_coords, meth)
 
     @check_attribute("learned", True, "raise")
     def evaluateCoordinates(self, stars_coords, meth="mean"):
@@ -109,7 +145,6 @@ class StarsFilter(object):
         decisions = []
         for decider in self.deciders:
             decisions.append(decider.evaluate(stars_coords))
-
         if meth == "mean":
             return [np.mean(coo) for coo in np.array(decisions).T]
 
@@ -123,18 +158,18 @@ class StarsFilter(object):
             raise QueryInputError(
                 "Invalid method for calculating membership probability")
 
-    def _assignSpaceCoordinates(self, star):
+    def _getSpaceCoordinates(self, star):
         space_coordinate = []
         for descriptor in self.descriptors:
             coo = descriptor.getSpaceCoords([star])
             if coo:
-                space_coordinate += coo[0]
+                space_coordinate += coo
             else:
                 return False
         return space_coordinate
 
     @check_attribute("learned", True, "raise")
-    def getStatistic(self, s_stars, c_stars):
+    def getStatistic(self, s_stars, c_stars, treshold=None):
         """
         Parameters
         ----------
@@ -143,6 +178,9 @@ class StarsFilter(object):
 
         c_stars : list of `Star` objects
             Contamination stars
+
+        treshold : float
+            Treshold value for filtering (number from 0 to 1)
 
         Returns
         -------
@@ -165,7 +203,36 @@ class StarsFilter(object):
                 Proportion of negatives that are incorrectly identified
                 as positives
         """
-        searched_stars_coords = self.assignSpaceCoordinates(s_stars)
-        contamination_stars_coords = self.assignSpaceCoordinates(c_stars)
+        searched_stars_coords = self.getSpaceCoordinates(s_stars)
+        contamination_stars_coords = self.getSpaceCoordinates(c_stars)
 
-        return [decider.getStatistic(searched_stars_coords, contamination_stars_coords) for decider in self.deciders]
+        return [decider.getStatistic(searched_stars_coords,
+                                     contamination_stars_coords, treshold) for decider in self.deciders]
+
+    def getROCs(self, s_stars, c_stars, n):
+        """
+        Parameters
+        ----------
+        s_stars : list of `Star` objects
+            Searched stars
+
+        c_stars : list of `Star` objects
+            Contamination stars
+
+        """
+        roc_curve = []
+        for treshold in np.linspace(0.01, 0.99, n):
+            print self.getStatistic(s_stars, c_stars, treshold)
+            roc_curve.append(
+                self._getROCs(self.getStatistic(s_stars, c_stars, treshold)))
+
+        return roc_curve
+
+    def _getROCs(self, stats):
+        x = []
+        y = []
+        for stat in stats:
+            x.append(stat.get("false_positive_rate"))
+            y.append(stat.get("true_positive_rate"))
+
+        return x, y

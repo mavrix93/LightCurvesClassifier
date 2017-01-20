@@ -1,7 +1,6 @@
 import glob
 import os
 import pyfits
-pyfits.ignore_deprecation_warnings()
 
 from conf import settings
 from conf.settings import VERBOSITY
@@ -10,7 +9,6 @@ from entities.exceptions import InvalidFilesPath, InvalidFile, QueryInputError
 from entities.light_curve import LightCurve
 from entities.star import Star
 import numpy as np
-from utils.commons import mandatory_args, args_type
 from utils.helpers import verbose
 from utils.output_process_modules import loadFromFile
 
@@ -78,6 +76,8 @@ class FileManager(LightCurvesDb):
         obtain_params : dict
             Query dictionary (see class Attributes doc above)
         '''
+        if isinstance(obtain_params, list) and len(obtain_params) == 1:
+            obtain_params = obtain_params[0]
 
         raw_path = obtain_params["path"]
         if raw_path.startswith(self.REL_PATH):

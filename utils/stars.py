@@ -96,7 +96,6 @@ def plotStarsPicture(stars, option="show", hist_bins=10, vario_bins=10,
             ylabel_unit = lc.meta.get("ylabel_unit", "mag")
             color = lc.meta.get("color", "")
             invert_axis = lc.meta.get("invert_yaxis", True)
-
             ax1 = fig.add_subplot(31 + num_rows * 100 + 3 * row_num)
             ax1.set_xlabel("({ylabel} + {mean} ) {ylabel_unit}".format(mean=lc.mag.mean(),
                                                                        ylabel=ylabel,

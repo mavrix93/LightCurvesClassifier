@@ -72,7 +72,7 @@ class LightCurve(object):
                 invert_yaxis - True/False if y axis is inverted
         '''
 
-        if (type(param) is list or type(param) is tuple):
+        if isinstance(param, (list, tuple)):
             param = np.array(param)
 
         if isinstance(param, np.ndarray):
@@ -196,4 +196,4 @@ class LightCurve(object):
                 cl_time.append(t)
                 cl_mag.append(m)
                 cl_err.append(e)
-        return cl_time, cl_mag, cl_err
+        return np.array(cl_time), np.array(cl_mag), np.array(cl_err)

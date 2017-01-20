@@ -3,11 +3,12 @@ import random
 
 import numpy as np
 
+from utils.helpers import progressbar
 from entities.exceptions import QueryInputError
 from stars_processing.stars_filter import StarsFilter
 
 
-class ParamsEstimation(object):
+class ParamsEstimator(object):
     '''
     Attributes
     ----------
@@ -56,10 +57,9 @@ class ParamsEstimation(object):
             Percentage number of train sample
 
         static_params : dict
-            Constant values for descriptors and deciders
+            Constant values for descriptors and deciders. Format is the
+            same one item of ´tuned_params´
         '''
-
-        # TODO: Custom split ratio
 
         random.shuffle(searched)
         random.shuffle(others)

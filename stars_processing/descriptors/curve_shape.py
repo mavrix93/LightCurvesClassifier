@@ -1,7 +1,7 @@
-from stars_processing.utils.compare import ComparativeBase
-from stars_processing.utils.symbolic_representation import SymbolicRepresentation
+from stars_processing.utilities.compare import ComparativeBase
+from stars_processing.utilities.symbolic_representation import SymbolicRepresentation
 from utils.data_analysis import compute_bins
-from stars_processing.utils.base_descriptor import BaseDescriptor
+from stars_processing.utilities.base_descriptor import BaseDescriptor
 
 
 class CurvesShape(SymbolicRepresentation, ComparativeBase, BaseDescriptor):
@@ -20,9 +20,12 @@ class CurvesShape(SymbolicRepresentation, ComparativeBase, BaseDescriptor):
     slide : bool
         If True, words with different lengths are dynamically compared
         by sliding shorter word thru longer
+
+    comp_stars : list
+        Template stars
     '''
 
-    def __init__(self, days_per_bin, alphabet_size, slide=True, **kwargs):
+    def __init__(self, comp_stars, days_per_bin, alphabet_size, slide=True, **kwargs):
         '''
         Parameters
         -----------
@@ -31,7 +34,11 @@ class CurvesShape(SymbolicRepresentation, ComparativeBase, BaseDescriptor):
 
         alphabet_size : int
             Range of of used letters
+
+        comp_stars : list
+            Template stars
         '''
+        self.comp_stars = comp_stars
         self.days_per_bin = days_per_bin
         self.alphabet_size = alphabet_size
         self.slide = slide

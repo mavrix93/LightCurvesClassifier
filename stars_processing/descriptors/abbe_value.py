@@ -1,4 +1,4 @@
-from stars_processing.utils.base_descriptor import BaseDescriptor
+from stars_processing.utilities.base_descriptor import BaseDescriptor
 
 
 class AbbeValue(BaseDescriptor):
