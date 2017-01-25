@@ -1,9 +1,9 @@
 from astroML.classification.gmm_bayes import GMMBayes
 from sklearn import svm
 from sklearn import tree
-from sklearn.lda import LDA
 from sklearn.naive_bayes import GaussianNB
-from sklearn.qda import QDA
+from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis as QDA
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
 
 from conf import deciders_settings
 from entities.exceptions import QueryInputError, LearningError

@@ -7,7 +7,7 @@ import sys
 from conf import settings
 from entities.exceptions import QueryInputError
 import numpy as np
-from stars_processing.systematic_search.status_resolver import StatusResolver
+from data_manager.status_resolver import StatusResolver
 from utils.helpers import get_combinations
 
 

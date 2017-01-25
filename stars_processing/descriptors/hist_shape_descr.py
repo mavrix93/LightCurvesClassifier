@@ -3,7 +3,7 @@ from stars_processing.utilities.symbolic_representation import SymbolicRepresent
 from stars_processing.utilities.base_descriptor import BaseDescriptor
 
 
-class HistShape(SymbolicRepresentation, ComparativeBase, BaseDescriptor):
+class HistShapeDescr(SymbolicRepresentation, ComparativeBase, BaseDescriptor):
     '''
     This descriptor compares histograms of light curves of inspected star
     with the template

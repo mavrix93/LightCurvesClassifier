@@ -1,6 +1,29 @@
 import itertools
 import os
 import sys
+import inspect
+
+import numpy as np
+
+
+def getArguments(self, insp_classes, isclass=True):
+    if isclass:
+        i = 1
+    else:
+        i = 0
+    mapped_classes = []
+    for insp_class in insp_classes:
+        params = inspect.getargspec(insp_class.__init__)[0]
+        default_values = inspect.getargspec(insp_class.__init__)[3]
+        n = len(default_values)
+        mandatory_params = params[i:-n]
+        default_params = params[-n:]
+        mapped_classes.append({"name": insp_class.__name__,
+                               "mandatory_params": mandatory_params,
+                               "default_params": default_params,
+                               "default_values": default_values})
+
+    return mapped_classes
 
 
 def clean_path(path):
@@ -13,7 +36,7 @@ def clean_path(path):
     return cleaned_name
 
 
-def checkDepth(a, deep_level):
+def checkDepth(a, deep_level, ifnotraise=True):
     """Check if input list has desired level of nested lists"""
     lev = 0
     while True:
@@ -23,9 +46,13 @@ def checkDepth(a, deep_level):
         except:
             break
     if not lev == deep_level:
-        raise Exception(
-            "Wrong input nested level. Excepted %i, got %i\n %s" % (deep_level,
-                                                                    lev, a))
+        if ifnotraise:
+            raise Exception(
+                "Wrong input nested level. Excepted %i, got %i\n %s" % (deep_level,
+                                                                        lev, a))
+        else:
+            return False
+    return True
 
 
 def subDictInDict(sub_dict, dict_list, remove_keys=[]):
@@ -168,3 +195,11 @@ def get_combinations(keys, *lists):
             this_query[key] = comb[i]
         queries.append(this_query)
     return queries
+
+
+def getMeanDict(dict_list):
+    new_d = {}
+    keys = dict_list[0].keys()
+    for key in keys:
+        new_d[key] = np.mean([x[key] for x in dict_list])
+    return new_d

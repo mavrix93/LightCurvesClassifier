@@ -1,7 +1,7 @@
 from stars_processing.utilities.base_descriptor import BaseDescriptor
 
 
-class AbbeValue(BaseDescriptor):
+class AbbeValueDescr(BaseDescriptor):
 
     '''
     Filter implementation which denies stars with lower value then a limit
@@ -12,17 +12,9 @@ class AbbeValue(BaseDescriptor):
     bins : int
         Dimension of reduced light curve from which Abbe value
         is calculated
-
-    plot_save_path : str, NoneType
-        Path to the folder where plots are saved if not None, else
-        plots are showed immediately
-
-    plot_save_name : str, NoneType
-        Name of plotted file
     '''
 
-    def __init__(self, bins=None, plot_save_path=None,
-                 plot_save_name=None, *args, **kwargs):
+    def __init__(self, bins=None):
         '''
         Parameters
         ----------
@@ -30,20 +22,8 @@ class AbbeValue(BaseDescriptor):
             Dimension of reduced light curve from which Abbe value
             is calculated
 
-        decider : Decider instance
-            Classifier object
-
-        plot_save_path : str, NoneType
-            Path to the folder where plots are saved if not None, else
-            plots are showed immediately
-
-        plot_save_name : str, NoneType
-            Name of plotted file
         '''
         self.bins = bins
-
-        self.plot_save_path = plot_save_path
-        self.plot_save_name = plot_save_name
 
     def getSpaceCoords(self, stars):
         """
@@ -66,6 +46,6 @@ class AbbeValue(BaseDescriptor):
                 bins = len(star.lightCurve.time)
             else:
                 bins = self.bins
-            abbe_values.append([star.lightCurve.getAbbe(bins=bins)])
+            abbe_values.append(star.lightCurve.getAbbe(bins=bins))
 
         return abbe_values

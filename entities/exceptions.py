@@ -52,3 +52,7 @@ class StarAttributeNotSpecified(AttributeError):
 
 class LearningError(Exception):
     pass
+
+
+class InvalidOption(Exception):
+    pass

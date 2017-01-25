@@ -9,6 +9,7 @@ import warnings
 from conf import deciders_settings
 import numpy as np
 from utils.helpers import checkDepth
+from utils.data_analysis import computePrecision
 
 
 class BaseDecider(object):
@@ -141,9 +142,8 @@ class BaseDecider(object):
         if not treshold:
             treshold = self.treshold
         checkDepth(stars_coords, 2)
-        return [self.evaluate([coo]) >= treshold for coo in stars_coords]
+        return [self.evaluate([coo])[0] >= treshold for coo in stars_coords]
 
-    # TODO: Reduce number of digits in output
     def getStatistic(self, right_coords, wrong_coords, treshold=None):
         """
         Parameters
@@ -192,8 +192,7 @@ class BaseDecider(object):
             [1 for guess in self.filter(wrong_coords, treshold) if guess == False])
         false_pos = wrong_num - true_neg
 
-        precision = round(
-            deciders_settings.PRECISION(true_pos, false_pos, true_neg, false_neg), 3)
+        precision = round(computePrecision(true_pos, false_pos), 3)
 
         stat = (("precision", precision),
                 ("true_positive_rate", round(true_pos / right_num, 3)),

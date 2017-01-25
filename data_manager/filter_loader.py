@@ -1,7 +1,7 @@
 import os
 
 from conf import settings
-from tools.package_reader import PackageReader
+from data_manager.package_reader import PackageReader
 from utils.output_process_modules import loadFromFile
 
 

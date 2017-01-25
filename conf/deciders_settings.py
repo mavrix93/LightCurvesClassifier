@@ -7,10 +7,8 @@ TRESHOLD = 0.80
 # Calculate precision of a combination of parameters
 
 
-def PRECISION(true_pos, false_pos, true_neg, false_neg):
-    if true_pos + false_pos > 0:
-        return true_pos / (true_pos + false_pos)
-    return 0
+def PRECISION(precision, *args, **kwargs):
+    return precision
 
 
 # For NeuronDecider

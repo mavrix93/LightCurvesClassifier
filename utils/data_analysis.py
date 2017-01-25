@@ -329,3 +329,9 @@ def compute_bins(x_time, days_per_bin):
         num_bins = 5
 
     return num_bins
+
+
+def computePrecision(true_pos, false_pos):
+    if true_pos + false_pos > 0:
+        return true_pos / (true_pos + false_pos)
+    return 0

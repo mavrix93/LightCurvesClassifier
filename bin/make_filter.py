@@ -11,11 +11,11 @@ import warnings
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from conf import settings
-from tools.package_reader import PackageReader
+from data_manager.package_reader import PackageReader
 from db_tier.stars_provider import StarsProvider
 from entities.exceptions import QueryInputError
 from tools.params_estim import ParamsEstimator
-from stars_processing.systematic_search.status_resolver import StatusResolver
+from data_manager.status_resolver import StatusResolver
 from utils.helpers import create_folder, progressbar
 
 

@@ -1,16 +1,18 @@
 from stars_processing.utilities.compare import ComparativeBase
 from stars_processing.utilities.symbolic_representation import SymbolicRepresentation
-from utils.data_analysis import compute_bins
 from stars_processing.utilities.base_descriptor import BaseDescriptor
 
 
-class CurvesShape(SymbolicRepresentation, ComparativeBase, BaseDescriptor):
+class VariogramShapeDescr(SymbolicRepresentation, ComparativeBase, BaseDescriptor):
     '''
-    This descriptor which compares light curves of inspected star
-    with the template in symbolic representation
+    This descriptor compares variograms of light curves of inspected star
+    with the template in symbolic representation.
 
     Attributes
     -----------
+    comp_stars : list
+        Template stars
+
     days_per_bin : float
         Ratio which decides about length of the word
 
@@ -20,26 +22,27 @@ class CurvesShape(SymbolicRepresentation, ComparativeBase, BaseDescriptor):
     slide : bool
         If True, words with different lengths are dynamically compared
         by sliding shorter word thru longer
-
-    comp_stars : list
-        Template stars
     '''
 
-    def __init__(self, comp_stars, days_per_bin, alphabet_size, slide=True, **kwargs):
+    def __init__(self, comp_stars, bins, alphabet_size, slide=False, **kwargs):
         '''
         Parameters
         -----------
-        days_per_bin : float
-            Ratio which decides about length of the word
+        comp_stars : list
+            Template stars
+
+        bins : int
+            Number of bins
 
         alphabet_size : int
             Range of of used letters
 
-        comp_stars : list
-            Template stars
+        slide : bool
+            If True, words with different lengths are dynamically compared
+            by sliding shorter word thru longer
         '''
         self.comp_stars = comp_stars
-        self.days_per_bin = days_per_bin
+        self.bins = bins
         self.alphabet_size = alphabet_size
         self.slide = slide
 
@@ -47,11 +50,12 @@ class CurvesShape(SymbolicRepresentation, ComparativeBase, BaseDescriptor):
         '''
         Parameters
         -----------
-        Star object with light curve
+        Star object with a light curve
 
         Returns
         --------
-        String representation of light curve
+        str
+            String representation of light curve's variogram
         '''
-        word_size = compute_bins(star.lightCurve.time, self.days_per_bin)
-        return self._getWord(star.lightCurve.mag, word_size, self.alphabet_size)
+        return self._getWord(star.lightCurve.getVariogram(bins=self.bins)[1],
+                             self.bins, self.alphabet_size)

@@ -1,4 +1,4 @@
-from tools.package_reader import PackageReader
+from data_manager.package_reader import PackageReader
 
 
 class StarsProvider(object):

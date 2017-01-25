@@ -2,7 +2,7 @@ from entities.exceptions import QueryInputError
 from stars_processing.utilities.base_descriptor import BaseDescriptor
 
 
-class ColorIndex(BaseDescriptor):
+class ColorIndexDescr(BaseDescriptor):
     '''
     Filter star according their color indexes
 

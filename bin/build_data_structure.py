@@ -4,7 +4,7 @@ import sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from entities.exceptions import QueryInputError
-from tools.prepare_package import create_data_structure
+from data_manager.prepare_package import create_data_structure
 
 
 def main():

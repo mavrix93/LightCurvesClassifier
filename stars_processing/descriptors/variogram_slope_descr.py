@@ -2,7 +2,7 @@ import numpy as np
 from stars_processing.utilities.base_descriptor import BaseDescriptor
 
 
-class VariogramSlope(BaseDescriptor):
+class VariogramSlopeDescr(BaseDescriptor):
     '''
     This filter sorting stars according slopes of their variograms
 

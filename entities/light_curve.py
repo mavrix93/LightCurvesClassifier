@@ -185,7 +185,9 @@ class LightCurve(object):
             Abbe value of the light curve
         '''
         if bins:
-            x = to_ekvi_PAA(self.time, self.mag, bins)[1]
+            x = to_ekvi_PAA(self.time, self.mag, bins)[0]
+        else:
+            x = self.mag
         return abbe(x, len(x))
 
     def _cleanLC(self, time, mag, err):

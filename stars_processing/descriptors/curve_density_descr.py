@@ -4,7 +4,7 @@ from utils.data_analysis import to_ekvi_PAA
 from stars_processing.utilities.base_descriptor import BaseDescriptor
 
 
-class CurveDensity(BaseDescriptor):
+class CurveDensityDescr(BaseDescriptor):
     '''
     This filter throw out stars with low density light curves. It means light
     curves with huge non observing gaps or light curves with low amount

@@ -4,22 +4,54 @@ import warnings
 import numpy as np
 from entities.exceptions import QueryInputError
 from utils.commons import check_attribute
+from utils.helpers import getMeanDict
 
 
 class StarsFilter(object):
     """
     This class is responsible for filtering stars according to given filters
     (their own implementation of filtering)
+
+    Attributes
+    ----------
+    descriptors : list
+        Descriptor objects
+
+    decider : list
+        Decider object
+
+    learned : bool
+        It is True after executing the learning
+
+    searched_coords : list
+        Parameters space coordinates (got from descriptors) of searched
+        objects
+
+    others_coords : list
+        Parameters space coordinates (got from descriptors) of contamination
+        objects
     """
 
     def __init__(self, descriptors, deciders):
+        """
+        Parameters
+        ----------
+        descriptors : list
+            Descriptor objects
+
+        decider :list
+            Decider objects
+        """
 
         self.descriptors = descriptors
 
         if not isinstance(deciders, (list, tuple)):
             deciders = [deciders]
         self.deciders = deciders
+
         self.learned = False
+        self.searched_coords = []
+        self.others_coords = []
 
     @check_attribute("learned", True, "raise")
     def filterStars(self, stars, pass_method="all", treshold=0.5):
@@ -61,6 +93,31 @@ class StarsFilter(object):
 
         return [probab >= treshold for probab in probabilities]
 
+    def learnOnCoords(self, searched_coords, others_coords):
+        """
+        Train deciders on given sample of coordinates
+
+        Parameters
+        ----------
+        searched_coords : list, tuple
+            Sample of searched coordinates
+
+        others_coords : list, tuple
+            Contamination sample of coordinates
+
+        Returns
+        -------
+            None
+        """
+        self.coords = searched_coords + others_coords
+
+        for decider in self.deciders:
+            decider.learn(searched_coords, others_coords)
+
+        self.learned = True
+        self.searched_coords = searched_coords
+        self.others_coords = others_coords
+
     def learn(self, searched, others):
         """
         Train deciders on given sample of `Star` objects
@@ -78,17 +135,10 @@ class StarsFilter(object):
         -------
             None
         """
-        searched_coords = self.getSpaceCoordinates(searched)
-        others_coords = self.getSpaceCoordinates(others)
+        self.learnOnCoords(
+            self.getSpaceCoordinates(searched), self.getSpaceCoordinates(others))
 
-        self.coords = searched_coords + others_coords
-
-        for decider in self.deciders:
-            decider.learn(searched_coords, others_coords)
-
-        self.learned = True
-
-    def getSpaceCoordinates(self, stars):
+    def getSpaceCoordinates(self, stars, get_labels=False):
         """
         Get params space coordinates according to descriptors
 
@@ -97,24 +147,52 @@ class StarsFilter(object):
         stars : list, tuple
             List of `Star` objects
 
+        get_labels : bool
+            If True labels are returned with coordinates
+
         Returns
         -------
         list
             Coordinates of the stars
+
+        list
+            Names of the stars
         """
         space_coordinates = []
+        labels = []
         for star in stars:
             coords = self._getSpaceCoordinates(star)
             if coords:
                 space_coordinates.append(coords)
+                labels.append(star.name)
             else:
                 warnings.warn("Not all space coordinates have been obtained")
 
+        if get_labels:
+            return space_coordinates, labels
         return space_coordinates
 
     def evaluateStars(self, stars, meth="mean"):
         """
+        Get probabilities of membership of inspected stars
 
+        Parameters
+        ----------
+        stars : list
+            Star objects
+
+        meth : str
+            Method for filtering:
+                mean - mean probability
+
+                highest - highest probability
+
+                lowest - lowest probability
+
+        Returns
+        -------
+        list
+            Probabilities of membership according to selected the method
         """
         stars_coords = self.getSpaceCoordinates(stars)
         return self.evaluateCoordinates(stars_coords, meth)
@@ -158,16 +236,6 @@ class StarsFilter(object):
             raise QueryInputError(
                 "Invalid method for calculating membership probability")
 
-    def _getSpaceCoordinates(self, star):
-        space_coordinate = []
-        for descriptor in self.descriptors:
-            coo = descriptor.getSpaceCoords([star])
-            if coo:
-                space_coordinate += coo
-            else:
-                return False
-        return space_coordinate
-
     @check_attribute("learned", True, "raise")
     def getStatistic(self, s_stars, c_stars, treshold=None):
         """
@@ -206,33 +274,15 @@ class StarsFilter(object):
         searched_stars_coords = self.getSpaceCoordinates(s_stars)
         contamination_stars_coords = self.getSpaceCoordinates(c_stars)
 
-        return [decider.getStatistic(searched_stars_coords,
-                                     contamination_stars_coords, treshold) for decider in self.deciders]
+        return getMeanDict([decider.getStatistic(searched_stars_coords,
+                                                 contamination_stars_coords, treshold) for decider in self.deciders])
 
-    def getROCs(self, s_stars, c_stars, n):
-        """
-        Parameters
-        ----------
-        s_stars : list of `Star` objects
-            Searched stars
-
-        c_stars : list of `Star` objects
-            Contamination stars
-
-        """
-        roc_curve = []
-        for treshold in np.linspace(0.01, 0.99, n):
-            print self.getStatistic(s_stars, c_stars, treshold)
-            roc_curve.append(
-                self._getROCs(self.getStatistic(s_stars, c_stars, treshold)))
-
-        return roc_curve
-
-    def _getROCs(self, stats):
-        x = []
-        y = []
-        for stat in stats:
-            x.append(stat.get("false_positive_rate"))
-            y.append(stat.get("true_positive_rate"))
-
-        return x, y
+    def _getSpaceCoordinates(self, star):
+        space_coordinate = []
+        for descriptor in self.descriptors:
+            coo = descriptor.getSpaceCoords([star])
+            if coo:
+                space_coordinate += coo
+            else:
+                return False
+        return space_coordinate
