@@ -7,11 +7,11 @@ from urllib2 import URLError
 import urllib2
 import numpy as np
 
-from conf import settings
-from db_tier.base_query import LightCurvesDb
-from entities.exceptions import NoInternetConnection, QueryInputError
-from entities.star import Star
-from utils.helpers import verbose
+from lcc.conf import settings
+from lcc.db_tier.base_query import LightCurvesDb
+from lcc.entities.exceptions import NoInternetConnection, QueryInputError
+from lcc.entities.star import Star
+from lcc.utils.helpers import verbose
 
 
 # NOTE: This is kind of messy version of db connector. Lots of changes in order

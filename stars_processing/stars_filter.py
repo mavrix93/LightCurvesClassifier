@@ -2,15 +2,15 @@ from __future__ import division
 import warnings
 
 import numpy as np
-from entities.exceptions import QueryInputError
-from utils.commons import check_attribute
-from utils.helpers import getMeanDict
+from lcc.entities.exceptions import QueryInputError
+from lcc.utils.commons import check_attribute
+from lcc.utils.helpers import getMeanDict
 
 
 class StarsFilter(object):
     """
     This class is responsible for filtering stars according to given filters
-    (their own implementation of filtering)
+    (their own implementation of filtering) 
 
     Attributes
     ----------
@@ -224,13 +224,13 @@ class StarsFilter(object):
         for decider in self.deciders:
             decisions.append(decider.evaluate(stars_coords))
         if meth == "mean":
-            return [np.mean(coo) for coo in np.array(decisions).T]
+            return [round(np.mean(coo), 2) for coo in np.array(decisions).T]
 
         elif meth == "highest":
-            return [np.max(coo) for coo in np.array(decisions).T]
+            return [round(np.max(coo), 2) for coo in np.array(decisions).T]
 
         elif meth == "lowest":
-            return [np.min(coo) for coo in np.array(decisions).T]
+            return [round(np.min(coo), 2) for coo in np.array(decisions).T]
 
         else:
             raise QueryInputError(

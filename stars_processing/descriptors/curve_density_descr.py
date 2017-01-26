@@ -1,7 +1,7 @@
 from __future__ import division
 
-from utils.data_analysis import to_ekvi_PAA
-from stars_processing.utilities.base_descriptor import BaseDescriptor
+from lcc.utils.data_analysis import to_ekvi_PAA
+from lcc.stars_processing.utilities.base_descriptor import BaseDescriptor
 
 
 class CurveDensityDescr(BaseDescriptor):

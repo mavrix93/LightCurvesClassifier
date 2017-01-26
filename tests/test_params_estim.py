@@ -6,22 +6,29 @@ Created on Jan 25, 2017
 import unittest
 import numpy as np
 
-from stars_processing.deciders.supervised_deciders import QDADec
-from stars_processing.tools.params_estim import ParamsEstimator
-from stars_processing.descriptors.abbe_value_descr import AbbeValueDescr
-from conf import deciders_settings
-from entities.star import Star
+from lcc.stars_processing.deciders.supervised_deciders import QDADec
+from lcc.stars_processing.tools.params_estim import ParamsEstimator
+from lcc.stars_processing.descriptors.abbe_value_descr import AbbeValueDescr
+from lcc.conf import deciders_settings
+from lcc.entities.star import Star
 from matplotlib import pyplot
-from stars_processing.tools.visualization import plotProbabSpace
-from stars_processing.descriptors.variogram_slope_descr import VariogramSlopeDescr
+from lcc.stars_processing.tools.visualization import plotProbabSpace
+from lcc.stars_processing.descriptors.variogram_slope_descr import VariogramSlopeDescr
+from lcc.stars_processing.descriptors.curve_shape_descr import CurvesShapeDescr
 
 
 class Test(unittest.TestCase):
 
     def setUp(self):
-        N = 50
+        N = 20
 
         x = np.linspace(0, 10, 100)
+
+        self.template = []
+        for ii in range(N):
+            st = Star(name="TemplateStar%i" % ii)
+            st.putLightCurve([x, np.cos(x) + np.random.normal(x) * 0.1])
+            self.template.append(st)
 
         self.variables = []
         for ii in range(N):
@@ -35,17 +42,13 @@ class Test(unittest.TestCase):
             st.putLightCurve([x, np.random.normal(x) * 2])
             self.noisy.append(st)
 
-    def tearDown(self):
-        pass
-
     def testName(self):
         deciders = [QDADec]
-        descriptors = [AbbeValueDescr, VariogramSlopeDescr]
-        static_params = {"AbbeValueDescr": {"bins": 100}}
-        tuned_params = [{"VariogramSlopeDescr": {"variogram_days_bin": 1}},
-                        {"VariogramSlopeDescr": {"variogram_days_bin": 0.1}},
-                        {"VariogramSlopeDescr": {"variogram_days_bin": 5}},
-                        {"VariogramSlopeDescr": {"variogram_days_bin": 0.01}}]
+        descriptors = [AbbeValueDescr, CurvesShapeDescr]
+        static_params = {"AbbeValueDescr": {"bins": 100},
+                         "CurvesShapeDescr": {"comp_stars": self.template}}
+        tuned_params = [{"CurvesShapeDescr": {"days_per_bin": 3, "alphabet_size": 10}},
+                        {"CurvesShapeDescr": {"days_per_bin": 0.5, "alphabet_size": 12}}]
 
         est = ParamsEstimator(self.variables, self.noisy, descriptors, deciders,
                               tuned_params, static_params=static_params)
@@ -59,8 +62,9 @@ class Test(unittest.TestCase):
 
         star_filter, stat, best_params = est.fit(
             deciders_settings.PRECISION, save_params=save_params)
-        plotProbabSpace(
-            star_filter, [0.01, 0.07], N=100)
+        print best_params
+        plotProbabSpace(star_filter,
+                        [[0.01, 0.05], [1, 0.5]], save=True, N=100)
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']

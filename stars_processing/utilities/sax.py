@@ -1,7 +1,7 @@
 from __future__ import division
 
+from lcc.utils.data_analysis import to_PAA, normalize
 import numpy as np
-from utils.data_analysis import to_PAA, normalize
 
 
 class SAX(object):

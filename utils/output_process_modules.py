@@ -1,7 +1,7 @@
 import os
 import pickle
 
-from entities.exceptions import InvalidFilesPath, InvalidFile
+from lcc.entities.exceptions import InvalidFilesPath, InvalidFile
 
 
 def saveIntoFile(obj, path=".", file_name="saved_object.pickle",

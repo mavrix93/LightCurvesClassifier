@@ -4,6 +4,7 @@ import sys
 import inspect
 
 import numpy as np
+import collections
 
 
 def getArguments(self, insp_classes, isclass=True):
@@ -198,8 +199,8 @@ def get_combinations(keys, *lists):
 
 
 def getMeanDict(dict_list):
-    new_d = {}
+    new_d = []
     keys = dict_list[0].keys()
     for key in keys:
-        new_d[key] = np.mean([x[key] for x in dict_list])
-    return new_d
+        new_d.append((key, np.mean([x[key] for x in dict_list])))
+    return collections.OrderedDict(new_d)

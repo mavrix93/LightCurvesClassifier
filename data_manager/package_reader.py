@@ -3,7 +3,7 @@ import importlib
 import inspect
 import os
 
-from conf import settings
+from lcc.conf import settings
 
 
 class PackageReader(object):

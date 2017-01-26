@@ -2,15 +2,15 @@ import glob
 import os
 import pyfits
 
-from conf import settings
-from conf.settings import VERBOSITY
-from db_tier.base_query import LightCurvesDb
-from entities.exceptions import InvalidFilesPath, InvalidFile, QueryInputError
-from entities.light_curve import LightCurve
-from entities.star import Star
+from lcc.conf import settings
+from lcc.conf.settings import VERBOSITY
+from lcc.db_tier.base_query import LightCurvesDb
+from lcc.entities.exceptions import InvalidFilesPath, InvalidFile, QueryInputError
+from lcc.entities.light_curve import LightCurve
+from lcc.entities.star import Star
+from lcc.utils.helpers import verbose
+from lcc.utils.output_process_modules import loadFromFile
 import numpy as np
-from utils.helpers import verbose
-from utils.output_process_modules import loadFromFile
 
 
 # TODO: This class need to be upgraded

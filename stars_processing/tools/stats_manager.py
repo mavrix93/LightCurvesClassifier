@@ -1,9 +1,8 @@
+from matplotlib import pyplot as plt
 import os
 
+from lcc.data_manager.status_resolver import StatusResolver
 import numpy as np
-from matplotlib import pyplot as plt
-
-from data_manager.status_resolver import StatusResolver
 
 
 class StatsManager(object):

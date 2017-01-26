@@ -1,10 +1,10 @@
 import ast
 import os
 
-from conf import settings
-from entities.exceptions import InvalidFilesPath
+from lcc.conf import settings
+from lcc.entities.exceptions import InvalidFilesPath
 import numpy as np
-from utils.helpers import subDictInDict
+from lcc.utils.helpers import subDictInDict
 
 
 class StatusResolver(object):

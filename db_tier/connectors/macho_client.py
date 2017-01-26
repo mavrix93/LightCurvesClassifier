@@ -1,7 +1,7 @@
 import collections
 
-from db_tier.base_query import LightCurvesDb
-from db_tier.vizier_tap_base import VizierTapBase
+from lcc.db_tier.base_query import LightCurvesDb
+from lcc.db_tier.vizier_tap_base import VizierTapBase
 
 
 # TODO: Convert coo query from degrees to h:m:s, d:m:s

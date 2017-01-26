@@ -1,8 +1,8 @@
 import collections
 import requests
 
-from db_tier.base_query import LightCurvesDb
-from db_tier.vizier_tap_base import VizierTapBase
+from lcc.db_tier.base_query import LightCurvesDb
+from lcc.db_tier.vizier_tap_base import VizierTapBase
 
 
 class AsasArchive(VizierTapBase, LightCurvesDb):

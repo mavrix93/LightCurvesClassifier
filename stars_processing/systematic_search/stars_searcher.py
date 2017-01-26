@@ -3,12 +3,12 @@ import os
 from warnings import warn
 import warnings
 
-from conf import settings
-from conf.settings import VERBOSITY, TO_THE_DATA_FOLDER, LC_FOLDER
-from db_tier.stars_provider import StarsProvider
-from entities.exceptions import QueryInputError, InvalidFilesPath
-from utils.helpers import verbose, progressbar, create_folder
-from utils.stars import saveStars
+from lcc.conf import settings
+from lcc.conf.settings import VERBOSITY, TO_THE_DATA_FOLDER, LC_FOLDER
+from lcc.db_tier.stars_provider import StarsProvider
+from lcc.entities.exceptions import QueryInputError, InvalidFilesPath
+from lcc.utils.helpers import verbose, progressbar, create_folder
+from lcc.utils.stars import saveStars
 
 
 # TODO: Think more about propriety of location of this class

@@ -1,6 +1,6 @@
 import numpy as np
 
-from stars_processing.deciders.base_decider import BaseDecider
+from lcc.stars_processing.deciders.base_decider import BaseDecider
 
 
 class DistanceDesider(BaseDecider):

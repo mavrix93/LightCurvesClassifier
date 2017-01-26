@@ -1,6 +1,6 @@
-from stars_processing.utilities.compare import ComparativeBase
-from stars_processing.utilities.symbolic_representation import SymbolicRepresentation
-from stars_processing.utilities.base_descriptor import BaseDescriptor
+from lcc.stars_processing.utilities.base_descriptor import BaseDescriptor
+from lcc.stars_processing.utilities.compare import ComparativeBase
+from lcc.stars_processing.utilities.symbolic_representation import SymbolicRepresentation
 
 
 class HistShapeDescr(SymbolicRepresentation, ComparativeBase, BaseDescriptor):

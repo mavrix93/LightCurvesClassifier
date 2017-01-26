@@ -2,13 +2,13 @@ from __future__ import division
 
 
 from astropy.coordinates.sky_coordinate import SkyCoord
-from astroquery.exceptions import InvalidQueryError
 import kplr
 
-from db_tier.base_query import LightCurvesDb
-from entities.light_curve import LightCurve
-from entities.star import Star
+from lcc.db_tier.base_query import LightCurvesDb
+from lcc.entities.light_curve import LightCurve
+from lcc.entities.star import Star
 import numpy as np
+from lcc.entities.exceptions import QueryInputError
 
 # TODO: Delete fits files downloaded to .kplr/data
 
@@ -119,7 +119,7 @@ class KeplerArchive(LightCurvesDb):
                     delta = delta / 3600.0
                     self.ra, self.dec, self.delta = ra, dec, delta
                 except:
-                    raise InvalidQueryError(
+                    raise QueryInputError(
                         "Coordinates parameters conversion to float has failed")
 
                 query = {"kic_degree_ra": "%f..%f" % (ra - delta, ra + delta),
@@ -136,7 +136,7 @@ class KeplerArchive(LightCurvesDb):
             try:
                 _stars = self.client.stars(**query)
             except:
-                raise InvalidQueryError("Unresolved query.\n%s" % query)
+                raise QueryInputError("Unresolved query.\n%s" % query)
 
         return [self._parseStar(_star, lc) for _star in _stars]
 

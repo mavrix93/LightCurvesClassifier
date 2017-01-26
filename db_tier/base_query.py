@@ -1,6 +1,7 @@
 import abc
+
 import astropy.units as u
-from entities.exceptions import QueryInputError
+from lcc.entities.exceptions import QueryInputError
 import numpy as np
 
 

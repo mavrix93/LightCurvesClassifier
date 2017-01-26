@@ -1,5 +1,5 @@
-from entities.exceptions import QueryInputError
-from stars_processing.utilities.base_descriptor import BaseDescriptor
+from lcc.entities.exceptions import QueryInputError
+from lcc.stars_processing.utilities.base_descriptor import BaseDescriptor
 
 
 class ColorIndexDescr(BaseDescriptor):

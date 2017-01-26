@@ -4,12 +4,12 @@ from sklearn import tree
 from sklearn.naive_bayes import GaussianNB
 from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis as QDA
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
-
-from conf import deciders_settings
-from entities.exceptions import QueryInputError, LearningError
 import numpy as np
-from stars_processing.deciders.base_decider import BaseDecider
-from utils.helpers import checkDepth
+
+from lcc.conf import deciders_settings
+from lcc.entities.exceptions import QueryInputError, LearningError
+from lcc.stars_processing.deciders.base_decider import BaseDecider
+from lcc.utils.helpers import checkDepth
 
 
 class SupervisedBase(BaseDecider):

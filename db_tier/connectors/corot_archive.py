@@ -7,11 +7,11 @@ import pyfits
 import requests
 import warnings
 
-from db_tier.base_query import LightCurvesDb
-from db_tier.vizier_tap_base import VizierTapBase
-from entities.light_curve import LightCurve
+from lcc.db_tier.base_query import LightCurvesDb
+from lcc.db_tier.vizier_tap_base import VizierTapBase
+from lcc.entities.light_curve import LightCurve
 import numpy as np
-from utils.data_analysis import to_ekvi_PAA
+from lcc.utils.data_analysis import to_ekvi_PAA
 
 
 class CorotBrightArchive(VizierTapBase, LightCurvesDb):

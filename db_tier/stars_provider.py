@@ -1,4 +1,4 @@
-from data_manager.package_reader import PackageReader
+from lcc.data_manager.package_reader import PackageReader
 
 
 class StarsProvider(object):

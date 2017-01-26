@@ -2,10 +2,10 @@ from astropy.coordinates.sky_coordinate import SkyCoord
 from gavo import votable
 from gavo.votable.tapquery import RemoteError, WrongStatus, NetworkError
 
-from base_query import LightCurvesDb
-from conf import settings
-from entities.exceptions import QueryInputError, NoInternetConnection
-from utils.helpers import verbose
+from .base_query import LightCurvesDb
+from lcc.conf import settings
+from lcc.entities.exceptions import QueryInputError, NoInternetConnection
+from lcc.utils.helpers import verbose
 
 
 class TapClient(LightCurvesDb):

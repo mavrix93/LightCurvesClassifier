@@ -1,14 +1,8 @@
-'''
-Created on Jan 25, 2017
-
-@author: martin
-'''
+from matplotlib import pyplot
 import unittest
 
+from lcc.entities.star import Star
 import numpy as np
-from entities.star import Star
-from utils.stars import plotStarsPicture
-from matplotlib import pyplot
 
 
 class Test(unittest.TestCase):

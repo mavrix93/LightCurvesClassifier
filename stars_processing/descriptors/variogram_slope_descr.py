@@ -1,5 +1,5 @@
 import numpy as np
-from stars_processing.utilities.base_descriptor import BaseDescriptor
+from lcc.stars_processing.utilities.base_descriptor import BaseDescriptor
 
 
 class VariogramSlopeDescr(BaseDescriptor):
@@ -10,10 +10,6 @@ class VariogramSlopeDescr(BaseDescriptor):
     ----------
     variogram_days_bin : float
         Rate between light curve dimension and days
-
-    bins : int
-        Dimension of reduced light curve from which Abbe value
-        is calculated
     '''
 
     def __init__(self, variogram_days_bin, *args, **kwargs):
@@ -46,7 +42,7 @@ class VariogramSlopeDescr(BaseDescriptor):
                 x, y = star.lightCurve.getVariogram(
                     days_per_bin=self.variogram_days_bin)
 
-                coords.append([np.polyfit(x, y, 1)[0]])
+                coords.append(np.polyfit(x, y, 1)[0])
             else:
                 coords.append([None])
         return coords

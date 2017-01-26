@@ -1,9 +1,9 @@
 import requests
 
-from db_tier.TAP_query import TapClient
-from entities.exceptions import QueryInputError
-from entities.light_curve import LightCurve
-from entities.star import Star
+from lcc.db_tier.TAP_query import TapClient
+from lcc.entities.exceptions import QueryInputError
+from lcc.entities.light_curve import LightCurve
+from lcc.entities.star import Star
 
 
 class VizierTapBase(TapClient):

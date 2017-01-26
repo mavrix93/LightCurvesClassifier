@@ -1,7 +1,7 @@
-from stars_processing.utilities.compare import ComparativeBase
-from stars_processing.utilities.symbolic_representation import SymbolicRepresentation
-from utils.data_analysis import compute_bins
-from stars_processing.utilities.base_descriptor import BaseDescriptor
+from lcc.stars_processing.utilities.base_descriptor import BaseDescriptor
+from lcc.stars_processing.utilities.compare import ComparativeBase
+from lcc.stars_processing.utilities.symbolic_representation import SymbolicRepresentation
+from lcc.utils.data_analysis import compute_bins
 
 
 class CurvesShapeDescr(SymbolicRepresentation, ComparativeBase, BaseDescriptor):

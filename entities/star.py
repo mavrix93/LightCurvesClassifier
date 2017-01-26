@@ -5,8 +5,8 @@ import numpy
 from warnings import warn
 
 import astropy.units as u
-from entities.exceptions import StarAttributeError
-from entities.light_curve import LightCurve
+from lcc.entities.exceptions import StarAttributeError
+from lcc.entities.light_curve import LightCurve
 
 
 class Star(object):

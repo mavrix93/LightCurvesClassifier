@@ -1,13 +1,13 @@
-import json
 import random
+import types
+import warnings
 
+from lcc.entities.exceptions import InvalidOption
+from lcc.entities.exceptions import QueryInputError
+from lcc.stars_processing.stars_filter import StarsFilter
+from lcc.stars_processing.tools.stats_manager import StatsManager
+from lcc.utils.helpers import progressbar
 import numpy as np
-
-from utils.helpers import progressbar
-from entities.exceptions import QueryInputError
-from stars_processing.stars_filter import StarsFilter
-from entities.exceptions import InvalidOption
-from stars_processing.tools.stats_manager import StatsManager
 
 
 class ParamsEstimator(object):
@@ -160,8 +160,7 @@ class ParamsEstimator(object):
         try:
             self.saveOutput(save_params)
         except:
-            raise
-            raise Exception("Error during saving outputs...")
+            warnings.warn("Error during saving outputs...")
 
         scores = []
         for stat in stats_list:
@@ -248,7 +247,25 @@ class ParamsEstimator(object):
                 "stats_name"
                 "stats_delim" - optional
         """
-        man = StatsManager(self.stats_list)
+        to_save = []
+        for st, tun in zip(self.stats_list, self.tuned_params):
+            x = st.copy()
+            unpacked_tun = []
+            for inner_dict in tun.itervalues():
+                for key, value in inner_dict.iteritems():
+                    print value
+                    if hasattr(value, "__iter__"):
+                        # if len(value) > 0 and not isinstance(value[0], types.InstanceType):
+                        #    unpacked_tun.append((key,value))
+                        #
+                        pass
+
+                    elif not isinstance(value, types.InstanceType):
+                        unpacked_tun.append((key, value))
+
+            x.update(unpacked_tun)
+            to_save.append(x)
+        man = StatsManager(to_save)
         if "roc_plot_path" in save_params and "roc_plot_name" in save_params:
             man.plotROC(save=True,
                         title=save_params.get("roc_plot_title", "ROC"),

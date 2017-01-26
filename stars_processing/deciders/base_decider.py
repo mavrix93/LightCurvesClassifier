@@ -2,14 +2,11 @@ from __future__ import division
 
 import abc
 import collections
-from matplotlib import pyplot as plt
-import os
 import warnings
 
-from conf import deciders_settings
+from lcc.utils.data_analysis import computePrecision
+from lcc.utils.helpers import checkDepth
 import numpy as np
-from utils.helpers import checkDepth
-from utils.data_analysis import computePrecision
 
 
 class BaseDecider(object):

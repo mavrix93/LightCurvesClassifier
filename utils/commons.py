@@ -1,12 +1,10 @@
 '''
 There are common functions and decorators mainly for query classes
 '''
-
-# Throws
 from functools import wraps
 import functools
 
-from entities.exceptions import MandatoryKeyInQueryDictIsMissing,\
+from lcc.entities.exceptions import MandatoryKeyInQueryDictIsMissing,\
     ArgumentValidationError, InvalidArgumentNumberError, InvalidReturnType
 
 

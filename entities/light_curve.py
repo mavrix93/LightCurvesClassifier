@@ -1,9 +1,9 @@
-from entities.exceptions import StarAttributeError
+from lcc.entities.exceptions import StarAttributeError
+from lcc.utils.data_analysis import compute_bins
+from lcc.utils.data_analysis import histogram, variogram, to_ekvi_PAA,\
+    abbe
 import matplotlib.pyplot as plt
 import numpy as np
-from utils.data_analysis import compute_bins
-from utils.data_analysis import histogram, variogram, to_ekvi_PAA,\
-    abbe
 
 
 class LightCurve(object):

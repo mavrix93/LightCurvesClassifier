@@ -1,7 +1,7 @@
 import abc
 
+from lcc.stars_processing.utilities.sax import SAX
 import numpy as np
-from stars_processing.utilities.sax import SAX
 
 
 class SymbolicRepresentation(object):

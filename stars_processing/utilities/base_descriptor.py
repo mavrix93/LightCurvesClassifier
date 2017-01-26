@@ -1,6 +1,6 @@
 import abc
 
-from utils.commons import returns, accepts
+from lcc.utils.commons import returns, accepts
 
 
 class BaseDescriptor(object):

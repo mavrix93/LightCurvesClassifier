@@ -1,8 +1,8 @@
+from matplotlib import pyplot as plt
 import os
 
-from matplotlib import pyplot as plt
+from lcc.utils.helpers import checkDepth
 import numpy as np
-from utils.helpers import checkDepth
 
 
 def plotProbabSpace(star_filter, plot_ranges, save=False,

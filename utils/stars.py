@@ -7,7 +7,7 @@ import random
 import string
 import warnings
 
-from db_tier.connectors.file_manager import FileManager
+from lcc.db_tier.connectors.file_manager import FileManager
 import matplotlib.pyplot as plt
 import numpy as np
 
