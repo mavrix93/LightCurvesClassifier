@@ -32,10 +32,6 @@ class BaseDescriptor(object):
     # TODO: Check whether these lists contains object of Star class type
 
 
-class ComparativeSubFilter(object):
-    pass
-
-
 class Learnable(object):
     """
     Common class for all filters which are able to call "learn" by yourself.

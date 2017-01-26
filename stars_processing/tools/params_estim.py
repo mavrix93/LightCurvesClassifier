@@ -159,8 +159,8 @@ class ParamsEstimator(object):
 
         try:
             self.saveOutput(save_params)
-        except:
-            warnings.warn("Error during saving outputs...")
+        except Exception as e:
+            warnings.warn("\nError during saving outputs...:\n\t%s" % e)
 
         scores = []
         for stat in stats_list:
@@ -247,24 +247,7 @@ class ParamsEstimator(object):
                 "stats_name"
                 "stats_delim" - optional
         """
-        to_save = []
-        for st, tun in zip(self.stats_list, self.tuned_params):
-            x = st.copy()
-            unpacked_tun = []
-            for inner_dict in tun.itervalues():
-                for key, value in inner_dict.iteritems():
-                    print value
-                    if hasattr(value, "__iter__"):
-                        # if len(value) > 0 and not isinstance(value[0], types.InstanceType):
-                        #    unpacked_tun.append((key,value))
-                        #
-                        pass
-
-                    elif not isinstance(value, types.InstanceType):
-                        unpacked_tun.append((key, value))
-
-            x.update(unpacked_tun)
-            to_save.append(x)
+        to_save = self._prepareStatus(self.stats_list, self.tuned_params)
         man = StatsManager(to_save)
         if "roc_plot_path" in save_params and "roc_plot_name" in save_params:
             man.plotROC(save=True,
@@ -282,3 +265,26 @@ class ParamsEstimator(object):
                           file_name=save_params.get("stats_name"),
                           delim=save_params.get("stats_delim", "\t"),
                           overwrite=True)
+
+    def _prepareStatus(self, stats_list, tuned_params):
+        result = []
+        for st, tun in zip(stats_list, tuned_params):
+            x = st.copy()
+            unpacked_tun = self._mergeTwoDict(st, tun)
+            x.update(unpacked_tun)
+            result.append(x)
+        return result
+
+    def _mergeTwoDict(self, stat, tun):
+        unpacked_tun = []
+        for prefix, inner_dict in tun.iteritems():
+            for key, value in inner_dict.iteritems():
+                if hasattr(value, "__iter__"):
+                    # if len(value) > 0 and not isinstance(value[0], types.InstanceType):
+                    #    unpacked_tun.append((key,value))
+                    #
+                    pass
+
+                elif not isinstance(value, types.InstanceType):
+                    unpacked_tun.append((":".join([prefix, key]), value))
+        return unpacked_tun

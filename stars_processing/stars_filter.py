@@ -10,7 +10,7 @@ from lcc.utils.helpers import getMeanDict
 class StarsFilter(object):
     """
     This class is responsible for filtering stars according to given filters
-    (their own implementation of filtering) 
+    (their own implementation of filtering)
 
     Attributes
     ----------
@@ -52,6 +52,19 @@ class StarsFilter(object):
         self.learned = False
         self.searched_coords = []
         self.others_coords = []
+
+    def __str__(self, *args, **kwargs):
+        txt = "Descriptors: " + \
+            ", ".join([desc.__name__ for desc in self.descriptors])
+        txt += "\nDeciders: " + \
+            ", ".join([dec.__name__ for dec in self.deciders])
+        if self.learned:
+            txt += "\nStar filter is learned"
+            txt += "It was trained on %i (searched) + %i (contamination) sample" % (
+                len(self.searched_coords), len(self.others_coords))
+        else:
+            txt += "\nStar filter is not learned"
+        return txt
 
     @check_attribute("learned", True, "raise")
     def filterStars(self, stars, pass_method="all", treshold=0.5):

@@ -1,7 +1,6 @@
 import ast
 import os
 
-from lcc.conf import settings
 from lcc.entities.exceptions import InvalidFilesPath
 import numpy as np
 from lcc.utils.helpers import subDictInDict
@@ -22,7 +21,7 @@ class StatusResolver(object):
     '''
 
     NUM_STATUS_INFO = 4  # Number of status info columns +1
-    DELIMITER = settings.FILE_DELIM
+    DELIMITER = ";"
 
     def __init__(self, status_file_path):
         '''
@@ -109,8 +108,8 @@ class StatusResolver(object):
         '''
         return self._getDictQuery(self.status_header, self.status_queries)
 
-    @staticmethod
-    def save_query(query, fi_name="query_file.txt", PATH=".", DELIM=None,
+    @classmethod
+    def save_query(self, query, fi_name="query_file.txt", PATH=".", DELIM=None,
                    overwrite=False):
         '''
         Save queries into the file which can be loaded for another query
@@ -129,7 +128,7 @@ class StatusResolver(object):
         path = os.path.join(PATH, fi_name)
 
         if not DELIM:
-            DELIM = settings.FILE_DELIM
+            DELIM = self.DELIMITER
 
         try:
             if overwrite:

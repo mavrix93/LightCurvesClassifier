@@ -2,13 +2,10 @@ import glob
 import os
 import pyfits
 
-from lcc.conf import settings
-from lcc.conf.settings import VERBOSITY
 from lcc.db_tier.base_query import LightCurvesDb
-from lcc.entities.exceptions import InvalidFilesPath, InvalidFile, QueryInputError
+from lcc.entities.exceptions import InvalidFilesPath, InvalidFile
 from lcc.entities.light_curve import LightCurve
 from lcc.entities.star import Star
-from lcc.utils.helpers import verbose
 from lcc.utils.output_process_modules import loadFromFile
 import numpy as np
 
@@ -20,9 +17,7 @@ class FileManager(LightCurvesDb):
     Attributes
     -----------
     path : str
-        Path key of folder of light curves registered in settings.
-        If path starts with "HERE:" such as "HERE:path/to/the/folder",
-        relative path is taken.
+        Path key of folder of light curves .
 
     star_class : str
         Name of the loaded star-like type (e.g. Cepheids)
@@ -57,7 +52,6 @@ class FileManager(LightCurvesDb):
 
     DEFAULT_SUFFIX = "dat"
     DEFAULT_STARCLASS = "star"
-    REL_PATH = "HERE:"
 
     FITS_RA = "RA"
     FITS_DEC = "DEC"
@@ -79,15 +73,10 @@ class FileManager(LightCurvesDb):
         if isinstance(obtain_params, list) and len(obtain_params) == 1:
             obtain_params = obtain_params[0]
 
-        raw_path = obtain_params["path"]
-        if raw_path.startswith(self.REL_PATH):
-            path = raw_path[len(self.REL_PATH):]
-        else:
-            path = settings.STARS_PATH[raw_path]
+        path = obtain_params.get("path", None)
 
         if not path:
-            raise QueryInputError("Path key: %s is not registered key for light curve files in settings.\nThere these variables: %s" % (
-                path, settings.STARS_PATH))
+            raise IOError("Path %s was not found" % path)
 
         if not hasattr(path, "__iter__"):
             path = [path]
@@ -144,16 +133,9 @@ class FileManager(LightCurvesDb):
             raise InvalidFilesPath(
                 "There are no stars in %s with %s suffix" % (self.path, self.suffix))
 
-        verbose("Number of stars in given directory is %i" %
-                numberOfFiles, 3, VERBOSITY)
-
         if (numberOfFiles < self.files_limit):
             self.files_limit = None
-        if (self.files_limit == None):
-            verbose("Loading all stars", 3, VERBOSITY)
         else:
-            verbose("Loading just %i of %i\n\n" %
-                    (self.files_limit, numberOfFiles), 3, VERBOSITY)
             numberOfFiles = self.files_limit
 
         if self.suffix in self.FITS_SUFFIX:
@@ -169,8 +151,6 @@ class FileManager(LightCurvesDb):
             if self.files_to_load and os.path.basename(singleFile) not in self.files_to_load:
                 break
 
-            verbose("Loading stars %i/%i" %
-                    (counter, numberOfFiles), 2, VERBOSITY)
             lc = LightCurve(self._loadLcFromDat(singleFile))
 
             # Check if light curve is not empty
@@ -348,16 +328,18 @@ class FileManager(LightCurvesDb):
         prim_hdu.header[self.FITS_CLASS] = star.starClass
 
         for db, ident in star.ident.iteritems():
-            prim_hdu.header[db + "_name"] = ident["name"]
+            prim_hdu.header["HIERARCH " + db + "_name"] = ident["name"]
 
             identifiers = ident.get("db_ident")
             if not identifiers:
                 identifiers = {}
 
             for key, value in identifiers.iteritems():
-                prim_hdu.header[db + "_id_" + key] = value
+                prim_hdu.header["HIERARCH " + db + "_id_" + key] = value
 
         for it, value in star.more.iteritems():
+            if len(it) > 8:
+                it = "HIERARCH " + it
             prim_hdu.header[it] = value
 
         hdu_list = pyfits.HDUList(prim_hdu)

@@ -7,11 +7,9 @@ from urllib2 import URLError
 import urllib2
 import numpy as np
 
-from lcc.conf import settings
 from lcc.db_tier.base_query import LightCurvesDb
 from lcc.entities.exceptions import NoInternetConnection, QueryInputError
 from lcc.entities.star import Star
-from lcc.utils.helpers import verbose
 
 
 # NOTE: This is kind of messy version of db connector. Lots of changes in order
@@ -196,7 +194,6 @@ class OgleII(LightCurvesDb):
                 raise NoInternetConnection(
                     "Connection to OGLEII database failed")
 
-            verbose("Light curves have been saved", 3, settings.VERBOSITY)
             if self.use_ra == "on":
                 stars = self.coneSearch(self.coo,
                                         _stars, self.delta, nearest=query.get("nearest", False))
@@ -264,8 +261,6 @@ class OgleII(LightCurvesDb):
         # Url for query
         url = "%s/query.php?qtype=%s&first=1" % (self.ROOT, self.QUERY_TYPE)
 
-        # Post query
-        verbose("OGLEII query is about to start", 3, settings.VERBOSITY)
         try:
             result = urllib2.urlopen(
                 url, urllib.urlencode(params), timeout=self.MAX_TIMEOUT)
@@ -279,8 +274,6 @@ class OgleII(LightCurvesDb):
 
             self.query_err_repetitions += 1
 
-        verbose(
-            "OGLEII query is done. Parsing result...", 3, settings.VERBOSITY)
         return self._parse_result(result)
 
     def _parse_result(self, result):
@@ -374,8 +367,6 @@ class OgleII(LightCurvesDb):
                     if (tmpdir):
                         self.tmpdir = tmpdir.group(1)
 
-        verbose("OGLE II query is done. Amount of the stars meeting the parameters: %i" % len(
-            stars), 3, settings.VERBOSITY)
         return stars
 
     def _parse_light_curves(self, stars):
@@ -384,8 +375,6 @@ class OgleII(LightCurvesDb):
         ready_stars = []
         numStars = len(stars)
         for i, star in enumerate(stars):
-            verbose("Parsing query result " + str(i) + "/" +
-                    str(numStars), 3, settings.VERBOSITY)
 
             # Make post request in order to obtain light curves
             self._make_tmpdir(star.ident[self.__class__.__name__]["db_ident"][

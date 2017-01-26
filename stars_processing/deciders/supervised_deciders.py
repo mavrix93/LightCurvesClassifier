@@ -6,7 +6,6 @@ from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis as QDA
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
 import numpy as np
 
-from lcc.conf import deciders_settings
 from lcc.entities.exceptions import QueryInputError, LearningError
 from lcc.stars_processing.deciders.base_decider import BaseDecider
 from lcc.utils.helpers import checkDepth
@@ -110,9 +109,7 @@ class LDADec(SupervisedBase):
     http://scikit-learn.org/stable/modules/lda_qda.html
     """
 
-    def __init__(self, treshold=None):
-        if not treshold:
-            treshold = deciders_settings.TRESHOLD
+    def __init__(self, treshold=0.5):
         SupervisedBase.__init__(self, clf=LDA, treshold=treshold)
 
 
@@ -123,9 +120,7 @@ class GaussianNBDec(SupervisedBase):
     http://scikit-learn.org/stable/modules/naive_bayes.html#gaussian-naive-bayes
     """
 
-    def __init__(self, treshold=None):
-        if not treshold:
-            treshold = deciders_settings.TRESHOLD
+    def __init__(self, treshold=0.5):
         SupervisedBase.__init__(self, clf=GaussianNB, treshold=treshold)
 
 
@@ -136,9 +131,7 @@ class GMMBayesDec(SupervisedBase):
     http://scikit-learn.org/stable/modules/linear_model.html#bayesian-regression
     """
 
-    def __init__(self, treshold=None):
-        if not treshold:
-            treshold = deciders_settings.TRESHOLD
+    def __init__(self, treshold=0.5):
         SupervisedBase.__init__(self, clf=GMMBayes, treshold=treshold)
 
 
@@ -149,9 +142,7 @@ class QDADec(SupervisedBase):
     http://scikit-learn.org/stable/modules/lda_qda.html
     """
 
-    def __init__(self, treshold=None):
-        if not treshold:
-            treshold = deciders_settings.TRESHOLD
+    def __init__(self, treshold=0.5):
         SupervisedBase.__init__(self, clf=QDA, treshold=treshold)
 
 

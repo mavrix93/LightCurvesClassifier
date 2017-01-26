@@ -3,9 +3,7 @@ from gavo import votable
 from gavo.votable.tapquery import RemoteError, WrongStatus, NetworkError
 
 from .base_query import LightCurvesDb
-from lcc.conf import settings
 from lcc.entities.exceptions import QueryInputError, NoInternetConnection
-from lcc.utils.helpers import verbose
 
 
 class TapClient(LightCurvesDb):
@@ -66,8 +64,6 @@ class TapClient(LightCurvesDb):
 
         query = self._get_select_text() + self._get_from_text() + \
             self._get_where_text()
-        verbose(query, 4, settings.VERBOSITY)
-        verbose("TAP query is about to start", 3, settings.VERBOSITY)
 
         # Run query
         try:
@@ -83,7 +79,6 @@ class TapClient(LightCurvesDb):
 
         retrieve_data = votable.load(job.openResult())[0]
 
-        verbose("TAP query is done", 3, settings.VERBOSITY)
         job.delete()
         return retrieve_data
 

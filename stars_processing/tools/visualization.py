@@ -5,7 +5,7 @@ from lcc.utils.helpers import checkDepth
 import numpy as np
 
 
-def plotProbabSpace(star_filter, plot_ranges, save=False,
+def plotProbabSpace(star_filter, plot_ranges=None, save=False,
                     path=".", file_name="params_space.png", N=100,
                     title="Params space", x_lab="", y_lab=""):
     """
@@ -36,6 +36,15 @@ def plotProbabSpace(star_filter, plot_ranges, save=False,
         None
     """
     dim = len(star_filter.searched_coords[0])
+
+    if not plot_ranges:
+        plot_ranges = []
+        trained_coo = np.array(
+            star_filter.searched_coords + star_filter.others_coords).T
+        for i in range(dim):
+            plot_ranges.append(
+                [np.min(trained_coo[i]), np.max(trained_coo[i])])
+
     if dim == 1:
         if not x_lab and not y_lab:
             x_lab = star_filter.descriptors[0].__class__.__name__
@@ -47,7 +56,9 @@ def plotProbabSpace(star_filter, plot_ranges, save=False,
             y_lab = star_filter.descriptors[1].__class__.__name__
         plot2DProbabSpace(star_filter, plot_ranges, N)
 
-    plt.legend()
+    else:
+        return
+
     plt.xlabel(str(x_lab))
     plt.ylabel(str(y_lab))
     plt.title(str(title))

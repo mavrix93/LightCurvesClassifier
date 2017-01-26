@@ -3,15 +3,12 @@ import os
 from warnings import warn
 import warnings
 
-from lcc.conf import settings
-from lcc.conf.settings import VERBOSITY, TO_THE_DATA_FOLDER, LC_FOLDER
 from lcc.db_tier.stars_provider import StarsProvider
 from lcc.entities.exceptions import QueryInputError, InvalidFilesPath
-from lcc.utils.helpers import verbose, progressbar, create_folder
+from lcc.utils.helpers import progressbar
 from lcc.utils.stars import saveStars
 
 
-# TODO: Think more about propriety of location of this class
 class StarsSearcher():
     '''
     The class manages systematic searching in databases. It also can be used
@@ -26,6 +23,9 @@ class StarsSearcher():
         Path from "run" module to the folder where found
         light curves will be saved
 
+    stat_file_path : str
+        Status file name
+
     save_lim : int
         Number of searched objects after which status file is saved
 
@@ -33,21 +33,23 @@ class StarsSearcher():
         Name of connector class
     '''
 
-    DEF_save_path = TO_THE_DATA_FOLDER + LC_FOLDER
     DEF_save_lim = 50
     DEF_unfound_lim = 150
 
-    def __init__(self, stars_filter, save_path=None, save_lim=None,
-                 unfound_lim=None, obth_method=None, *args, **kwargs):
+    def __init__(self, stars_filters, save_path=None, stat_file_path=None,
+                 save_lim=None, unfound_lim=None, obth_method=None):
         '''
         Parameters
         ----------
-        stars_filter : FilteringManager object
-            Filter which is prepared filter star objects
+        stars_filters : lists
+            Stars filters
 
         save_path : str
             Path from "run" module to the folder where found
             light curves will be saved
+
+        stat_file_path : str
+            Status file name
 
         save_lim : int
             Number of searched objects after which status file is saved
@@ -71,43 +73,22 @@ class StarsSearcher():
             raise QueryInputError(
                 "Database for searching need to be specified.")
 
-        if save_path.startswith("HERE:"):
-            save_path = save_path[5:]
-        else:
-            save_path = os.path.join(settings.LC_FOLDER, save_path)
-        if os.path.isdir(save_path):
-            self.save_path = save_path
-        else:
-            save_path = os.path.join(settings.LC_FOLDER, save_path)
-            try:
-                create_folder(save_path)
-                self.save_path = save_path
-                warnings.warn(
-                    "Output folder %s was created because it has not existed.\n" % (save_path))
-            except:
-                warnings.warn("Invalid save path. Current folder was set")
-                self.save_path = "."
+        self.save_path = save_path
+        self.stat_file_path = stat_file_path
 
         self.obth_method = obth_method
         self.save_lim = save_lim
         self.unfound_lim = unfound_lim
 
-        filt_name = ""
-        if stars_filter:
-            for filt in stars_filter.descriptors:
-                filt_name += "_" + filt.__class__.__name__
-        else:
-            filt_name = "None"
-        self.filt_name = filt_name
-        self.stars_filter = stars_filter
+        self.stars_filters = stars_filters
 
         self.not_uploaded = []
         self.passed_stars = []
 
     def filterStar(self, star, *args, **kwargs):
         '''
-        This method filter given star in list.
-        In case of match method "matchOccur" will be performed
+        This method filter given star.
+        In case of match method "matchOccured" will be performed
 
         Parameters
         ----------
@@ -120,21 +101,19 @@ class StarsSearcher():
             If star passed thru filtering
         '''
 
-        if self.stars_filter:
-            result = self.stars_filter.filterStars([star])
-        else:
-            result = [star]
+        if self.stars_filters:
+            for star_filt in self.stars_filters:
+                result = star_filt.filterStars([star])
+                if not result:
+                    break
 
-        if len(result) == 1:
-            self.matchOccur(result[0])
-            return True
-        elif len(result) > 1:
-            raise Exception(
-                "One star has entered to filtering phase, but more then have passed ?!?!")
-        return False
+            if len(result) == 1:
+                self.matchOccured(star)
+                return True
+            return False
+        return True
 
-    # NOTE: Default behavior. It can be overridden.
-    def matchOccur(self, star, *args, **kwargs):
+    def matchOccured(self, star, *args, **kwargs):
         '''
         What to do with star which passed thru filtering
 
@@ -147,11 +126,9 @@ class StarsSearcher():
         -------
             None
         '''
-        verbose(star, 2, VERBOSITY)
         saveStars([star], self.save_path)[0]
         self.passed_stars.append(star)
 
-    # NOTE: Default behavior. It can be overwritten.
     def failProcedure(self, query, err=""):
         '''
         What to do if a fail occurs
@@ -168,10 +145,10 @@ class StarsSearcher():
         -------
             None
         '''
+        raise
         warnings.warn("Error occurred during filtering: %s" % err)
 
-    # NOTE: Default behavior. It can be overwritten.
-    def statusFile(self, query, status):
+    def statusFile(self, query, status, delimiter="\t"):
         '''
         This method generates status file for overall query in certain db.
         Every queried star will be noted.
@@ -189,38 +166,37 @@ class StarsSearcher():
         -------
             None
         '''
-
-        file_name = os.path.join(
-            self.save_path, "%s%s.txt" % (self.obth_method, self.filt_name))
+        if not self.stat_file_path:
+            return False
         try:
-            empty_file = os.stat(file_name).st_size == 0
+            empty_file = os.stat(self.stat_file_path).st_size == 0
         except OSError:
             empty_file = True
 
-        with open(file_name, "a") as status_file:
+        with open(self.stat_file_path, "a") as status_file:
             if empty_file:
                 status_file.write("#")
                 for i, key in enumerate(query):
-                    delim = settings.FILE_DELIM
+                    delim = delimiter
                     status_file.write(str(key) + delim)
                 for i, key in enumerate(status):
                     if i >= len(status) - 1:
                         delim = ""
                     else:
-                        delim = settings.FILE_DELIM
+                        delim = delimiter
 
                     status_file.write(str(key) + delim)
                 status_file.write("\n")
 
             for i, key in enumerate(query):
-                delim = settings.FILE_DELIM
+                delim = delimiter
 
                 status_file.write(str(query[key]) + delim)
             for i, key in enumerate(status):
                 if i >= len(status) - 1:
                     delim = ""
                 else:
-                    delim = settings.FILE_DELIM
+                    delim = delimiter
 
                 status_file.write(str(status[key]) + delim)
             status_file.write("\n")
@@ -228,7 +204,7 @@ class StarsSearcher():
     def queryStars(self, queries):
         '''
         Query db according to list of queries. Stars passed thru filter
-        are managed by `matchOccur` method.
+        are managed by `matchOccured` method.
 
         Parameters
         ----------
@@ -258,7 +234,7 @@ class StarsSearcher():
                 warn("Couldn't download any light curve")
                 stars = []
 
-            # Check if searched star was found
+            # Check if the searched star was found
             result_len = len(stars)
             if result_len == 0:
                 unfound_counter += 1
@@ -292,9 +268,9 @@ class StarsSearcher():
                         except IOError as err:
                             raise InvalidFilesPath(err)
                         except Exception as err:
-                            raise
                             self.failProcedure(query, err)
-                            warn("Something went wrong during filtering")
+                            warn(
+                                "Something went wrong during filtering:\n\t%s" % err)
                     query["name"] = one_star.name
                     self.statusFile(query, status)
 

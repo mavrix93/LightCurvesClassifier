@@ -14,14 +14,8 @@ def rec(directory, current_path):
         os.makedirs(current_path)
 
 
-def prepare_run(directory, runs=[]):
+def prepare_run(directory, run_name):
     d = tree()
-
-    if "make_filter" in runs:
-        d["make_filter"]["filters"]
-        d["make_filter"]["tunining_data"]
-
-    if "filtering" in runs:
-        d["filtering"]["lcs"]
+    d[run_name]["lcs"]
 
     rec(d, directory)

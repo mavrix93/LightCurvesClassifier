@@ -2,13 +2,14 @@ import imp
 import importlib
 import inspect
 import os
-
-from lcc.conf import settings
+from lcc.stars_processing.utilities.base_descriptor import BaseDescriptor
+from lcc.db_tier.base_query import StarsCatalogue
+from lcc.stars_processing.deciders.base_decider import BaseDecider
 
 
 class PackageReader(object):
     """
-    Class for managing modules and its classes in a package
+    Class for managing modules and its classes in the package
 
     Attributes
     -----------
@@ -25,9 +26,12 @@ class PackageReader(object):
     """
 
     MODULE_EXTENSIONS = ('.py',)
-    NAMES = settings.IMPLEMENTED_CLASSES
-    EXCLUDE = ('lcc',)
+    EXCLUDE = tuple()
+    NAMES = {"descriptors": ("lcc/stars_processing/descriptors", BaseDescriptor),
+             "connectors": ("lcc/db_tier/connectors", StarsCatalogue),
+             "deciders": ("lcc/stars_processing/deciders", BaseDecider)}
 
+    @classmethod
     def getClasses(self, name):
         """
         Get all classes in the package which inherit base classes according
@@ -62,6 +66,7 @@ class PackageReader(object):
                     searched_classes.append(module_class)
         return searched_classes
 
+    @classmethod
     def getClassesDict(self, package_name):
         """
         Get dictionary of all classes in the package which inherit base classes
@@ -85,6 +90,7 @@ class PackageReader(object):
             classes_dict[cls.__name__] = cls
         return classes_dict
 
+    @classmethod
     def getPackageContents(self, package_name):
         """
         Get all modules in the package
@@ -107,6 +113,7 @@ class PackageReader(object):
                     if module.endswith(self.MODULE_EXTENSIONS) and
                     not module.startswith(self.EXCLUDE)])
 
+    @classmethod
     def getModuleClasses(self, module):
         """
         Parameters

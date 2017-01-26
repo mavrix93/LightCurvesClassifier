@@ -2,7 +2,6 @@ from pybrain.datasets import SupervisedDataSet
 from pybrain.supervised.trainers import BackpropTrainer
 from pybrain.tools.shortcuts import buildNetwork
 
-from lcc.conf import deciders_settings
 from lcc.stars_processing.deciders.base_decider import BaseDecider
 import numpy as np
 
@@ -43,7 +42,7 @@ class NeuronDecider(BaseDecider):
 
     OUTPUT_NEURONS = 1
 
-    def __init__(self, treshold=None, hidden_neurons=None):
+    def __init__(self, treshold=0.5, hidden_neurons=2):
         '''
         Parameters
         -----------
@@ -55,11 +54,6 @@ class NeuronDecider(BaseDecider):
         Attributes with None values will be updated by setTrainer
         and train methods
         '''
-        if not treshold:
-            treshold = deciders_settings.TRESHOLD
-
-        if not hidden_neurons:
-            hidden_neurons = deciders_settings.HIDDEN_NEURONS
 
         self.hiden_neurons = hidden_neurons
 

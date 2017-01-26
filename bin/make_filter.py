@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # encoding: utf-8
 from __future__ import division
+
 import json
 from optparse import OptionParser
 import os
@@ -8,26 +9,27 @@ import random
 import sys
 import warnings
 
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-from conf import settings
-from data_manager.package_reader import PackageReader
-from db_tier.stars_provider import StarsProvider
-from entities.exceptions import QueryInputError
-from tools.params_estim import ParamsEstimator
-from data_manager.status_resolver import StatusResolver
-from utils.helpers import create_folder, progressbar
-
+from lcc.data_manager.package_reader import PackageReader
+from lcc.data_manager.status_resolver import StatusResolver
+from lcc.stars_processing.tools.params_estim import ParamsEstimator
+from lcc.stars_processing.utilities.compare import ComparativeBase
+from lcc.data_manager.prepare_package import tree
+from lcc.data_manager.prepare_package import rec
+from lcc.api.stars_handling import getStars
+from lcc.api.input_parse import parse_tun_query
+from lcc.entities.exceptions import QueryInputError
+from lcc.stars_processing.tools.visualization import plotProbabSpace
+from lcc.data_manager.filter_serializer import FiltersSerializer
 
 __all__ = []
 __version__ = 0.3
 __date__ = '2016-09-23'
-__updated__ = '2017-01-07'
+__updated__ = '2017-01-26'
 
 debug = True
 
 
-def main(argv=None):
+def main(project_settings, argv=None):
     '''Command line options.'''
 
     program_info = """ABOUT
@@ -207,6 +209,8 @@ def main(argv=None):
     program_longdesc = "Run script without paramas to get info about the program."
     program_license = "Copyright 2016 Martin Vo"
 
+    DEF_FILT_NAME = "Unnamed"
+
     if argv is None:
         argv = sys.argv[1:]
     try:
@@ -214,31 +218,40 @@ def main(argv=None):
         parser = OptionParser(version=program_version_string,
                               epilog=program_longdesc,
                               description=program_license)
+
         parser.add_option("-i", "--input", dest="input",
-                          help="Path to the query file")
-        parser.add_option("-o", "--file_name", dest="file_name", default="my_filter.pickle",
-                          help="Name of result filter file")
-        parser.add_option("-f", "--filter", dest="filt",
-                          help="Name of filter class name")
-        parser.add_option("-s", "--searched", dest="searched", action="append", default=[],
-                          help="Designation of searched light curves folder (in settings)")
+                          help="Name of the file of tuning combinations (present in $PROJEC_DIR/inputs/tun_params)")
+
+        parser.add_option("-n", "--name", dest="filt_name",
+                          help="Name of the filter")
+
+        parser.add_option("-f", "--descriptor", dest="descriptors",
+                          action="append", default=[],
+                          help="Descriptors (this key can be used multiple times)")
+
+        parser.add_option("-s", "--searched", dest="searched", action="append",
+                          default=[],
+                          help="Searched stars folder (present in $PROJEC_DIR/inputs/lcs)")
+
         parser.add_option("-c", "--contamination", dest="cont", action="append", default=[],
-                          help="Designation of contamination light curve folder (in settings)")
-        parser.add_option("-d", "--decider", dest="decider", default=None,
+                          help="Contamination stars folder (present in $PROJEC_DIR/inputs/lcs)")
+
+        parser.add_option("-t", "--template", dest="template", action="append", default=[],
+                          help="Template stars folder (present in $PROJEC_DIR/inputs/lcs) if comparative filters are used")
+
+        parser.add_option("-d", "--decider", dest="deciders", default=None,
                           help="Decider for learning to recognize objects")
-        parser.add_option("-l", "--log", dest="log",  default=".",
-                          help="Path to the folder where info about tuning and plot will be saved")
-        parser.add_option("-p", "--split", dest="split_ratio",  default="3:1",
-                          help="Split ratio of given sample of stars for train:test:template (If there are comparing filter there is no need to give template ratio")
+
+        parser.add_option("-p", "--split", dest="split_ratio", default="3:1",
+                          help="Split ratio for train-test sample")
 
         # process options
         opts, args = parser.parse_args(argv)
 
         if not len(argv):
             print program_info, "\n"
-            print "Databases accessible via QUERY:db_key:query_file:\n\t%s\n" % json.dumps(PackageReader().getClassesDict("connectors").keys(), indent=4)
-            print "Stars path accessible via STARS_PATH key:\n\t%s\n" % json.dumps(settings.STARS_PATH, indent=4)
-            print "Available filters:\n\t%s\n" % json.dumps(PackageReader().getClassesDict("filters").keys(), indent=4)
+            print "Available databases:\n\t%s\n" % json.dumps(PackageReader().getClassesDict("connectors").keys(), indent=4)
+            print "Available descriptors:\n\t%s\n" % json.dumps(PackageReader().getClassesDict("descriptors").keys(), indent=4)
             print "Available deciders:\n\t%s\n" % json.dumps(PackageReader().getClassesDict("deciders").keys(), indent=4)
             print "Run with '-h' in order to show params help\n"
             return False
@@ -246,43 +259,70 @@ def main(argv=None):
         # -------    Core    ------
 
         try:
-            filt = PackageReader().getClassesDict("filters")[opts.filt]
-        except KeyError:
-            raise Exception("There are no filter %s.\nAvailable filters: %s" % (
-                opts.filt, PackageReader().getClassesDict("filters")))
+            descriptors = [desc for desc in PackageReader().getClasses(
+                "descriptors") if desc.__name__ in opts.descriptors]
 
-        if opts.input.startswith("HERE:"):
-            inp = opts.input[5:]
-        else:
-            inp = os.path.join(settings.INPUTS_PATH, opts.input)
+        except KeyError:
+            raise Exception("There are no descriptor %s.\nAvailable filters: %s" % (
+                opts.filt, PackageReader().getClassesDict("descriptors")))
+        if len(opts.descriptors) != len(descriptors):
+            raise QueryInputError("No all descriptors have been found. Got: %s\nFound: %s" % (
+                opts.descriptors, descriptors))
+
+        inp = os.path.join(project_settings.TUN_PARAMS, opts.input)
 
         try:
-            tuned_params = StatusResolver(status_file_path=inp).getQueries()
+            _tuned_params = StatusResolver(status_file_path=inp).getQueries()
+            tuned_params = parse_tun_query(_tuned_params)
         except IOError:
             raise Exception(
                 "File of parameters combinations was not found:\n%s" % inp)
 
         if not tuned_params:
-            raise Exception("Empty parameters file")
+            raise QueryInputError("Empty parameters file")
+
         # TODO: Add check that tuned_paramters are these params needed to
         # construct filter.
 
-        if opts.log.startswith("HERE:"):
-            log_path = opts.log[5:]
-        else:
-            log_path = os.path.join(settings.TUNING_LOGS, opts.log)
-
-        create_folder(log_path)
-
-        all_deciders = PackageReader().getClassesDict("deciders")
         try:
-            decider = all_deciders[opts.decider]()
+            deciders = [desc for desc in PackageReader().getClasses(
+                "deciders") if desc.__name__ in opts.deciders]
         except KeyError:
             raise Exception(
-                "Unknown decider %s\nAvailable deciders: %s" % (opts.decider, all_deciders))
+                "Unknown decider %s\nAvailable deciders: %s" % (opts.deciders, PackageReader().getClasses(
+                    "deciders")))
 
-        addit_params = {}
-        searched = _getStars(opts.searched)
+        searched = getStars(
+            opts.searched, project_settings.INP_LCS, query_path=project_settings.QUERIES)
+
+        static_params = {}
+        temp_stars = getStars(
+            opts.template, project_settings.INP_LCS, query_path=project_settings.QUERIES)
+        for desc in descriptors:
+            if issubclass(desc, ComparativeBase):
+                static_params[desc.__name__] = {}
+                static_params[desc.__name__]["comp_stars"] = temp_stars
+
+        filt_name = opts.filt_name
+        if not filt_name:
+            filt_name = DEF_FILT_NAME
+        if "." in filt_name:
+            filt_name = filt_name[:filt_name.rfind(".")]
+
+        filter_path = os.path.join(project_settings.FILTERS, filt_name)
+
+        d = tree()
+        d[filt_name]
+
+        rec(d, project_settings.FILTERS)
+
+        save_params = {"roc_plot_path": filter_path,
+                       "roc_plot_name": "ROC_plot.png",
+                       "roc_plot_title": filt_name,
+                       "roc_data_path": filter_path,
+                       "roc_data_name": "ROC_data.dat",
+                       "stats_path": filter_path,
+                       "stats_name": "stats.dat"}
 
         try:
             ratios = [int(sp) for sp in opts.split_ratio.split(":")]
@@ -290,29 +330,27 @@ def main(argv=None):
             raise ValueError(
                 "Ratios have to be numbers separated by ':'. Got:\n%s" % opts.split_ratio)
 
-        if opts.filt == "ComparingFilter":
-            template_ratio = ratios[-1] / sum(ratios)
-            split_n = int(len(searched) * template_ratio)
-            addit_params["compar_stars"] = searched[split_n:]
-            searched = searched[: split_n]
-            addit_params["compar_filters"] = _getSubFilters(tuned_params[0])
-
         es = ParamsEstimator(searched=searched,
-                               others=_getStars(opts.cont),
-                               tuned_params=tuned_params,
-                               decider=decider,
-                               star_filter=filt,
-                               log_path=log_path,
-                               split_ratio=ratios[0] / sum(ratios[:2]),
-                               plot_save_path=log_path,
-                               plot_save_name=opts.file_name,
-                               save_filter_name=opts.file_name, **addit_params)
+                             others=getStars(
+                                 opts.cont, project_settings.INP_LCS, query_path=project_settings.QUERIES),
+                             descriptors=descriptors,
+                             deciders=deciders,
+                             tuned_params=tuned_params,
+                             static_params=static_params,
+                             split_ratio=ratios[0] / sum(ratios[:2]))
 
         print "Tuning is about to start. There are %i combinations to try" % len(tuned_params)
 
-        es.fit()
+        star_filter, _, _ = es.fit(_getPrecision, save_params=save_params)
 
-        print "It is done.\nLog file and plots have been saved into %s " % opts.log
+        FiltersSerializer(
+            filt_name + ".filter", filter_path).saveFilter(star_filter)
+
+        plotProbabSpace(star_filter, save=True, path=filter_path,
+                        file_name="ProbabSpace.png",
+                        title="".join([d.__name__ for d in deciders]))
+
+        print "It is done."
 
     except Exception, e:
         if debug:
@@ -323,186 +361,8 @@ def main(argv=None):
         return 2
 
 
-def _getStars(queries):
-    """
-    Get stars from query text. According to format of the query text different
-    methods are called.
-
-        1.LOCAL:db_name:query_file_in_inputs_folder
-            --> Local database is queried (according to key in settings.DATABASES)
-
-        2.QUERY:db_name:query_file_in_inputs_folder
-            --> Remote database is queried (db key is name of connector class)
-
-        3.stars_folder_key:number or stars_folder_key:float_number or stars_folder_key
-            --> Light curves from folder according to first key is loaded
-                (according to settings.STARS_PATH dictionary). All stars are
-                loaded if there is no number and ':', in case of integer after
-                ':' just this number of stars are loaded and if there are float
-                number after ':' this percentage number of all stars are loaded.
-
-    """
-    LOC_QUERY_KEY = "LOCAL"
-    ORDINARY_QUERY_KEY = "QUERY:"
-
-    stars = []
-    for query in queries:
-        query = query.strip()
-
-        if query.startswith(ORDINARY_QUERY_KEY):
-            stars += _getStarsFromRemoteDb(query[len(ORDINARY_QUERY_KEY):])
-
-        else:
-            stars += _getStarsFromFolder(query)
-
-    if not stars:
-        raise QueryInputError("There no stars. Your query: %s" % query)
-
-    return stars
-
-
-def _getStarsFromFolder(single_path):
-    """
-    Get stars from folder/s. If path is iterable (case that more folders were
-    given, light curves from that all folder will be loaded
-
-    Parameters
-    -----------
-        single_path : str
-            Name of the folder of lightcurves from "light_curve" directory (specified
-            in settings). 
-
-    Returns
-    --------
-        stars : List of Star objects
-            Stars from the folder
-    """
-
-    p, restr = _check_sample_name(single_path)
-    try:
-        st = StarsProvider().getProvider(obtain_method="FileManager",
-                                         path=p).getStarsWithCurves()
-        stars = _split_stars(st, restr)
-
-    except KeyError:
-        raise Exception("\n\nThere no folder with light curves named %s.\nAvailable light curve folders %s" % (
-            p, settings.STARS_PATH))
-
-    if not stars:
-        raise Exception(
-            "There are no stars in path with given restriction %s " % single_path)
-
-    random.shuffle(stars)
-    return stars
-
-
-def _getStarsFromRemoteDb(query):
-    """
-    This method parsing the query text in order to return desired stars
-    from remote database.
-
-    Parameters
-    -----------
-        query : str
-            Query text contains db_key and query file separated by ':'
-
-    Returns
-    --------
-        List of Star objects
-
-    Example
-    -------
-        _getStarsFromRemoteDb("OgleII:query_file.txt") --> [Star objects]
-
-        query_file.txt:
-            #starid;field;target
-            1;1;lmc
-            10;1;smc
-    """
-
-    try:
-        db_key, query_file = query.split(":")
-    except:
-        QueryInputError(
-            "Key for resolving stars source was not recognized:\n%s" % query)
-
-    queries = StatusResolver(
-        os.path.join(settings.INPUTS_PATH, query_file)).getQueries()
-
-    stars = []
-
-    for query in progressbar(queries, "Querying stars: "):
-        starsProvider = StarsProvider().getProvider(obtain_method=db_key,
-                                                    obtain_params=query)
-
-        stars += starsProvider.getStarsWithCurves()
-
-    return stars
-
-
-def _split_stars(stars, restr):
-    random.shuffle(stars)
-    num = None
-    if type(restr) == float:
-        n = len(stars)
-        num = int(n * restr)
-
-    elif type(restr) == int:
-        num = restr
-
-    return stars[:num]
-
-
-def _getSubFilters(params):
-    sub_filters = []
-    for subf in PackageReader().getClasses("sub_filters"):
-        try:
-            subf(**params)
-            sub_filters.append(subf)
-        except TypeError as e:
-            pass
-    if not sub_filters:
-        raise Exception(
-            "There are no filter which can be constructed from given parameters %s" % params)
-    return sub_filters
-
-
-def _check_sample_name(star_class):
-
-    if "%" in star_class:
-        parts = star_class.split("%")
-
-        if len(parts) == 2:
-            name, ratio = parts
-
-            try:
-                ratio = float(ratio)
-            except ValueError:
-                raise Exception("Invalid float number after '%' %s " % ratio)
-
-            return name, ratio
-        else:
-            raise Exception(
-                "There have to be just one '%' special mark in the star class name.\Got %s" % star_class)
-
-    elif ":" in star_class:
-        parts = star_class.split(":")
-
-        if len(parts) == 2:
-            name, num = parts
-
-            try:
-                num = int(num)
-            except ValueError:
-                raise Exception("Invalid integer after '%' %s " % num)
-
-            return name, num
-        else:
-            raise Exception(
-                "There have to be just one ':' special mark in the star class name.\Got %s" % star_class)
-
-    return star_class, None
-
+def _getPrecision(*args, **kwargs):
+    return kwargs["precision"]
 
 if __name__ == "__main__":
     warnings.filterwarnings("ignore", category=DeprecationWarning)

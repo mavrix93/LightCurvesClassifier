@@ -6,23 +6,23 @@ import os
 import sys
 import warnings
 
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-from conf import settings
-from data_manager.filter_loader import FilterLoader
-from db_tier.stars_provider import StarsProvider
-from entities.exceptions import InvalidFilesPath
-from stars_processing.systematic_search.stars_searcher import StarsSearcher
-from data_manager.status_resolver import StatusResolver
+from lcc.data_manager.filter_serializer import FiltersSerializer
+from lcc.db_tier.stars_provider import StarsProvider
+from lcc.entities.exceptions import InvalidFilesPath
+from lcc.stars_processing.systematic_search.stars_searcher import StarsSearcher
+from lcc.data_manager.status_resolver import StatusResolver
+from lcc.entities.exceptions import QueryInputError
+from lcc.data_manager.filter_serializer import FiltersSerializer
+from lcc.data_manager.prepare_package import prepare_run
 
 
 __all__ = []
 __version__ = 0.3
 __date__ = '2016-09-05'
-__updated__ = '2017-01-16'
+__updated__ = '2017-01-26'
 
 
-def main(argv=None):
+def main(project_settings, argv=None):
     program_info = """ABOUT
     The program downloads light curves from astronomical databases
     which pass thru given filters (or all).
@@ -41,7 +41,7 @@ def main(argv=None):
         Queries can be specified in the file where first
         row starts with '#' and then there are keys for query a database.
         Next rows consist of searched values. All columns are separated
-        by ';' (can be changed in settings). 
+        by ';' (can be changed in settings).
         
         Note:
             Example files can be find in data/inputs/examples
@@ -145,17 +145,14 @@ def main(argv=None):
         parser = OptionParser(version=program_version_string,
                               epilog=program_longdesc,
                               description=program_license)
-        parser.add_option("-o", "--output", dest="output",
-                          help="Path to the directory for output files from data/light_curves", type=str)
-        parser.add_option("-i", "--input", dest="input",
-                          help="Path to the query file")
+        parser.add_option("-r", "--run", dest="run",
+                          help="Name of this run (name of folder for results)", type=str)
+        parser.add_option("-q", "--query", dest="query",
+                          help="Name of the query file in %PROJECT_DIR/queries")
         parser.add_option("-d", "--database", dest="db",
                           help="Searched database")
         parser.add_option("-f", "--filter", dest="filt", action="append", default=[],
-                          help="Name of the filter file in filters folder (see settings file)")
-
-        # set defaults
-        parser.set_defaults(output=".")
+                          help="Name of the filter file in filters folder (%PROJECT_DIR/filters)")
 
         # process options
         opts, args = parser.parse_args(argv)
@@ -175,31 +172,38 @@ def main(argv=None):
 
         UNFOUND_LIM = 2
 
-        if opts.input.startswith("HERE:"):
-            inp = opts.input[5:]
-        else:
-            inp = os.path.join(settings.INPUTS_PATH, opts.input)
+        try:
+            resolver = StatusResolver(
+                status_file_path=os.path.join(project_settings.QUERIES, opts.query))
+            queries = resolver.getQueries()
+        except IOError:
+            raise IOError("Query file was not found")
+        except Exception as e:
+            raise
+            print "Err:", e
+            raise QueryInputError("There is an issue in query file")
 
-        resolver = StatusResolver(status_file_path=inp)
-        queries = resolver.getQueries()
-
-        star_filters = _load_filters(opts.filt)
+        star_filters = [FiltersSerializer(
+            filt_name, project_settings.FILTERS).loadFilter() for filt_name in opts.filt]
 
         if not star_filters:
             filt_txt = ""
         else:
             filt_txt = [filt.__class__.__name__ for filt in star_filters]
 
-        print _sum_txt(opts.db, opts.input, len(resolver.status_queries), filt_txt, opts.output)
+        prepare_run(project_settings.RESULTS, opts.run)
+
+        print _sum_txt(opts.db, len(resolver.status_queries), filt_txt)
 
         searcher = StarsSearcher(star_filters,
-                                 save_path=opts.output,
+                                 save_path=os.path.join(
+                                     project_settings.RESULTS, opts.run, "lcs"),
                                  save_lim=1,
+                                 stat_file_path=os.path.join(
+                                     project_settings.RESULTS, opts.run, "query_status.txt"),
                                  obth_method=opts.db,
                                  unfound_lim=UNFOUND_LIM)
         searcher.queryStars(queries)
-
-        print "\nResults and status file were saved into %s folder in %s" % (opts.output, settings.LC_FOLDER)
 
     except Exception, e:
         raise
@@ -209,45 +213,15 @@ def main(argv=None):
         return 2
 
 
-def _sum_txt(db, input, num_queries, star_filters, out):
+def _sum_txt(db, num_queries, star_filters):
     '''Get info text before querying'''
 
     sumup_txt = '''
     \n\nDownloading from %s database is about to start..
-The query file from %s was loaded properly and there were found %i queries.
+The query file was loaded and there were found %i queries.
 Filters which will be applied: %s
-The result light curves will be saved into %s
-    \n\n''' % (db, input, num_queries, ", ".join(star_filters), out)
+    \n\n''' % (db, num_queries, star_filters)
     return sumup_txt
-
-
-def _load_filters(filt_input):
-    SET_TYPES = (list, tuple)
-
-    # In case of single filter
-    if not type(filt_input) in SET_TYPES:
-        filt_input = [filt_input]
-
-    star_filters = []
-    for filter_path in filt_input:
-        if filter_path:
-            if settings.JUST_FILTER_OBJECT:
-                object_file = True
-
-            elif filter_path.split(".")[-1] == settings.OBJECT_SUFFIX:
-                object_file = True
-            else:
-                object_file = False
-            try:
-                star_filters.append(
-                    FilterLoader(filter_path, object_file).getFilter())
-            except InvalidFilesPath:
-                raise InvalidFilesPath(
-                    "There are no filter %s in data/star_filters" % filter_path)
-        else:
-            return [[]]
-
-    return star_filters
 
 
 if __name__ == "__main__":
