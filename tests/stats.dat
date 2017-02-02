@@ -1,3 +1,0 @@
-#precision	true_positive_rate	true_negative_rate	false_positive_rate	false_negative_rate	alphabet_size	days_per_bin
-1.0	1.0	1.0	0.0	0.0	10	3
-1.0	1.0	1.0	0.0	0.0	12	0.5

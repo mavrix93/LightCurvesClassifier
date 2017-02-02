@@ -11,6 +11,8 @@ class CurvesShapeDescr(SymbolicRepresentation, ComparativeBase, BaseDescriptor):
 
     Attributes
     -----------
+    comp_stars : list
+        Template stars
     days_per_bin : float
         Ratio which decides about length of the word
 
@@ -20,23 +22,23 @@ class CurvesShapeDescr(SymbolicRepresentation, ComparativeBase, BaseDescriptor):
     slide : bool
         If True, words with different lengths are dynamically compared
         by sliding shorter word thru longer
-
-    comp_stars : list
-        Template stars
     '''
 
-    def __init__(self, comp_stars, days_per_bin, alphabet_size, slide=True, **kwargs):
+    LABEL = "Dissimilarity of the curve from the template"
+
+    def __init__(self, comp_stars, days_per_bin, alphabet_size, slide=True):
         '''
         Parameters
         -----------
+        comp_stars : list
+            Template stars
+
         days_per_bin : float
             Ratio which decides about length of the word
 
         alphabet_size : int
             Range of of used letters
 
-        comp_stars : list
-            Template stars
         '''
         self.comp_stars = comp_stars
         self.days_per_bin = days_per_bin

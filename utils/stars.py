@@ -108,14 +108,14 @@ def plotStarsPicture(stars, option="show", hist_bins=10, vario_bins=10,
 
             width = 1 * (indices[1] - indices[0])
             center = (indices[:-1] + indices[1:]) / 2
-            ax1.bar(center, hist, align='center', width=width, color="blue")
+            ax1.bar(center, hist, align='center', width=width)
 
             ax2 = fig.add_subplot(33 + num_rows * 100 + 3 * row_num)
             if invert_axis:
                 ax2.set_ylim(np.max(lc.mag), np.min(lc.mag))
             ax2.set_xlabel("%s [%s]" % (xlabel, xlabel_unit))
             ax2.set_ylabel("%s [%s]" % (ylabel, ylabel_unit))
-            ax2.errorbar(lc.time, lc.mag, yerr=lc.err, fmt='o', ecolor='r')
+            ax2.errorbar(lc.time, lc.mag, yerr=lc.err, fmt='o')
 
             if vario_bins:
                 ax3 = fig.add_subplot(32 + num_rows * 100 + 3 * row_num)
@@ -129,7 +129,7 @@ def plotStarsPicture(stars, option="show", hist_bins=10, vario_bins=10,
                     value=xlabel, unit=xlabel_unit))
                 ax3.set_ylabel("log (I_i - I_j)^2")
                 x_v, y_v = lc.getVariogram(bins=vario_bins)
-                ax3.plot(x_v, y_v, "b--")
+                ax3.plot(x_v, y_v, "--")
 
         if option == "save":
             if not save_loc:

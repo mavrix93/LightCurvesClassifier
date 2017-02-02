@@ -4,11 +4,10 @@ from optparse import OptionParser
 import os
 import sys
 
-from conf import settings
-from entities.exceptions import QueryInputError
+from lcc.entities.exceptions import QueryInputError
 import numpy as np
-from data_manager.status_resolver import StatusResolver
-from utils.helpers import get_combinations
+from lcc.data_manager.status_resolver import StatusResolver
+from lcc.utils.helpers import get_combinations
 
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -18,10 +17,10 @@ __all__ = []
 
 __version__ = 0.1
 __date__ = '2016-11-07'
-__updated__ = '2016-12-18'
+__updated__ = '2017-02-01'
 
 
-def main(argv=None):
+def main(project_settings, argv=None):
     '''Command line options.'''
 
     program_info = """ABOUT
@@ -69,8 +68,7 @@ def main(argv=None):
     # Separator for range keys input text
     RANGES_SEPARATOR = ":"
 
-    #
-    ENUM_SYMBOL = ";"
+    ENUM_SYMBOL = ","
 
     if argv is None:
         argv = sys.argv[1:]
@@ -141,12 +139,8 @@ def main(argv=None):
 
         query = get_combinations(params, *x)
 
-        if opts.output.startswith("HERE:"):
-            file_name = opts.output[5:]
-            path = "."
-        else:
-            file_name = opts.output
-            path = settings.INPUTS_PATH
+        path = project_settings.TUN_PARAMS
+        file_name = opts.output
 
         StatusResolver.save_query(query, file_name, path, opts.delim)
 

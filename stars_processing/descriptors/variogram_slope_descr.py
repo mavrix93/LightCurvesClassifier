@@ -12,7 +12,9 @@ class VariogramSlopeDescr(BaseDescriptor):
         Rate between light curve dimension and days
     '''
 
-    def __init__(self, variogram_days_bin, *args, **kwargs):
+    LABEL = "Light curve's variogram slope"
+
+    def __init__(self, variogram_days_bin):
         '''
         Parameters
         ----------
@@ -41,8 +43,7 @@ class VariogramSlopeDescr(BaseDescriptor):
             if star.lightCurve:
                 x, y = star.lightCurve.getVariogram(
                     days_per_bin=self.variogram_days_bin)
-
                 coords.append(np.polyfit(x, y, 1)[0])
             else:
-                coords.append([None])
+                coords.append(None)
         return coords

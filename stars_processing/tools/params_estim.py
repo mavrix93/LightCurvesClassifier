@@ -30,7 +30,7 @@ class ParamsEstimator(object):
         List of parameters to tune
 
     static_params : dict
-            Constant values for descriptors and deciders
+        Constant values for descriptors and deciders
     '''
 
     def __init__(self, searched, others, descriptors, deciders, tuned_params,
@@ -55,6 +55,7 @@ class ParamsEstimator(object):
 
             EXAMPLE
             [{'AbbeValue' : {'bins' : 10, ..}, 'NeuronDecider' : {'hidden_layers': 2, ..}, .. ]
+
         split_ratio : float
             Percentage number of train sample
 
@@ -99,7 +100,6 @@ class ParamsEstimator(object):
         for tun_param in progressbar(self.tuned_params,
                                      "Evaluating the combinations: "):
             i += 1
-
             stars_filter, stats = self.evaluate(tun_param)
             stats_list.append(stats)
             filters.append(stars_filter)
@@ -109,7 +109,7 @@ class ParamsEstimator(object):
 
         return stats_list, filters, self.tuned_params
 
-    def fit(self, score_func, opt="max", save_params={}):
+    def fit(self, score_func=None, opt="max", save_params={}):
         """
         Find the best combination of the filter parameters
 
@@ -164,7 +164,11 @@ class ParamsEstimator(object):
 
         scores = []
         for stat in stats_list:
-            scores.append(score_func(**stat))
+            if not score_func:
+                score = stat.get("precision", 0)
+            else:
+                score = score_func(**stat)
+            scores.append(score)
 
         if opt == "max":
             best_id = np.argmax(scores)
@@ -172,6 +176,8 @@ class ParamsEstimator(object):
             best_id = np.argmin(scores)
         else:
             raise InvalidOption("Available options are: 'max' or 'min'.")
+
+        self.best_id = best_id
 
         return filters[best_id], stats_list[best_id], tuned_params[best_id]
 
@@ -191,32 +197,24 @@ class ParamsEstimator(object):
             Stars filter, statistical values
         """
 
-        deciders = []
-        for decider in self.deciders:
-            params = self.static_params.get(decider.__name__)
-            if isinstance(params, dict):
-                deciders.append(decider(**params))
-
-            elif isinstance(params, (list, tuple)):
-                deciders.append(decider(*params))
-
-            elif params is None:
-                deciders.append(decider())
-
-            else:
-                deciders.append(decider(params))
-
         descriptors = []
-        for descriptor in self.descriptors:
+        deciders = []
+        n = len(self.descriptors)
+        for i, des in enumerate(self.descriptors + self.deciders):
             try:
-                static_params = self.static_params.get(descriptor.__name__, {})
-                params = combination.get(descriptor.__name__, {})
+                static_params = self.static_params.get(des.__name__, {})
+                _params = combination.get(des.__name__, {})
+                params = _params.copy()
                 params.update(static_params)
-                descriptors.append(descriptor(**params))
+
+                if i < n:
+                    descriptors.append(des(**params))
+                else:
+                    deciders.append(des(**params))
 
             except TypeError:
                 raise QueryInputError("Not enough parameters to construct constructor {0}\nGot: {1}".format(
-                    descriptor.__name__, params))
+                    des.__name__, params))
 
         stars_filter = StarsFilter(descriptors, deciders)
         stars_filter.learn(self.searched_train, self.others_train)
@@ -248,6 +246,7 @@ class ParamsEstimator(object):
                 "stats_delim" - optional
         """
         to_save = self._prepareStatus(self.stats_list, self.tuned_params)
+        self.stats = to_save
         man = StatsManager(to_save)
         if "roc_plot_path" in save_params and "roc_plot_name" in save_params:
             man.plotROC(save=True,

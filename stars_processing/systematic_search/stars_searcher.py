@@ -7,6 +7,7 @@ from lcc.db_tier.stars_provider import StarsProvider
 from lcc.entities.exceptions import QueryInputError, InvalidFilesPath
 from lcc.utils.helpers import progressbar
 from lcc.utils.stars import saveStars
+from lcc.data_manager.status_resolver import StatusResolver
 
 
 class StarsSearcher():
@@ -31,13 +32,17 @@ class StarsSearcher():
 
     obth_method : str
         Name of connector class
+
+    save_coords : bool
+        Save params space coordinates of inspected stars
     '''
 
     DEF_save_lim = 50
     DEF_unfound_lim = 150
 
-    def __init__(self, stars_filters, save_path=None, stat_file_path=None,
-                 save_lim=None, unfound_lim=None, obth_method=None):
+    def __init__(self, stars_filters, save_path=".", stat_file_path=None,
+                 save_lim=None, unfound_lim=None, obth_method=None,
+                 save_coords=None):
         '''
         Parameters
         ----------
@@ -56,13 +61,11 @@ class StarsSearcher():
 
         obth_method : str
             Name of connector class
+
+        save_coords : bool
+            Save params space coordinates of inspected stars
         '''
 
-        # Default values warning and setting
-        if not save_path:
-            save_path = self.DEF_save_path
-            warn("Path to the save folder was not specified.\nSetting default path: %s" % (
-                save_path))
         if not save_lim:
             save_lim = self.DEF_save_lim
 
@@ -85,6 +88,10 @@ class StarsSearcher():
         self.not_uploaded = []
         self.passed_stars = []
 
+        if save_coords:
+            self._saveCoords(query=[], header=True)
+        self.save_coords = save_coords
+
     def filterStar(self, star, *args, **kwargs):
         '''
         This method filter given star.
@@ -100,18 +107,16 @@ class StarsSearcher():
         bool
             If star passed thru filtering
         '''
+        for star_filt in self.stars_filters:
+            result = star_filt.filterStars([star])
+            if not result:
+                break
 
-        if self.stars_filters:
-            for star_filt in self.stars_filters:
-                result = star_filt.filterStars([star])
-                if not result:
-                    break
-
-            if len(result) == 1:
-                self.matchOccured(star)
-                return True
+        if not self.stars_filters or len(result) == 1:
+            self.matchOccured(star)
+            return True
+        else:
             return False
-        return True
 
     def matchOccured(self, star, *args, **kwargs):
         '''
@@ -225,15 +230,15 @@ class StarsSearcher():
             status = collections.OrderedDict(
                 (("found", False), ("filtered", False), ("passed", False)))
             try:
-
                 stars = StarsProvider().getProvider(
                     obtain_method=self.obth_method, **query).getStarsWithCurves()
             except QueryInputError:
                 raise
+            except (KeyboardInterrupt, SystemExit):
+                raise
             except:
                 warn("Couldn't download any light curve")
                 stars = []
-
             # Check if the searched star was found
             result_len = len(stars)
             if result_len == 0:
@@ -242,41 +247,63 @@ class StarsSearcher():
                 if unfound_counter > self.unfound_lim:
                     warn("Max number of unsatisfied queries reached: %i" %
                          self.unfound_lim)
-                    break
 
-            else:
-                unfound_counter = 0
-                for one_star in stars:
-                    status["found"] = True
+            unfound_counter = 0
+            for one_star in stars:
+                status["found"] = True
+                contain_lc = True
 
-                    contain_lc = True
+                try:
+                    stars[0].lightCurve.time
+                except AttributeError:
+                    contain_lc = False
+
+                if contain_lc:
+
+                    if self.save_coords and self.stars_filters:
+                        self._saveCoords([one_star.name] +
+                                         self.stars_filters[0].getSpaceCoordinates([one_star])[0])
+
+                    # Try to apply filters to the star
                     try:
-                        stars[0].lightCurve.time
-                    except AttributeError:
-                        contain_lc = False
+                        passed = self.filterStar(one_star, query)
+                        status["filtered"] = True
+                        status["passed"] = passed
+                        stars_num += 1
+                        if passed:
+                            passed_num += 1
 
-                    if contain_lc:
-                        # Try to apply filters to the star
-                        try:
-                            passed = self.filterStar(one_star, query)
-                            status["filtered"] = True
-                            status["passed"] = passed
-                            stars_num += 1
-                            if passed:
-                                passed_num += 1
-
-                        except IOError as err:
-                            raise InvalidFilesPath(err)
-                        except Exception as err:
-                            self.failProcedure(query, err)
-                            warn(
-                                "Something went wrong during filtering:\n\t%s" % err)
+                    except (KeyboardInterrupt, SystemExit):
+                        raise
+                    except IOError as err:
+                        raise InvalidFilesPath(err)
+                    except Exception as err:
+                        self.failProcedure(query, err)
+                        warn(
+                            "Something went wrong during filtering:\n\t%s" % err)
                     query["name"] = one_star.name
                     self.statusFile(query, status)
 
         print "\n************\t\tQuery is done\t\t************"
         print "Query results:\nThere are %i stars passed thru filtering from %s." % (passed_num, stars_num)
         if all_unfound:
-            print "There are %i stars which was not found" % all_unfound
+            print "There are %i unsatisfied queries" % all_unfound
         if self.not_uploaded:
             print "\t%i stars have not been uploaded into local db, because they are already there." % len(self.not_uploaded)
+
+    def _saveCoords(self, query, header=True):
+        if self.stars_filters:
+            star_filter = self.stars_filters[0]
+            if header:
+                header = ["star_name"] + [
+                    desc.LABEL for desc in star_filter.descriptors]
+            else:
+                header = None
+
+            StatusResolver.save_lists_query(query=query, fi_name="space_coordinates.dat",
+                                            PATH=os.path.join(
+                                                self.save_path, ".."),
+                                            header=header)
+        else:
+            warnings.warn(
+                "There are no filters, so space coordinates cannot be obtained.\n")

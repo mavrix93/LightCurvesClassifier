@@ -3,11 +3,13 @@ import os
 
 from lcc.utils.helpers import checkDepth
 import numpy as np
+import warnings
 
 
-def plotProbabSpace(star_filter, plot_ranges=None, save=False,
+def plotProbabSpace(star_filter, plot_ranges=None, opt="show",
                     path=".", file_name="params_space.png", N=100,
-                    title="Params space", x_lab="", y_lab=""):
+                    title="Params space", x_lab="", y_lab="",
+                    searched_coords=[], contaminatiom_coords=[]):
     """
     Plot params space
 
@@ -19,8 +21,8 @@ def plotProbabSpace(star_filter, plot_ranges=None, save=False,
     plot_ranges : tuple, list
         List of ranges. For example: [range(1,10), range(20,50)] - for 2D plot
 
-    save : bool
-        If True plot is saved into the file
+    opt : str
+        Option whether save/show/return
 
     title : str
         Title of the plot
@@ -35,6 +37,8 @@ def plotProbabSpace(star_filter, plot_ranges=None, save=False,
     -------
         None
     """
+    OVERLAY = 0.6
+
     dim = len(star_filter.searched_coords[0])
 
     if not plot_ranges:
@@ -42,59 +46,62 @@ def plotProbabSpace(star_filter, plot_ranges=None, save=False,
         trained_coo = np.array(
             star_filter.searched_coords + star_filter.others_coords).T
         for i in range(dim):
-            plot_ranges.append(
-                [np.min(trained_coo[i]), np.max(trained_coo[i])])
+            rang = [np.min(trained_coo[i]), np.max(trained_coo[i])]
+            overl = abs(rang[0] - rang[1]) * OVERLAY
+            plot_ranges.append([rang[0] - overl, rang[1] + overl])
 
     if dim == 1:
         if not x_lab and not y_lab:
-            x_lab = star_filter.descriptors[0].__class__.__name__
+            x_lab = star_filter.descriptors[0].LABEL
             y_lab = "Probability"
-        plot1DProbabSpace(star_filter, plot_ranges, N, x_lab, y_lab, title)
+        plt_data = plot1DProbabSpace(
+            star_filter, plot_ranges, N, x_lab, y_lab, title,
+            searched_coords=searched_coords,
+            contaminatiom_coords=contaminatiom_coords)
     elif dim == 2:
         if not x_lab and not y_lab:
-            x_lab = star_filter.descriptors[0].__class__.__name__
-            y_lab = star_filter.descriptors[1].__class__.__name__
-        plot2DProbabSpace(star_filter, plot_ranges, N)
+            if len(star_filter.descriptors) == 2:
+                x_lab = star_filter.descriptors[0].LABEL
+                y_lab = star_filter.descriptors[1].LABEL
+            else:
+                labels = []
+                for desc in star_filter.descriptors:
+                    if hasattr(desc.LABEL, "__iter__"):
+                        labels += desc.LABEL
+                    else:
+                        labels.append(desc.LABEL)
+                if len(labels) == 2:
+                    x_lab = labels[0]
+                    y_lab = labels[1]
+                else:
+                    x_lab = ", ".join(labels)
+                    y_lab = ""
+        plt_data = plot2DProbabSpace(star_filter, plot_ranges, N,
+                                     searched_coords=searched_coords,
+                                     contaminatiom_coords=contaminatiom_coords)
 
     else:
-        return
+        return np.array([[]])
 
     plt.xlabel(str(x_lab))
     plt.ylabel(str(y_lab))
     plt.title(str(title))
 
-    if not save:
+    if opt == "show":
         plt.show()
-    else:
+    elif opt == "save":
         plt.savefig(os.path.join(path, file_name))
+    elif opt == "return":
+        return plt_data
 
 
-def plot2DProbabSpace(star_filter, plot_ranges, N):
+def plot2DProbabSpace(star_filter, plot_ranges, N, searched_coords=[],
+                      contaminatiom_coords=[]):
     """
     Plot probability space
 
     Parameters
     ----------
-    option : str
-        "show"
-        "save"
-        "return"
-
-    save_path : str, NoneType
-        Path to the folder where plots are saved if not None, else
-        plots are showed immediately
-
-    x_lab : str
-        Label for x-axis
-
-    y_lab : str
-        Label for y-axis
-
-    title : str
-        Title for the plot
-
-    file_name : str
-        Name of the plot file
 
     Returns
     -------
@@ -115,23 +122,54 @@ def plot2DProbabSpace(star_filter, plot_ranges, N):
     plt.pcolor(X, Y, Z)
     plt.colorbar()
 
+    if searched_coords or contaminatiom_coords:
+        s = np.array(searched_coords).T
+        c = np.array(contaminatiom_coords).T
+        plt.plot(s[0], s[1], "m*", label="Searched objects", markersize=17)
+        plt.plot(
+            c[0], c[1], "k*", label="Contamination objects", markersize=17)
+        plt.legend()
 
-def plot1DProbabSpace(star_filter, plot_ranges, N, x_lab, y_lab, title):
+    return x, y, Z
+
+
+def plot1DProbabSpace(star_filter, plot_ranges, N, x_lab, y_lab, title,
+                      searched_coords=[], contaminatiom_coords=[]):
     if checkDepth(plot_ranges, 2, ifnotraise=False):
         plot_ranges = plot_ranges[0]
     x = np.linspace(plot_ranges[0], plot_ranges[1])
+    y = star_filter.evaluateCoordinates([[y] for y in x])
 
-    plt.plot(x, star_filter.evaluateCoordinates([[y] for y in x]), linewidth=3)
+    plt.plot(x, y, linewidth=3)
 
-'''def plotHist(title="", labels=[], bins=None, save_path=None,
+    if searched_coords or contaminatiom_coords:
+        s = [qq[0] for qq in searched_coords]
+        c = [qq[0] for qq in contaminatiom_coords]
+        s_weights = np.ones_like(s) / len(s)
+        c_weights = np.ones_like(c) / len(c)
+        plt.hist(s, bins=x,
+                 histtype='bar', weights=s_weights,
+                 label="Searched objects")
+        plt.hist(c, bins=x,
+                 histtype='bar', weights=c_weights,
+                 label="Contamination objects")
+        plt.legend()
+
+    return x, np.array(y)
+
+
+def plotHist(searched_coo, cont_coo, labels=[], bins=None, save_path=None,
              file_name="hist.png"):
     """
     Plot histogram
 
     Parameters
     ----------
-    title : str
-        Title for the plot
+    searched_coo : iterable
+        Coordinates of searched objects to plot the histogram
+
+    cont_coo : iterable
+        Coordinates of contamination objects to plot the histogram
 
     labels : list, tuple of str
         Labels for axis
@@ -150,34 +188,43 @@ def plot1DProbabSpace(star_filter, plot_ranges, N, x_lab, y_lab, title):
     -------
     None
     """
-    if self.X.any():
+    x = np.array(searched_coo).T
+    y = np.array(cont_coo).T
+
+    if len(x) != len(y):
+        raise Exception(
+            "Dimension of both searched and contamination sample have to be the same.\nGot: %i, %i" % (len(x), len(y)))
+    if len(x) != len(labels):
+        warnings.warn(
+            "Dimension of the dimension of train sample and labels have to be the same.\nGot: %i, %i" % (len(x), len(labels)))
+        labels = ["" for _ in x]
+
+    for x_param, y_param, lab in zip(x, y, labels):
+        plt.clf()
+
         if not bins:
-            bins = 1 + 3.32 * np.log10(len(self.X))
+            x_bins = 1 + 3.32 * np.log10(len(x_param))
+            y_bins = 1 + 3.32 * np.log10(len(y_param))
+        else:
+            x_bins = bins
+            y_bins = bins
 
-        for i in range(len(self.X[0])):
+        x_weights = np.ones_like(x_param) / len(x_param)
+        y_weights = np.ones_like(y_param) / len(y_param)
 
-            if len(labels) > i:
-                lab = labels[i].lower()
-            else:
-                lab = ""
+        plt.hist(x_param, bins=x_bins, weights=x_weights,
+                 histtype='bar', color="crimson",
+                 label="Searched objects")
+        plt.hist(y_param, bins=y_bins, weights=y_weights,
+                 label="Others")
+        plt.title("Distribution of the parameters coordinates")
 
-            plt.clf()
-            plt.hist(self.X[self.y == 1][:, i], normed=True, bins=bins,
-                     histtype='bar', color="crimson",
-                     label="Searched objects")
-            plt.hist(
-                self.X[self.y == 0][:, i], normed=True, bins=bins,
-                label="Others")
-            plt.title(title)
+        plt.xlabel(lab)
+        plt.ylabel("Normalized counts")
 
-            plt.xlabel(str(lab))
-
-            plt.legend()
-            if save_path:
-                plt.savefig(os.path.join(
-                    save_path, file_name + "_hist_%s_%i.png" % (lab.replace(" ", "_"), i)))
-            else:
-                plt.show()
-    else:
-        warnings.warn("No data to plot histogram")
-'''
+        plt.legend()
+        if save_path:
+            plt.savefig(os.path.join(
+                save_path, file_name + "_hist_%s.png" % (lab.replace(" ", "_"))))
+        else:
+            plt.show()

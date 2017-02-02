@@ -42,7 +42,7 @@ class SymbolicRepresentation(object):
 
     def _getDissmilarity(self, inspected_word, filter_word, curve_len):
         '''
-        This method go through string curve of a star and trying to math filter
+        This method go through string curve of a star and trying to match filter
         sentence pattern.
         '''
         if not inspected_word or not filter_word:

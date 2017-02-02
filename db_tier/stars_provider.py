@@ -15,7 +15,7 @@ class StarsProvider(object):
     STARS_PROVIDERS = PackageReader().getClassesDict("connectors")
 
     @classmethod
-    def getProvider(self, obtain_method="", obtain_params=[], **kwargs):
+    def getProvider(self, obtain_method, obtain_params):
         '''
         Get database connector via name of its class
 
@@ -35,10 +35,8 @@ class StarsProvider(object):
 
         if obtain_method not in self.STARS_PROVIDERS:
             raise AttributeError(
-                "Unresolved stars provider\nAvaible stars providers: %s" % self.STARS_PROVIDERS)
+                "Unresolved stars provider\nAvaible stars providers: %s" % self.STARS_PROVIDERS.keys())
 
-        if not obtain_params:
-            obtain_params = kwargs
         provider = self.STARS_PROVIDERS[obtain_method]
 
         if len(obtain_params) == 0:

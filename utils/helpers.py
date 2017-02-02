@@ -7,23 +7,43 @@ import numpy as np
 import collections
 
 
-def getArguments(self, insp_classes, isclass=True):
-    if isclass:
-        i = 1
-    else:
-        i = 0
+def getArguments(insp_classes):
+    """
+    Get args and kwargs of the class methods
+
+    Parameters
+    ----------
+    insp_classes : list
+        Classes to inspect
+    """
     mapped_classes = []
     for insp_class in insp_classes:
-        params = inspect.getargspec(insp_class.__init__)[0]
-        default_values = inspect.getargspec(insp_class.__init__)[3]
-        n = len(default_values)
-        mandatory_params = params[i:-n]
-        default_params = params[-n:]
+        try:
+            x = inspect.getargspec(insp_class.__init__)
+            params = x[0]
+            if x[3]:
+                default_values = list(x[3])
+            else:
+                default_values = []
+
+        except TypeError as e:
+            params = []
+            default_values = []
+
+        if default_values:
+            n = -len(default_values)
+        else:
+            n = None
+        print insp_class.__name__
+        print "def", default_values
+        print "args", params
+        print "n", n
+        mandatory_params = params[1:n]
+        default_params = params[n:]
         mapped_classes.append({"name": insp_class.__name__,
                                "mandatory_params": mandatory_params,
                                "default_params": default_params,
                                "default_values": default_values})
-
     return mapped_classes
 
 
@@ -39,8 +59,9 @@ def clean_path(path):
 
 def checkDepth(a, deep_level, ifnotraise=True):
     """Check if input list has desired level of nested lists"""
+    MAX_ITER = 10
     lev = 0
-    while True:
+    while lev < MAX_ITER:
         try:
             a = a[0]
             lev += 1
@@ -172,7 +193,7 @@ def get_combinations(keys, *lists):
         Name of consequent columns (lists)
 
     lists : list of lists
-        Combinations
+        Values to combine
 
     Example
     --------
@@ -199,8 +220,32 @@ def get_combinations(keys, *lists):
 
 
 def getMeanDict(dict_list):
-    new_d = []
-    keys = dict_list[0].keys()
-    for key in keys:
-        new_d.append((key, np.mean([x[key] for x in dict_list])))
-    return collections.OrderedDict(new_d)
+    if dict_list:
+        new_d = []
+        keys = dict_list[0].keys()
+        for key in keys:
+            new_d.append((key, np.mean([x[key] for x in dict_list])))
+        return collections.OrderedDict(new_d)
+    return {}
+
+
+def convertInputValue(value):
+    if "." in value:
+        try:
+            return float(value)
+        except ValueError:
+            return str(value)
+    try:
+        return int(value)
+    except ValueError:
+        pass
+
+    value = str(value).strip()
+    if value == "False":
+        return False
+    elif value == "True":
+        return True
+    elif value == "None":
+        return None
+
+    return value

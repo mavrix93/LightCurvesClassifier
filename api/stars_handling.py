@@ -7,7 +7,7 @@ from lcc.entities.exceptions import QueryInputError
 from lcc.utils.helpers import progressbar
 
 
-def getStars(queries, lcs_fold, query_path=None):
+def getStars(queries, lcs_fold, query_path=None, progb_txt="Querying stars: "):
     """
     Get stars from query text. According to format of the query text different
     methods are called.
@@ -26,7 +26,7 @@ def getStars(queries, lcs_fold, query_path=None):
     ORDINARY_QUERY_KEY = "QUERY:"
 
     stars = []
-    for query in queries:
+    for query in progressbar(queries, progb_txt):
         query = query.strip()
 
         if query.startswith(ORDINARY_QUERY_KEY):
@@ -37,7 +37,7 @@ def getStars(queries, lcs_fold, query_path=None):
             stars += getStarsFromFolder(query, lcs_fold)
 
     if not stars:
-        raise QueryInputError("There no stars. Your query: %s" % query)
+        raise QueryInputError("There no stars. Your query: %s" % queries)
 
     return stars
 
@@ -60,8 +60,8 @@ def getStarsFromFolder(single_path, lcs_fold):
     """
     p, restr = _check_sample_name(single_path)
     try:
-        st = StarsProvider().getProvider(obtain_method="FileManager",
-                                         path=os.path.join(lcs_fold, p)).getStarsWithCurves()
+        st = StarsProvider().getProvider(
+            "FileManager", {"path": os.path.join(lcs_fold, p)}).getStarsWithCurves()
         stars = _split_stars(st, restr)
 
     except KeyError:

@@ -1,9 +1,9 @@
 import unittest
 
-from db_tier.stars_provider import StarsProvider
-from entities.star import Star
+from lcc.db_tier.stars_provider import StarsProvider
+from lcc.entities.star import Star
 import numpy as np
-from utils.stars import plotStarsPicture
+from lcc.utils.stars import plotStarsPicture
 
 
 class Test(unittest.TestCase):

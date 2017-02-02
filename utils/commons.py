@@ -6,6 +6,9 @@ import functools
 
 from lcc.entities.exceptions import MandatoryKeyInQueryDictIsMissing,\
     ArgumentValidationError, InvalidArgumentNumberError, InvalidReturnType
+import sys
+import time
+import threading
 
 
 def check_attribute(attribute, cond, if_not=False):
@@ -245,3 +248,36 @@ def accepts(*accepted_arg_types):
             return validate_function(*to_return_args)
         return decorator_wrapper
     return accept_decorator
+
+
+class Spinner:
+    busy = False
+    delay = 0.1
+
+    @staticmethod
+    def spinning_cursor():
+        while 1:
+            for cursor in '|/-\\':
+                yield cursor
+
+    def __init__(self, txt="", delay=None):
+        self.spinner_generator = self.spinning_cursor()
+        if delay and float(delay):
+            self.delay = delay
+        self.txt = txt
+
+    def spinner_task(self):
+        while self.busy:
+            sys.stdout.write(self.txt + next(self.spinner_generator))
+            sys.stdout.flush()
+            time.sleep(self.delay)
+            sys.stdout.write('\b')
+            sys.stdout.flush()
+
+    def start(self):
+        self.busy = True
+        threading.Thread(target=self.spinner_task).start()
+
+    def stop(self):
+        self.busy = False
+        time.sleep(self.delay)

@@ -2,7 +2,7 @@ from pybrain.datasets import SupervisedDataSet
 from pybrain.supervised.trainers import BackpropTrainer
 from pybrain.tools.shortcuts import buildNetwork
 
-from lcc.stars_processing.deciders.base_decider import BaseDecider
+from lcc.stars_processing.utilities.base_decider import BaseDecider
 import numpy as np
 
 

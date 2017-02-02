@@ -4,7 +4,7 @@ import inspect
 import os
 from lcc.stars_processing.utilities.base_descriptor import BaseDescriptor
 from lcc.db_tier.base_query import StarsCatalogue
-from lcc.stars_processing.deciders.base_decider import BaseDecider
+from lcc.stars_processing.utilities.base_decider import BaseDecider
 
 
 class PackageReader(object):

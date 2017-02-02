@@ -5,26 +5,27 @@ from __future__ import division
 import json
 from optparse import OptionParser
 import os
-import random
 import sys
 import warnings
 
-from lcc.data_manager.package_reader import PackageReader
-from lcc.data_manager.status_resolver import StatusResolver
-from lcc.stars_processing.tools.params_estim import ParamsEstimator
-from lcc.stars_processing.utilities.compare import ComparativeBase
-from lcc.data_manager.prepare_package import tree
-from lcc.data_manager.prepare_package import rec
-from lcc.api.stars_handling import getStars
 from lcc.api.input_parse import parse_tun_query
-from lcc.entities.exceptions import QueryInputError
-from lcc.stars_processing.tools.visualization import plotProbabSpace
+from lcc.api.stars_handling import getStars
 from lcc.data_manager.filter_serializer import FiltersSerializer
+from lcc.data_manager.package_reader import PackageReader
+from lcc.data_manager.prepare_package import rec
+from lcc.data_manager.prepare_package import tree
+from lcc.data_manager.status_resolver import StatusResolver
+from lcc.entities.exceptions import QueryInputError
+from lcc.stars_processing.tools.params_estim import ParamsEstimator
+from lcc.stars_processing.tools.visualization import plotProbabSpace
+from lcc.stars_processing.utilities.compare import ComparativeBase
+import numpy as np
+from lcc.stars_processing.tools.visualization import plotHist
 
 __all__ = []
 __version__ = 0.3
 __date__ = '2016-09-23'
-__updated__ = '2017-01-26'
+__updated__ = '2017-02-02'
 
 debug = True
 
@@ -119,7 +120,7 @@ def main(project_settings, argv=None):
     Deciders:
     --------
         Deciders manage all learning and then recognizing of inspected objects.
-        They can be loaded via name of their class. 
+        They can be loaded via name of their class.
     
         Note:
             There is a overview of implemented deciders at the end (if it is
@@ -239,7 +240,7 @@ def main(project_settings, argv=None):
         parser.add_option("-t", "--template", dest="template", action="append", default=[],
                           help="Template stars folder (present in $PROJEC_DIR/inputs/lcs) if comparative filters are used")
 
-        parser.add_option("-d", "--decider", dest="deciders", default=None,
+        parser.add_option("-d", "--decider", dest="deciders", default=[],
                           help="Decider for learning to recognize objects")
 
         parser.add_option("-p", "--split", dest="split_ratio", default="3:1",
@@ -257,7 +258,6 @@ def main(project_settings, argv=None):
             return False
 
         # -------    Core    ------
-
         try:
             descriptors = [desc for desc in PackageReader().getClasses(
                 "descriptors") if desc.__name__ in opts.descriptors]
@@ -269,6 +269,13 @@ def main(project_settings, argv=None):
             raise QueryInputError("No all descriptors have been found. Got: %s\nFound: %s" % (
                 opts.descriptors, descriptors))
 
+        header = "#" + " " * 40 + \
+            "Light Curves Classifier - Make Filter" + " " * 30 + "#"
+        print "\n\n\t" + "#" * len(header)
+        print "\t#" + " " * (len(header) - 2) + "#"
+        print "\t" + header
+        print "\t#" + " " * (len(header) - 2) + "#"
+        print "\t" + "#" * len(header) + "\nSelected descriptors: " + ", ".join([d.__name__ for d in descriptors])
         inp = os.path.join(project_settings.TUN_PARAMS, opts.input)
 
         try:
@@ -283,7 +290,6 @@ def main(project_settings, argv=None):
 
         # TODO: Add check that tuned_paramters are these params needed to
         # construct filter.
-
         try:
             deciders = [desc for desc in PackageReader().getClasses(
                 "deciders") if desc.__name__ in opts.deciders]
@@ -292,12 +298,18 @@ def main(project_settings, argv=None):
                 "Unknown decider %s\nAvailable deciders: %s" % (opts.deciders, PackageReader().getClasses(
                     "deciders")))
 
-        searched = getStars(
-            opts.searched, project_settings.INP_LCS, query_path=project_settings.QUERIES)
+        print "Selected deciders: " + ", ".join([d.__name__ for d in deciders])
+        print "\nLoading stars..."
+        searched = getStars(opts.searched, project_settings.INP_LCS,
+                            query_path=project_settings.QUERIES, progb_txt="Querying searched stars: ")
+        others = getStars(opts.cont, project_settings.INP_LCS,
+                          query_path=project_settings.QUERIES, progb_txt="Querying contamination stars: ")
+        print "Sample of %i searched objects and %i of contamination objects was loaded" % (len(searched), len(others))
 
         static_params = {}
-        temp_stars = getStars(
-            opts.template, project_settings.INP_LCS, query_path=project_settings.QUERIES)
+        if opts.template:
+            temp_stars = getStars(
+                opts.template, project_settings.INP_LCS, query_path=project_settings.QUERIES)
         for desc in descriptors:
             if issubclass(desc, ComparativeBase):
                 static_params[desc.__name__] = {}
@@ -331,26 +343,43 @@ def main(project_settings, argv=None):
                 "Ratios have to be numbers separated by ':'. Got:\n%s" % opts.split_ratio)
 
         es = ParamsEstimator(searched=searched,
-                             others=getStars(
-                                 opts.cont, project_settings.INP_LCS, query_path=project_settings.QUERIES),
+                             others=others,
                              descriptors=descriptors,
                              deciders=deciders,
                              tuned_params=tuned_params,
                              static_params=static_params,
                              split_ratio=ratios[0] / sum(ratios[:2]))
 
-        print "Tuning is about to start. There are %i combinations to try" % len(tuned_params)
+        print "\nTuning is about to start. There are %i combinations to try" % len(tuned_params)
 
         star_filter, _, _ = es.fit(_getPrecision, save_params=save_params)
 
         FiltersSerializer(
             filt_name + ".filter", filter_path).saveFilter(star_filter)
 
-        plotProbabSpace(star_filter, save=True, path=filter_path,
+        plotProbabSpace(star_filter, opt="save", path=filter_path,
                         file_name="ProbabSpace.png",
-                        title="".join([d.__name__ for d in deciders]))
+                        title="".join([d.__name__ for d in deciders]),
+                        searched_coords=star_filter.searched_coords,
+                        contaminatiom_coords=star_filter.others_coords)
+        desc_labels = []
+        for desc in star_filter.descriptors:
+            if hasattr(desc.LABEL, "__iter__"):
+                desc_labels += desc.LABEL
+            else:
+                desc_labels.append(desc.LABEL)
 
-        print "It is done."
+        plotHist(star_filter.searched_coords, star_filter.others_coords,
+                 labels=desc_labels, save_path=filter_path,
+                 file_name="CoordsDistribution")
+
+        header = "\t".join(desc_labels)
+        np.savetxt(os.path.join(project_settings.FILTERS, filt_name, "searched_coords.dat"),
+                   star_filter.searched_coords, "%.3f", header=header)
+        np.savetxt(os.path.join(project_settings.FILTERS, filt_name, "contam_coords.dat"),
+                   star_filter.others_coords, "%.3f", header=header)
+
+        print "\nIt is done.\n\t" + "#" * len(header)
 
     except Exception, e:
         if debug:

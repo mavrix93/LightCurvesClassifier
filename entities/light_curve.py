@@ -195,7 +195,7 @@ class LightCurve(object):
         for t, m, e in zip(time, mag, err):
             if not (t in self.BAD_VALUES or m in self.BAD_VALUES or
                     e in self.BAD_VALUES):
-                cl_time.append(t)
-                cl_mag.append(m)
-                cl_err.append(e)
+                cl_time.append(round(t, 5))
+                cl_mag.append(round(m, 3))
+                cl_err.append(round(e, 3))
         return np.array(cl_time), np.array(cl_mag), np.array(cl_err)

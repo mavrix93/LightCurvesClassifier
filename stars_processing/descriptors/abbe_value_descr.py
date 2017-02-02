@@ -13,6 +13,7 @@ class AbbeValueDescr(BaseDescriptor):
         Dimension of reduced light curve from which Abbe value
         is calculated
     '''
+    LABEL = "Abbe value"
 
     def __init__(self, bins=None):
         '''

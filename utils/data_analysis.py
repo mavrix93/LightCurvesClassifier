@@ -123,8 +123,8 @@ def to_ekvi_PAA(x, y, bins=None, days_per_bin=None):
             val_x = x_frame_sum / items_in_this_frame
 
             if val_x and val_y:
-                y_aprox.append(val_x)
-                x_aprox.append(val_y)
+                y_aprox.append(val_y)
+                x_aprox.append(val_x)
             x_frame_sum = 0
             y_frame_sum = 0
             items_in_this_frame = 0
@@ -205,12 +205,10 @@ def variogram(x, y, bins=None, log_opt=True):
         Variogram as two numpy arrays
     '''
     if not bins:
-        bins = 12
+        bins = 20
 
-    pre_bins = len(x) * 0.5
-
-    x = to_PAA(x, pre_bins)[0]
-    y = to_PAA(y, pre_bins)[0]
+    x = to_PAA(x, bins)[0]
+    y = to_PAA(y, bins)[0]
     sort_opt = True
     n = len(x)
     vario_x = []
@@ -274,7 +272,11 @@ def histogram(xx, yy, bins_num=None, centred=True, normed=True):
     # Center values to zero
     if centred:
         x = x - x.mean()
-    hist, bins = np.histogram(x, bins=bins_num)
+
+    bins = np.linspace(x.min(), x.max(), bins_num)
+
+    hist, _ = np.histogram(x, bins=bins)
+
     # Norm histogram (number of point up or below the mean value)
     if normed:
         hist = normalize(hist)

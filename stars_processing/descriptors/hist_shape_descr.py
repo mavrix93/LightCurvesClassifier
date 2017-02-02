@@ -22,9 +22,15 @@ class HistShapeDescr(SymbolicRepresentation, ComparativeBase, BaseDescriptor):
     slide : bool
         If True, words with different lengths are dynamically compared
         by sliding shorter word thru longer
+
+    slide : bool
+        If True, words with different lengths are dynamically compared
+        by sliding shorter word thru longer
     '''
 
-    def __init__(self, comp_stars, bins, alphabet_size, slide=False, **kwargs):
+    LABEL = "Dissimilarity of the light curves histogram from the template"
+
+    def __init__(self, comp_stars, bins, alphabet_size, slide=True):
         '''
         Parameters
         -----------

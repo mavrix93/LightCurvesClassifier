@@ -69,7 +69,6 @@ class ColorIndexDescr(BaseDescriptor):
         List of list of floats
         """
         coords = []
-
         for star in stars:
             colors = []
             for col in self.colors:

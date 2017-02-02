@@ -4,6 +4,7 @@ import os
 from lcc.entities.exceptions import InvalidFilesPath
 import numpy as np
 from lcc.utils.helpers import subDictInDict
+from lcc.utils.helpers import checkDepth
 
 
 class StatusResolver(object):
@@ -154,7 +155,7 @@ class StatusResolver(object):
         for que in query:
             if len(que) != len(header):
                 raise Exception(
-                    "Number of header params and values have to be the same.\nGot %s and %s" % (que, header))
+                    "Number of header params and values have to be the same.\nGot query %s and header %s \nCheck the query file if there are no missing value in any column or if there is a whitespace." % (que, header))
             for i, key in enumerate(que):
                 delim = DELIM
                 if i >= n - 1:
@@ -162,6 +163,51 @@ class StatusResolver(object):
 
                 query_file.write(str(que[key]) + delim)
             query_file.write("\n")
+
+        query_file.close()
+
+    @classmethod
+    def save_lists_query(self, query=[], fi_name="query_file.txt", PATH=".", DELIM=None,
+                         overwrite=False, header=None):
+        '''
+        Save queries into the file which can be loaded for another query
+
+        Parameters
+        ----------
+        query : list
+            List of lists which contains
+
+        Returns
+        -------
+            None
+        '''
+
+        path = os.path.join(PATH, fi_name)
+
+        if not DELIM:
+            DELIM = self.DELIMITER
+
+        if not checkDepth(query, 2, ifnotraise=False):
+            query = [query]
+
+        if not header and query[0]:
+            return False
+
+        try:
+            if overwrite:
+                query_file = open(path, "w+")
+            else:
+                query_file = open(path, "a+")
+
+        except IOError as err:
+            raise InvalidFilesPath(err)
+
+        if header and not query_file.readline():
+            query_file.write(
+                "#" + DELIM.join([str(it) for it in header]))
+
+        for line in query:
+            query_file.write(DELIM.join([str(it) for it in line]) + "\n")
 
         query_file.close()
 
@@ -223,16 +269,21 @@ class StatusResolver(object):
         for query in queries:
             if type(query) is not np.ndarray and type(query) is not list:
                 query = [query]
-            queries_list.append(dict(zip(header, self._readInStr(query))))
+            queries_list.append(dict(zip(header, query)))
         return queries_list
 
     def _readInStr(self, words):
+        ENUM_SEP = ","
         x = []
         for word in words:
-            try:
-                x.append(ast.literal_eval(word.strip()))
-            except:
-                x.append(word)
+            if ENUM_SEP in str(word):
+                x.append(word.split(ENUM_SEP))
+            else:
+                try:
+                    x.append(ast.literal_eval(word.strip()))
+                except:
+                    x.append(word)
+
         return x
 
     def _correctData(self, data, header):

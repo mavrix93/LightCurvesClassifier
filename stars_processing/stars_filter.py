@@ -5,6 +5,7 @@ import numpy as np
 from lcc.entities.exceptions import QueryInputError
 from lcc.utils.commons import check_attribute
 from lcc.utils.helpers import getMeanDict
+from sklearn.manifold.t_sne import TSNE
 
 
 class StarsFilter(object):
@@ -30,9 +31,13 @@ class StarsFilter(object):
     others_coords : list
         Parameters space coordinates (got from descriptors) of contamination
         objects
+
+    reduce_dim : int, NoneType
+        Dimension of coordinates is reduced if it is greater then
+        `reduce_dim`. In case of 0 or None the dimension is kept
     """
 
-    def __init__(self, descriptors, deciders):
+    def __init__(self, descriptors, deciders, reduced_dim=2):
         """
         Parameters
         ----------
@@ -41,6 +46,10 @@ class StarsFilter(object):
 
         decider :list
             Decider objects
+
+        reduce_dim : int, NoneType
+            Dimension of coordinates is reduced if it is greater then
+            `reduce_dim`. In case of 0 or None the dimension is kept
         """
 
         self.descriptors = descriptors
@@ -49,18 +58,24 @@ class StarsFilter(object):
             deciders = [deciders]
         self.deciders = deciders
 
+        if not deciders:
+            warnings.warn("There are no deciders!")
+        if not descriptors:
+            warnings.warn("There are no descriptors!")
+
+        self.reduced_dim = reduced_dim
         self.learned = False
         self.searched_coords = []
         self.others_coords = []
 
     def __str__(self, *args, **kwargs):
         txt = "Descriptors: " + \
-            ", ".join([desc.__name__ for desc in self.descriptors])
+            ", ".join([desc.__class__.__name__ for desc in self.descriptors])
         txt += "\nDeciders: " + \
-            ", ".join([dec.__name__ for dec in self.deciders])
+            ", ".join([dec.__class__.__name__ for dec in self.deciders])
         if self.learned:
-            txt += "\nStar filter is learned"
-            txt += "It was trained on %i (searched) + %i (contamination) sample" % (
+            txt += "\nStar filter is learned\n"
+            txt += "It was trained on the sample of %i searched and %i contamination objects" % (
                 len(self.searched_coords), len(self.others_coords))
         else:
             txt += "\nStar filter is not learned"
@@ -122,6 +137,11 @@ class StarsFilter(object):
         -------
             None
         """
+        if searched_coords and self.reduced_dim and len(searched_coords[0]) > self.reduced_dim:
+            models = TSNE(self.reduced_dim)
+            searched_coords = models.fit_transform(searched_coords)
+            others_coords = models.fit_transform(others_coords)
+
         self.coords = searched_coords + others_coords
 
         for decider in self.deciders:
@@ -181,8 +201,13 @@ class StarsFilter(object):
             else:
                 warnings.warn("Not all space coordinates have been obtained")
 
+        if space_coordinates and self.reduced_dim and len(space_coordinates[0]) > self.reduced_dim:
+            models = TSNE(self.reduced_dim)
+            space_coordinates = models.fit_transform(space_coordinates)
+
         if get_labels:
             return space_coordinates, labels
+
         return space_coordinates
 
     def evaluateStars(self, stars, meth="mean"):
@@ -293,9 +318,12 @@ class StarsFilter(object):
     def _getSpaceCoordinates(self, star):
         space_coordinate = []
         for descriptor in self.descriptors:
-            coo = descriptor.getSpaceCoords([star])
+            coo = descriptor.getSpaceCoords([star])[0]
             if coo:
-                space_coordinate += coo
+                if hasattr(coo, "__iter__"):
+                    space_coordinate += coo
+                else:
+                    space_coordinate.append(coo)
             else:
                 return False
         return space_coordinate

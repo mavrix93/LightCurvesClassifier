@@ -50,7 +50,7 @@ class FileManager(LightCurvesDb):
         Name of the pickle file which contains list of star objects
     '''
 
-    DEFAULT_SUFFIX = "dat"
+    SUFFIXES = ["dat", "txt", "fits", "FITS"]
     DEFAULT_STARCLASS = "star"
 
     FITS_RA = "RA"
@@ -83,7 +83,7 @@ class FileManager(LightCurvesDb):
         self.path = path
         self.star_class = obtain_params.get(
             "star_class", self.DEFAULT_STARCLASS)
-        self.suffix = obtain_params.get("suffix", self.DEFAULT_SUFFIX)
+        self.suffix = obtain_params.get("suffix", None)
         file_lim = obtain_params.get("files_limit")
         if file_lim:
             self.files_limit = int(file_lim)
@@ -127,11 +127,20 @@ class FileManager(LightCurvesDb):
             self.path = self.path + "/"
 
         # Get all light curve files (all files which end with certain suffix
-        starsList = glob.glob("%s*%s" % (self.path, self.suffix))
+        if not self.suffix:
+            starsList = []
+            for suffix in self.SUFFIXES:
+                starsList += glob.glob("%s*%s" % (self.path, suffix))
+        else:
+            starsList = glob.glob("%s*%s" % (self.path, self.suffix))
         numberOfFiles = len(starsList)
         if (numberOfFiles == 0):
-            raise InvalidFilesPath(
-                "There are no stars in %s with %s suffix" % (self.path, self.suffix))
+            if self.suffix:
+                raise InvalidFilesPath(
+                    "There are no stars in %s with %s suffix" % (self.path, self.suffix))
+            else:
+                raise InvalidFilesPath(
+                    "There are no stars in %s with any of supported suffix: %s" % (self.path, self.SUFFIXES))
 
         if (numberOfFiles < self.files_limit):
             self.files_limit = None
@@ -141,7 +150,11 @@ class FileManager(LightCurvesDb):
         if self.suffix in self.FITS_SUFFIX:
             return self._loadFromFITS(starsList, numberOfFiles)
 
-        return self._loadDatFiles(starsList, numberOfFiles)
+        stars = self._loadDatFiles(
+            [s for s in starsList if s.endswith("dat")], numberOfFiles)
+        stars += self._loadFromFITS(
+            [s for s in starsList if s.endswith("fits")], numberOfFiles)
+        return stars
 
     def _loadDatFiles(self, star_paths, numberOfFiles):
         stars = []
@@ -169,6 +182,7 @@ class FileManager(LightCurvesDb):
             counter += 1
         return stars
 
+    @classmethod
     def _loadLcFromDat(self, file_name):
         '''
         Load Light curve from dat file of light curve
@@ -194,6 +208,7 @@ class FileManager(LightCurvesDb):
         except IndexError:
             dat = np.loadtxt(file_name, usecols=(
                 TIME_COL, MAG_COL, ERR_COL), skiprows=2)
+
         except IOError, Argument:
             raise InvalidFilesPath(
                 "\nCannot open light curve file\n %s" % Argument)
@@ -236,18 +251,20 @@ class FileManager(LightCurvesDb):
     def _loadFromFITS(self, star_paths, files_lim=None):
         stars = []
         for path in star_paths:
-            stars.append(self._createStarFromFITS(path))
+            try:
+                fits = pyfits.open(os.path.join(self.path, path))
+
+            except:
+                raise InvalidFile("Invalid fits file or path: %s" % self.path)
+
+            stars.append(self._createStarFromFITS(fits))
 
         return stars
 
-    def _createStarFromFITS(self, fits_name):
+    @classmethod
+    def _createStarFromFITS(self, fits):
         DB_NAME_END = "_name"
         DB_IDENT_SEP = "_id_"
-
-        try:
-            fits = pyfits.open(os.path.join(self.path, fits_name))
-        except:
-            raise InvalidFile("Invalid fits file or path: %s" % self.path)
 
         prim_hdu = fits[0].header
 
@@ -286,8 +303,10 @@ class FileManager(LightCurvesDb):
         for lc_hdu in fits[1:]:
             star.putLightCurve(self._createLcFromFits(lc_hdu))
 
+        fits.close()
         return star
 
+    @classmethod
     def _createLcFromFits(self, fits):
 
         time = []
@@ -347,19 +366,20 @@ class FileManager(LightCurvesDb):
         for lc in star.light_curves:
             col1 = pyfits.Column(name=lc.meta.get("xlabel", "hjd"),
                                  unit=lc.meta.get("xlabel_unit", "days"),
-                                 format='D', array=lc.time)
+                                 format='E', array=lc.time)
             col2 = pyfits.Column(name=(lc.meta.get("ylabel", "magnitude")),
                                  unit=lc.meta.get("ylabel_unit", "mag"),
-                                 format='D', array=lc.mag)
+                                 format='E', array=lc.mag)
             col3 = pyfits.Column(name="error",
                                  unit=lc.meta.get("ylabel_unit", "mag"),
-                                 format='D', array=lc.err)
+                                 format='E', array=lc.err)
 
             # lc_hdu = pyfits.BinTableHDU.from_columns( cols )
             lc_hdu = pyfits.new_table(pyfits.ColDefs([col1, col2, col3]))
 
             lc_hdu.header["FILTER"] = lc.meta.get("color", "")
-            lc_hdu.header[self.DB_ORIGIN] = lc.meta.get("origin", "")
+            lc_hdu.header[
+                "HIERARCH " + self.DB_ORIGIN] = lc.meta.get("origin", "")
 
             hdu_list.append(lc_hdu)
 

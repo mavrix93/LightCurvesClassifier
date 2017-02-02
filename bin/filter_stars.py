@@ -6,14 +6,13 @@ import os
 import sys
 import warnings
 
-from lcc.data_manager.filter_serializer import FiltersSerializer
 from lcc.db_tier.stars_provider import StarsProvider
-from lcc.entities.exceptions import InvalidFilesPath
 from lcc.stars_processing.systematic_search.stars_searcher import StarsSearcher
 from lcc.data_manager.status_resolver import StatusResolver
 from lcc.entities.exceptions import QueryInputError
 from lcc.data_manager.filter_serializer import FiltersSerializer
 from lcc.data_manager.prepare_package import prepare_run
+from __builtin__ import True
 
 
 __all__ = []
@@ -147,10 +146,16 @@ def main(project_settings, argv=None):
                               description=program_license)
         parser.add_option("-r", "--run", dest="run",
                           help="Name of this run (name of folder for results)", type=str)
+
         parser.add_option("-q", "--query", dest="query",
                           help="Name of the query file in %PROJECT_DIR/queries")
+
         parser.add_option("-d", "--database", dest="db",
                           help="Searched database")
+
+        parser.add_option("-s", "--coords", dest="save_coords", default="y",
+                          help="Save params coordinates of inspected stars if 'y'.")
+
         parser.add_option("-f", "--filter", dest="filt", action="append", default=[],
                           help="Name of the filter file in filters folder (%PROJECT_DIR/filters)")
 
@@ -191,6 +196,11 @@ def main(project_settings, argv=None):
         else:
             filt_txt = [filt.__class__.__name__ for filt in star_filters]
 
+        if opts.save_coords == "y":
+            save_coords = True
+        else:
+            save_coords = False
+
         prepare_run(project_settings.RESULTS, opts.run)
 
         print _sum_txt(opts.db, len(resolver.status_queries), filt_txt)
@@ -202,7 +212,8 @@ def main(project_settings, argv=None):
                                  stat_file_path=os.path.join(
                                      project_settings.RESULTS, opts.run, "query_status.txt"),
                                  obth_method=opts.db,
-                                 unfound_lim=UNFOUND_LIM)
+                                 unfound_lim=UNFOUND_LIM,
+                                 save_coords=save_coords)
         searcher.queryStars(queries)
 
     except Exception, e:
@@ -219,7 +230,7 @@ def _sum_txt(db, num_queries, star_filters):
     sumup_txt = '''
     \n\nDownloading from %s database is about to start..
 The query file was loaded and there were found %i queries.
-Filters which will be applied: %s
+%s filter/s will be used.
     \n\n''' % (db, num_queries, star_filters)
     return sumup_txt
 

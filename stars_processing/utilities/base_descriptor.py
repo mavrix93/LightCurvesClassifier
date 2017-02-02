@@ -10,6 +10,8 @@ class BaseDescriptor(object):
     subclasses have certain methods
     '''
 
+    LABEL = ""
+
     @accepts(list)
     @returns(list)
     def getSpaceCoords(self, stars):

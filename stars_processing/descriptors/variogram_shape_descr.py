@@ -13,8 +13,8 @@ class VariogramShapeDescr(SymbolicRepresentation, ComparativeBase, BaseDescripto
     comp_stars : list
         Template stars
 
-    days_per_bin : float
-        Ratio which decides about length of the word
+    bins : int
+        Number of bins
 
     alphabet_size : int
         Range of of used letters
@@ -23,6 +23,8 @@ class VariogramShapeDescr(SymbolicRepresentation, ComparativeBase, BaseDescripto
         If True, words with different lengths are dynamically compared
         by sliding shorter word thru longer
     '''
+
+    LABEL = "Dissimilarity of the light curve's variogram from the template"
 
     def __init__(self, comp_stars, bins, alphabet_size, slide=False, **kwargs):
         '''

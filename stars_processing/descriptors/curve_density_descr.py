@@ -14,6 +14,8 @@ class CurveDensityDescr(BaseDescriptor):
     ----------
     '''
 
+    LABEL = "Curve density"
+
     def getSpaceCoords(self, stars):
         """
         Get list of curve densities
@@ -33,7 +35,7 @@ class CurveDensityDescr(BaseDescriptor):
             if star.lightCurve:
                 x, _ = to_ekvi_PAA(star.lightCurve.time, star.lightCurve.mag)
                 ren = x.max() - x.min()
-                coo.append([len(x) / ren])
+                coo.append(len(x) / ren)
             else:
                 coo.append([None])
         return coo

@@ -4,6 +4,8 @@ import unittest
 from lcc.entities.star import Star
 import numpy as np
 
+# TODO
+
 
 class Test(unittest.TestCase):
 
@@ -28,9 +30,9 @@ class Test(unittest.TestCase):
         var_abbes = [st.lightCurve.getAbbe(bins=500) for st in self.variables]
         noisy_abbes = [st.lightCurve.getAbbe(bins=500) for st in self.noisy]
 
-        pyplot.hist(var_abbes)
-        pyplot.hist(noisy_abbes)
-        pyplot.show()
+        # pyplot.hist(var_abbes)
+        # pyplot.hist(noisy_abbes)
+        # pyplot.show()
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testAbbe']

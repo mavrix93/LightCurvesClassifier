@@ -71,6 +71,7 @@ class StatsManager(object):
         with open(os.path.join(path, file_name), 'w') as f:
             f.write('#fp%stp\n' % delim)
             np.savetxt(f, roc, fmt='%.2f', delimiter=delim)
+        return roc
 
     def plotROC(self, save=False, title="ROC curve", path=".",
                 file_name="roc_plot.png"):

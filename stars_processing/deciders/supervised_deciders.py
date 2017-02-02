@@ -1,105 +1,11 @@
 from astroML.classification.gmm_bayes import GMMBayes
 from sklearn import svm
 from sklearn import tree
-from sklearn.naive_bayes import GaussianNB
-from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis as QDA
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
-import numpy as np
+from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis as QDA
+from sklearn.naive_bayes import GaussianNB
 
-from lcc.entities.exceptions import QueryInputError, LearningError
-from lcc.stars_processing.deciders.base_decider import BaseDecider
-from lcc.utils.helpers import checkDepth
-
-
-class SupervisedBase(BaseDecider):
-    """
-    Base class for `sklearn` library supervised classes transformed
-    to the package content. It is not intended to use this directly,
-    but thru certain method subclasses.
-
-    Attributes
-    ----------
-    treshold : float
-        Border probability value (objects with probability higher then this
-        value is considered as searched object)
-
-    learner : sklearn object
-        Learner object for desired method of supervised learning
-    """
-
-    def __init__(self, clf, treshold=0.5):
-        """
-        Parameters
-        -----------
-        treshold: float
-            Border probability value (objects with probability higher then this
-            value is considered as searched object)
-
-        learner: sklearn object
-            Learner object for desired method of supervised learning
-        """
-
-        self.treshold = treshold
-        self.learner = clf()
-
-    def learn(self, right_coords, wrong_coords):
-        """
-        Learn to recognize objects
-
-        Parameters
-        -----------
-        right_coords: iterable
-            List of coordinates (list of numbers) of searched objects
-
-        wrong_coords: iterable
-            List of coordinates (list of numbers) of contamination objects
-
-        Returns
-        --------
-        NoneType
-            None
-        """
-        if not right_coords or not wrong_coords:
-            raise QueryInputError(
-                "Decider can't be learned on an empty sample")
-
-        y = [1 for i in range(len(right_coords))]
-        y += [0 for i in range(len(wrong_coords))]
-        self.X = np.array(right_coords + wrong_coords)
-        self.y = np.array(y)
-
-        if not self.X.any() or not self.y.any():
-            raise QueryInputError(
-                "No stars have attributes which are needed by filter")
-
-        try:
-            self.learner.fit(self.X, self.y)
-        except:
-            raise LearningError(
-                "Could not learn decider on dataset:\nX = %s\n\nlabels = %s" % (self.X, self.y))
-
-    def evaluate(self, coords):
-        """
-        Get probability of membership
-
-        Parameters
-        ----------
-        coords : list of lists
-            List of prameter space coordinates
-
-        Returns
-        -------
-        list of floats
-            List of probabilities
-        """
-        # TODO:
-        # if coords != np.ndarray: coords = np.array( coords )
-        # checkDepth(coords, 2)
-        prediction = self.learner.predict_proba(coords)[:, 1]
-        checkDepth(prediction, 1)
-        where_are_NaNs = np.isnan(prediction)
-        prediction[where_are_NaNs] = 0
-        return prediction
+from lcc.stars_processing.utilities.superv_base_decider import SupervisedBase
 
 
 class LDADec(SupervisedBase):

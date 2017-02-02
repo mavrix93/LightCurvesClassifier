@@ -194,8 +194,8 @@ class BaseDecider(object):
         stat = (("precision", precision),
                 ("true_positive_rate", round(true_pos / right_num, 3)),
                 ("true_negative_rate", round(true_neg / wrong_num, 3)),
-                ("false_positive_rate", round(false_pos / right_num, 3)),
-                ("false_negative_rate", round(false_neg / wrong_num, 3)))
+                ("false_positive_rate", round(1 - (true_pos / right_num), 3)),
+                ("false_negative_rate", round(1 - (true_neg / wrong_num), 3)))
 
         return collections.OrderedDict(stat)
 
