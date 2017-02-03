@@ -231,12 +231,13 @@ class StarsSearcher():
                 (("found", False), ("filtered", False), ("passed", False)))
             try:
                 stars = StarsProvider().getProvider(
-                    obtain_method=self.obth_method, **query).getStarsWithCurves()
+                    self.obth_method, query).getStarsWithCurves()
             except QueryInputError:
                 raise
             except (KeyboardInterrupt, SystemExit):
                 raise
             except:
+                raise
                 warn("Couldn't download any light curve")
                 stars = []
             # Check if the searched star was found

@@ -17,7 +17,7 @@ __all__ = []
 
 __version__ = 0.1
 __date__ = '2016-11-07'
-__updated__ = '2017-02-01'
+__updated__ = '2017-02-02'
 
 
 def main(project_settings, argv=None):
@@ -85,6 +85,8 @@ def main(project_settings, argv=None):
                           help="Range of parameters separated by ':' - from_num:to_num:step_num.")
         parser.add_option("-d", "--delim", dest="delim", default=";",
                           help="Delimiter for the output file")
+        parser.add_option("-f", "--folder", dest="folder", default=".",
+                          help="Path where the query file will be saved")
 
         # process options
         opts, args = parser.parse_args(argv)
@@ -139,7 +141,12 @@ def main(project_settings, argv=None):
 
         query = get_combinations(params, *x)
 
-        path = project_settings.TUN_PARAMS
+        if opts.folder == "t":
+            path = project_settings.TUN_PARAMS
+        elif opts.folder == "q":
+            path = project_settings.QUERIES
+        else:
+            path = opts.folder
         file_name = opts.output
 
         StatusResolver.save_query(query, file_name, path, opts.delim)

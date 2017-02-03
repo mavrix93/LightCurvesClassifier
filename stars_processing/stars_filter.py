@@ -82,7 +82,7 @@ class StarsFilter(object):
         return txt
 
     @check_attribute("learned", True, "raise")
-    def filterStars(self, stars, pass_method="all", treshold=0.5):
+    def filterStars(self, stars, pass_method="all"):
         '''
         Apply all deciders
 
@@ -107,6 +107,8 @@ class StarsFilter(object):
         '''
         stars_coords = self.getSpaceCoordinates(stars)
 
+        treshold = np.mean([dec.treshold for dec in self.deciders])
+
         if pass_method == "all":
             probabilities = self.evaluateCoordinates(stars_coords, "lowest")
 
@@ -119,7 +121,7 @@ class StarsFilter(object):
         else:
             raise QueryInputError("Invalid filtering method")
 
-        return [probab >= treshold for probab in probabilities]
+        return [stars[i] for i, probab in enumerate(probabilities) if probab >= treshold]
 
     def learnOnCoords(self, searched_coords, others_coords):
         """
@@ -137,6 +139,9 @@ class StarsFilter(object):
         -------
             None
         """
+        searched_coords = list(searched_coords)
+        others_coords = list(others_coords)
+
         if searched_coords and self.reduced_dim and len(searched_coords[0]) > self.reduced_dim:
             models = TSNE(self.reduced_dim)
             searched_coords = models.fit_transform(searched_coords)

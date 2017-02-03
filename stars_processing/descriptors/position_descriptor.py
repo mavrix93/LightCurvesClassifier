@@ -1,10 +1,12 @@
-from lcc.stars_processing.utilities.base_decider import BaseDecider
+from lcc.stars_processing.utilities.base_descriptor import BaseDescriptor
 
 
-class PositionDescriptor(BaseDecider):
+class PositionDescriptor(BaseDescriptor):
     '''
     Describe stars according their position on the sky
     '''
+
+    LABEL = ["Right ascension", "Declination"]
 
     def getSpaceCoords(self, stars):
         """

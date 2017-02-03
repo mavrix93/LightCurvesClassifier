@@ -18,7 +18,7 @@ from __builtin__ import True
 __all__ = []
 __version__ = 0.3
 __date__ = '2016-09-05'
-__updated__ = '2017-01-26'
+__updated__ = '2017-02-02'
 
 
 def main(project_settings, argv=None):
@@ -175,8 +175,16 @@ def main(project_settings, argv=None):
 
         # -------    Core    ------
 
+        header = "#" + " " * 40 + \
+            "Light Curves Classifier - Filter stars" + " " * 30 + "#"
+        print "\n\n\t" + "#" * len(header)
+        print "\t#" + " " * (len(header) - 2) + "#"
+        print "\t" + header
+        print "\t#" + " " * (len(header) - 2) + "#"
+
         UNFOUND_LIM = 2
 
+        print "Loading query..."
         try:
             resolver = StatusResolver(
                 status_file_path=os.path.join(project_settings.QUERIES, opts.query))
@@ -184,10 +192,10 @@ def main(project_settings, argv=None):
         except IOError:
             raise IOError("Query file was not found")
         except Exception as e:
-            raise
             print "Err:", e
             raise QueryInputError("There is an issue in query file")
 
+        print "Loading filters"
         star_filters = [FiltersSerializer(
             filt_name, project_settings.FILTERS).loadFilter() for filt_name in opts.filt]
 
@@ -217,7 +225,7 @@ def main(project_settings, argv=None):
         searcher.queryStars(queries)
 
     except Exception, e:
-        raise
+        print e, "\n\n"
         indent = len(program_name) * " "
         sys.stderr.write(program_name + ": " + repr(e) + "\n")
         sys.stderr.write(indent + "  for help use --help")

@@ -63,6 +63,13 @@ class StarsCatalogue(object):
 
         return passed_stars
 
+    def _getRanges(self, ra, dec, arcsec_delta):
+        if not ra or not dec or not arcsec_delta:
+            return "", "", "", ""
+        else:
+            delta = arcsec_delta / 3600.
+            return ra - delta, ra + delta, dec - delta, dec + delta
+
 
 class LightCurvesDb(StarsCatalogue):
     __metaclass__ = abc.ABCMeta

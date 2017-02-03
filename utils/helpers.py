@@ -34,10 +34,6 @@ def getArguments(insp_classes):
             n = -len(default_values)
         else:
             n = None
-        print insp_class.__name__
-        print "def", default_values
-        print "args", params
-        print "n", n
         mandatory_params = params[1:n]
         default_params = params[n:]
         mapped_classes.append({"name": insp_class.__name__,

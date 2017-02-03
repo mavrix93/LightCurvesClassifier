@@ -25,21 +25,11 @@ class BaseDecider(object):
         Probability (1.0  means 100 %) level. All objects with probability of
         membership to the group higher then the treshold are considered
         as members.
+
+    treshold = 0.8
     """
 
     __metaclass__ = abc.ABCMeta
-
-    def __init__(self, treshold=0.5):
-        """
-        Parameters
-        -----------
-        treshold : float
-            Probability (1.0  means 100 %) level. All objects with probability
-            of membership to the group higher then the treshold are considered
-            as members
-        """
-
-        self.treshold = treshold
 
     def learn(self, right_coords, wrong_coords):
         """

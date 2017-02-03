@@ -36,13 +36,11 @@ class StatsManager(object):
         list
             List of fp values and tp values values
         """
-        x = [0]
-        y = [0]
+        x = []
+        y = []
         for stat in self.stats:
             x.append(stat.get("false_positive_rate"))
             y.append(stat.get("true_positive_rate"))
-        x.append(1)
-        y.append(1)
         sort_map = np.argsort(x)
         return [np.array(x)[sort_map], np.array(y)[sort_map]]
 
