@@ -1,11 +1,13 @@
 from __future__ import division
+
+from sklearn.manifold.t_sne import TSNE
 import warnings
 
-import numpy as np
 from lcc.entities.exceptions import QueryInputError
 from lcc.utils.commons import check_attribute
 from lcc.utils.helpers import getMeanDict
-from sklearn.manifold.t_sne import TSNE
+import numpy as np
+import pandas as pd
 
 
 class StarsFilter(object):
@@ -129,28 +131,53 @@ class StarsFilter(object):
 
         Parameters
         ----------
-        searched_coords : list, tuple
+        searched_coords : pandas.DataFram, list, tuple
             Sample of searched coordinates
 
-        others_coords : list, tuple
+        others_coords : pandas.DataFram, list, tuple
             Contamination sample of coordinates
 
         Returns
         -------
             None
         """
-        searched_coords = list(searched_coords)
-        others_coords = list(others_coords)
+        if (isinstance(searched_coords, pd.DataFrame) and
+                isinstance(others_coords, pd.DataFrame)):
+            searched_coords_data = searched_coords.values.tolist()
+            others_coords_data = others_coords.values.tolist()
+            df = True
+        else:
+            searched_coords_data = list(searched_coords)
+            others_coords_data = list(others_coords)
+            df = False
 
-        if searched_coords and self.reduced_dim and len(searched_coords[0]) > self.reduced_dim:
+        if searched_coords_data and self.reduced_dim and len(searched_coords_data[0]) > self.reduced_dim:
             models = TSNE(self.reduced_dim)
-            searched_coords = models.fit_transform(searched_coords)
-            others_coords = models.fit_transform(others_coords)
+            red_searched_coords = models.fit_transform(searched_coords_data)
+            red_others_coords = models.fit_transform(others_coords_data)
 
-        self.coords = searched_coords + others_coords
+            labels = []
+            for dec in self.descriptors:
+                l = dec.LABEL
+                if hasattr(l, "__iter__"):
+                    labels += l
+                else:
+                    labels.append(l)
+
+            if df:
+                index_s = searched_coords.indexes
+                index_o = others_coords.indexes
+            else:
+                index_s = None
+                index_o = None
+
+            searched_coords = pd.DataFrame(
+                red_searched_coords, columns=labels, index=index_s)
+            others_coords = pd.DataFrame(
+                red_others_coords, columns=labels, index=index_o)
 
         for decider in self.deciders:
-            decider.learn(searched_coords, others_coords)
+            decider.learn(searched_coords.values, others_coords.values)
 
         self.learned = True
         self.searched_coords = searched_coords
@@ -176,7 +203,7 @@ class StarsFilter(object):
         self.learnOnCoords(
             self.getSpaceCoordinates(searched), self.getSpaceCoordinates(others))
 
-    def getSpaceCoordinates(self, stars, get_labels=False):
+    def getSpaceCoordinates(self, stars):
         """
         Get params space coordinates according to descriptors
 
@@ -185,16 +212,10 @@ class StarsFilter(object):
         stars : list, tuple
             List of `Star` objects
 
-        get_labels : bool
-            If True labels are returned with coordinates
-
         Returns
         -------
-        list
-            Coordinates of the stars
-
-        list
-            Names of the stars
+        pandas.DataFrame
+            Coordinates of the stars as pandas DataFrame
         """
         space_coordinates = []
         labels = []
@@ -206,14 +227,27 @@ class StarsFilter(object):
             else:
                 warnings.warn("Not all space coordinates have been obtained")
 
+        desc_labels = []
+        for desc in self.descriptors:
+            if hasattr(desc.LABEL, "__iter__"):
+                desc_labels += desc.LABEL
+            else:
+                desc_labels.append(desc.LABEL)
+
+        df_coords = pd.DataFrame(
+            space_coordinates, columns=desc_labels, index=labels)
+        df_coords.fillna(np.NaN)
+        df_coords.dropna(inplace=True)
+
+        space_coordinates = df_coords.values.tolist()
         if space_coordinates and self.reduced_dim and len(space_coordinates[0]) > self.reduced_dim:
             models = TSNE(self.reduced_dim)
-            space_coordinates = models.fit_transform(space_coordinates)
+            reduced_coordinates = models.fit_transform(space_coordinates)
 
-        if get_labels:
-            return space_coordinates, labels
+            df_coords = pd.DataFrame(reduced_coordinates, columns=[
+                                     "" for _ in range(self.reduced_dim)], index=df_coords.index)
 
-        return space_coordinates
+        return df_coords
 
     def evaluateStars(self, stars, meth="mean"):
         """
@@ -314,8 +348,8 @@ class StarsFilter(object):
                 Proportion of negatives that are incorrectly identified
                 as positives
         """
-        searched_stars_coords = self.getSpaceCoordinates(s_stars)
-        contamination_stars_coords = self.getSpaceCoordinates(c_stars)
+        searched_stars_coords = self.getSpaceCoordinates(s_stars).values
+        contamination_stars_coords = self.getSpaceCoordinates(c_stars).values
 
         return getMeanDict([decider.getStatistic(searched_stars_coords,
                                                  contamination_stars_coords, treshold) for decider in self.deciders])
@@ -323,8 +357,9 @@ class StarsFilter(object):
     def _getSpaceCoordinates(self, star):
         space_coordinate = []
         for descriptor in self.descriptors:
-            coo = descriptor.getSpaceCoords([star])[0]
-            if coo:
+            _coo = descriptor.getSpaceCoords([star])
+            if _coo:
+                coo = _coo[0]
                 if hasattr(coo, "__iter__"):
                     space_coordinate += coo
                 else:

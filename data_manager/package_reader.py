@@ -29,7 +29,8 @@ class PackageReader(object):
     EXCLUDE = tuple()
     NAMES = {"descriptors": ("lcc/stars_processing/descriptors", BaseDescriptor),
              "connectors": ("lcc/db_tier/connectors", StarsCatalogue),
-             "deciders": ("lcc/stars_processing/deciders", BaseDecider)}
+             "deciders": ("lcc/stars_processing/deciders", BaseDecider),
+             "unsup_deciders": ("lcc/stars_processing/deciders/unsupervised", BaseDecider)}
 
     @classmethod
     def getClasses(self, name):

@@ -4,12 +4,13 @@ import os
 from lcc.utils.helpers import checkDepth
 import numpy as np
 import warnings
+import pandas as pd
 
 
 def plotProbabSpace(star_filter, plot_ranges=None, opt="show",
                     path=".", file_name="params_space.png", N=100,
                     title="Params space", x_lab="", y_lab="",
-                    searched_coords=[], contaminatiom_coords=[]):
+                    searched_coords=[], contamination_coords=[]):
     """
     Plot params space
 
@@ -39,12 +40,16 @@ def plotProbabSpace(star_filter, plot_ranges=None, opt="show",
     """
     OVERLAY = 0.6
 
-    dim = len(star_filter.searched_coords[0])
+    dim = len(star_filter.searched_coords.columns)
+
+    if isinstance(searched_coords, pd.DataFrame) and isinstance(contamination_coords, pd.DataFrame):
+        searched_coords = searched_coords.values.tolist()
+        contamination_coords = contamination_coords.values.tolist()
 
     if not plot_ranges:
         plot_ranges = []
         trained_coo = np.array(
-            star_filter.searched_coords + star_filter.others_coords).T
+            star_filter.searched_coords.values.tolist() + star_filter.others_coords.values.tolist()).T
         for i in range(dim):
             rang = [np.min(trained_coo[i]), np.max(trained_coo[i])]
             overl = abs(rang[0] - rang[1]) * OVERLAY
@@ -57,7 +62,7 @@ def plotProbabSpace(star_filter, plot_ranges=None, opt="show",
         plt_data = plot1DProbabSpace(
             star_filter, plot_ranges, N, x_lab, y_lab, title,
             searched_coords=searched_coords,
-            contaminatiom_coords=contaminatiom_coords)
+            contaminatiom_coords=contamination_coords)
     elif dim == 2:
         if not x_lab and not y_lab:
             if len(star_filter.descriptors) == 2:
@@ -78,7 +83,7 @@ def plotProbabSpace(star_filter, plot_ranges=None, opt="show",
                     y_lab = ""
         plt_data = plot2DProbabSpace(star_filter, plot_ranges, N,
                                      searched_coords=searched_coords,
-                                     contaminatiom_coords=contaminatiom_coords)
+                                     contaminatiom_coords=contamination_coords)
 
     else:
         return np.array([[]])
@@ -228,3 +233,41 @@ def plotHist(searched_coo, cont_coo, labels=[], bins=None, save_path=None,
                 save_path, file_name + "_hist_%s.png" % (lab.replace(" ", "_"))))
         else:
             plt.show()
+
+
+def plotUnsupProbabSpace(coords, decider, opt="show", N=100):
+    x_min, x_max = coords[:, 0].min() - 1, coords[:, 0].max() + 1
+    y_min, y_max = coords[:, 1].min() - 1, coords[:, 1].max() + 1
+    x, y = np.linspace(x_min, x_max, N), np.linspace(y_min, y_max, N)
+    xx, yy = np.meshgrid(x, y)
+
+    # Obtain labels for each point in mesh. Use last trained model.
+    Z = decider.evaluate(np.c_[xx.ravel(), yy.ravel()])
+
+    # Put the result into a color plot
+    Z = Z.reshape(xx.shape)
+
+    # Plot the centroids as a white X
+    centroids = decider.classifier.cluster_centers_
+
+    if opt == "show":
+        plt.figure(1)
+        plt.clf()
+        plt.imshow(Z, interpolation='nearest',
+                   extent=(xx.min(), xx.max(), yy.min(), yy.max()),
+                   cmap=plt.cm.Paired,
+                   aspect='auto', origin='lower')
+
+        plt.plot(coords[:, 0], coords[:, 1], 'k.', markersize=2)
+        plt.scatter(centroids[:, 0], centroids[:, 1],
+                    marker='x', s=169, linewidths=3,
+                    color='w', zorder=10)
+        plt.title('')
+        plt.xlim(x_min, x_max)
+        plt.ylim(y_min, y_max)
+        plt.xticks(())
+        plt.yticks(())
+
+        plt.show()
+
+    return x, y, Z, centroids

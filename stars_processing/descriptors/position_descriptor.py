@@ -25,5 +25,8 @@ class PositionDescriptor(BaseDescriptor):
 
         coords = []
         for star in stars:
-            coords.append([star.coo.ra.degree, star.coo.dec.degree])
+            if star.coo:
+                coords.append([star.coo.ra.degree, star.coo.dec.degree])
+            else:
+                coords.append([None, None])
         return coords

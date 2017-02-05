@@ -59,7 +59,7 @@ class SupervisedBase(BaseDecider):
 
         if not len(right_coords) or not len(wrong_coords):
             raise QueryInputError(
-                "Decider can't be learned on an empty sample")
+                "Decider can't be learned on an empty sample\nGot\tsearched:%s\tothers%s" % (right_coords, wrong_coords))
 
         y = [1 for i in range(len(right_coords))]
         y += [0 for i in range(len(wrong_coords))]
@@ -68,7 +68,7 @@ class SupervisedBase(BaseDecider):
 
         if not self.X.any() or not self.y.any():
             raise QueryInputError(
-                "No stars have attributes which are needed by filter")
+                "No stars have an attribute which are needed by filter")
 
         try:
             self.learner.fit(self.X, self.y)

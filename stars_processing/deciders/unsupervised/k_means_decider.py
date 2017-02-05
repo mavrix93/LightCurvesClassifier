@@ -2,7 +2,7 @@ from matplotlib import pyplot as plt
 from sklearn.cluster.k_means_ import KMeans
 
 import numpy as np
-from stars_processing.deciders._unsupervised.unsupervised_base import UnsupervisedBase
+from lcc.stars_processing.deciders.unsupervised.unsupervised_base import UnsupervisedBase
 
 
 class KMeansDecider(UnsupervisedBase):

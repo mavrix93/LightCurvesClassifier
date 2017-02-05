@@ -2,9 +2,10 @@ import numpy as np
 
 from lcc.entities.exceptions import QueryInputError
 from lcc.utils.helpers import convertInputValue
+import ast
 
 
-def parse_query_ranges(raw_params, split_by=":", enum_by=","):
+def parse_query_ranges(raw_params, split_by=":", enum_by=";"):
     """
     Parse range strings
 
@@ -82,14 +83,23 @@ def _parse_tun_query(one_param):
         obj_name, col = x
 
         descr = this_comb.get(obj_name)
+
         if not descr:
             this_comb[obj_name] = {}
-        if value == "True":
-            value = True
-        elif value == "False":
-            value = False
-        elif value == "None":
-            value = None
 
+        if isinstance(value, str):
+            if value == "True":
+                value = True
+            elif value == "False":
+                value = False
+            elif value == "None":
+                value = None
+            elif value.strip().startswith("`") and value.strip().endswith("`"):
+                try:
+                    value = ast.literal_eval(value.strip()[1:-1])
+                except:
+                    raise
+
+        print this_comb
         this_comb[obj_name][col] = value
     return this_comb
