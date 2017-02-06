@@ -1,1 +1,0 @@
-../bin/make_filter.py  -i examples/tuning_histvario_filter.txt -f ComparingFilter -s quasars:20 -c cepheids:5 -c stars:15 -d GaussianNBDec -o examples/HistVario_quasars.filter -l examples/HistVario_quasars
