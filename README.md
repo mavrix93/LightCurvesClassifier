@@ -1,4 +1,4 @@
-# Light Curve Classifier
+# Light Curves Classifier
 
 ## Introduction
 The Light Curve Classifier is a Python package for classifying astronomical objects. It is
