@@ -25,7 +25,7 @@ from lcc.stars_processing.tools.visualization import plotHist
 __all__ = []
 __version__ = 0.3
 __date__ = '2016-09-23'
-__updated__ = '2017-02-02'
+__updated__ = '2017-02-07'
 
 debug = True
 
@@ -232,7 +232,7 @@ def main(project_settings, argv=None):
 
         parser.add_option("-s", "--searched", dest="searched", action="append",
                           default=[],
-                          help="Searched stars folder (present in $PROJEC_DIR/inputs/lcs)")
+                          help="Searched stars folder (present in $PROJEC_DIR/inp_lcs)")
 
         parser.add_option("-c", "--contamination", dest="cont", action="append", default=[],
                           help="Contamination stars folder (present in $PROJEC_DIR/inputs/lcs)")

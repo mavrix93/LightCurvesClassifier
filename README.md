@@ -98,7 +98,7 @@ Output folder of found star objects
 Support tool for making files of queries or files of tuning combinations in given ranges.
 
 | option | flag option |  description | default value |
-|:-------:|:---------:|:------:|:---------:|:-----:|:--------:|:------:|
+|:-------:|:---------:|:------:|:---------:|
 |-o | --output | Name of the query file | my_query.txt |
 |-p | --param | Parameter name which will be generated| |
 |-r | --range | Range of parameters separated by ':' - from_num:to_num:step_num | |
@@ -107,36 +107,91 @@ Support tool for making files of queries or files of tuning combinations in give
 
 *There are two shortcuts for the --folder paramater to the folder for queries - "q" and for tuning parameters - "t".
 
+Example
+
+```
+lcc prepare_query -o tune_lc_shape.txt -p CurvesShapeDescr:alphabet_size -r 5:19:3 -p CurvesShapeDescr:days_per_bin -r 30:120:40 -p QDADec:treshold -r 0.1:0.99:0.08
+```
+
+Thi genarates *tune_lc_shape.txt* file in *tun_params* directory which looks like that:
+
+```
+#QDADec:treshold;CurvesShapeDescr:alphabet_size;CurvesShapeDescr:days_per_bin
+0.1;5;30
+0.18;5;30
+0.26;5;30
+...
+```
+
 #### Make filter
+
 This script creates new filter objects which are then able to recognize if an inspected
 star object is a member of searched group or if it is not. The learning is performed
-by different methods (which can be specified) on train sample of searched objects and
-contamination objects (other stars).
+by different methods (which can be specified) on the train sample of searched objects and
+the contamination sample. 
+
+
+| option | flag option |  description | default value |
+|:-------:|:---------:|:------:|:---------:|:-----:|:--------:|:------:|
+| -i | --input | Name of the file of the tuning combinations (present in PROJEC_DIR/tun_params)| |
+| -n | --name | Name of the filter (the filter file will be appended by ".filter" | Unnamed |
+| -f | --descriptor | Descriptors (this key can be used multiple times | |
+| -d | --decider | Decider for learning to recognize objects | |
+| -s | --searched | Searched stars folder (present in PROJEC_DIR/inp_lcs)| |
+| -c | --contamination | Contamination stars folder (present in PROJEC_DIR/inp_lcs)| |
+| -t | --template | Template stars folder (present in PROJEC_DIR/inp_lcs) if comparative filters are used | |
+| -p | --split | Split ratio for train-test sample | 3:1 |
+
+Number of stars can be specified after the name of folders for loading the stars. If there is a *dir_name:number*, just *number* of stars are loaded (randomly). If there is a *dir_name%float_number*, just this precentage number if loaded.
+Stars can be also obtained from databases. For this option *db_name:query_file* have to be specified. For example:
+```
+OgleII:query_file.txt
+```
+where *query_file.txt* is located in *PROJECT_DIR/queries*
+
+Example:
+```
+lcc make_filter -i tuning_histvario.txt -f HistShapeDescr -f VariogramShapeDescr -s quasars:50 -c some_stars:50 -t templ_qso:1 -d GaussianNBDec -n HistVarioFilter
+```
+This command loads *tuning_histvario.txt* file of the combination of parameters (see example in "Prepare query" section), it uses Histogram Shape Descriptor  and Variogram Shape Descriptor to describe each star object. Train sample of searched stars is stored in *PROJECT_DIR/inp_lcs/quasars*, contamination sample in ROJECT_DIR/inp_lcs/some_stars* and a template star in ROJECT_DIR/inp_lcs/templ_qso*.
+
+After the tuning result files will be saved in *PROJECT_DIR/filter/HistVarioFilter*.
 
 #### Filter stars
-After creation of filter object it is possible to filter given sample of star objects. In-
-spected stars can be obtained by various connectors which will be described in a next
-chapter.
+After creation of filter object it is possible to use the filter. The searching can be executed on the remote databses or on the files stored locally.
 
 
+| option | flag option |  description | default value |
+|:-------:|:---------:|:------:|:---------:|
+| -r | --run | Name of this run (name of the folder for results)| |
+| -q | --query | Name of the query file in *PROJECT_DIR/queries* | |
+| -d | --database | Searched database | |
+| -s | --coords | Save params coordinates of inspected stars if 'y' | y |
+| -f | --filter | Name of the filter file in the filters folder |   |  |
 
-
-
-### Intro via example
-
-#### Filtering stars via Abbe Value Filter
-
-Our task is to find stars with a trend in their light curves. It can be reached by calculating of Abbe value.
-
-First of all we need to prepare files of filter parameters which will be tuned. For Abbe Value Filter there is just one parameter which have to be find - dimension of reduced light curve (bins). Let's try values between 10 and 150 which step of 5:
+Example:
 
 ```
-./prepare_query.py -o tuning_abbe_filter.txt  -p bins -r 10:150:5
+lcc filter_stars -r FirstRun -d OgleII -q ogle_query.txt -f HistVario/HistVario.filter -s y
 ```
 
-This generates file named "tuning_abbe_filter.txt" in data/inputs.
+This command creates folder *FirstRun* in *PROJECT_DIR/query_results* where status file about progress of filtering and passed lightcurves will be stored. Search is executed in *OgleII* via queries in *PROJECT_DIR/queries/ogle_query.txt* by using *HistVario.filter* for filtering.
 
-| #bins |
+### Examples
+
+#### Filtering stars via Abbe Value Descriptor
+
+Our task is to find stars with a trend in their light curves and then find some of them in OgleII database. It can be reached by calculating of Abbe value - light curves with a trend have Abbe values near to 0 and non-variable light curves 1.
+
+First of all we need to prepare files of descriptor parameters which will be tuned and queries for OgleII databse. For Abbe Value Descriptor there is just one parameter which have to be find - dimension of reduced light curve (bins). Let's try values between 10 and 150 which step of 5:
+
+```
+lcc prepare_query -o tuning_abbe.txt  -p AbeValueDescr:bins -r 10:150:5 -f t
+```
+
+This generates file named "tuning_abbe.txt" in *tun_params*.
+
+| #AbbeValueDescr:bins |
 |-------|
 | 10    |
 | 20    |
@@ -146,19 +201,100 @@ This generates file named "tuning_abbe_filter.txt" in data/inputs.
 | 140   |
 
 
-Then we can learn AbbeValueFilter on train sample of quasars and non variable stars as contamination sample. Our learning method is GaussianNBDec (description of all implemented methods can be found in a next section).
-
 ```
-./make_filter.py  -i tuning_abbe_filter.txt -f AbbeValueFilter -s quasars -c stars -d GaussianNBDec -o AbbeValue_quasar.filter -l AbbeValue_quasar
+lcc prepare_query -o query_ogle.txt  -p starid -r 1:100 -p field_num -r 1:10 -p target -r lmc -f q
 ```
 
 
+Then we can learn AbbeValueDesc on the train sample of quasars and the non variable stars as contamination sample. Our learning method is GaussianNBDec (description of all implemented methods can be found in a next section).
 
 ```
-./filter_stars.py -d FileManager -i query_folders.txt -f AbbeValue_quasar.filter -o examples
+lcc make_filter -i tuning_abbe.txt -f AbbeValueDesc -s quasars -c stars -d GaussianNBDec -n AbbeValue_quasar
 ```
 
 
+
+```
+lcc filter_stars.py -d OgleII -i query_ogle.txt -f AbbeValue_quasar/AbbeValue_quasar.filter -r FoundQuasars
+```
+
+
+# The package
+
+Let's look how could be achieved the same result as in previous example by using the package directly.
+
+```
+import os
+import pandas as pd
+
+from lcc.db_tier.stars_provider import StarsProvider
+from lcc.stars_processing.tools.params_estim import ParamsEstimator
+from lcc.stars_processing.systematic_search.stars_searcher import StarsSearcher
+from lcc.utils.helpers import  get_combinations
+from lcc.data_manager.package_reader import PackageReader
+
+
+# The query #
+#=============
+
+# Tunning parameters
+tun_param = "bins"
+bin_from = 10
+bin_to = 150
+bin_step = 5
+
+# Descriptor and decider
+descr_name = "AbbeValueDescr"
+decid_name = "GaussianNBDec"
+
+# Loading training stars
+LCS_PATH = "/home/martin/workspace/LightCurvesClassifier/data/project/inp_lcs"
+obt_method = "FileManager"
+quasars_path = os.path.join(LCS_PATH, "quasars")
+stars_path = os.path.join(LCS_PATH, "some_stars")
+
+# Query for OgleII
+db_name = "OgleII"
+starid_from = 1
+# starid_to = 100
+starid_to = 10
+field_num_from = 1
+# field_num_to = 10
+field_num_to = 2
+target = "lmc"
+
+
+# Prepare for tuning
+descriptor = PackageReader().getClassesDict("descriptors").get(descr_name)
+decider = PackageReader().getClassesDict("deciders").get(decid_name)
+
+tun_params = [{descr_name : {tun_param : abbe_value}} for abbe_value in range(bin_from, bin_to, bin_step)]
+
+quasars = StarsProvider.getProvider(obt_method, {"path" : quasars_path}).getStarsWithCurves()
+stars = StarsProvider.getProvider(obt_method, {"path" : stars_path}).getStarsWithCurves()
+
+# Estimate all combinations and get the best one
+es = ParamsEstimator(searched=quasars,
+                     others=stars,
+                     descriptors=[descriptor],
+                     deciders=[decider],
+                     tuned_params=tun_params)
+
+star_filter, best_stats, best_params = es.fit()
+
+# Prepare queries and run systematic search by using the filter
+queries = get_combinations(["starid", "field_num", "target"],
+                           range(starid_from, starid_to),
+                           range(field_num_from, field_num_to),
+                           [target])
+
+searcher = StarsSearcher([star_filter],
+                         obth_method=db_name)
+searcher.queryStars(queries)
+
+passed_stars = searcher.passed_stars
+
+```
 
 # Database connectors
 ## Usage
@@ -172,7 +308,7 @@ There are two groups of database connectors:
 + Light curves archives
     - Information about star attributes can be obtained and its light curves
     
-In term of program structure - all connectors return stars objects, but just Light curves archives also obtaining light curves. Star objects can be obtained by common way:
+In term of program structure - all connectors return star objects, but just Light curves archives also obtaining light curves. Star objects can be obtained by the common way:
 
     queries = [{"ra": 297.8399, "dec": 46.57427, "delta": 10},
                 {"kic_num": 9787239},
@@ -181,7 +317,7 @@ In term of program structure - all connectors return stars objects, but just Lig
                                          obtain_params=queries)
     stars = client.getStarsWithCurves()
 
-Because of common API for all connectors therefore databases can be queried by the syntax. Keys for quering depends on designation in particular databases. Anyway there are common keys for cone search:
+Because of common API for all connectors therefore databases can be queried by the same syntax. Keys for quering depends on designation in particular databases. However there are common keys for cone search:
 
 * ra
     - Right Ascension in degrees
@@ -208,7 +344,7 @@ Stars can be then easily crossmatched:
 
 ## Implementing new connectors
 
-All connectors accept input (queries) in unitary format (list of dictionaries) and implements one (stars catalogs) or two (light curves archives) methods which return Star object. In order to access the connector by *StarsProvder* (as is shown in examples above) the module have to be located in *db_tier.connectors* package. This is all magic need to be done to have compatible connector with rest of the package.
+All connectors accept input (queries) in unitary format (list of dictionaries) and implements one (stars catalogs) or two (light curves archives) methods which return Star objects. In order to access the connector by *StarsProvder* (as is shown in examples above) the module have to be located in *db_tier.connectors* package. This is all magic need to be done to have compatible connector with the rest of the package.
 
 The connectors have to inherit *StarsCatalogue* or *LightCurvesDb* classes. This ensures that all connectors are able to return unitary Star objects in the same manner. Inheritage of these classes helps *StarsProvider* to find connectors.
 
@@ -247,7 +383,4 @@ Common interface for all databases accessible via Vizier. For many databases the
                                             ("rPer", "period_r"),
                                         ("bPer", "period_b")))
 
-    
-## Available connectors
-### KeplerArchive
-Connector to Kepler Input Catalog Targets by [kplr](http://dan.iel.fm/kplr/) package. See available query keys in [official field description](http://archive.stsci.edu/search_fields.php?mission=kic10). 
+   

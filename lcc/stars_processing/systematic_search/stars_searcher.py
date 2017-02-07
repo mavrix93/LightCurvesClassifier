@@ -2,12 +2,13 @@ import collections
 import os
 from warnings import warn
 import warnings
+import pandas as pd
 
+from lcc.data_manager.status_resolver import StatusResolver
 from lcc.db_tier.stars_provider import StarsProvider
 from lcc.entities.exceptions import QueryInputError, InvalidFilesPath
 from lcc.utils.helpers import progressbar
 from lcc.utils.stars import saveStars
-from lcc.data_manager.status_resolver import StatusResolver
 
 
 class StarsSearcher():
@@ -35,6 +36,9 @@ class StarsSearcher():
 
     save_coords : bool
         Save params space coordinates of inspected stars
+
+    status : pandas.DataFrame
+        Status table about results of queries
     '''
 
     DEF_save_lim = 50
@@ -91,6 +95,8 @@ class StarsSearcher():
         if save_coords:
             self._saveCoords(query=[], header=True)
         self.save_coords = save_coords
+
+        self.status = pd.DataFrame()
 
     def filterStar(self, star, *args, **kwargs):
         '''
@@ -171,6 +177,12 @@ class StarsSearcher():
         -------
             None
         '''
+        x = collections.OrderedDict(query.copy())
+        x.update(status)
+
+        this_status = pd.DataFrame([x], index=[len(self.status)])
+        self.status = self.status.append(this_status)
+
         if not self.stat_file_path:
             return False
         try:
@@ -283,7 +295,11 @@ class StarsSearcher():
                         warn(
                             "Something went wrong during filtering:\n\t%s" % err)
                     query["name"] = one_star.name
-                    self.statusFile(query, status)
+                else:
+                    status["filtered"] = False
+                    status["passed"] = False
+
+                self.statusFile(query, status)
 
         print "\n************\t\tQuery is done\t\t************"
         print "Query results:\nThere are %i stars passed thru filtering from %s." % (passed_num, stars_num)
