@@ -62,3 +62,5 @@ def loadFromFile(file_name="saved_object.pickle"):
     except ImportError:
         raise InvalidFile(
             "Structure of project has been changed since saving this object")
+    except TypeError:
+        return pickle.load(file_name)

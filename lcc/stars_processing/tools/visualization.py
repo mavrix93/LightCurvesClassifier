@@ -60,7 +60,7 @@ def plotProbabSpace(star_filter, plot_ranges=None, opt="show",
             x_lab = star_filter.descriptors[0].LABEL
             y_lab = "Probability"
         plt_data = plot1DProbabSpace(
-            star_filter, plot_ranges, N, x_lab, y_lab, title,
+            star_filter, plot_ranges, N,
             searched_coords=searched_coords,
             contaminatiom_coords=contamination_coords)
     elif dim == 2:
@@ -107,10 +107,25 @@ def plot2DProbabSpace(star_filter, plot_ranges, N, searched_coords=[],
 
     Parameters
     ----------
+    star_filter : StarsFilter object
+        Trained stars filter
+
+    plot_ranges : iterable
+        Ranges (max/min) for all axis
+
+    N : int
+        Number of points per axis
+
+    searched_coords : list, iterable
+        List of coordinates of searched objects
+
+    contaminatiom_coords : list, iterable
+        List of coordinates of contamination objects
 
     Returns
     -------
-    None
+    tuple
+        x, y, Z
     """
     if checkDepth(plot_ranges, 1, ifnotraise=False):
         plot_ranges = [plot_ranges, plot_ranges]
@@ -138,8 +153,34 @@ def plot2DProbabSpace(star_filter, plot_ranges, N, searched_coords=[],
     return x, y, Z
 
 
-def plot1DProbabSpace(star_filter, plot_ranges, N, x_lab, y_lab, title,
+def plot1DProbabSpace(star_filter, plot_ranges, N,
                       searched_coords=[], contaminatiom_coords=[]):
+    """
+    Plot probability space
+
+    Parameters
+    ----------
+    star_filter : StarsFilter object
+        Trained stars filter
+
+    plot_ranges : iterable
+        Ranges (max/min) for all axis
+
+    N : int
+        Number of points per axis
+
+    searched_coords : list, iterable
+        List of coordinates of searched objects
+
+    contaminatiom_coords : list, iterable
+        List of coordinates of contamination objects
+
+    Returns
+    -------
+    tuple
+        x, y
+    """
+
     if checkDepth(plot_ranges, 2, ifnotraise=False):
         plot_ranges = plot_ranges[0]
     x = np.linspace(plot_ranges[0], plot_ranges[1])
@@ -236,9 +277,21 @@ def plotHist(searched_coo, cont_coo, labels=[], bins=None, save_path=None,
 
 
 def plotUnsupProbabSpace(coords, decider, opt="show", N=100):
-    x_min, x_max = coords[:, 0].min() - 1, coords[:, 0].max() + 1
-    y_min, y_max = coords[:, 1].min() - 1, coords[:, 1].max() + 1
-    x, y = np.linspace(x_min, x_max, N), np.linspace(y_min, y_max, N)
+    if list(coords) and len(coords[0]) == 2:
+        return plot2DUnsupProbabSpace(coords, decider, opt, N)
+    elif list(coords) and len(coords[0]) == 1:
+        return plot1DUnsupProbabSpace(coords, decider, opt, N)
+
+
+def plot2DUnsupProbabSpace(coords, decider, opt="show", N=100):
+    OVERLAY = 0.2
+
+    x_min, x_max = coords[:, 0].min(), coords[:, 0].max()
+    y_min, y_max = coords[:, 1].min(), coords[:, 1].max()
+    xo = (x_max - x_min) * OVERLAY
+    yo = (y_max - y_min) * OVERLAY
+    x, y = np.linspace(
+        x_min - xo, x_max + xo, N), np.linspace(y_min - yo, y_max + yo, N)
     xx, yy = np.meshgrid(x, y)
 
     # Obtain labels for each point in mesh. Use last trained model.
@@ -271,3 +324,15 @@ def plotUnsupProbabSpace(coords, decider, opt="show", N=100):
         plt.show()
 
     return x, y, Z, centroids
+
+
+def plot1DUnsupProbabSpace(coords, decider, opt, N):
+    OVERLAY = 0.2
+
+    x_min, x_max = coords[:, 0].min(), coords[:, 0].max()
+    xo = (x_max - x_min) * OVERLAY
+    x = np.linspace(x_min - xo, x_max + xo, N)
+
+    y = decider.evaluate([[xx] for xx in x])
+    centroids = decider.classifier.cluster_centers_
+    return x, y, centroids

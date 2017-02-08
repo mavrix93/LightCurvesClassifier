@@ -13,6 +13,9 @@ class CustomDecider(BaseDecider):
     ----------
     boundaries : list, iterable
         List of tuples of two values - lower and higher border value
+
+    treshold : float
+        Treshold value for evaluating
     '''
 
     def __init__(self, boundaries):
@@ -35,6 +38,7 @@ class CustomDecider(BaseDecider):
             raise QueryInputError(
                 "List of boundaries have to be consist of tuples of two values")
         self.boundaries = boundaries
+        self.treshold = 0.5
 
     def evaluate(self, star_coords):
         """
@@ -92,7 +96,7 @@ class CustomDecider(BaseDecider):
         NoneType
             None
         """
-        if right_coords and wrong_coords:
+        if len(right_coords) and len(wrong_coords):
             self._checkDimensions(right_coords)
             self._checkDimensions(wrong_coords)
 

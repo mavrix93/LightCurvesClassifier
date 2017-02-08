@@ -244,9 +244,9 @@ class StarsFilter(object):
             models = TSNE(self.reduced_dim)
             reduced_coordinates = models.fit_transform(space_coordinates)
 
-            df_coords = pd.DataFrame(reduced_coordinates, columns=[
-                                     "" for _ in range(self.reduced_dim)], index=df_coords.index)
-
+            new_col = [", ".join([lab for lab in desc_labels]), ""]
+            df_coords = pd.DataFrame(
+                reduced_coordinates, columns=new_col, index=df_coords.index)
         return df_coords
 
     def evaluateStars(self, stars, meth="mean"):

@@ -67,8 +67,8 @@ class StarsCatalogue(object):
         if not ra or not dec or not arcsec_delta:
             return "", "", "", ""
         else:
-            delta = arcsec_delta / 3600.
-            return ra - delta, ra + delta, dec - delta, dec + delta
+            delta = float(arcsec_delta) / 3600.
+            return float(ra) - float(delta), float(ra) + float(delta), float(dec) - float(delta), float(dec) + float(delta)
 
 
 class LightCurvesDb(StarsCatalogue):

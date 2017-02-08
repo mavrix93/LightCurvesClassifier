@@ -5,6 +5,7 @@ import inspect
 
 import numpy as np
 import collections
+import ast
 
 
 def getArguments(insp_classes):
@@ -226,6 +227,24 @@ def getMeanDict(dict_list):
 
 
 def convertInputValue(value):
+
+    value = str(value).strip()
+    if value == "False":
+        return False
+    elif value == "True":
+        return True
+    elif value == "None":
+        return None
+    elif value.startswith("`") and value.endswith("`"):
+        try:
+            print "ccc", value[1:-1]
+            return ast.literal_eval(value[1:-1])
+        except:
+            try:
+                return eval(value[1:-1])
+            except:
+                pass
+
     if "." in value:
         try:
             return float(value)
@@ -235,13 +254,5 @@ def convertInputValue(value):
         return int(value)
     except ValueError:
         pass
-
-    value = str(value).strip()
-    if value == "False":
-        return False
-    elif value == "True":
-        return True
-    elif value == "None":
-        return None
 
     return value

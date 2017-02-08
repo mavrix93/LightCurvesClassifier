@@ -22,6 +22,9 @@ class TapClient(LightCurvesDb):
     COO_UNIT_CONV = 1
     QUOTING = [" ", "/", "_", "-", ".", "+"]
 
+    REPEAT_CON = 10
+    COUNTER_CON = 0
+
     def postQuery(self, tap_params):
         '''
         Post query according to given parameters
@@ -75,7 +78,10 @@ class TapClient(LightCurvesDb):
         except WrongStatus:
             raise QueryInputError("Wrong TAP query url")
         except NetworkError:
-            raise NoInternetConnection()
+            if self.COUNTER_CON < self.REPEAT_CON:
+                self.postQuery(tap_params)
+            else:
+                raise NoInternetConnection()
 
         retrieve_data = votable.load(job.openResult())[0]
 

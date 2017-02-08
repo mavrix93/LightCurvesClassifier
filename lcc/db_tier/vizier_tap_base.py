@@ -142,7 +142,7 @@ class VizierTapBase(TapClient):
             and its values
         '''
         # Case of just one query
-        if type(queries) is dict:
+        if isinstance(queries, dict):
             queries = [queries]
 
         self.queries = queries
@@ -174,7 +174,8 @@ class VizierTapBase(TapClient):
         select = list(select)
 
         raw_stars = []
-        for que in self.queries:
+        for _que in self.queries:
+            que = _que.copy()
             if "ra" in que and "dec" in que:
                 que[self.RA] = que.pop("ra")
                 que[self.DEC] = que.pop("dec")
@@ -190,7 +191,7 @@ class VizierTapBase(TapClient):
                     if len(value) == 2:
                         conditions.append((key, value[0], value[1]))
                     else:
-                        raise QueryInputError("Invalid range query")
+                        raise QueryInputError("Invalid query range")
                 else:
                     conditions.append((key, value))
 

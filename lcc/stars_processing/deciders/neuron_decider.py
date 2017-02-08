@@ -82,7 +82,7 @@ class NeuronDecider(BaseDecider):
         NoneType
             None
         '''
-        if not searched or not others:
+        if not len(searched) or not len(others):
             raise Exception("Decider can't be learned on an empty sample")
 
         # Resolve number of input neurons
@@ -117,7 +117,6 @@ class NeuronDecider(BaseDecider):
 
     def train(self):
         """Train neuron grid by training sample"""
-        print "Training has begun..."
         # Prepare the network
         self.net = buildNetwork(
             self.input_neurons, self.hiden_neurons, self.OUTPUT_NEURONS)

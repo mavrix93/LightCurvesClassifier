@@ -18,7 +18,7 @@ from __builtin__ import True
 __all__ = []
 __version__ = 0.3
 __date__ = '2016-09-05'
-__updated__ = '2017-02-02'
+__updated__ = '2017-02-08'
 
 
 def main(project_settings, argv=None):

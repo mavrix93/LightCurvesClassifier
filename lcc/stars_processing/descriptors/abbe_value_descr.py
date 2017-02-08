@@ -43,10 +43,17 @@ class AbbeValueDescr(BaseDescriptor):
         abbe_values = []
 
         for star in stars:
-            if not self.bins:
-                bins = len(star.lightCurve.time)
+            if star.lightCurve:
+
+                if not self.bins:
+                    bins = len(star.lightCurve.time)
+                else:
+                    bins = self.bins
+
+                ab = star.lightCurve.getAbbe(bins=bins)
             else:
-                bins = self.bins
-            abbe_values.append(star.lightCurve.getAbbe(bins=bins))
+                ab = None
+
+            abbe_values.append(ab)
 
         return abbe_values

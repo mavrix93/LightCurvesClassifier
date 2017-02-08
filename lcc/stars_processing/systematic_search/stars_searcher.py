@@ -93,7 +93,7 @@ class StarsSearcher():
         self.passed_stars = []
 
         if save_coords:
-            self._saveCoords(query=[], header=True)
+            self.que_coords = None
         self.save_coords = save_coords
 
         self.status = pd.DataFrame()
@@ -177,46 +177,15 @@ class StarsSearcher():
         -------
             None
         '''
-        x = collections.OrderedDict(query.copy())
-        x.update(status)
+        data = [query.pop("name")] + query.values() + status.values()
+        columns = ["name"] + query.keys() + status.keys()
 
-        this_status = pd.DataFrame([x], index=[len(self.status)])
+        this_status = pd.DataFrame(
+            [data], columns=columns, index=[len(self.status)])
         self.status = self.status.append(this_status)
 
-        if not self.stat_file_path:
-            return False
-        try:
-            empty_file = os.stat(self.stat_file_path).st_size == 0
-        except OSError:
-            empty_file = True
-
-        with open(self.stat_file_path, "a") as status_file:
-            if empty_file:
-                status_file.write("#")
-                for i, key in enumerate(query):
-                    delim = delimiter
-                    status_file.write(str(key) + delim)
-                for i, key in enumerate(status):
-                    if i >= len(status) - 1:
-                        delim = ""
-                    else:
-                        delim = delimiter
-
-                    status_file.write(str(key) + delim)
-                status_file.write("\n")
-
-            for i, key in enumerate(query):
-                delim = delimiter
-
-                status_file.write(str(query[key]) + delim)
-            for i, key in enumerate(status):
-                if i >= len(status) - 1:
-                    delim = ""
-                else:
-                    delim = delimiter
-
-                status_file.write(str(status[key]) + delim)
-            status_file.write("\n")
+        if self.stat_file_path:
+            self.status.to_csv(self.stat_file_path, index=False)
 
     def queryStars(self, queries):
         '''
@@ -240,7 +209,7 @@ class StarsSearcher():
         unfound_counter = 0
         for query in progressbar(queries, "Query: "):
             status = collections.OrderedDict(
-                (("found", False), ("filtered", False), ("passed", False)))
+                (("found", False), ("lc", False), ("passed", False)))
             try:
                 stars = StarsProvider().getProvider(
                     self.obth_method, query).getStarsWithCurves()
@@ -267,20 +236,21 @@ class StarsSearcher():
                 contain_lc = True
 
                 try:
-                    stars[0].lightCurve.time
+                    one_star.lightCurve.time
                 except AttributeError:
                     contain_lc = False
 
                 if contain_lc:
 
+                    # TODO
                     if self.save_coords and self.stars_filters:
                         self._saveCoords([one_star.name] +
-                                         self.stars_filters[0].getSpaceCoordinates([one_star])[0])
+                                         self.stars_filters[0].getSpaceCoordinates([one_star]).values[0].tolist())
 
                     # Try to apply filters to the star
                     try:
                         passed = self.filterStar(one_star, query)
-                        status["filtered"] = True
+                        status["lc"] = True
                         status["passed"] = passed
                         stars_num += 1
                         if passed:
@@ -294,11 +264,14 @@ class StarsSearcher():
                         self.failProcedure(query, err)
                         warn(
                             "Something went wrong during filtering:\n\t%s" % err)
-                    query["name"] = one_star.name
                 else:
-                    status["filtered"] = False
+                    status["lc"] = False
                     status["passed"] = False
 
+                query["name"] = one_star.name
+                self.statusFile(query, status)
+            if not stars:
+                query["name"] = ""
                 self.statusFile(query, status)
 
         print "\n************\t\tQuery is done\t\t************"
@@ -308,19 +281,26 @@ class StarsSearcher():
         if self.not_uploaded:
             print "\t%i stars have not been uploaded into local db, because they are already there." % len(self.not_uploaded)
 
-    def _saveCoords(self, query, header=True):
+    def _saveCoords(self, query):
         if self.stars_filters:
             star_filter = self.stars_filters[0]
-            if header:
-                header = ["star_name"] + [
-                    desc.LABEL for desc in star_filter.descriptors]
-            else:
-                header = None
 
-            StatusResolver.save_lists_query(query=query, fi_name="space_coordinates.dat",
-                                            PATH=os.path.join(
-                                                self.save_path, ".."),
-                                            header=header)
+            labels = []
+            for desc in star_filter.descriptors:
+                if hasattr(desc.LABEL, "__iter__"):
+                    labels += desc.LABEL
+                else:
+                    labels.append(desc.LABEL)
+
+            header = ["star_name"] + labels
+
+            this_df = pd.DataFrame([query], columns=header)
+            if not isinstance(self.que_coords, pd.DataFrame):
+                self.que_coords = this_df
+            self.que_coords = self.que_coords.append(this_df)
+
+            self.que_coords.to_csv(
+                os.path.join(self.save_path, "..", "space_coordinates.csv"), index=False, delimiter=";")
         else:
             warnings.warn(
                 "There are no filters, so space coordinates cannot be obtained.\n")

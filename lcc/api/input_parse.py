@@ -24,7 +24,9 @@ def parse_query_ranges(raw_params, split_by=":", enum_by=";"):
     """
     all_combs = []
     for params in raw_params:
-        par_ranges = params.split(split_by)
+        par_ranges = [par.strip() for par in params.split(split_by)]
+
+        print "pra", par_ranges, params
         if len(par_ranges) == 1:
             this_combs = [convertInputValue(t) for t in params.split(enum_by)]
 
@@ -42,7 +44,7 @@ def parse_query_ranges(raw_params, split_by=":", enum_by=";"):
             except:
                 raise ValueError(
                     "Ranges of type from:to:steps have to be floats")
-            this_combs = np.linspace(*par_ranges)
+            this_combs = np.linspace(*par_ranges).tolist()
 
         else:
             raise Exception(
