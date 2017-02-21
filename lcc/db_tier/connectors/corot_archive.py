@@ -20,6 +20,9 @@ class CorotBrightArchive(VizierTapBase, LightCurvesDb):
     executed on Vizier catalog. It inherits `VizierTapBase` - see
     documentation of this class to class attributes description.
 
+    As for all TAP queries it is possible to use "<" and ">" marks (for example
+    {"CoRot":">2.5}).
+
     EXAMPLES
     ---------
     queries = [{"ra": 102.707, "dec": -0.54089, "delta": 10},

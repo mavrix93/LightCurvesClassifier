@@ -283,7 +283,7 @@ def plotUnsupProbabSpace(coords, decider, opt="show", N=100):
         return plot1DUnsupProbabSpace(coords, decider, opt, N)
 
 
-def plot2DUnsupProbabSpace(coords, decider, opt="show", N=100):
+def plot2DUnsupProbabSpace(coords, decider, opt="show", N=50):
     OVERLAY = 0.2
 
     x_min, x_max = coords[:, 0].min(), coords[:, 0].max()
@@ -336,3 +336,47 @@ def plot1DUnsupProbabSpace(coords, decider, opt, N):
     y = decider.evaluate([[xx] for xx in x])
     centroids = decider.classifier.cluster_centers_
     return x, y, centroids
+
+
+"""def plotNDUnsupProbabSpace(coords, decider, opt="show", N=8):
+    OVERLAY = 0.2
+
+    coords = np.array(coords)
+    x_data = []
+    for x_coords in coords.T:
+        x_min, x_max = x_coords.min(), x_coords.max()
+        xo = (x_max - x_min) * OVERLAY
+        x_data.append( np.linspace(x_min - xo, x_max + xo, N) )
+        
+    x_meshed = np.meshgrid(*x_data)
+
+    # Obtain labels for each point in mesh. Use last trained model.
+    Z = decider.evaluate(np.c_[xx.ravel(), yy.ravel()])
+
+    # Put the result into a color plot
+    Z = Z.reshape(xx.shape)
+
+    # Plot the centroids as a white X
+    centroids = decider.classifier.cluster_centers_
+
+    if opt == "show":
+        plt.figure(1)
+        plt.clf()
+        plt.imshow(Z, interpolation='nearest',
+                   extent=(xx.min(), xx.max(), yy.min(), yy.max()),
+                   cmap=plt.cm.Paired,
+                   aspect='auto', origin='lower')
+
+        plt.plot(coords[:, 0], coords[:, 1], 'k.', markersize=2)
+        plt.scatter(centroids[:, 0], centroids[:, 1],
+                    marker='x', s=169, linewidths=3,
+                    color='w', zorder=10)
+        plt.title('')
+        plt.xlim(x_min, x_max)
+        plt.ylim(y_min, y_max)
+        plt.xticks(())
+        plt.yticks(())
+
+        plt.show()
+
+    return x, y, Z, centroids"""

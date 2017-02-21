@@ -179,7 +179,6 @@ class VizierTapBase(TapClient):
             if "ra" in que and "dec" in que:
                 que[self.RA] = que.pop("ra")
                 que[self.DEC] = que.pop("dec")
-
                 if "delta" in que:
                     delta = que.pop("delta")
                     que[self.RA], que[self.DEC] = self._areaSearch(
@@ -193,7 +192,8 @@ class VizierTapBase(TapClient):
                     else:
                         raise QueryInputError("Invalid query range")
                 else:
-                    conditions.append((key, value))
+                    if key != "nearest":
+                        conditions.append((key, value))
 
             query_inp = {"table": self.TABLE,
                          "select": select,
@@ -201,7 +201,7 @@ class VizierTapBase(TapClient):
                          "URL": self.TAP_URL}
             res = self.postQuery(query_inp)
             if res:
-                raw_stars.append(res[0])
+                raw_stars += res
 
         return self._createStar(raw_stars, select, lc, **kwargs)
 

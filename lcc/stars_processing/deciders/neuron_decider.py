@@ -38,16 +38,31 @@ class NeuronDecider(BaseDecider):
         Each item of the array contains a number of the group which the test
         object belongs. Position in the array
         corresponds to item in X_test.
+
+    validationProportion : float
+        It is the ratio of the dataset
+        that is used for the validation dataset
+
+    maxEpochs : int
+        Maximum number of epochs for training
     """
 
     OUTPUT_NEURONS = 1
 
-    def __init__(self, treshold=0.5, hidden_neurons=2):
+    def __init__(self, treshold=0.5, hidden_neurons=2,
+                 validationProportion=0.15, maxEpochs=100):
         '''
         Parameters
         -----------
         hidden_neurons: int
-            Number of hiden neurons
+            Number of hidden neurons
+
+        validationProportion : float
+            It is the ratio of the dataset
+            that is used for the validation dataset
+
+        maxEpochs : int
+            Maximum number of epochs for training
 
         Note
         -----
@@ -62,6 +77,8 @@ class NeuronDecider(BaseDecider):
         self.y = None
 
         self.treshold = treshold
+        self.validationProportion = validationProportion
+        self.maxEpochs = maxEpochs
 
     def learn(self, searched, others):
         '''
@@ -129,7 +146,8 @@ class NeuronDecider(BaseDecider):
 
         # Prepare the network trainer and train them
         trainer = BackpropTrainer(self.net, ds)
-        trainer.trainUntilConvergence()
+        trainer.trainUntilConvergence(validationProportion=self.validationProportion,
+                                      maxEpochs=self.maxEpochs)
         print "Successfully finished"
 
     def evaluate(self, coords):

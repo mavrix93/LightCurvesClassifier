@@ -10,6 +10,9 @@ class AsasArchive(VizierTapBase, LightCurvesDb):
     Asas archive of variable stars. It inherits `VizierTapBase` - see
     documentation of this class to class attributes description.
 
+    As for all TAP queries it is possible to use "<" and ">" marks (for example
+    {"Per":">2.5}).
+
     Example
     -------
     queries = [{"ASAS": "000030-3937.5"},

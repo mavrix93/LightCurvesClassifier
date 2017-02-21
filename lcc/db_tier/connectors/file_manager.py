@@ -339,12 +339,15 @@ class FileManager(LightCurvesDb):
 
         prim_hdu.header["IDENT"] = star.name
 
-        prim_hdu.header[self.FITS_RA] = star.coo.ra.degree
-        prim_hdu.header[self.FITS_RA_UNIT] = "deg"
-        prim_hdu.header[self.FITS_DEC] = star.coo.dec.degree
-        prim_hdu.header[self.FITS_DEC_UNIT] = "deg"
+        try:
+            prim_hdu.header[self.FITS_RA] = star.coo.ra.degree
+            prim_hdu.header[self.FITS_RA_UNIT] = "deg"
+            prim_hdu.header[self.FITS_DEC] = star.coo.dec.degree
+            prim_hdu.header[self.FITS_DEC_UNIT] = "deg"
+            prim_hdu.header[self.FITS_CLASS] = star.starClass
 
-        prim_hdu.header[self.FITS_CLASS] = star.starClass
+        except AttributeError:
+            pass
 
         for db, ident in star.ident.iteritems():
             prim_hdu.header["HIERARCH " + db + "_name"] = ident["name"]

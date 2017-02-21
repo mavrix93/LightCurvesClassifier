@@ -30,7 +30,7 @@ class HistShapeDescr(SymbolicRepresentation, ComparativeBase, BaseDescriptor):
 
     LABEL = "Dissimilarity of the light curves histogram from the template"
 
-    def __init__(self, comp_stars, bins, alphabet_size, slide=True):
+    def __init__(self, comp_stars, bins, alphabet_size, slide=False):
         '''
         Parameters
         -----------

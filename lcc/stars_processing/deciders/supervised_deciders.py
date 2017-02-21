@@ -68,23 +68,7 @@ class SVCDec(SupervisedBase):
             value is considered as searched object)
         """
         self.treshold = treshold
-        self.learner = svm.SVC()
-
-    def evaluate(self, coords):
-        """
-        Get probability of membership
-
-        Parameters
-        ----------
-        coords : list of lists
-            List of prameter space coordinates
-
-        Returns
-        -------
-        list of floats
-            List of probabilities
-        """
-        return self.learner.predict(coords)
+        self.learner = svm.SVC(probability=True)
 
 
 class TreeDec(SupervisedBase):

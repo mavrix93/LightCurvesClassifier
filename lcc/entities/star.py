@@ -7,6 +7,7 @@ from warnings import warn
 import astropy.units as u
 from lcc.entities.exceptions import StarAttributeError
 from lcc.entities.light_curve import LightCurve
+import warnings
 
 
 class Star(object):
@@ -137,8 +138,9 @@ class Star(object):
                 given_coo = SkyCoord(given_coo[0], given_coo[1], unit=unit)
 
             except:
-                raise StarAttributeError("""Invalid values for
+                warnings.warn("""Invalid values for
                                         constructing coordinate object""")
+                given_coo = None
         self._coo = given_coo
 
     @property

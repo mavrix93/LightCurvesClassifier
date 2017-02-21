@@ -14,7 +14,7 @@ class CurveDensityDescr(BaseDescriptor):
     ----------
     '''
 
-    LABEL = "Curve density"
+    LABEL = "Curve density [points per time lag]"
 
     def getSpaceCoords(self, stars):
         """

@@ -64,6 +64,7 @@ class StarsCatalogue(object):
         return passed_stars
 
     def _getRanges(self, ra, dec, arcsec_delta):
+
         if not ra or not dec or not arcsec_delta:
             return "", "", "", ""
         else:

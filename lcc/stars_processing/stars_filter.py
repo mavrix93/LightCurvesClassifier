@@ -1,6 +1,5 @@
 from __future__ import division
 
-from sklearn.manifold.t_sne import TSNE
 import warnings
 
 from lcc.entities.exceptions import QueryInputError
@@ -33,13 +32,9 @@ class StarsFilter(object):
     others_coords : list
         Parameters space coordinates (got from descriptors) of contamination
         objects
-
-    reduce_dim : int, NoneType
-        Dimension of coordinates is reduced if it is greater then
-        `reduce_dim`. In case of 0 or None the dimension is kept
     """
 
-    def __init__(self, descriptors, deciders, reduced_dim=2):
+    def __init__(self, descriptors, deciders):
         """
         Parameters
         ----------
@@ -48,10 +43,6 @@ class StarsFilter(object):
 
         decider :list
             Decider objects
-
-        reduce_dim : int, NoneType
-            Dimension of coordinates is reduced if it is greater then
-            `reduce_dim`. In case of 0 or None the dimension is kept
         """
 
         self.descriptors = descriptors
@@ -65,7 +56,6 @@ class StarsFilter(object):
         if not descriptors:
             warnings.warn("There are no descriptors!")
 
-        self.reduced_dim = reduced_dim
         self.learned = False
         self.searched_coords = []
         self.others_coords = []
@@ -151,31 +141,6 @@ class StarsFilter(object):
             others_coords_data = list(others_coords)
             df = False
 
-        if searched_coords_data and self.reduced_dim and len(searched_coords_data[0]) > self.reduced_dim:
-            models = TSNE(self.reduced_dim)
-            red_searched_coords = models.fit_transform(searched_coords_data)
-            red_others_coords = models.fit_transform(others_coords_data)
-
-            labels = []
-            for dec in self.descriptors:
-                l = dec.LABEL
-                if hasattr(l, "__iter__"):
-                    labels += l
-                else:
-                    labels.append(l)
-
-            if df:
-                index_s = searched_coords.indexes
-                index_o = others_coords.indexes
-            else:
-                index_s = None
-                index_o = None
-
-            searched_coords = pd.DataFrame(
-                red_searched_coords, columns=labels, index=index_s)
-            others_coords = pd.DataFrame(
-                red_others_coords, columns=labels, index=index_o)
-
         for decider in self.deciders:
             decider.learn(searched_coords.values, others_coords.values)
 
@@ -239,14 +204,6 @@ class StarsFilter(object):
         df_coords.fillna(np.NaN)
         df_coords.dropna(inplace=True)
 
-        space_coordinates = df_coords.values.tolist()
-        if space_coordinates and self.reduced_dim and len(space_coordinates[0]) > self.reduced_dim:
-            models = TSNE(self.reduced_dim)
-            reduced_coordinates = models.fit_transform(space_coordinates)
-
-            new_col = [", ".join([lab for lab in desc_labels]), ""]
-            df_coords = pd.DataFrame(
-                reduced_coordinates, columns=new_col, index=df_coords.index)
         return df_coords
 
     def evaluateStars(self, stars, meth="mean"):

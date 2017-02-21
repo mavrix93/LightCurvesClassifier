@@ -22,6 +22,8 @@ class TapClient(LightCurvesDb):
     COO_UNIT_CONV = 1
     QUOTING = [" ", "/", "_", "-", ".", "+"]
 
+    SPECIAL_SYMB = ["<", ">", "="]
+
     REPEAT_CON = 10
     COUNTER_CON = 0
 
@@ -125,11 +127,22 @@ class TapClient(LightCurvesDb):
                 where_text += "({0} BETWEEN {1} AND {2}) AND ".format(*
                                                                       condition)
             elif (len(condition) == 2):
-                where_text += "({0} = {1}) AND ".format(*condition)
+                if condition[1].strip().startswith("'") or condition[1].strip().startswith('"'):
+                    cleaned_cond = condition[1].strip()[1:-1]
+                else:
+                    cleaned_cond = condition[1].strip()
+
+                if cleaned_cond[0] in self.SPECIAL_SYMB:
+                    where_text += "({0} {1}) AND ".format(
+                        condition[0], cleaned_cond)
+
+                else:
+                    where_text += "({0} = {1}) AND ".format(*condition)
             else:
                 raise QueryInputError(
                     "Unresolved TAP query condition: %s" % condition)
         where_text = where_text[:-4]
+        print "whh", where_text
         return where_text
 
     def _transfromCoo(self, condition):
@@ -141,9 +154,8 @@ class TapClient(LightCurvesDb):
         return condition
 
     def _areaSearch(self, ra, dec, delta):
-        return (ra - delta / 3600.,
-                ra + delta / 3600.), (dec - delta / 3600.,
-                                      dec + delta / 3600.)
+        ra1, ra2, dec1, dec2 = self._getRanges(ra, dec, delta)
+        return (ra1, ra2), (dec1, dec2)
 
     def _quoteIfNeeded(self, value):
         value = str(value).strip()
