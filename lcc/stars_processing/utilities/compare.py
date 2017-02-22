@@ -33,7 +33,7 @@ class ComparativeBase():
         """
         self.comp_stars = comp_stars
 
-    def getSpaceCoords(self, stars, meth="average"):
+    def getSpaceCoords(self, stars):
         '''
         Apply all filters and get their space coordinates
 
@@ -42,18 +42,16 @@ class ComparativeBase():
         stars : Star objects
             Stars to filtering
 
-        meth : str
-            Method key for calculating distance from comparative objects
-
-            average     : take mean distance in each coordinate as
-                          object coordinate
-            closest     : take coordinate with closest distance as
-                          object coordinate
         Returns
         --------
         list
             List of coordinates
         '''
+        try:
+            meth = self.method
+        except AttributeError:
+            meth = "average"
+
         space_coordinates = []
         # PB for star in progressbar(stars,"Obtaining space coordinates: "):
         for star in stars:
@@ -66,6 +64,7 @@ class ComparativeBase():
 
             else:
                 raise Exception("Unresolved coordinates calculation method")
+
         return space_coordinates
 
     def _filtOneStar(self, star, *args, **kwargs):

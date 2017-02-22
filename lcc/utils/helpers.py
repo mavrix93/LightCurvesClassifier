@@ -237,7 +237,6 @@ def convertInputValue(value):
         return None
     elif value.startswith("`") and value.endswith("`"):
         try:
-            print "ccc", value[1:-1]
             return ast.literal_eval(value[1:-1])
         except:
             try:

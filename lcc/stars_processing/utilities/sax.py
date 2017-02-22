@@ -52,7 +52,7 @@ class SAX(object):
 
         self.word_size = word_size
         self.alphabet_size = alphabet_size
-        self.beta = self._getBreakpoints()[str(self.alphabet_size)]
+        self.beta = self._getBreakpoints()[str(int(self.alphabet_size))]
         self.build_letter_compare_dict()
         self.scaling_factor = scaling_factor
 
@@ -160,7 +160,7 @@ class SAX(object):
         -------
             None
         """
-        number_rep = range(0, self.alphabet_size)
+        number_rep = range(0, int(self.alphabet_size))
         letters = [chr(x + self.A_OFFSET) for x in number_rep]
         self.compare_dict = {}
         for i in range(0, len(letters)):

@@ -64,6 +64,8 @@ class SymbolicRepresentation(object):
         while (a_word_size + shift <= b_word_size):
             word = word_b[shift:shift + a_word_size]
             score = self.sax.compare_strings(word, word_a)
+
+            print "shift", shift, score
             if (score < best_score):
                 best_score = score
             shift += 1
