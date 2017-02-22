@@ -299,7 +299,7 @@ def sort_pairs(x, y, rev=False):
     return xx, yy
 
 
-def compute_bins(x_time, days_per_bin):
+def compute_bins(x_time, days_per_bin, set_min=5):
     '''
     Compute number of bins for given time series according to given ratio
     of number of days per one bin
@@ -310,7 +310,9 @@ def compute_bins(x_time, days_per_bin):
         List of times
 
     days_per_bin : float
-        Transformation rate for diemension reduction
+        Transformation rate for dimension reduction
+
+    set_min
     '''
 
     BORDER_AREA = 5
@@ -325,7 +327,7 @@ def compute_bins(x_time, days_per_bin):
     time_range = x_time[-BORDER_AREA:].mean() - x_time[:BORDER_AREA].mean()
     num_bins = int(round(time_range / float(days_per_bin)))
 
-    if (num_bins < 5):
+    if (set_min and num_bins < set_min):
         warnings.warn(
             "Too low number of bins for given ratio. Setting bin number to minimal default value.")
         num_bins = 5

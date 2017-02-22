@@ -31,14 +31,31 @@ class SymbolicRepresentation(object):
         curve_len = np.max(
             [len(star.lightCurve.mag), len(comp_star.lightCurve.mag)])
 
-        inspected_word = self.getWord(star)
-        comp_word = self.getWord(comp_star)
-        score = self._getDissmilarity(inspected_word, comp_word, curve_len)
-        return score
+        if not self.slide or not hasattr(self, "getWords"):
+            inspected_word = self.getWord(star)
+            comp_word = self.getWord(comp_star)
+            score = self._getDissmilarity(inspected_word, comp_word, curve_len)
+            return score
+
+        else:
+            one_word, words = self.getWords(comp_star, star)
+            return self._getDissmilaritySlide(one_word, words)
 
     def _getWord(self, x, word_size, alphabet_size):
         self.sax = SAX(word_size, alphabet_size)
         return self.sax.to_letter_rep(x)[0]
+
+    def _getDissmilaritySlide(self, sliding_word, words):
+        '''
+        This method go through string curve of a star and trying to match filter
+        sentence pattern.
+        '''
+        best_score = 1e9
+        for word in words:
+            score = self.sax.compare_strings(word, sliding_word)
+            if score < best_score:
+                best_score = score
+        return best_score
 
     def _getDissmilarity(self, inspected_word, filter_word, curve_len):
         '''
@@ -65,7 +82,6 @@ class SymbolicRepresentation(object):
             word = word_b[shift:shift + a_word_size]
             score = self.sax.compare_strings(word, word_a)
 
-            print "shift", shift, score
             if (score < best_score):
                 best_score = score
             shift += 1

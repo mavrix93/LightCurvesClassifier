@@ -3,6 +3,7 @@ import numpy as np
 from lcc.entities.exceptions import QueryInputError
 from lcc.utils.helpers import convertInputValue
 import ast
+import warnings
 
 
 def parse_query_ranges(raw_params, split_by=":", enum_by=";"):
@@ -99,8 +100,13 @@ def _parse_tun_query(one_param):
             elif value.strip().startswith("`") and value.strip().endswith("`"):
                 try:
                     value = ast.literal_eval(value.strip()[1:-1])
-                except:
-                    raise
+                except Exception as e:
+                    print value
+                    warnings.warn(str(e))
+                    try:
+                        value = value.strip()[1:-1]
+                    except:
+                        pass
 
         print this_comb
         this_comb[obj_name][col] = value
