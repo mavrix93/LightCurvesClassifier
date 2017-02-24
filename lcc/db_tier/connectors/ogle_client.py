@@ -13,9 +13,9 @@ import numpy as np
 
 class OgleII(LightCurvesDb):
     '''
-    OgleII class is responsible for searching stars in OGLE db according
-    to query. Then it can download light curves and saved them or retrieve
-    stars object (with lc, coordinates, name...).
+    Connector to OGLEII. It is divided into two subdatabases - "phot" and "bvi".
+    The first one contains light curves and metadata about coordinates, identifiers
+    and V magnitude. The second one also contains information about V and I. 
 
     Identifier of the stars in OgleII db are: field, starid and target.
 

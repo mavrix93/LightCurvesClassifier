@@ -156,7 +156,6 @@ class StarsSearcher():
         -------
             None
         '''
-        raise
         warnings.warn("Error occurred during filtering: %s" % err)
 
     def statusFile(self, query, status, delimiter="\t"):
@@ -218,7 +217,6 @@ class StarsSearcher():
             except (KeyboardInterrupt, SystemExit):
                 raise
             except:
-                raise
                 warn("Couldn't download any light curve")
                 stars = []
             # Check if the searched star was found
@@ -244,8 +242,10 @@ class StarsSearcher():
 
                     # TODO
                     if self.save_coords and self.stars_filters:
-                        self._saveCoords([one_star.name] +
-                                         self.stars_filters[0].getSpaceCoordinates([one_star]).values[0].tolist())
+                        spc = self.stars_filters[
+                            0].getSpaceCoordinates([one_star]).values
+                        if len(spc):
+                            self._saveCoords([one_star.name] + spc[0].tolist())
 
                     # Try to apply filters to the star
                     try:
