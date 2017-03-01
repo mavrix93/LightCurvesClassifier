@@ -148,6 +148,12 @@ class OgleII(LightCurvesDb):
             if "db" not in query:
                 query["db"] = self.QUERY_TYPES[0]
 
+            if "coo" in query and isinstance(query["coo"], SkyCoord) and "delta" in query:
+                todel_queries.append(i)
+                coo = query["coo"]
+                query["ra"] = coo.ra.degree
+                query["dec"] = coo.dec.degree
+
             if "ra" in query and "dec" in query and "target" not in query:
                 todel_queries.append(i)
 

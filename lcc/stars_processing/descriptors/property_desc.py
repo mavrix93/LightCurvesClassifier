@@ -7,12 +7,17 @@ class PropertyDescr(BaseDescriptor):
 
     Attributes
     -----------
-    attribute_name : str
-        Key of star's objects `more` attribute
+    attribute_names : iterable, str
+        Keys of star's objects `more` attribute
+	
+	For example:
+	    `["pm_ra", "pm_de"]`
 
     ifnot : str, NoneType
         Value of coordinates which will be assigned if there is no
         `attribute_name` value
+
+
     '''
 
     LABEL = "Star's property"
