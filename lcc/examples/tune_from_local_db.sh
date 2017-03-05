@@ -1,0 +1,1 @@
+../bin/make_filter.py  -i examples/tuning_color_index2.txt -f ColorIndexFilter -s LOCAL:milliquas:examples/query_localdb.txt -c LOCAL:milliquas:examples/query_localdb2.txt -d GaussianNBDec -o examples/ColorIndex_quasars.filter -l examples/ColorIndex_quasars_filter

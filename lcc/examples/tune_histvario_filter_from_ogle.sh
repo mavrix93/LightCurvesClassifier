@@ -1,0 +1,1 @@
+../bin/make_filter.py  -i examples/tuning_histvario_filter.txt -f ComparingFilter -s QUERY:OgleII:examples/query_ogle.txt -c cepheids:5 -d GaussianNBDec -o examples/HistVario.filter -l examples/HistVario_random

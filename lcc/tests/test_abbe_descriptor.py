@@ -10,9 +10,9 @@ import numpy as np
 class Test(unittest.TestCase):
 
     def setUp(self):
-        N = 50
+        N = 100
 
-        x = np.linspace(0, 10, 100)
+        x = np.linspace(0, 10, 1000)
 
         self.variables = []
         for ii in range(N):
@@ -27,12 +27,14 @@ class Test(unittest.TestCase):
             self.noisy.append(st)
 
     def testAbbe(self):
-        var_abbes = [st.lightCurve.getAbbe(bins=500) for st in self.variables]
-        noisy_abbes = [st.lightCurve.getAbbe(bins=500) for st in self.noisy]
-
-        # pyplot.hist(var_abbes)
-        # pyplot.hist(noisy_abbes)
-        # pyplot.show()
+        N = 1000
+        var_abbes = [st.lightCurve.getAbbe(bins=N) for st in self.variables]
+        noisy_abbes = [st.lightCurve.getAbbe(bins=N) for st in self.noisy]
+        print np.mean(var_abbes)
+        print np.mean(noisy_abbes)
+        pyplot.hist(var_abbes, color="b")
+        pyplot.hist(noisy_abbes, color="r")
+        pyplot.show()
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testAbbe']

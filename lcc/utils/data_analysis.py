@@ -110,7 +110,7 @@ def to_ekvi_PAA(x, y, bins=None, days_per_bin=None):
     x_aprox = []
     y_aprox = []
     i = 0
-    frame_num = 1
+    frame_num = 0
     x_frame_sum = 0
     y_frame_sum = 0
     items_in_this_frame = 0

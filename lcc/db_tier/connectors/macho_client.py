@@ -8,7 +8,7 @@ from lcc.db_tier.vizier_tap_base import VizierTapBase
 # NOTE: Please note that coordinates query is not available now
 class MachoDb(VizierTapBase, LightCurvesDb):
     '''
-    Client for MACHO database. It inherits `VizierTapBase` - see
+    Client for MACHO database of variable stars. It inherits `VizierTapBase` - see
     documentation of this class to class attributes description.
 
     EXAMPLES
