@@ -36,7 +36,11 @@ There are many connectors to astronomical databases such as: OgleII, Kepler, Asa
 
 ## Installation
 
-So far the package is not stored in pip repository and it has to be "installed" manually.
+The package can be easily installed via pip:
+
+pip install lcc
+
+Or it can be "installed" manually.
 
 1) Download the package from git repository
 
