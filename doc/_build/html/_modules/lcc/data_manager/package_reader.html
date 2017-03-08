@@ -1,0 +1,221 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>lcc.data_manager.package_reader &#8212; LightCurvesClassifier 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for lcc.data_manager.package_reader</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">imp</span>
+<span class="kn">import</span> <span class="nn">importlib</span>
+<span class="kn">import</span> <span class="nn">inspect</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">lcc.stars_processing.utilities.base_descriptor</span> <span class="k">import</span> <span class="n">BaseDescriptor</span>
+<span class="kn">from</span> <span class="nn">lcc.db_tier.base_query</span> <span class="k">import</span> <span class="n">StarsCatalogue</span>
+<span class="kn">from</span> <span class="nn">lcc.stars_processing.utilities.base_decider</span> <span class="k">import</span> <span class="n">BaseDecider</span>
+
+
+<div class="viewcode-block" id="PackageReader"><a class="viewcode-back" href="../../../lcc.data_manager.html#lcc.data_manager.package_reader.PackageReader">[docs]</a><span class="k">class</span> <span class="nc">PackageReader</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class for managing modules and its classes in the package</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    -----------</span>
+<span class="sd">    MODULE_EXTENSION : iterable</span>
+<span class="sd">        Accepted extensions of module files.</span>
+
+<span class="sd">    NAMES : dict</span>
+<span class="sd">        Keys are identifiers for path to the package where searched classes</span>
+<span class="sd">        are located and base filter which all package classes needs to inherit</span>
+<span class="sd">        in order to be accepted.</span>
+
+<span class="sd">    EXCLUDE : iterable</span>
+<span class="sd">        File names (first letters of them) which will be excluded.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">MODULE_EXTENSIONS</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;.py&#39;</span><span class="p">,)</span>
+    <span class="n">EXCLUDE</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">()</span>
+    <span class="n">NAMES</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;descriptors&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;lcc/stars_processing/descriptors&quot;</span><span class="p">,</span> <span class="n">BaseDescriptor</span><span class="p">),</span>
+             <span class="s2">&quot;connectors&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;lcc/db_tier/connectors&quot;</span><span class="p">,</span> <span class="n">StarsCatalogue</span><span class="p">),</span>
+             <span class="s2">&quot;deciders&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;lcc/stars_processing/deciders&quot;</span><span class="p">,</span> <span class="n">BaseDecider</span><span class="p">),</span>
+             <span class="s2">&quot;unsup_deciders&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;lcc/stars_processing/deciders/unsupervised&quot;</span><span class="p">,</span> <span class="n">BaseDecider</span><span class="p">)}</span>
+
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="PackageReader.getClasses"><a class="viewcode-back" href="../../../lcc.data_manager.html#lcc.data_manager.package_reader.PackageReader.getClasses">[docs]</a>    <span class="k">def</span> <span class="nf">getClasses</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get all classes in the package which inherit base classes according</span>
+<span class="sd">        to `NAME` attribute</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        -----------</span>
+<span class="sd">        name : str</span>
+<span class="sd">            Key in `NAME` dictionary to package location and parent class</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        list</span>
+<span class="sd">            List of all classes in the package which inherit base classes</span>
+<span class="sd">            according to `NAME` attribute</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">package_name</span><span class="p">,</span> <span class="n">base_class</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">NAMES</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">package_name</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="n">contents</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getPackageContents</span><span class="p">(</span><span class="n">package_name</span><span class="p">)</span>
+
+        <span class="n">searched_classes</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">package_module</span> <span class="ow">in</span> <span class="n">contents</span><span class="p">:</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                <span class="n">package_name</span><span class="p">,</span> <span class="n">package_module</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">,</span> <span class="s2">&quot;.&quot;</span><span class="p">)</span>
+            <span class="n">module_classes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getModuleClasses</span><span class="p">(</span>
+                <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">module_class</span> <span class="ow">in</span> <span class="n">module_classes</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">module_class</span><span class="p">,</span> <span class="n">base_class</span><span class="p">):</span>
+                    <span class="n">searched_classes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">module_class</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">searched_classes</span></div>
+
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="PackageReader.getClassesDict"><a class="viewcode-back" href="../../../lcc.data_manager.html#lcc.data_manager.package_reader.PackageReader.getClassesDict">[docs]</a>    <span class="k">def</span> <span class="nf">getClassesDict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">package_name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get dictionary of all classes in the package which inherit base classes</span>
+<span class="sd">        according to `NAME` attribute</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        -----------</span>
+<span class="sd">        package_name : str</span>
+<span class="sd">            Key in `NAME` dictionary to package location and parent class</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        dict</span>
+<span class="sd">            Dictionary of all classes in the package which inherit base classes</span>
+<span class="sd">            according to `NAME` attribute</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">searched_classes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getClasses</span><span class="p">(</span><span class="n">package_name</span><span class="p">)</span>
+
+        <span class="n">classes_dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="bp">cls</span> <span class="ow">in</span> <span class="n">searched_classes</span><span class="p">:</span>
+            <span class="n">classes_dict</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="p">]</span> <span class="o">=</span> <span class="bp">cls</span>
+        <span class="k">return</span> <span class="n">classes_dict</span></div>
+
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="PackageReader.getPackageContents"><a class="viewcode-back" href="../../../lcc.data_manager.html#lcc.data_manager.package_reader.PackageReader.getPackageContents">[docs]</a>    <span class="k">def</span> <span class="nf">getPackageContents</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">package_name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get all modules in the package</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        -----------</span>
+<span class="sd">        package_name : str</span>
+<span class="sd">            Name of the target package specified in `NAMES` attribute</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        set</span>
+<span class="sd">            Set of module names in the package</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">pathname</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">imp</span><span class="o">.</span><span class="n">find_module</span><span class="p">(</span><span class="n">package_name</span><span class="p">)</span>
+
+        <span class="c1"># Use a set because some may be both source and compiled.</span>
+        <span class="k">return</span> <span class="nb">set</span><span class="p">([</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">module</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="k">for</span> <span class="n">module</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">pathname</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">module</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">MODULE_EXTENSIONS</span><span class="p">)</span> <span class="ow">and</span>
+                    <span class="ow">not</span> <span class="n">module</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">EXCLUDE</span><span class="p">)])</span></div>
+
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="PackageReader.getModuleClasses"><a class="viewcode-back" href="../../../lcc.data_manager.html#lcc.data_manager.package_reader.PackageReader.getModuleClasses">[docs]</a>    <span class="k">def</span> <span class="nf">getModuleClasses</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        -----------</span>
+<span class="sd">        module : module</span>
+<span class="sd">            Module object</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list</span>
+<span class="sd">            List of classes in the module</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">def</span> <span class="nf">accept</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">inspect</span><span class="o">.</span><span class="n">isclass</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span> <span class="ow">and</span> <span class="n">module</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">==</span> <span class="n">obj</span><span class="o">.</span><span class="vm">__module__</span>
+
+        <span class="k">return</span> <span class="p">[</span><span class="n">class_</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">class_</span> <span class="ow">in</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getmembers</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">accept</span><span class="p">)]</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Martin Vo.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

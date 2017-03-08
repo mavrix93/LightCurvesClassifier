@@ -1,0 +1,345 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>lcc.entities.star &#8212; LightCurvesClassifier 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for lcc.entities.star</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span>
+
+<span class="kn">from</span> <span class="nn">astropy.coordinates.sky_coordinate</span> <span class="k">import</span> <span class="n">SkyCoord</span>
+<span class="kn">import</span> <span class="nn">numpy</span>
+<span class="kn">from</span> <span class="nn">warnings</span> <span class="k">import</span> <span class="n">warn</span>
+
+<span class="kn">import</span> <span class="nn">astropy.units</span> <span class="k">as</span> <span class="nn">u</span>
+<span class="kn">from</span> <span class="nn">lcc.entities.exceptions</span> <span class="k">import</span> <span class="n">StarAttributeError</span>
+<span class="kn">from</span> <span class="nn">lcc.entities.light_curve</span> <span class="k">import</span> <span class="n">LightCurve</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+
+
+<div class="viewcode-block" id="Star"><a class="viewcode-back" href="../../../lcc.entities.html#lcc.entities.star.Star">[docs]</a><span class="k">class</span> <span class="nc">Star</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Star is base object in astronomy. This class is responsible for keeping</span>
+<span class="sd">    basic informations about stellar objects. It&#39;s possible to create empty</span>
+<span class="sd">    star and add parameters additionally</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    -----------</span>
+<span class="sd">    ident : dict</span>
+<span class="sd">            Dictionary of identifiers of the star. Each key of the dict</span>
+<span class="sd">            is name of a database and its value is another dict of database</span>
+<span class="sd">            identifiers for the star (e.g. &#39;name&#39;) which can be used</span>
+<span class="sd">            as an unique identifier for querying the star. For example:</span>
+<span class="sd">                ident = {&quot;OgleII&quot; : {&quot;name&quot; : &quot;LMC_SC1_1&quot;,</span>
+<span class="sd">                                    &quot;db_ident&quot; : {&quot;field_num&quot; : 1,</span>
+<span class="sd">                                                  &quot;starid&quot; : 1,</span>
+<span class="sd">                                                  &quot;target&quot; : &quot;lmc&quot;},</span>
+<span class="sd">                                                  ...}</span>
+<span class="sd">            Please keep convention as is shown above. Star is able to</span>
+<span class="sd">            be queried again automatically if ident key is name of</span>
+<span class="sd">            database connector and it contains dictionary called</span>
+<span class="sd">            &quot;db_ident&quot;. This dictionary contains unique query for</span>
+<span class="sd">            the star in the database.</span>
+<span class="sd">    name : str</span>
+<span class="sd">        Optional name of the star across the all databases</span>
+<span class="sd">    coo : astropy.coordinates.sky_coordinate.SkyCoord</span>
+<span class="sd">        Coordinate of the star</span>
+<span class="sd">    more : dict</span>
+<span class="sd">        Additional informations about the star in dictionary. This</span>
+<span class="sd">        attribute can be considered as a container. These parameters</span>
+<span class="sd">        can be then used for filtering. For example it can contains</span>
+<span class="sd">        color indexes:</span>
+<span class="sd">            more = { &quot;b_mag&quot; : 17.56, &quot;v_mag&quot; : 16.23 }</span>
+<span class="sd">    star_class : str</span>
+<span class="sd">        Name of category of the star e.g. &#39;cepheid&#39;, &#39;RR Lyrae&#39;, etc.</span>
+<span class="sd">    light_curves : list</span>
+<span class="sd">        Light curve objects of the star</span>
+<span class="sd">    EPS : float</span>
+<span class="sd">        Max distance in degrees to consider two stars equal</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="n">EPS</span> <span class="o">=</span> <span class="mf">0.000138</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ident</span><span class="o">=</span><span class="p">{},</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">coo</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">more</span><span class="o">=</span><span class="p">{},</span>
+                 <span class="n">starClass</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        -----------</span>
+<span class="sd">        ident : dict</span>
+<span class="sd">            Dictionary of identifiers of the star. Each key of the dict</span>
+<span class="sd">            is name of a database and its value is another dict of database</span>
+<span class="sd">            identifiers for the star (e.g. &#39;name&#39;) which can be used</span>
+<span class="sd">            as an unique identifier for querying the star. For example:</span>
+
+<span class="sd">                ident = {&quot;OgleII&quot; : {&quot;name&quot; : &quot;LMC_SC1_1&quot;,</span>
+<span class="sd">                                    &quot;db_ident&quot; : {&quot;field_num&quot; : 1,</span>
+<span class="sd">                                                  &quot;starid&quot; : 1,</span>
+<span class="sd">                                                  &quot;target&quot; : &quot;lmc&quot;},</span>
+<span class="sd">                                                  ...}</span>
+
+<span class="sd">            Please keep convention as is shown above. Star is able to</span>
+<span class="sd">            be queried again automatically if ident key is name of</span>
+<span class="sd">            database connector and it contains dictionary called</span>
+<span class="sd">            &quot;db_ident&quot;. This dictionary contains unique query for</span>
+<span class="sd">            the star in the database.</span>
+<span class="sd">        name : str</span>
+<span class="sd">            Optional name of the star across the all databases</span>
+<span class="sd">        coo : SkyCoord object</span>
+<span class="sd">            Coordinate of the star</span>
+<span class="sd">        more : dict</span>
+<span class="sd">            Additional informations about the star in dictionary. This</span>
+<span class="sd">            attribute can be considered as a container. These parameters</span>
+<span class="sd">            can be then used for filtering. For example it can contains</span>
+<span class="sd">            color indexes:</span>
+
+<span class="sd">                more = { &quot;b_mag&quot; : 17.56, &quot;v_mag&quot; : 16.23 }</span>
+<span class="sd">        star_class : str</span>
+<span class="sd">            Name of category of the star e.g. &#39;cepheid&#39;, &#39;RR Lyrae&#39;, etc.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ident</span> <span class="o">=</span> <span class="n">ident</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">coo</span> <span class="o">=</span> <span class="n">coo</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">more</span> <span class="o">=</span> <span class="n">more</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">light_curves</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">starClass</span> <span class="o">=</span> <span class="n">starClass</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+
+    <span class="k">def</span> <span class="nf">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Star</span><span class="p">)):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">if</span> <span class="n">other</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">ident</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">db_key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">ident</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">db_key</span> <span class="ow">in</span> <span class="n">other</span><span class="o">.</span><span class="n">ident</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ident</span><span class="p">[</span><span class="n">db_key</span><span class="p">]</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">ident</span><span class="p">[</span><span class="n">db_key</span><span class="p">]:</span>
+                        <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">getInRange</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">EPS</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">star_text</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">db_key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">ident</span><span class="p">:</span>
+            <span class="n">star_text</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> identifier:</span><span class="se">\t</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">db_key</span>
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">ident</span><span class="p">[</span><span class="n">db_key</span><span class="p">]:</span>
+                <span class="n">star_text</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">: </span><span class="si">%s</span><span class="se">\t</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ident</span><span class="p">[</span><span class="n">db_key</span><span class="p">][</span><span class="n">key</span><span class="p">])</span>
+            <span class="n">star_text</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">coo</span><span class="p">:</span>
+            <span class="n">star_text</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Coordinate: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">coo</span><span class="o">.</span><span class="n">to_string</span><span class="p">(</span><span class="s2">&quot;hmsdms&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">star_text</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">coo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_coo</span>
+
+    <span class="nd">@coo</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">coo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">given_coo</span><span class="p">):</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">given_coo</span> <span class="ow">and</span> <span class="n">given_coo</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">!=</span> <span class="s2">&quot;SkyCoord&quot;</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">given_coo</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+                    <span class="n">unit</span> <span class="o">=</span> <span class="n">given_coo</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">unit</span> <span class="o">=</span> <span class="s2">&quot;deg&quot;</span>
+                <span class="n">given_coo</span> <span class="o">=</span> <span class="n">SkyCoord</span><span class="p">(</span><span class="n">given_coo</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">given_coo</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">unit</span><span class="o">=</span><span class="n">unit</span><span class="p">)</span>
+
+            <span class="k">except</span><span class="p">:</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;Invalid values for</span>
+<span class="s2">                                        constructing coordinate object&quot;&quot;&quot;</span><span class="p">)</span>
+                <span class="n">given_coo</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_coo</span> <span class="o">=</span> <span class="n">given_coo</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">lightCurve</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">light_curves</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">light_curves</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="nd">@lightCurve</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">lightCurve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lc</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">putLightCurve</span><span class="p">(</span><span class="n">lc</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">getIdentName</span><span class="p">()</span>
+
+    <span class="nd">@name</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="n">name</span>
+
+<div class="viewcode-block" id="Star.getInRange"><a class="viewcode-back" href="../../../lcc.entities.html#lcc.entities.star.Star.getInRange">[docs]</a>    <span class="k">def</span> <span class="nf">getInRange</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="n">eps</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        This method decides whether other star is in eps range of this star</span>
+<span class="sd">        according to coordinates</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        -----------</span>
+<span class="sd">            other : Star object</span>
+<span class="sd">                Star to compare with</span>
+<span class="sd">            eps : float, astropy.unit.quantity.Quantity</span>
+<span class="sd">                Range in degrees</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        bool</span>
+<span class="sd">            If in range</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">eps</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">quantity</span><span class="o">.</span><span class="n">Quantity</span><span class="p">):</span>
+            <span class="n">eps</span> <span class="o">=</span> <span class="n">eps</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">deg</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">coo</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Star </span><span class="si">{0}</span><span class="s2"> has no coordinates&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">getDistance</span><span class="p">(</span><span class="n">other</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">eps</span></div>
+
+<div class="viewcode-block" id="Star.getDistance"><a class="viewcode-back" href="../../../lcc.entities.html#lcc.entities.star.Star.getDistance">[docs]</a>    <span class="k">def</span> <span class="nf">getDistance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Compute distance between this and other star in degrees</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        -----------</span>
+<span class="sd">            other : Star object</span>
+<span class="sd">                Another star object to compare with</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        astropy.coordinates.angles.Angle</span>
+<span class="sd">            Distance of stars in degrees</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">coo</span><span class="o">.</span><span class="n">separation</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">coo</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Star.getIdentName"><a class="viewcode-back" href="../../../lcc.entities.html#lcc.entities.star.Star.getIdentName">[docs]</a>    <span class="k">def</span> <span class="nf">getIdentName</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">db_key</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        -----------</span>
+<span class="sd">            db_key : str</span>
+<span class="sd">                Database key</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        str</span>
+<span class="sd">            Name of the star in given database. If it is not specified,</span>
+<span class="sd">            the first database will be taken to construct the name</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">db_key</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ident</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">return</span> <span class="s2">&quot;Unknown&quot;</span>
+            <span class="n">db_key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ident</span><span class="o">.</span><span class="n">keys</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="s2">&quot;name&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">ident</span><span class="p">[</span><span class="n">db_key</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ident</span><span class="p">[</span><span class="n">db_key</span><span class="p">][</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+        <span class="n">star_name</span> <span class="o">=</span> <span class="n">db_key</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">ident</span><span class="p">[</span><span class="n">db_key</span><span class="p">]:</span>
+            <span class="n">star_name</span> <span class="o">+=</span> <span class="s2">&quot;_</span><span class="si">%s</span><span class="s2">_</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ident</span><span class="p">[</span><span class="n">db_key</span><span class="p">][</span><span class="n">key</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">star_name</span></div>
+
+<div class="viewcode-block" id="Star.putLightCurve"><a class="viewcode-back" href="../../../lcc.entities.html#lcc.entities.star.Star.putLightCurve">[docs]</a>    <span class="k">def</span> <span class="nf">putLightCurve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lc</span><span class="p">,</span> <span class="n">meta</span><span class="o">=</span><span class="p">{}):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Add light curve to the star</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        lc : list, numpy.ndarray</span>
+<span class="sd">            Light curve</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">            None</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">lc</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">lc</span><span class="p">:</span>
+            <span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Invalid light curve: </span><span class="si">%s</span><span class="se">\n</span><span class="s2">Light curve not created to star </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
+                <span class="n">lc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">lc</span><span class="p">,</span> <span class="s2">&quot;__iter__&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">lc</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">lc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">LightCurve</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">light_curves</span> <span class="o">+=</span> <span class="n">lc</span>
+
+        <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">lc</span><span class="p">,</span> <span class="n">LightCurve</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">lc</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">light_curves</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">LightCurve</span><span class="p">(</span><span class="n">lc</span><span class="p">,</span> <span class="n">meta</span><span class="o">=</span><span class="n">meta</span><span class="p">))</span>
+
+        <span class="k">elif</span> <span class="n">lc</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">light_curves</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lc</span><span class="p">)</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Martin Vo.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
