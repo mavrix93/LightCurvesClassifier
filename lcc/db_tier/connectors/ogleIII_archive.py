@@ -19,22 +19,17 @@ class OgleIII(LightCurvesDb):
     --------
     que1 = {"ra": 5.549147 * 15,
        "dec": -70.55792, "delta": 5, "nearest": True}
-    que2 = {"field":"LMC_SC1","starid":"152248","target":"lmc"}
 
     client = StarsProvider().getProvider(
-        obtain_method="OgleII", obtain_params=[que1, que2])
+        obtain_method="OgleIIT", obtain_params=[que1, que2])
     stars = client.getStarsWithCurves()
     '''
 
     ROOT = "http://ogledb.astrouw.edu.pl/~ogle/CVS/"
     SUFF = "query.php?first=1&qtype=catalog"
 
-    BVI_TARGETS = ["lmc", "smc", "bul"]
-    PHOT_TARGETS = ["lmc", "smc", "bul", "car"]
-
-    QUERY_TYPES = ["bvi", "phot"]
-
     MAX_TIMEOUT = 60
+    DEFAULT_DELTA = 10
 
     LC_META = {"xlabel": "hjd",
                "xlabel_unit": "days",
@@ -74,6 +69,7 @@ class OgleIII(LightCurvesDb):
         if isinstance(queries, dict):
             queries = [queries]
         self.queries = self._parseQueries(queries)
+        print "x", self.queries
 
     def getStarsWithCurves(self):
         return self.getStars(lc=True)
@@ -162,27 +158,22 @@ class OgleIII(LightCurvesDb):
         todel_queries = []
         new_queries = []
         for i, query in enumerate(queries):
-            if "db" not in query:
-                query["db"] = self.QUERY_TYPES[0]
 
-            if "coo" in query and isinstance(query["coo"], SkyCoord) and "delta" in query:
+            if "coo" in query and isinstance(query["coo"], SkyCoord):
+                if not "delta" in query:
+                    query["delta"] = self.DEFAULT_DELTA
                 todel_queries.append(i)
                 coo = query["coo"]
-                query["ra"] = coo.ra.degree
-                query["dec"] = coo.dec.degree
+                new_queries.append(
+                    {"ra": coo.ra.degree, "dec": coo.dec.degree,
+                     "delta": query["delta"], "target": "all"})
 
-            if "ra" in query and "dec" in query and "target" not in query:
-                todel_queries.append(i)
+            if "ra" in query and "dec" in query:
+                if not "delta" in query:
+                    query["delta"] = self.DEFAULT_DELTA
 
-                if query["db"] == "phot":
-                    targets = self.PHOT_TARGETS
-                else:
-                    targets = self.BVI_TARGETS
-
-                for target in targets:
-                    z = query.copy()
-                    z["target"] = target
-                    new_queries.append(z)
+                if "target" not in query:
+                    query["target"] = "all"
 
             elif "starid" in query:
                 if "field" in query:
@@ -192,10 +183,6 @@ class OgleIII(LightCurvesDb):
                         "target"].upper() + "_SC" + str(query["field_num"])
                 else:
                     raise QueryInputError("Unresolved target")
-
-            if query["db"] not in self.QUERY_TYPES:
-                raise QueryInputError(
-                    "Invalid db. Available OgleII databases: %s" % self.QUERY_TYPES)
 
         return [item for i, item in enumerate(
             queries) if i not in todel_queries] + new_queries
@@ -229,12 +216,12 @@ class OgleIII(LightCurvesDb):
                 raw_table += line
 
         if not raw_table:
+            warnings.warn("OgleIII query failed")
             return []
 
         soup = BeautifulSoup(raw_table, "lxml")
         table = soup.find('table')
         rows = table.findAll('tr')
-
         res_rows = []
         for tr in rows[1:]:
             cols = tr.findAll('td')

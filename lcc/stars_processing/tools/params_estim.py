@@ -34,7 +34,7 @@ class ParamsEstimator(object):
     '''
 
     def __init__(self, searched, others, descriptors, deciders, tuned_params,
-                 split_ratio=0.75, static_params={}, **kwargs):
+                 split_ratio=0.5, static_params={}, **kwargs):
         '''
         Parameters
         ----------

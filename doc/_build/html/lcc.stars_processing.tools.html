@@ -1,0 +1,633 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>lcc.stars_processing.tools package &#8212; LightCurvesClassifier 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="lcc.stars_processing.utilities package" href="lcc.stars_processing.utilities.html" />
+    <link rel="prev" title="lcc.stars_processing.systematic_search package" href="lcc.stars_processing.systematic_search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="lcc-stars-processing-tools-package">
+<h1>lcc.stars_processing.tools package<a class="headerlink" href="#lcc-stars-processing-tools-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-lcc.stars_processing.tools.params_estim">
+<span id="lcc-stars-processing-tools-params-estim-module"></span><h2>lcc.stars_processing.tools.params_estim module<a class="headerlink" href="#module-lcc.stars_processing.tools.params_estim" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="lcc.stars_processing.tools.params_estim.ParamsEstimator">
+<em class="property">class </em><code class="descclassname">lcc.stars_processing.tools.params_estim.</code><code class="descname">ParamsEstimator</code><span class="sig-paren">(</span><em>searched</em>, <em>others</em>, <em>descriptors</em>, <em>deciders</em>, <em>tuned_params</em>, <em>split_ratio=0.5</em>, <em>static_params={}</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/tools/params_estim.html#ParamsEstimator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.tools.params_estim.ParamsEstimator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>searched</td>
+<td>(list of <cite>Star</cite> objects) Searched stars</td>
+</tr>
+<tr class="row-even"><td>others</td>
+<td>(list of <cite>Star</cite> objects) Contamination stars</td>
+</tr>
+<tr class="row-odd"><td>descriptors</td>
+<td>(list, iterable) Unconstructed descriptor objects</td>
+</tr>
+<tr class="row-even"><td>deciders</td>
+<td>(list, iterable) Decider instances</td>
+</tr>
+<tr class="row-odd"><td>tuned_params</td>
+<td>(list of dicts) List of parameters to tune</td>
+</tr>
+<tr class="row-even"><td>static_params</td>
+<td>(dict) Constant values for descriptors and deciders</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods</p>
+<dl class="method">
+<dt id="lcc.stars_processing.tools.params_estim.ParamsEstimator.evaluate">
+<code class="descname">evaluate</code><span class="sig-paren">(</span><em>combination</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/tools/params_estim.html#ParamsEstimator.evaluate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.tools.params_estim.ParamsEstimator.evaluate" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>combination</strong> : dict</p>
+<blockquote>
+<div><p>Dictionary of dictionaries - one per a descriptor.</p>
+<dl class="docutils">
+<dt>EXAMPLE</dt>
+<dd><p class="first last">{&#8216;AbbeValue&#8217;: {&#8216;bin&#8217;:10, .. }, .. }</p>
+</dd>
+</dl>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">tuple</p>
+<blockquote class="last">
+<div><p>Stars filter, statistical values</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="lcc.stars_processing.tools.params_estim.ParamsEstimator.evaluateCombinations">
+<code class="descname">evaluateCombinations</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/tools/params_estim.html#ParamsEstimator.evaluateCombinations"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.tools.params_estim.ParamsEstimator.evaluateCombinations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluate all combination of the filter parameters</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">list</p>
+<blockquote>
+<div><p>Filters created from particular combinations</p>
+</div></blockquote>
+<p>list</p>
+<blockquote>
+<div><p>Statistical values of all combinations</p>
+</div></blockquote>
+<p>list</p>
+<blockquote class="last">
+<div><p>Input parameters of all combinations</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="lcc.stars_processing.tools.params_estim.ParamsEstimator.fit">
+<code class="descname">fit</code><span class="sig-paren">(</span><em>score_func=None</em>, <em>opt='max'</em>, <em>save_params={}</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/tools/params_estim.html#ParamsEstimator.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.tools.params_estim.ParamsEstimator.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find the best combination of the filter parameters</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>score_func</strong> : function</p>
+<blockquote>
+<div><p>Function which takes dict of statistical values and return
+a score</p>
+</div></blockquote>
+<p><strong>opt</strong> : str</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>Option for evaluating scores</dt>
+<dd><p class="first last">&#8220;max&#8221; - Returns the highest score
+&#8220;min&#8221; - Returns the lowerest score</p>
+</dd>
+</dl>
+</div></blockquote>
+<p><strong>save_params</strong> : dict</p>
+<blockquote>
+<div><p>Parameters for saving outputs. For each output there are some
+mandatory keys:</p>
+<dl class="docutils">
+<dt>ROC plot:</dt>
+<dd><p class="first last">&#8220;roc_plot_path&#8221;
+&#8220;roc_plot_name&#8221;
+&#8220;roc_plot_title&#8221; - optional</p>
+</dd>
+<dt>ROC data file:</dt>
+<dd><p class="first last">&#8220;roc_data_path&#8221;
+&#8220;roc_data_name&#8221;
+&#8220;roc_data_delim&#8221; - optional</p>
+</dd>
+<dt>Statistical params of all combinations:</dt>
+<dd><p class="first last">&#8220;stats_path&#8221;
+&#8220;stats_name&#8221;
+&#8220;stats_delim&#8221; - optional</p>
+</dd>
+</dl>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">object</p>
+<blockquote>
+<div><p>Filter created from the best parameters</p>
+</div></blockquote>
+<p>dict</p>
+<blockquote>
+<div><p>Statistical values of the best combination</p>
+</div></blockquote>
+<p>dict</p>
+<blockquote class="last">
+<div><p>Input parameters of the best combination</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="lcc.stars_processing.tools.params_estim.ParamsEstimator.saveOutput">
+<code class="descname">saveOutput</code><span class="sig-paren">(</span><em>save_params</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/tools/params_estim.html#ParamsEstimator.saveOutput"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.tools.params_estim.ParamsEstimator.saveOutput" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>save_params</strong> : dict</p>
+<blockquote class="last">
+<div><p>Parameters for saving outputs. For each output there are some
+mandatory keys:</p>
+<dl class="docutils">
+<dt>ROC plot:</dt>
+<dd><p class="first last">&#8220;roc_plot_path&#8221;
+&#8220;roc_plot_name&#8221;
+&#8220;roc_plot_title&#8221; - optional</p>
+</dd>
+<dt>ROC data file:</dt>
+<dd><p class="first last">&#8220;roc_data_path&#8221;
+&#8220;roc_data_name&#8221;
+&#8220;roc_data_delim&#8221; - optional</p>
+</dd>
+<dt>Statistical params of all combinations:</dt>
+<dd><p class="first last">&#8220;stats_path&#8221;
+&#8220;stats_name&#8221;
+&#8220;stats_delim&#8221; - optional</p>
+</dd>
+</dl>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-lcc.stars_processing.tools.stats_manager">
+<span id="lcc-stars-processing-tools-stats-manager-module"></span><h2>lcc.stars_processing.tools.stats_manager module<a class="headerlink" href="#module-lcc.stars_processing.tools.stats_manager" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="lcc.stars_processing.tools.stats_manager.StatsManager">
+<em class="property">class </em><code class="descclassname">lcc.stars_processing.tools.stats_manager.</code><code class="descname">StatsManager</code><span class="sig-paren">(</span><em>stats</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/tools/stats_manager.html#StatsManager"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.tools.stats_manager.StatsManager" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="3%" />
+<col width="97%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>stats</td>
+<td>(list) List of dictionaries. They consists of statistical values. Or at least with &#8220;false_positive_rate&#8221; and &#8220;true_positive_rate&#8221; in order to work properly.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods</p>
+<dl class="method">
+<dt id="lcc.stars_processing.tools.stats_manager.StatsManager.getROC">
+<code class="descname">getROC</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/tools/stats_manager.html#StatsManager.getROC"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.tools.stats_manager.StatsManager.getROC" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get ROC curve</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">list</p>
+<blockquote class="last">
+<div><p>List of fp values and tp values values</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="lcc.stars_processing.tools.stats_manager.StatsManager.plotROC">
+<code class="descname">plotROC</code><span class="sig-paren">(</span><em>save=False</em>, <em>title='ROC curve'</em>, <em>path='.'</em>, <em>file_name='roc_plot.png'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/tools/stats_manager.html#StatsManager.plotROC"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.tools.stats_manager.StatsManager.plotROC" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot ROC and show it or save it</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>save</strong> : bool</p>
+<blockquote>
+<div><p>If True plot is saved into the file</p>
+</div></blockquote>
+<p><strong>title</strong> : str</p>
+<blockquote>
+<div><p>Title of the plot</p>
+</div></blockquote>
+<p><strong>path</strong> : str</p>
+<blockquote>
+<div><p>Path to the output file location</p>
+</div></blockquote>
+<p><strong>file_name</strong> : str</p>
+<blockquote>
+<div><p>Name of the file</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">None</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="lcc.stars_processing.tools.stats_manager.StatsManager.saveROCfile">
+<code class="descname">saveROCfile</code><span class="sig-paren">(</span><em>path</em>, <em>file_name='roc_curve.dat'</em>, <em>delim=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/tools/stats_manager.html#StatsManager.saveROCfile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.tools.stats_manager.StatsManager.saveROCfile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save ROC data into the file</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>path</strong> : str</p>
+<blockquote>
+<div><p>Path to the output file location</p>
+</div></blockquote>
+<p><strong>file_name</strong> : str</p>
+<blockquote>
+<div><p>Name of the file</p>
+</div></blockquote>
+<p><strong>delim</strong> : str</p>
+<blockquote>
+<div><p>Delimiter of columns</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">None</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="lcc.stars_processing.tools.stats_manager.StatsManager.saveStats">
+<code class="descname">saveStats</code><span class="sig-paren">(</span><em>path='.'</em>, <em>file_name='stats.dat'</em>, <em>delim=None</em>, <em>overwrite=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/tools/stats_manager.html#StatsManager.saveStats"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.tools.stats_manager.StatsManager.saveStats" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save stats file into the file</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>path</strong> : str</p>
+<blockquote>
+<div><p>Path to the output file location</p>
+</div></blockquote>
+<p><strong>file_name</strong> : str</p>
+<blockquote>
+<div><p>Name of the file</p>
+</div></blockquote>
+<p><strong>delim</strong> : str</p>
+<blockquote>
+<div><p>Delimiter of columns</p>
+</div></blockquote>
+<p><strong>overwrite</strong> : bool</p>
+<blockquote>
+<div><p>Overwrite file if it exists</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">None</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-lcc.stars_processing.tools.visualization">
+<span id="lcc-stars-processing-tools-visualization-module"></span><h2>lcc.stars_processing.tools.visualization module<a class="headerlink" href="#module-lcc.stars_processing.tools.visualization" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="lcc.stars_processing.tools.visualization.plot1DProbabSpace">
+<code class="descclassname">lcc.stars_processing.tools.visualization.</code><code class="descname">plot1DProbabSpace</code><span class="sig-paren">(</span><em>star_filter</em>, <em>plot_ranges</em>, <em>N</em>, <em>searched_coords=[]</em>, <em>contaminatiom_coords=[]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/tools/visualization.html#plot1DProbabSpace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.tools.visualization.plot1DProbabSpace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot probability space</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>star_filter</strong> : StarsFilter object</p>
+<blockquote>
+<div><p>Trained stars filter</p>
+</div></blockquote>
+<p><strong>plot_ranges</strong> : iterable</p>
+<blockquote>
+<div><p>Ranges (max/min) for all axis</p>
+</div></blockquote>
+<p><strong>N</strong> : int</p>
+<blockquote>
+<div><p>Number of points per axis</p>
+</div></blockquote>
+<p><strong>searched_coords</strong> : list, iterable</p>
+<blockquote>
+<div><p>List of coordinates of searched objects</p>
+</div></blockquote>
+<p><strong>contaminatiom_coords</strong> : list, iterable</p>
+<blockquote>
+<div><p>List of coordinates of contamination objects</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">tuple</p>
+<blockquote class="last">
+<div><p>x, y</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="lcc.stars_processing.tools.visualization.plot1DUnsupProbabSpace">
+<code class="descclassname">lcc.stars_processing.tools.visualization.</code><code class="descname">plot1DUnsupProbabSpace</code><span class="sig-paren">(</span><em>coords</em>, <em>decider</em>, <em>opt</em>, <em>N</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/tools/visualization.html#plot1DUnsupProbabSpace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.tools.visualization.plot1DUnsupProbabSpace" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="lcc.stars_processing.tools.visualization.plot2DProbabSpace">
+<code class="descclassname">lcc.stars_processing.tools.visualization.</code><code class="descname">plot2DProbabSpace</code><span class="sig-paren">(</span><em>star_filter</em>, <em>plot_ranges</em>, <em>N</em>, <em>searched_coords=[]</em>, <em>contaminatiom_coords=[]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/tools/visualization.html#plot2DProbabSpace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.tools.visualization.plot2DProbabSpace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot probability space</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>star_filter</strong> : StarsFilter object</p>
+<blockquote>
+<div><p>Trained stars filter</p>
+</div></blockquote>
+<p><strong>plot_ranges</strong> : iterable</p>
+<blockquote>
+<div><p>Ranges (max/min) for all axis</p>
+</div></blockquote>
+<p><strong>N</strong> : int</p>
+<blockquote>
+<div><p>Number of points per axis</p>
+</div></blockquote>
+<p><strong>searched_coords</strong> : list, iterable</p>
+<blockquote>
+<div><p>List of coordinates of searched objects</p>
+</div></blockquote>
+<p><strong>contaminatiom_coords</strong> : list, iterable</p>
+<blockquote>
+<div><p>List of coordinates of contamination objects</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">tuple</p>
+<blockquote class="last">
+<div><p>x, y, Z</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="lcc.stars_processing.tools.visualization.plot2DUnsupProbabSpace">
+<code class="descclassname">lcc.stars_processing.tools.visualization.</code><code class="descname">plot2DUnsupProbabSpace</code><span class="sig-paren">(</span><em>coords</em>, <em>decider</em>, <em>opt='show'</em>, <em>N=50</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/tools/visualization.html#plot2DUnsupProbabSpace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.tools.visualization.plot2DUnsupProbabSpace" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="lcc.stars_processing.tools.visualization.plotHist">
+<code class="descclassname">lcc.stars_processing.tools.visualization.</code><code class="descname">plotHist</code><span class="sig-paren">(</span><em>searched_coo</em>, <em>cont_coo</em>, <em>labels=[]</em>, <em>bins=None</em>, <em>save_path=None</em>, <em>file_name='hist.png'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/tools/visualization.html#plotHist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.tools.visualization.plotHist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot histogram</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>searched_coo</strong> : iterable</p>
+<blockquote>
+<div><p>Coordinates of searched objects to plot the histogram</p>
+</div></blockquote>
+<p><strong>cont_coo</strong> : iterable</p>
+<blockquote>
+<div><p>Coordinates of contamination objects to plot the histogram</p>
+</div></blockquote>
+<p><strong>labels</strong> : list, tuple of str</p>
+<blockquote>
+<div><p>Labels for axis</p>
+</div></blockquote>
+<p><strong>save_path</strong> : str, NoneType</p>
+<blockquote>
+<div><p>Path to the folder where plots are saved if not None, else
+plots are showed immediately</p>
+</div></blockquote>
+<p><strong>bins</strong> : int, NoneType</p>
+<blockquote>
+<div><p>Number of bins for histogram</p>
+</div></blockquote>
+<p><strong>file_name</strong> : str</p>
+<blockquote>
+<div><p>Name of the plot file</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">None</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="lcc.stars_processing.tools.visualization.plotProbabSpace">
+<code class="descclassname">lcc.stars_processing.tools.visualization.</code><code class="descname">plotProbabSpace</code><span class="sig-paren">(</span><em>star_filter</em>, <em>plot_ranges=None</em>, <em>opt='show'</em>, <em>path='.'</em>, <em>file_name='params_space.png'</em>, <em>N=400</em>, <em>title='Params space'</em>, <em>x_lab=''</em>, <em>y_lab=''</em>, <em>searched_coords=[]</em>, <em>contamination_coords=[]</em>, <em>OVERLAY=0.6</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/tools/visualization.html#plotProbabSpace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.tools.visualization.plotProbabSpace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot params space</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>star_filter</strong> : StarsFilter object</p>
+<blockquote>
+<div><p>Trained stars filter object</p>
+</div></blockquote>
+<p><strong>plot_ranges</strong> : tuple, list</p>
+<blockquote>
+<div><p>List of ranges. For example: [range(1,10), range(20,50)] - for 2D plot</p>
+</div></blockquote>
+<p><strong>opt</strong> : str</p>
+<blockquote>
+<div><p>Option whether save/show/return</p>
+</div></blockquote>
+<p><strong>title</strong> : str</p>
+<blockquote>
+<div><p>Title of the plot</p>
+</div></blockquote>
+<p><strong>path</strong> : str</p>
+<blockquote>
+<div><p>Path to the output file location</p>
+</div></blockquote>
+<p><strong>file_name</strong> : str</p>
+<blockquote>
+<div><p>Name of the file</p>
+</div></blockquote>
+<p><strong>OVERLAY</strong> : float</p>
+<blockquote>
+<div><p>Percentage overlay of borders despite of data ranges</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">None</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="lcc.stars_processing.tools.visualization.plotUnsupProbabSpace">
+<code class="descclassname">lcc.stars_processing.tools.visualization.</code><code class="descname">plotUnsupProbabSpace</code><span class="sig-paren">(</span><em>coords</em>, <em>decider</em>, <em>opt='show'</em>, <em>N=100</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/tools/visualization.html#plotUnsupProbabSpace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.tools.visualization.plotUnsupProbabSpace" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-lcc.stars_processing.tools">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-lcc.stars_processing.tools" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">lcc.stars_processing.tools package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-lcc.stars_processing.tools.params_estim">lcc.stars_processing.tools.params_estim module</a></li>
+<li><a class="reference internal" href="#module-lcc.stars_processing.tools.stats_manager">lcc.stars_processing.tools.stats_manager module</a></li>
+<li><a class="reference internal" href="#module-lcc.stars_processing.tools.visualization">lcc.stars_processing.tools.visualization module</a></li>
+<li><a class="reference internal" href="#module-lcc.stars_processing.tools">Module contents</a></li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="lcc.html">lcc package</a><ul>
+  <li><a href="lcc.stars_processing.html">lcc.stars_processing package</a><ul>
+      <li>Previous: <a href="lcc.stars_processing.systematic_search.html" title="previous chapter">lcc.stars_processing.systematic_search package</a></li>
+      <li>Next: <a href="lcc.stars_processing.utilities.html" title="next chapter">lcc.stars_processing.utilities package</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/lcc.stars_processing.tools.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Martin Vo.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/lcc.stars_processing.tools.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

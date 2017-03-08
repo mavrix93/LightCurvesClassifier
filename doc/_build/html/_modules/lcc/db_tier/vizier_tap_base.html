@@ -1,0 +1,431 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>lcc.db_tier.vizier_tap_base &#8212; LightCurvesClassifier 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for lcc.db_tier.vizier_tap_base</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">requests</span>
+
+<span class="kn">from</span> <span class="nn">lcc.db_tier.TAP_query</span> <span class="k">import</span> <span class="n">TapClient</span>
+<span class="kn">from</span> <span class="nn">lcc.entities.exceptions</span> <span class="k">import</span> <span class="n">QueryInputError</span>
+<span class="kn">from</span> <span class="nn">lcc.entities.light_curve</span> <span class="k">import</span> <span class="n">LightCurve</span>
+<span class="kn">from</span> <span class="nn">lcc.entities.star</span> <span class="k">import</span> <span class="n">Star</span>
+
+
+<div class="viewcode-block" id="VizierTapBase"><a class="viewcode-back" href="../../../lcc.db_tier.html#lcc.db_tier.vizier_tap_base.VizierTapBase">[docs]</a><span class="k">class</span> <span class="nc">VizierTapBase</span><span class="p">(</span><span class="n">TapClient</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Base class for all tap connectors using VizieR database. In the most</span>
+<span class="sd">    situations new connectors will contain just few class attributes and </span>
+<span class="sd">    there will not be need to write new or overwrite current methods.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    -----------</span>
+<span class="sd">    TAP_URL : str</span>
+<span class="sd">        Url to tap server</span>
+
+<span class="sd">    FILES_URL : str</span>
+<span class="sd">        Path to light curve files storage</span>
+
+<span class="sd">    TABLE : str</span>
+<span class="sd">        Name of queried table</span>
+
+<span class="sd">    RA : str</span>
+<span class="sd">        Name of right ascension column. It should be in degrees, anyway it is</span>
+<span class="sd">        necessary to convert them</span>
+
+<span class="sd">    DEC : str</span>
+<span class="sd">        Name of declination column. It should be in degrees, anyway it is</span>
+<span class="sd">        necessary to convert them</span>
+
+<span class="sd">    NAME : preformated str</span>
+<span class="sd">        Preformated string with dictionary keys.</span>
+
+<span class="sd">        EXAMPLE</span>
+<span class="sd">        --------</span>
+<span class="sd">            &quot;{Field}.{Tile}.{Seqn}&quot;</span>
+
+<span class="sd">        Keys represent name of columns</span>
+
+<span class="sd">    LC_FILE : str</span>
+<span class="sd">        Column name which can be used for obtaining light curve files.</span>
+<span class="sd">        By default it is set to None that means that is not necessary</span>
+<span class="sd">        to include any other column in order to get light curves</span>
+
+<span class="sd">    LC_META : dict</span>
+<span class="sd">        Meta data for light curve.</span>
+
+<span class="sd">        Example</span>
+<span class="sd">        --------</span>
+<span class="sd">            {&quot;xlabel&quot; : &quot;Terrestrial time&quot;,</span>
+<span class="sd">           &quot;xlabel_unit&quot; : &quot;days&quot;,</span>
+<span class="sd">           &quot;ylabel&quot; : &quot;Flux&quot;,</span>
+<span class="sd">           &quot;ylabel_unit&quot; : &quot;Electrons per second&quot;,</span>
+<span class="sd">           &quot;color&quot; : &quot;N/A&quot;,</span>
+<span class="sd">           &quot;invert_yaxis&quot; : False}</span>
+
+<span class="sd">        Light curve is expected by default (magnitudes and Julian days)</span>
+
+<span class="sd">    TIME_COL : int</span>
+<span class="sd">        Number (starts with 0) of times column in data file</span>
+
+<span class="sd">    MAG_COL : int</span>
+<span class="sd">        Number (starts with 0) of magnitudes column in data file</span>
+
+<span class="sd">    ERR_COL : int</span>
+<span class="sd">        Number (starts with 0) of errors column in data file</span>
+
+<span class="sd">    ERR_MAG_RATIO : float:</span>
+<span class="sd">        Ratio between error and magnitude values</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            Added because of Corot Archive of Faint Stars.</span>
+
+<span class="sd">    IDENT_MAP : ordered dict</span>
+<span class="sd">        Ordered dictionary of &quot;name of database&quot; : &quot;column name/s</span>
+<span class="sd">        of identifiers&quot;</span>
+
+<span class="sd">        Example</span>
+<span class="sd">        --------</span>
+<span class="sd">            IDENT_MAP = {&quot;MachoDb&quot; :  (&quot;Field&quot;, &quot;Tile&quot;, &quot;Seqn&quot;) }</span>
+
+<span class="sd">            This allows NAME attribute to access these keys (see above)</span>
+<span class="sd">            and construct unique identifier for the star.</span>
+
+<span class="sd">        For one item dictionaries can be used simple dictionary, because</span>
+<span class="sd">        there is no need to keep order of items.</span>
+
+<span class="sd">    MORE_MAP : ordered dict</span>
+<span class="sd">        Ordered dictionary of &quot;column names&quot; : &quot;key in new dictionary which</span>
+<span class="sd">        is be stored in Star object&quot;</span>
+
+<span class="sd">        Example</span>
+<span class="sd">        --------</span>
+<span class="sd">            MORE_MAP = collections.OrderedDict(((&quot;Per&quot;, &quot;period&quot;),</span>
+<span class="sd">                                                (&quot;Class&quot; , &quot;var_type&quot;),</span>
+<span class="sd">                                                (&quot;Jmag&quot; , &quot;j_mag&quot;),</span>
+<span class="sd">                                                (&quot;Kmag&quot; , &quot;k_mag&quot;),</span>
+<span class="sd">                                                (&quot;Hmag&quot; , &quot;h_mag&quot;)))</span>
+
+
+<span class="sd">    Methods</span>
+<span class="sd">    --------</span>
+<span class="sd">    This class inherits TapClient which brings methods for creating,</span>
+<span class="sd">    posting and returning tap queries. Methods of this class manage</span>
+<span class="sd">    results and create Star objects and light curves.</span>
+
+<span class="sd">    There is no need overwrite methods in inherited classes in the most</span>
+<span class="sd">    cases. Anyway obtaining light curves can be different for many</span>
+<span class="sd">    databases. In this case it would be sufficient to just implement</span>
+<span class="sd">    new _getLightCurve method.</span>
+
+<span class="sd">    Brief description of methods can be found below at their declaration.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="c1"># Common attribute for all vizier tap connectors</span>
+    <span class="n">TAP_URL</span> <span class="o">=</span> <span class="s2">&quot;http://tapvizier.u-strasbg.fr/TAPVizieR/tap&quot;</span>
+
+    <span class="c1"># Most common attributes - can be overwritten #</span>
+    <span class="n">RA</span> <span class="o">=</span> <span class="s2">&quot;RAJ2000&quot;</span>
+    <span class="n">DEC</span> <span class="o">=</span> <span class="s2">&quot;DEJ2000&quot;</span>
+
+    <span class="n">LC_FILE</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="n">TIME_COL</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">MAG_COL</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">ERR_COL</span> <span class="o">=</span> <span class="mi">2</span>
+
+    <span class="n">ERR_MAG_RATIO</span> <span class="o">=</span> <span class="mf">1.</span>
+
+    <span class="c1"># Split at any number of white spaces</span>
+    <span class="n">DELIM</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">queries</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        -----------</span>
+<span class="sd">        queries : list, dict</span>
+<span class="sd">            List of queries. Each query is dictionary of query parameters</span>
+<span class="sd">            and its values</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="c1"># Case of just one query</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">queries</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="n">queries</span> <span class="o">=</span> <span class="p">[</span><span class="n">queries</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">queries</span> <span class="o">=</span> <span class="n">queries</span>
+
+<div class="viewcode-block" id="VizierTapBase.getStars"><a class="viewcode-back" href="../../../lcc.db_tier.html#lcc.db_tier.vizier_tap_base.VizierTapBase.getStars">[docs]</a>    <span class="k">def</span> <span class="nf">getStars</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lc</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Get star objects</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        lc : bool</span>
+<span class="sd">            Star is appended by light curve if True</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list</span>
+<span class="sd">            List of stars</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">select</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">RA</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">DEC</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">LC_FILE</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">MORE_MAP</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+        <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">IDENT_MAP</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="nb">set</span><span class="p">)):</span>
+                <span class="k">for</span> <span class="n">it</span> <span class="ow">in</span> <span class="n">val</span><span class="p">:</span>
+                    <span class="n">select</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">it</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">select</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+
+        <span class="n">select</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">select</span> <span class="k">if</span> <span class="n">s</span><span class="p">]</span>
+        <span class="n">select</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">select</span><span class="p">)</span>
+
+        <span class="n">raw_stars</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">_que</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">queries</span><span class="p">:</span>
+            <span class="n">que</span> <span class="o">=</span> <span class="n">_que</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="k">if</span> <span class="s2">&quot;ra&quot;</span> <span class="ow">in</span> <span class="n">que</span> <span class="ow">and</span> <span class="s2">&quot;dec&quot;</span> <span class="ow">in</span> <span class="n">que</span><span class="p">:</span>
+                <span class="n">que</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">RA</span><span class="p">]</span> <span class="o">=</span> <span class="n">que</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;ra&quot;</span><span class="p">)</span>
+                <span class="n">que</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">DEC</span><span class="p">]</span> <span class="o">=</span> <span class="n">que</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;dec&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="s2">&quot;delta&quot;</span> <span class="ow">in</span> <span class="n">que</span><span class="p">:</span>
+                    <span class="n">delta</span> <span class="o">=</span> <span class="n">que</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;delta&quot;</span><span class="p">)</span>
+                    <span class="n">que</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">RA</span><span class="p">],</span> <span class="n">que</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">DEC</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_areaSearch</span><span class="p">(</span>
+                        <span class="n">que</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">RA</span><span class="p">],</span> <span class="n">que</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">DEC</span><span class="p">],</span> <span class="n">delta</span><span class="p">)</span>
+
+            <span class="n">conditions</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">que</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                        <span class="n">conditions</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">value</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="n">QueryInputError</span><span class="p">(</span><span class="s2">&quot;Invalid query range&quot;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">key</span> <span class="o">!=</span> <span class="s2">&quot;nearest&quot;</span><span class="p">:</span>
+                        <span class="n">conditions</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">))</span>
+
+            <span class="n">query_inp</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;table&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">TABLE</span><span class="p">,</span>
+                         <span class="s2">&quot;select&quot;</span><span class="p">:</span> <span class="n">select</span><span class="p">,</span>
+                         <span class="s2">&quot;conditions&quot;</span><span class="p">:</span> <span class="n">conditions</span><span class="p">,</span>
+                         <span class="s2">&quot;URL&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">TAP_URL</span><span class="p">}</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">postQuery</span><span class="p">(</span><span class="n">query_inp</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">res</span><span class="p">:</span>
+                <span class="n">raw_stars</span> <span class="o">+=</span> <span class="n">res</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_createStar</span><span class="p">(</span><span class="n">raw_stars</span><span class="p">,</span> <span class="n">select</span><span class="p">,</span> <span class="n">lc</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="VizierTapBase.getStarsWithCurves"><a class="viewcode-back" href="../../../lcc.db_tier.html#lcc.db_tier.vizier_tap_base.VizierTapBase.getStarsWithCurves">[docs]</a>    <span class="k">def</span> <span class="nf">getStarsWithCurves</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Get star objects with light curves</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        kwargs : dict</span>
+<span class="sd">            Optional parameters which have effect just if certain database</span>
+<span class="sd">            provides this option.</span>
+
+<span class="sd">            For example CoRoT archive contains very large light curves,</span>
+<span class="sd">            so the dimension of light curve can be reduced by `max_bins`</span>
+<span class="sd">            keyword.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        list</span>
+<span class="sd">            List of stars with their light curves</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">getStars</span><span class="p">(</span><span class="n">lc</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_createStar</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">keys</span><span class="p">,</span> <span class="n">lc_opt</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create Star objects from query result</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        data : list</span>
+<span class="sd">            Result from query</span>
+
+<span class="sd">        keys : list</span>
+<span class="sd">            Name of columns of data</span>
+
+<span class="sd">        lc_opt : bool</span>
+<span class="sd">            Obtain light curves if True</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        list</span>
+<span class="sd">            List of Star objects</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">stars</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">raw_star</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+            <span class="n">ident</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">IDENT_MAP</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+                <span class="n">db_ident</span> <span class="o">=</span> <span class="p">{}</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
+                    <span class="k">for</span> <span class="n">ide</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
+                        <span class="n">db_ident</span><span class="p">[</span><span class="n">ide</span><span class="p">]</span> <span class="o">=</span> <span class="n">raw_star</span><span class="p">[</span><span class="n">keys</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">ide</span><span class="p">)]</span>
+                    <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">NAME</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">db_ident</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">name</span> <span class="o">=</span> <span class="n">raw_star</span><span class="p">[</span><span class="n">keys</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">value</span><span class="p">)]</span>
+
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">db_ident</span><span class="p">:</span>
+                    <span class="n">db_ident</span> <span class="o">=</span> <span class="kc">None</span>
+
+                <span class="n">ident</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">name</span><span class="p">,</span> <span class="s2">&quot;db_ident&quot;</span><span class="p">:</span> <span class="n">db_ident</span><span class="p">}</span>
+
+            <span class="n">more</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">MORE_MAP</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+                <span class="n">more_item</span> <span class="o">=</span> <span class="n">raw_star</span><span class="p">[</span><span class="n">keys</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">key</span><span class="p">)]</span>
+                <span class="n">more</span><span class="p">[</span><span class="n">value</span><span class="p">]</span> <span class="o">=</span> <span class="n">more_item</span>
+            <span class="n">raw_star_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">keys</span><span class="p">,</span> <span class="n">raw_star</span><span class="p">))</span>
+
+            <span class="n">star</span> <span class="o">=</span> <span class="n">Star</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">NAME</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">raw_star_dict</span><span class="p">),</span>
+                        <span class="n">coo</span><span class="o">=</span><span class="p">(</span><span class="n">raw_star_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">RA</span><span class="p">],</span>
+                             <span class="n">raw_star_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">DEC</span><span class="p">]),</span>
+                        <span class="n">ident</span><span class="o">=</span><span class="n">ident</span><span class="p">,</span>
+                        <span class="n">more</span><span class="o">=</span><span class="n">more</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">lc_opt</span><span class="p">:</span>
+                <span class="n">star</span><span class="o">.</span><span class="n">putLightCurve</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_getLightCurve</span><span class="p">(</span><span class="n">star</span><span class="o">=</span><span class="n">star</span><span class="p">,</span>
+                                                       <span class="n">file_name</span><span class="o">=</span><span class="n">raw_star_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                                                           <span class="bp">self</span><span class="o">.</span><span class="n">LC_FILE</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+                                                       <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
+            <span class="n">stars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">star</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">stars</span>
+
+    <span class="k">def</span> <span class="nf">_getLightCurve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">star</span><span class="p">,</span> <span class="n">do_per</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">period_key</span><span class="o">=</span><span class="s2">&quot;period&quot;</span><span class="p">,</span>
+                       <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Obtain the light curve</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        -----------</span>
+<span class="sd">        star : Star instance</span>
+<span class="sd">             Star boy object constructed from query looking</span>
+<span class="sd">             for his light curve :)</span>
+
+<span class="sd">        do_per : bool</span>
+<span class="sd">            If True phase curve is returned instead</span>
+
+<span class="sd">        period_key : str</span>
+<span class="sd">            Key in star.more dictionary for value of period length</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        tuple</span>
+<span class="sd">            Tuple of times, mags, errors lists</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">do_per</span><span class="p">:</span>
+            <span class="n">period</span> <span class="o">=</span> <span class="n">star</span><span class="o">.</span><span class="n">more</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">period_key</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">period</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">LC_META</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;xlabel&quot;</span><span class="p">:</span> <span class="s2">&quot;Period&quot;</span><span class="p">,</span>
+                                <span class="s2">&quot;xlabel_unit&quot;</span><span class="p">:</span> <span class="s2">&quot;phase&quot;</span><span class="p">}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">period</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">LC_URL</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">macho_name</span><span class="o">=</span><span class="n">star</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">period</span><span class="o">=</span><span class="n">period</span><span class="p">)</span>
+
+        <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+        <span class="n">time</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">mag</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">err</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">lcs</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">iter_lines</span><span class="p">():</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">((</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;#&quot;</span><span class="p">)):</span>
+                <span class="n">parts</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DELIM</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+                    <span class="n">time</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">parts</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">TIME_COL</span><span class="p">]))</span>
+                    <span class="n">mag</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">parts</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">MAG_COL</span><span class="p">]))</span>
+                    <span class="n">err</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">parts</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">ERR_COL</span><span class="p">])</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">ERR_MAG_RATIO</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;# m = -1&quot;</span><span class="p">):</span>
+                    <span class="n">meta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">LC_META</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+                    <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;color&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;B&quot;</span>
+                <span class="k">elif</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;# m = -2&quot;</span><span class="p">):</span>
+                    <span class="n">lcs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">LightCurve</span><span class="p">([</span><span class="n">time</span><span class="p">,</span> <span class="n">mag</span><span class="p">,</span> <span class="n">err</span><span class="p">],</span> <span class="n">meta</span><span class="p">))</span>
+                    <span class="n">time</span><span class="p">,</span> <span class="n">mag</span><span class="p">,</span> <span class="n">err</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[]</span>
+
+                    <span class="n">meta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">LC_META</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+                    <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;color&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;R&quot;</span>
+        <span class="n">lcs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">LightCurve</span><span class="p">([</span><span class="n">time</span><span class="p">,</span> <span class="n">mag</span><span class="p">,</span> <span class="n">err</span><span class="p">],</span> <span class="n">meta</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">lcs</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Martin Vo.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

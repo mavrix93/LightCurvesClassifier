@@ -10,7 +10,7 @@ import pandas as pd
 def plotProbabSpace(star_filter, plot_ranges=None, opt="show",
                     path=".", file_name="params_space.png", N=400,
                     title="Params space", x_lab="", y_lab="",
-                    searched_coords=[], contamination_coords=[], OVERLAY = 0.6):
+                    searched_coords=[], contamination_coords=[], OVERLAY=0.6):
     """
     Plot params space
 
@@ -35,13 +35,12 @@ def plotProbabSpace(star_filter, plot_ranges=None, opt="show",
         Name of the file
 
     OVERLAY : float
-	Percentage overlay of borders despite of data ranges
+        Percentage overlay of borders despite of data ranges
 
     Returns
     -------
         None
     """
-    
 
     dim = len(star_filter.searched_coords.columns)
 
@@ -89,7 +88,7 @@ def plotProbabSpace(star_filter, plot_ranges=None, opt="show",
                                      contaminatiom_coords=contamination_coords)
 
     else:
-        return np.array([[]])
+        return np.array([[], [], []])
 
     plt.xlabel(str(x_lab))
     plt.ylabel(str(y_lab))

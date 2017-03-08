@@ -1,0 +1,292 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>lcc.stars_processing.systematic_search package &#8212; LightCurvesClassifier 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="lcc.stars_processing.tools package" href="lcc.stars_processing.tools.html" />
+    <link rel="prev" title="lcc.stars_processing.descriptors package" href="lcc.stars_processing.descriptors.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="lcc-stars-processing-systematic-search-package">
+<h1>lcc.stars_processing.systematic_search package<a class="headerlink" href="#lcc-stars-processing-systematic-search-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-lcc.stars_processing.systematic_search.stars_searcher">
+<span id="lcc-stars-processing-systematic-search-stars-searcher-module"></span><h2>lcc.stars_processing.systematic_search.stars_searcher module<a class="headerlink" href="#module-lcc.stars_processing.systematic_search.stars_searcher" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="lcc.stars_processing.systematic_search.stars_searcher.StarsSearcher">
+<em class="property">class </em><code class="descclassname">lcc.stars_processing.systematic_search.stars_searcher.</code><code class="descname">StarsSearcher</code><span class="sig-paren">(</span><em>stars_filters</em>, <em>save_path='.'</em>, <em>stat_file_path=None</em>, <em>save_lim=None</em>, <em>unfound_lim=None</em>, <em>obth_method=None</em>, <em>save_coords=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/systematic_search/stars_searcher.html#StarsSearcher"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.systematic_search.stars_searcher.StarsSearcher" title="Permalink to this definition">¶</a></dt>
+<dd><p>The class manages systematic searching in databases. It also can be used
+as base class for other star searchers.</p>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="15%" />
+<col width="85%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>stars_filter</td>
+<td>(FilteringManager object) Filter which is prepared filter star objects</td>
+</tr>
+<tr class="row-even"><td>save_path</td>
+<td>(str) Path from &#8220;run&#8221; module to the folder where found light curves will be saved</td>
+</tr>
+<tr class="row-odd"><td>stat_file_path</td>
+<td>(str) Status file name</td>
+</tr>
+<tr class="row-even"><td>save_lim</td>
+<td>(int) Number of searched objects after which status file is saved</td>
+</tr>
+<tr class="row-odd"><td>obth_method</td>
+<td>(str) Name of connector class</td>
+</tr>
+<tr class="row-even"><td>save_coords</td>
+<td>(bool) Save params space coordinates of inspected stars</td>
+</tr>
+<tr class="row-odd"><td>status</td>
+<td>(pandas.DataFrame) Status table about results of queries</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods</p>
+<dl class="attribute">
+<dt id="lcc.stars_processing.systematic_search.stars_searcher.StarsSearcher.DEF_save_lim">
+<code class="descname">DEF_save_lim</code><em class="property"> = 50</em><a class="headerlink" href="#lcc.stars_processing.systematic_search.stars_searcher.StarsSearcher.DEF_save_lim" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="lcc.stars_processing.systematic_search.stars_searcher.StarsSearcher.DEF_unfound_lim">
+<code class="descname">DEF_unfound_lim</code><em class="property"> = 150</em><a class="headerlink" href="#lcc.stars_processing.systematic_search.stars_searcher.StarsSearcher.DEF_unfound_lim" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="lcc.stars_processing.systematic_search.stars_searcher.StarsSearcher.failProcedure">
+<code class="descname">failProcedure</code><span class="sig-paren">(</span><em>query</em>, <em>err=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/systematic_search/stars_searcher.html#StarsSearcher.failProcedure"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.systematic_search.stars_searcher.StarsSearcher.failProcedure" title="Permalink to this definition">¶</a></dt>
+<dd><p>What to do if a fail occurs</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>query</strong> : optional</p>
+<blockquote>
+<div><p>Query informations</p>
+</div></blockquote>
+<p><strong>err</strong> : str</p>
+<blockquote>
+<div><p>Error message</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">None</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="lcc.stars_processing.systematic_search.stars_searcher.StarsSearcher.filterStar">
+<code class="descname">filterStar</code><span class="sig-paren">(</span><em>star</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/systematic_search/stars_searcher.html#StarsSearcher.filterStar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.systematic_search.stars_searcher.StarsSearcher.filterStar" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method filter given star.
+In case of match method &#8220;matchOccured&#8221; will be performed</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>stars</strong> : <cite>Star</cite> instance</p>
+<blockquote>
+<div><p>Star to filter</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">bool</p>
+<blockquote class="last">
+<div><p>If star passed thru filtering</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="lcc.stars_processing.systematic_search.stars_searcher.StarsSearcher.matchOccured">
+<code class="descname">matchOccured</code><span class="sig-paren">(</span><em>star</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/systematic_search/stars_searcher.html#StarsSearcher.matchOccured"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.systematic_search.stars_searcher.StarsSearcher.matchOccured" title="Permalink to this definition">¶</a></dt>
+<dd><p>What to do with star which passed thru filtering</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>star</strong> : <cite>Star</cite> instance</p>
+<blockquote>
+<div><p>Star object which will be saved as fits</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">None</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="lcc.stars_processing.systematic_search.stars_searcher.StarsSearcher.queryStars">
+<code class="descname">queryStars</code><span class="sig-paren">(</span><em>queries</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/systematic_search/stars_searcher.html#StarsSearcher.queryStars"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.systematic_search.stars_searcher.StarsSearcher.queryStars" title="Permalink to this definition">¶</a></dt>
+<dd><p>Query db according to list of queries. Stars passed thru filter
+are managed by <cite>matchOccured</cite> method.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>queries</strong> : list, iterable</p>
+<blockquote>
+<div><p>List of dictionaries of queries for certain db</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">None</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="lcc.stars_processing.systematic_search.stars_searcher.StarsSearcher.statusFile">
+<code class="descname">statusFile</code><span class="sig-paren">(</span><em>query</em>, <em>status</em>, <em>delimiter='\t'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/systematic_search/stars_searcher.html#StarsSearcher.statusFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.systematic_search.stars_searcher.StarsSearcher.statusFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method generates status file for overall query in certain db.
+Every queried star will be noted.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>query</strong> : dict</p>
+<blockquote>
+<div><p>Query informations</p>
+</div></blockquote>
+<p><strong>status</strong> : dict</p>
+<blockquote>
+<div><p>Information whether queried star was found, filtered
+and passed thru filtering</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">None</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-lcc.stars_processing.systematic_search">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-lcc.stars_processing.systematic_search" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">lcc.stars_processing.systematic_search package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-lcc.stars_processing.systematic_search.stars_searcher">lcc.stars_processing.systematic_search.stars_searcher module</a></li>
+<li><a class="reference internal" href="#module-lcc.stars_processing.systematic_search">Module contents</a></li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="lcc.html">lcc package</a><ul>
+  <li><a href="lcc.stars_processing.html">lcc.stars_processing package</a><ul>
+      <li>Previous: <a href="lcc.stars_processing.descriptors.html" title="previous chapter">lcc.stars_processing.descriptors package</a></li>
+      <li>Next: <a href="lcc.stars_processing.tools.html" title="next chapter">lcc.stars_processing.tools package</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/lcc.stars_processing.systematic_search.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Martin Vo.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/lcc.stars_processing.systematic_search.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
