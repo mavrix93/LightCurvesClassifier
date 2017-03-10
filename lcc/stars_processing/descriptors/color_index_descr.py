@@ -85,7 +85,6 @@ class ColorIndexDescr(BaseDescriptor):
                     if len(col) == 2:
                         mag1 = star.more.get(col[0])
                         mag2 = star.more.get(col[1])
-                        print "mag12", mag1, mag2
                         if mag1 and mag2:
                             this_coords.append(float(mag2) - float(mag1))
                         else:
