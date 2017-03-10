@@ -18,7 +18,7 @@ Of course the second option brings much more functionality. However command line
 
 ## Philosophy of the program
 
-[Workflow](https://cloud.githubusercontent.com/assets/17453516/23814530/26486e96-05e4-11e7-90cc-876eea1904dd.png)
+![Workflow](https://cloud.githubusercontent.com/assets/17453516/23814530/26486e96-05e4-11e7-90cc-876eea1904dd.png)
 
 Let's say that one has data of objects of interest and one would like to find other of these objects in huge databases. No matter what these objects are and what they have in common - all we have to do is to specify few parameters and the program will do all the magic for us. 
 
