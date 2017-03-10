@@ -18,13 +18,41 @@ Of course the second option brings much more functionality. However command line
 
 ## Philosophy of the program
 
-![Workflow](https://cloud.githubusercontent.com/assets/17453516/23814530/26486e96-05e4-11e7-90cc-876eea1904dd.png)
-
 Let's say that one has data of objects of interest and one would like to find other of these objects in huge databases. No matter what these objects are and what they have in common - all we have to do is to specify few parameters and the program will do all the magic for us. 
+
+![Workflow](https://cloud.githubusercontent.com/assets/17453516/23814530/26486e96-05e4-11e7-90cc-876eea1904dd.png)
 
 
 ### Description of the stars
 Stars can be described by many attributes like: distance, temperature, coordinates, variance, dissimilarity from our template curve, color indexes etc. For particular tasks these "properties of interest" have to be chosen - for example if one desires to classify members of a cluster of stars one would use distance and coordinates as values which describes particular stars. Another example could be distinguishing variable stars from non-variable, for this task one could use something like variance or for example the slopes of fitted light curves (with reduced dimension) by linear function.
+
+#### Descriptors
+
+Objects/tools which obtain features for an inspected object from the given data.
+Example descriptors:
+    
+
+##### Curves Shape Descriptor
+Light curves are transformed into words by SAX and compared to the template light curves.
+The dissimilarity  of these two light curves is assigned as the feature to the inspected star.
+
+![good_lc](https://cloud.githubusercontent.com/assets/17453516/23814524/263093ac-05e4-11e7-970f-cd4bdd1aed57.png)
+![bad_lc](https://cloud.githubusercontent.com/assets/17453516/23814526/26334e44-05e4-11e7-9279-177af06110e1.png)
+
+##### Histogram Shape Descriptor
+Histograms of light curves are shifted to have mean magnitude 0 and transformed to have standart deviation 1. 
+Then it is transformed into words by SAX and compared to the template histograms.
+ The dissimilarity  of these two light curves is assigned as the feature to the inspected star.
+
+![good_hist](https://cloud.githubusercontent.com/assets/17453516/23814527/26374cb0-05e4-11e7-8a46-5c16b4caac12.png)
+![bad_hist](https://cloud.githubusercontent.com/assets/17453516/23814525/263340d4-05e4-11e7-9dd7-9445b57ca72a.png)
+
+##### Variogram Shape Descriptor
+Time serie which represents variation of brightness in different time lags. 
+It is also transformed into SAX and compared with template variogram.
+
+![good_vario](https://cloud.githubusercontent.com/assets/17453516/23814528/263ae7ee-05e4-11e7-90c3-0f141261f9e5.png)
+![bad_vario](https://cloud.githubusercontent.com/assets/17453516/23814529/263c9c38-05e4-11e7-9f17-2b1d8e9d89e2.png)
 
 
 ### Classifying
