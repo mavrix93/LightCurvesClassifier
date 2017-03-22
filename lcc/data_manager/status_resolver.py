@@ -3,8 +3,8 @@ import os
 
 from lcc.entities.exceptions import InvalidFilesPath
 import numpy as np
-from lcc.utils.helpers import subDictInDict
-from lcc.utils.helpers import checkDepth
+from lcc.utils.helpers import sub_dict_in_dict
+from lcc.utils.helpers import check_depth
 
 
 class StatusResolver(object):
@@ -96,7 +96,7 @@ class StatusResolver(object):
 
         status_dict = self._getDictQuery(
             self.status_header, self.status_queries)
-        return subDictInDict(stat, status_dict, ["passed", "filtered", "found"])
+        return sub_dict_in_dict(stat, status_dict, ["passed", "filtered", "found"])
 
     def getQueries(self):
         '''
@@ -187,7 +187,7 @@ class StatusResolver(object):
         if not DELIM:
             DELIM = self.DELIMITER
 
-        if not checkDepth(query, 2, ifnotraise=False):
+        if not check_depth(query, 2, ifnotraise=False):
             query = [query]
 
         if not header and query[0]:
@@ -229,7 +229,7 @@ class StatusResolver(object):
         list
             Returns all queries with desired status
         '''
-        return subDictInDict(stat, queries)
+        return sub_dict_in_dict(stat, queries)
 
     def _readFile(self, path):
         '''Get header and data from the file'''

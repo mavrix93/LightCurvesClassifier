@@ -1,6 +1,8 @@
-
-import numpy as np
 import abc
+import numpy as np
+
+from lcc.entities.exceptions import QueryInputError
+from lcc.utils.helpers import convert_input_value
 
 
 class ComparativeBase():
@@ -55,20 +57,32 @@ class ComparativeBase():
         space_coordinates = []
         # PB for star in progressbar(stars,"Obtaining space coordinates: "):
         for star in stars:
-            coords = self._filtOneStar(star, search_opt="all")
+            coords = [x for x in self._filtOneStar(star, search_opt="all") if x]
             if meth == "closest":
                 space_coordinates.append(np.min(coords))
 
             elif meth == "average":
                 space_coordinates.append(np.mean(coords))
 
+            elif meth.startswith("best"):
+                n = convert_input_value(meth[4:])
+
+                if isinstance(n, float):
+                    n = int(len(coords)*n)
+
+                if not meth:
+                    raise QueryInputError("""Unresolved coordinates calculation method. String 'best' has to
+                    be followed by integer or float number""")
+
+                space_coordinates.append(np.mean(np.argsort(coords)[:n]))
+
             else:
-                raise Exception("Unresolved coordinates calculation method")
+                raise QueryInputError("Unresolved coordinates calculation method")
 
         return space_coordinates
 
     def _filtOneStar(self, star, *args, **kwargs):
-        '''
+        """
         Calculate distances of inspected star and template stars
 
         Parameters
@@ -80,10 +94,13 @@ class ComparativeBase():
         --------
         list
             List of all dissimilarities of inspected star to template stars
-        '''
+        """
 
         coordinates = []
         # Try every template star
         for comp_star in self.comp_stars:
-            coordinates.append(self.compareTwoStars(star, comp_star))
+            if comp_star.lightCurve and star.lightCurve:
+                coordinates.append(self.compareTwoStars(star, comp_star))
+            else:
+                coordinates.append(None)
         return coordinates

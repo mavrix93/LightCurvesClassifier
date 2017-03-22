@@ -1,33 +1,35 @@
+import numpy as np
+from scipy.stats import skew
+
 from lcc.stars_processing.utilities.base_descriptor import BaseDescriptor
+from lcc.utils.data_analysis import to_ekvi_PAA
 
 
-class AbbeValueDescr(BaseDescriptor):
+class SkewnessDescr(BaseDescriptor):
 
     """
-    AbbeValueDescr describes stars by Abbe values
+    SkewnessDescr describes stars by skewness
 
     Attributes
     ----------
     bins : int
-        Dimension of reduced light curve from which Abbe value
-        is calculated
+        Dimension of reduced light curve
     """
-    LABEL = "Abbe value"
+    LABEL = "Skewness"
 
     def __init__(self, bins=None):
         """
         Parameters
         ----------
         bins : int
-            Dimension of reduced light curve from which Abbe value
-            is calculated
+            Dimension of reduced light curve
 
         """
         self.bins = bins
 
     def getSpaceCoords(self, stars):
         """
-        Get list of Abbe values
+        Get list of skewness values
 
         Parameters
         -----------
@@ -39,20 +41,18 @@ class AbbeValueDescr(BaseDescriptor):
         list
             List of list of floats
         """
-        abbe_values = []
-
+        skew_list = []
         for star in stars:
             if star.lightCurve:
-
-                if not self.bins:
-                    bins = len(star.lightCurve.time)
+                lc = star.lightCurve
+                if self.bins:
+                    _, mags = to_ekvi_PAA(lc.time, lc.mag, self.bins)
                 else:
-                    bins = self.bins
-
-                ab = star.lightCurve.getAbbe(bins=bins)
+                    mags = lc.mag
+                sk =skew(mags)
             else:
-                ab = None
+                sk = None
 
-            abbe_values.append(ab)
+            skew_list.append(sk)
 
-        return abbe_values
+        return skew_list

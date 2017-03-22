@@ -51,7 +51,7 @@ def to_PAA(x, bins):
 
 
 def to_ekvi_PAA(x, y, bins=None, days_per_bin=None):
-    '''
+    """
     This method perform PAA (see above) on y data set, but it will consider
     different time steps between values (in x data set) and return corrected
     data set.
@@ -77,7 +77,7 @@ def to_ekvi_PAA(x, y, bins=None, days_per_bin=None):
 
     list
         Reduced `y` data
-    '''
+    """
 
     if isinstance(x, list):
         x = np.array(x)
@@ -110,7 +110,7 @@ def to_ekvi_PAA(x, y, bins=None, days_per_bin=None):
     x_aprox = []
     y_aprox = []
     i = 0
-    frame_num = 0
+    frame_num = 1
     x_frame_sum = 0
     y_frame_sum = 0
     items_in_this_frame = 0

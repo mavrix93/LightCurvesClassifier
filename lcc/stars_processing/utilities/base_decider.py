@@ -5,7 +5,7 @@ import collections
 import warnings
 
 from lcc.utils.data_analysis import computePrecision
-from lcc.utils.helpers import checkDepth
+from lcc.utils.helpers import check_depth
 import numpy as np
 
 
@@ -94,7 +94,7 @@ class BaseDecider(object):
             Coordinates with highest probability of membership to the
             searched group (one list of coordinates)
         """
-        checkDepth(stars_coords, 2)
+        check_depth(stars_coords, 2)
         if not len(stars_coords):
             warnings.warn(" There are no stars coordinates to inspect")
             return None
@@ -128,7 +128,7 @@ class BaseDecider(object):
         """
         if not treshold:
             treshold = self.treshold
-        checkDepth(stars_coords, 2)
+        check_depth(stars_coords, 2)
         return [self.evaluate([coo])[0] >= treshold for coo in stars_coords]
 
     def getStatistic(self, right_coords, wrong_coords, treshold=None):
@@ -165,8 +165,8 @@ class BaseDecider(object):
                 Proportion of negatives that are incorrectly identified
                 as positives
         """
-        checkDepth(right_coords, 2)
-        checkDepth(wrong_coords, 2)
+        check_depth(right_coords, 2)
+        check_depth(wrong_coords, 2)
 
         right_num = len(right_coords)
         wrong_num = len(wrong_coords)

@@ -47,6 +47,29 @@ def saveStars(stars, path=".", clobber=True):
     return file_names
 
 
+def get_stars_dict(stars):
+    """
+    Transform list of stars into dictionary where keys are their names
+
+    Parameters
+    ----------
+    stars : list, iterable
+        Star objects
+
+    Return
+    ------
+    dict
+        Stars dictionary
+    """
+    x = {}
+    for st in stars:
+        try:
+            x[st.name] = st
+        except:
+            pass
+    return x
+
+
 # TODO: Need to be upgraded
 def plotStarsPicture(stars, option="show", hist_bins=10, vario_bins=10,
                      center=True, save_loc=None, num_plots=None, abbe_bins=20):

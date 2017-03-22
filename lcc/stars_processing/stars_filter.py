@@ -135,14 +135,12 @@ class StarsFilter(object):
                 isinstance(others_coords, pd.DataFrame)):
             searched_coords_data = searched_coords.values.tolist()
             others_coords_data = others_coords.values.tolist()
-            df = True
         else:
             searched_coords_data = list(searched_coords)
             others_coords_data = list(others_coords)
-            df = False
 
         for decider in self.deciders:
-            decider.learn(searched_coords.values, others_coords.values)
+            decider.learn(searched_coords_data, others_coords_data)
 
         self.learned = True
         self.searched_coords = searched_coords

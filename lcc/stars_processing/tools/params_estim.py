@@ -11,7 +11,7 @@ import numpy as np
 
 
 class ParamsEstimator(object):
-    '''
+    """
     Attributes
     ----------
     searched : list of `Star` objects
@@ -31,11 +31,11 @@ class ParamsEstimator(object):
 
     static_params : dict
         Constant values for descriptors and deciders
-    '''
+    """
 
     def __init__(self, searched, others, descriptors, deciders, tuned_params,
-                 split_ratio=0.5, static_params={}, **kwargs):
-        '''
+                 split_ratio=0.7, static_params={}, **kwargs):
+        """
         Parameters
         ----------
         searched : list
@@ -62,7 +62,7 @@ class ParamsEstimator(object):
         static_params : dict
             Constant values for descriptors and deciders. Format is the
             same one item of tuned_params
-        '''
+        """
 
         random.shuffle(searched)
         random.shuffle(others)
@@ -77,6 +77,7 @@ class ParamsEstimator(object):
         self.static_params = static_params
 
         self.stats_list = None
+        self.stats = {}
         self.filters = None
 
     def evaluateCombinations(self):

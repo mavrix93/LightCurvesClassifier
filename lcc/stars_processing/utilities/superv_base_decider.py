@@ -3,7 +3,7 @@ import numpy as np
 
 from lcc.entities.exceptions import LearningError, QueryInputError
 from lcc.stars_processing.utilities.base_decider import BaseDecider
-from lcc.utils.helpers import checkDepth
+from lcc.utils.helpers import check_depth
 
 
 class SupervisedBase(BaseDecider):
@@ -94,7 +94,7 @@ class SupervisedBase(BaseDecider):
         # if coords != np.ndarray: coords = np.array( coords )
         # checkDepth(coords, 2)
         prediction = self.learner.predict_proba(coords)[:, 1]
-        checkDepth(prediction, 1)
+        check_depth(prediction, 1)
         where_are_NaNs = np.isnan(prediction)
         prediction[where_are_NaNs] = 0
         return prediction

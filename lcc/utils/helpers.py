@@ -8,7 +8,7 @@ import collections
 import ast
 
 
-def getArguments(insp_classes):
+def get_arguments(insp_classes):
     """
     Get args and kwargs of the class methods
 
@@ -54,7 +54,7 @@ def clean_path(path):
     return cleaned_name
 
 
-def checkDepth(a, deep_level, ifnotraise=True):
+def check_depth(a, deep_level, ifnotraise=True):
     """Check if input list has desired level of nested lists"""
     MAX_ITER = 10
     lev = 0
@@ -74,8 +74,8 @@ def checkDepth(a, deep_level, ifnotraise=True):
     return True
 
 
-def subDictInDict(sub_dict, dict_list, remove_keys=[]):
-    '''
+def sub_dict_in_dict(sub_dict, dict_list, remove_keys=[]):
+    """
     Parameters
     ----------
     sub_dict : dict
@@ -97,7 +97,7 @@ def subDictInDict(sub_dict, dict_list, remove_keys=[]):
     -------
     list
         List of dictionaries which contain condition in sub_dict
-    '''
+    """
     assert len(sub_dict.keys()) == 1
 
     key = sub_dict.keys()[0]
@@ -114,7 +114,7 @@ def subDictInDict(sub_dict, dict_list, remove_keys=[]):
 
 
 def verbose(txt, verbosity, verb_level=2):
-    '''
+    """
     Parameters
     ----------
     txt : str
@@ -133,7 +133,7 @@ def verbose(txt, verbosity, verb_level=2):
     Returns
     -------
         None
-    '''
+    """
     if verbosity <= verb_level:
         print txt
 
@@ -226,8 +226,7 @@ def getMeanDict(dict_list):
     return {}
 
 
-def convertInputValue(value):
-
+def convert_input_value(value):
     value = str(value).strip()
     if value == "False":
         return False

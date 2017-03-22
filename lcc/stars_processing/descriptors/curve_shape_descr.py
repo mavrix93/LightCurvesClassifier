@@ -7,7 +7,7 @@ import numpy as np
 
 
 class CurvesShapeDescr(SymbolicRepresentation, ComparativeBase, BaseDescriptor):
-    '''
+    """
     This descriptor which compares light curves of inspected star
     with the template in symbolic representation
 
@@ -32,14 +32,15 @@ class CurvesShapeDescr(SymbolicRepresentation, ComparativeBase, BaseDescriptor):
                       object coordinate
         closest     : take coordinate with closest distance as
                       object coordinate
-    '''
+        best'n'   : take best n scores of match, it can be integer or percentage float (0-1).
+                    for example best10 takes 10 best matches, best0.5 takes 50 % best matches of the total
+    """
 
-    AVAIL_METHODS = ["average", "closest"]
     LABEL = "Dissimilarity of the curve from the template"
 
     def __init__(self, comp_stars, days_per_bin, alphabet_size,
                  slide=0.25, meth="average"):
-        '''
+        """
         Parameters
         -----------
         comp_stars : list
@@ -63,10 +64,9 @@ class CurvesShapeDescr(SymbolicRepresentation, ComparativeBase, BaseDescriptor):
                           object coordinate
             closest     : take coordinate with closest distance as
                           object coordinate
-        '''
-        if not meth in self.AVAIL_METHODS:
-            raise QueryInputError(
-                "Unrecognized method %s\nAvailable: %s" % (meth, self.AVAIL_METHODS))
+            best'n'   : take best n scores of match, it can be integer or percentage float (0-1).
+                    for example best10 takes 10 best matches, best0.5 takes 50 % best matches of the total
+        """
 
         self.comp_stars = comp_stars
         self.days_per_bin = days_per_bin

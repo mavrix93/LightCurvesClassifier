@@ -1,7 +1,7 @@
 from matplotlib import pyplot as plt
 import os
 
-from lcc.utils.helpers import checkDepth
+from lcc.utils.helpers import check_depth
 import numpy as np
 import warnings
 import pandas as pd
@@ -20,7 +20,7 @@ def plotProbabSpace(star_filter, plot_ranges=None, opt="show",
         Trained stars filter object
 
     plot_ranges : tuple, list
-        List of ranges. For example: [range(1,10), range(20,50)] - for 2D plot
+        List of ranges. For example: [(1,10), (20,50)] - for 2D plot
 
     opt : str
         Option whether save/show/return
@@ -129,7 +129,7 @@ def plot2DProbabSpace(star_filter, plot_ranges, N, searched_coords=[],
     tuple
         x, y, Z
     """
-    if checkDepth(plot_ranges, 1, ifnotraise=False):
+    if check_depth(plot_ranges, 1, ifnotraise=False):
         plot_ranges = [plot_ranges, plot_ranges]
     x = np.linspace(plot_ranges[0][0], plot_ranges[0][1], N)
     y = np.linspace(plot_ranges[1][0], plot_ranges[1][1], N)
@@ -183,7 +183,7 @@ def plot1DProbabSpace(star_filter, plot_ranges, N,
         x, y
     """
 
-    if checkDepth(plot_ranges, 2, ifnotraise=False):
+    if check_depth(plot_ranges, 2, ifnotraise=False):
         plot_ranges = plot_ranges[0]
     x = np.linspace(plot_ranges[0], plot_ranges[1])
     y = star_filter.evaluateCoordinates([[y] for y in x])

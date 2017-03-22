@@ -1,3 +1,6 @@
+from lcc.entities.exceptions import QueryInputError
+from pybrain import FeedForwardNetwork, LinearLayer, SigmoidLayer, FullConnection
+from pybrain.datasets import ClassificationDataSet
 from pybrain.datasets import SupervisedDataSet
 from pybrain.supervised.trainers import BackpropTrainer
 from pybrain.tools.shortcuts import buildNetwork
@@ -18,7 +21,7 @@ class NeuronDecider(BaseDecider):
     OUTPUT_NEURONS : int
         Number of output neurons.
 
-    input_neuron : int
+    input_neurons : int
         Number of input neurons.
 
     X_train : numpy array of array of floats
@@ -39,9 +42,8 @@ class NeuronDecider(BaseDecider):
         object belongs. Position in the array
         corresponds to item in X_test.
 
-    validationProportion : float
-        It is the ratio of the dataset
-        that is used for the validation dataset
+    maxErr : float
+        Maximal error which would satisfy trainer
 
     maxEpochs : int
         Maximum number of epochs for training
@@ -50,16 +52,15 @@ class NeuronDecider(BaseDecider):
     OUTPUT_NEURONS = 1
 
     def __init__(self, treshold=0.5, hidden_neurons=2,
-                 validationProportion=0.15, maxEpochs=100):
-        '''
+                 maxErr=1e-5, maxEpochs=20000):
+        """
         Parameters
         -----------
         hidden_neurons: int
             Number of hidden neurons
 
-        validationProportion : float
-            It is the ratio of the dataset
-            that is used for the validation dataset
+        maxErr : float
+            Maximal error which would satisfy trainer
 
         maxEpochs : int
             Maximum number of epochs for training
@@ -68,20 +69,22 @@ class NeuronDecider(BaseDecider):
         -----
         Attributes with None values will be updated by setTrainer
         and train methods
-        '''
+        """
 
         self.hiden_neurons = hidden_neurons
 
-        self.input_neuron = None
+        self.input_neurons = None
         self.X = None
         self.y = None
 
         self.treshold = treshold
-        self.validationProportion = validationProportion
         self.maxEpochs = maxEpochs
+        self.maxErr = maxErr
+
+        self.net = None
 
     def learn(self, searched, others):
-        '''
+        """
         This method loads lists of specific values of searched objects and
         others. Then the sample will be  divided into train and
         test samples according to user.
@@ -98,9 +101,9 @@ class NeuronDecider(BaseDecider):
         -------
         NoneType
             None
-        '''
+        """
         if not len(searched) or not len(others):
-            raise Exception("Decider can't be learned on an empty sample")
+            raise QueryInputError("Decider can't be learned on an empty sample")
 
         # Resolve number of input neurons
         self.input_neurons = len(searched[0])
@@ -110,7 +113,7 @@ class NeuronDecider(BaseDecider):
             try:
                 X = searched.tolist() + others.tolist()
             except AttributeError as err:
-                raise AttributeError("Wrong input: %s" % err)
+                raise AttributeError("Wrong coordinates input: %s" % err)
         elif type(searched) == list:
             X = np.array(searched + others)
 
@@ -119,39 +122,44 @@ class NeuronDecider(BaseDecider):
             [1 for i in range(len(searched))] + [0 for i in range(len(others))])
         self.X = X
 
-        # Prepare button for executing of training
         self.train()
-
-    def getTrainer(self):
-        '''
-        Returns
-        --------
-        pybrain net instance, SupervisedDataSet
-            Learned net object, empty SupervisedDataSet which can be loaded
-                                by sample of inspected objects
-        '''
-        return self.net, SupervisedDataSet(self.input_neurons, self.OUTPUT_NEURONS)
 
     def train(self):
         """Train neuron grid by training sample"""
-        # Prepare the network
-        self.net = buildNetwork(
-            self.input_neurons, self.hiden_neurons, self.OUTPUT_NEURONS)
 
-        # Insert train sample into the network
-        ds = SupervisedDataSet(self.input_neurons, self.OUTPUT_NEURONS)
+        self.net = FeedForwardNetwork()
 
+        inLayer = LinearLayer(self.input_neurons)
+        hiddenLayer = SigmoidLayer(self.hiden_neurons)
+        outLayer = LinearLayer(self.OUTPUT_NEURONS)
+
+        self.net.addInputModule(inLayer)
+
+        self.net.addModule(hiddenLayer)
+        self.net.addOutputModule(outLayer)
+
+        in_to_hidden = FullConnection(inLayer, hiddenLayer)
+        hidden_to_out = FullConnection(hiddenLayer, outLayer)
+
+        self.net.addConnection(in_to_hidden)
+        self.net.addConnection(hidden_to_out)
+        self.net.sortModules()
+
+        ds = ClassificationDataSet(self.input_neurons, self.OUTPUT_NEURONS, nb_classes=3)
         for i, coord in enumerate(self.X):
             ds.addSample(coord, (self.y[i],))
 
-        # Prepare the network trainer and train them
-        trainer = BackpropTrainer(self.net, ds)
-        trainer.trainUntilConvergence(validationProportion=self.validationProportion,
-                                      maxEpochs=self.maxEpochs)
+        trainer = BackpropTrainer(self.net, dataset=ds, momentum=0.1, verbose=True, weightdecay=0.01)
+
+        for i in range(self.maxEpochs):
+            if trainer.train() < self.maxErr:
+                print "Desired error reached"
+                break
+
         print "Successfully finished"
 
     def evaluate(self, coords):
-        '''
+        """
         Find if inspected parameter-space coordinates belongs to searched
         object
 
@@ -164,7 +172,7 @@ class NeuronDecider(BaseDecider):
         ------
         numpy.array
             Probabilities of membership to searched group objects
-        '''
+        """
         pred = []
         for coord in coords:
             p = self.net.activate(coord)[0]
