@@ -12,20 +12,26 @@ class SkewnessDescr(BaseDescriptor):
 
     Attributes
     ----------
-    bins : int
-        Dimension of reduced light curve
+    bins : int, NoneType
+        Dimension of reduced light curve. If it is `None` whole curve is taken.
+
+    absolute : bool
+        Absolute value of skewness is taken if it is `True`
     """
     LABEL = "Skewness"
 
-    def __init__(self, bins=None):
+    def __init__(self, bins=None, absolute=False):
         """
         Parameters
         ----------
-        bins : int
-            Dimension of reduced light curve
+        bins : int, NoneType
+            Dimension of reduced light curve. If it is `None` whole curve is taken.
 
+        absolute : bool
+            Absolute value of skewness is taken if it is True
         """
         self.bins = bins
+        self.absolute = absolute
 
     def getSpaceCoords(self, stars):
         """
@@ -50,6 +56,9 @@ class SkewnessDescr(BaseDescriptor):
                 else:
                     mags = lc.mag
                 sk =skew(mags)
+
+                if self.absolute:
+                    sk = abs(sk)
             else:
                 sk = None
 

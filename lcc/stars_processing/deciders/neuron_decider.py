@@ -52,15 +52,16 @@ class NeuronDecider(BaseDecider):
     OUTPUT_NEURONS = 1
 
     def __init__(self, treshold=0.5, hidden_neurons=2,
-                 maxErr=1e-5, maxEpochs=20000):
+                 maxErr=None, maxEpochs=20000):
         """
         Parameters
         -----------
         hidden_neurons: int
             Number of hidden neurons
 
-        maxErr : float
-            Maximal error which would satisfy trainer
+        maxErr : NoneType, float
+            Maximal error which would satisfy the trainer. In case of None trainUntilConvergence methods
+            is used
 
         maxEpochs : int
             Maximum number of epochs for training
@@ -151,10 +152,13 @@ class NeuronDecider(BaseDecider):
 
         trainer = BackpropTrainer(self.net, dataset=ds, momentum=0.1, verbose=True, weightdecay=0.01)
 
-        for i in range(self.maxEpochs):
-            if trainer.train() < self.maxErr:
-                print "Desired error reached"
-                break
+        if self.maxErr:
+            for i in range(self.maxEpochs):
+                if trainer.train() < self.maxErr:
+                    print "Desired error reached"
+                    break
+        else:
+            trainer.trainUntilConvergence(maxEpochs=self.maxEpochs)
 
         print "Successfully finished"
 

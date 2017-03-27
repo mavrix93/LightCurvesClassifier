@@ -2,3 +2,4 @@ numpy
 scipy
 pyfits
 astropy
+pandas

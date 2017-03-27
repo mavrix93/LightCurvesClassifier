@@ -11,7 +11,7 @@ import warnings
 
 
 class Star(object):
-    '''
+    """
     Star is base object in astronomy. This class is responsible for keeping
     basic informations about stellar objects. It's possible to create empty
     star and add parameters additionally
@@ -49,13 +49,13 @@ class Star(object):
         Light curve objects of the star
     EPS : float
         Max distance in degrees to consider two stars equal
-    '''
+    """
 
     EPS = 0.000138
 
     def __init__(self, ident={}, name=None, coo=None, more={},
                  starClass=None):
-        '''
+        """
         Parameters
         -----------
         ident : dict
@@ -88,7 +88,7 @@ class Star(object):
                 more = { "b_mag" : 17.56, "v_mag" : 16.23 }
         star_class : str
             Name of category of the star e.g. 'cepheid', 'RR Lyrae', etc.
-        '''
+        """
         self.ident = ident
         self.coo = coo
         self.more = more
@@ -129,17 +129,20 @@ class Star(object):
 
     @coo.setter
     def coo(self, given_coo):
-        if (given_coo and given_coo.__class__.__name__ != "SkyCoord"):
-            try:
-                if len(given_coo) == 3:
-                    unit = given_coo[2]
-                else:
-                    unit = "deg"
-                given_coo = SkyCoord(given_coo[0], given_coo[1], unit=unit)
+        if given_coo and given_coo.__class__.__name__ != "SkyCoord":
+            if None not in [it for it in given_coo]:
+                try:
+                    if len(given_coo) == 3:
+                        unit = given_coo[2]
+                    else:
+                        unit = "deg"
+                    given_coo = SkyCoord(given_coo[0], given_coo[1], unit=unit)
 
-            except:
-                warnings.warn("""Invalid values for
-                                        constructing coordinate object""")
+                except:
+                    warnings.warn("""Invalid values for
+                                            constructing coordinate object""")
+                    given_coo = None
+            else:
                 given_coo = None
         self._coo = given_coo
 

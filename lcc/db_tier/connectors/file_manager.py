@@ -12,7 +12,8 @@ import numpy as np
 
 # TODO: This class need to be upgraded
 class FileManager(LightCurvesDb):
-    '''This class is responsible for managing light curve files
+    """
+    This class is responsible for managing light curve files
 
     Attributes
     -----------
@@ -48,7 +49,7 @@ class FileManager(LightCurvesDb):
 
     object_file_name : str
         Name of the pickle file which contains list of star objects
-    '''
+    """
 
     SUFFIXES = ["dat", "txt", "fits", "FITS"]
     DEFAULT_STARCLASS = "star"

@@ -1,10 +1,11 @@
-from matplotlib import pyplot as plt
-import os
-
-from lcc.utils.helpers import check_depth
 import numpy as np
+import os
 import warnings
+from sklearn import decomposition
 import pandas as pd
+from lcc.utils.helpers import check_depth
+from matplotlib import pyplot as plt
+
 
 
 def plotProbabSpace(star_filter, plot_ranges=None, opt="show",
@@ -88,7 +89,11 @@ def plotProbabSpace(star_filter, plot_ranges=None, opt="show",
                                      contaminatiom_coords=contamination_coords)
 
     else:
-        return np.array([[], [], []])
+        plt_data = plotNDProbabSpace(star_filter, plot_ranges, N,
+                                  searched_coords=searched_coords,
+                                  contaminatiom_coords=contamination_coords
+                                  )
+        # return np.array([[], [], []])
 
     plt.xlabel(str(x_lab))
     plt.ylabel(str(y_lab))
@@ -100,6 +105,91 @@ def plotProbabSpace(star_filter, plot_ranges=None, opt="show",
         plt.savefig(os.path.join(path, file_name))
     elif opt == "return":
         return plt_data
+
+
+def plotNDProbabSpace(star_filter, plot_ranges, N, searched_coords=[],
+                      contaminatiom_coords=[]):
+    """
+    Plot N dim probability space
+
+    Parameters
+    ----------
+    star_filter : StarsFilter object
+        Trained stars filter
+
+    plot_ranges : iterable
+        Ranges (max/min) for all axis
+
+    N : int
+        Number of points per axis
+
+    searched_coords : list, iterable
+        List of coordinates of searched objects
+
+    contaminatiom_coords : list, iterable
+        List of coordinates of contamination objects
+
+    Returns
+    -------
+    tuple
+        x, y, Z
+    """
+    OVERLAY = 0.4
+    ns = len(searched_coords)
+    if not isinstance(searched_coords, list):
+        try:
+            searched_coords = searched_coords.tolist()
+            contaminatiom_coords = contaminatiom_coords.tolist()
+        except:
+            pass
+
+    coords = searched_coords + contaminatiom_coords
+
+    if not coords:
+        try:
+            coords = star_filter.searched_coords.values.tolist() + star_filter.others_coords.values.tolist()
+
+        except:
+            try:
+                coords = star_filter.searched_coords.tolist() + star_filter.others_coords.tolist()
+            except:
+                coords = star_filter.searched_coords + star_filter.others_coords
+
+    pca = decomposition.PCA(n_components=2)
+    pca.fit(coords)
+    red_coords = pca.transform(coords)
+
+    xmax, ymax = np.max(red_coords, axis=0).tolist()
+    xmin, ymin = np.min(red_coords, axis=0).tolist()
+
+    xwidth = xmax - xmin
+    ywidth = ymax - ymin
+
+    x = np.linspace(xmin - xwidth*OVERLAY, xmax + xwidth*OVERLAY, N)
+    y = np.linspace(ymin - ywidth*OVERLAY, ymax + ywidth*OVERLAY, N)
+    X, Y = np.meshgrid(x, y)
+
+    to_transf = np.c_[X.ravel(), Y.ravel()]
+    back_transf_data = pca.inverse_transform(to_transf)
+
+    z = np.array(star_filter.evaluateCoordinates(back_transf_data))
+    Z = z.reshape(X.shape)
+
+    plt.xlim(xmin, xmax)
+    plt.ylim(ymin, ymax)
+
+    plt.pcolor(X, Y, Z)
+    plt.colorbar()
+
+    if coords:
+        s = np.array(red_coords[:ns]).T
+        c = np.array(red_coords[ns:]).T
+        plt.plot(s[0], s[1], "m*", label="Searched objects", markersize=17)
+        plt.plot(
+            c[0], c[1], "k*", label="Contamination objects", markersize=17)
+        plt.legend()
+
+    return x, y, Z, pca
 
 
 def plot2DProbabSpace(star_filter, plot_ranges, N, searched_coords=[],
@@ -279,10 +369,12 @@ def plotHist(searched_coo, cont_coo, labels=[], bins=None, save_path=None,
 
 
 def plotUnsupProbabSpace(coords, decider, opt="show", N=100):
-    if list(coords) and len(coords[0]) == 2:
+    if len(coords) and len(coords[0]) == 2:
         return plot2DUnsupProbabSpace(coords, decider, opt, N)
-    elif list(coords) and len(coords[0]) == 1:
+    elif len(coords) and len(coords[0]) == 1:
         return plot1DUnsupProbabSpace(coords, decider, opt, N)
+    else:
+        return plotNDUnsupProbabSpace(coords, decider, opt, N)
 
 
 def plot2DUnsupProbabSpace(coords, decider, opt="show", N=50):
@@ -340,45 +432,62 @@ def plot1DUnsupProbabSpace(coords, decider, opt, N):
     return x, y, centroids
 
 
-"""def plotNDUnsupProbabSpace(coords, decider, opt="show", N=8):
+def plotNDUnsupProbabSpace(coords, decider, opt="show", N=8):
+    """
+
+    """
     OVERLAY = 0.2
 
-    coords = np.array(coords)
-    x_data = []
-    for x_coords in coords.T:
-        x_min, x_max = x_coords.min(), x_coords.max()
-        xo = (x_max - x_min) * OVERLAY
-        x_data.append( np.linspace(x_min - xo, x_max + xo, N) )
-        
-    x_meshed = np.meshgrid(*x_data)
+    if not isinstance(coords, list):
+        coords = list(coords)
 
-    # Obtain labels for each point in mesh. Use last trained model.
-    Z = decider.evaluate(np.c_[xx.ravel(), yy.ravel()])
+    pca = decomposition.PCA(n_components=2)
+    pca.fit(coords)
+    red_coords = pca.transform(coords)
 
-    # Put the result into a color plot
-    Z = Z.reshape(xx.shape)
+    xmax, ymax = np.max(red_coords, axis=0).tolist()
+    xmin, ymin = np.min(red_coords, axis=0).tolist()
+
+    xwidth = xmax-xmin
+    ywidth = ymax - ymin
+
+    x = np.linspace(xmin - xwidth*OVERLAY, xmax + ywidth*OVERLAY, N)
+    y = np.linspace(ymin - ywidth*OVERLAY, ymax + ywidth*OVERLAY, N)
+    X, Y = np.meshgrid(x, y)
+
+    to_transf = np.c_[X.ravel(), Y.ravel()]
+    back_transf_data = pca.inverse_transform(to_transf)
+
+    z = np.array(decider.evaluate(back_transf_data))
+    Z = z.reshape(X.shape)
 
     # Plot the centroids as a white X
-    centroids = decider.classifier.cluster_centers_
+    centroids = pca.transform(decider.classifier.cluster_centers_)
+
+    plt.xlim(xmin, xmax)
+    plt.ylim(ymin, ymax)
+
+    plt.pcolor(X, Y, Z)
+    plt.colorbar()
 
     if opt == "show":
         plt.figure(1)
         plt.clf()
         plt.imshow(Z, interpolation='nearest',
-                   extent=(xx.min(), xx.max(), yy.min(), yy.max()),
+                   extent=(xmin, xmax, ymin, ymax),
                    cmap=plt.cm.Paired,
                    aspect='auto', origin='lower')
 
-        plt.plot(coords[:, 0], coords[:, 1], 'k.', markersize=2)
+        plt.plot(red_coords[:, 0], red_coords[:, 1], 'k.', markersize=2)
         plt.scatter(centroids[:, 0], centroids[:, 1],
                     marker='x', s=169, linewidths=3,
                     color='w', zorder=10)
         plt.title('')
-        plt.xlim(x_min, x_max)
-        plt.ylim(y_min, y_max)
+        plt.xlim(xmin, xmax)
+        plt.ylim(ymin, ymax)
         plt.xticks(())
         plt.yticks(())
 
         plt.show()
 
-    return x, y, Z, centroids"""
+    return x, y, Z, centroids, red_coords

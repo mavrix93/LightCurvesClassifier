@@ -123,7 +123,7 @@ class ParamsEstimator(object):
         opt : str
             Option for evaluating scores
                 "max" - Returns the highest score
-                "min" - Returns the lowerest score
+                "min" - Returns the lowermost score
 
         save_params : dict
             Parameters for saving outputs. For each output there are some

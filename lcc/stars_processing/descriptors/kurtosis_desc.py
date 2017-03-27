@@ -12,20 +12,26 @@ class KurtosisDescr(BaseDescriptor):
 
     Attributes
     ----------
-    bins : int
-        Dimension of reduced light curve
+    bins : int, NoneType
+        Dimension of reduced light curve. If it is `None` whole curve is taken.
+
+    absolute : bool
+        Absolute value of kurtosis is taken if it is `True`
     """
     LABEL = "Kurtosis"
 
-    def __init__(self, bins=None):
+    def __init__(self, bins=None, absolute=False):
         """
         Parameters
         ----------
-        bins : int
-            Dimension of reduced light curve
+        bins : int, NoneType
+            Dimension of reduced light curve. If it is `None` whole curve is taken.
 
+        absolute : bool
+            Absolute value of kurtosis is taken if it is `True`
         """
         self.bins = bins
+        self.absolute = absolute
 
     def getSpaceCoords(self, stars):
         """
@@ -50,6 +56,10 @@ class KurtosisDescr(BaseDescriptor):
                 else:
                     mags = lc.mag
                 kurt = kurtosis(mags)
+
+                if self.absolute:
+                    kut = abs(kurt)
+
             else:
                 kurt = None
             kurtosis_list.append(kurt)

@@ -75,7 +75,7 @@ class StarsFilter(object):
 
     @check_attribute("learned", True, "raise")
     def filterStars(self, stars, pass_method="all"):
-        '''
+        """
         Apply all deciders
 
         Parameters
@@ -96,7 +96,7 @@ class StarsFilter(object):
         -------
         list of `Star`s
             Stars which passed thru filtering
-        '''
+        """
         stars_coords = self.getSpaceCoordinates(stars)
 
         treshold = np.mean([dec.treshold for dec in self.deciders])
@@ -163,8 +163,8 @@ class StarsFilter(object):
         -------
             None
         """
-        self.learnOnCoords(
-            self.getSpaceCoordinates(searched), self.getSpaceCoordinates(others))
+        coords = self.getSpaceCoordinates(searched+others)
+        self.learnOnCoords(coords[:len(searched)], coords[len(searched):])
 
     def getSpaceCoordinates(self, stars):
         """
@@ -180,15 +180,12 @@ class StarsFilter(object):
         pandas.DataFrame
             Coordinates of the stars as pandas DataFrame
         """
-        space_coordinates = []
-        labels = []
-        for star in stars:
-            coords = self._getSpaceCoordinates(star)
-            if coords:
-                space_coordinates.append(coords)
-                labels.append(star.name)
-            else:
-                warnings.warn("Not all space coordinates have been obtained")
+        space_coordinates = self._getSpaceCoordinates(stars)
+        if isinstance(space_coordinates, np.ndarray):
+            space_coordinates = space_coordinates.tolist()
+        labels = [st.name for st in stars]
+
+        assert len(space_coordinates) == len(labels)
 
         desc_labels = []
         for desc in self.descriptors:
@@ -231,7 +228,7 @@ class StarsFilter(object):
 
     @check_attribute("learned", True, "raise")
     def evaluateCoordinates(self, stars_coords, meth="mean"):
-        '''
+        """
         Get probability of membership calculated from all deciders
 
         Parameters
@@ -251,7 +248,7 @@ class StarsFilter(object):
         -------
         list
             Probabilities of membership according to selected the method
-        '''
+        """
         decisions = []
         for decider in self.deciders:
             decisions.append(decider.evaluate(stars_coords))
@@ -309,16 +306,15 @@ class StarsFilter(object):
         return getMeanDict([decider.getStatistic(searched_stars_coords,
                                                  contamination_stars_coords, treshold) for decider in self.deciders])
 
-    def _getSpaceCoordinates(self, star):
+    def _getSpaceCoordinates(self, stars):
         space_coordinate = []
         for descriptor in self.descriptors:
-            _coo = descriptor.getSpaceCoords([star])
-            if _coo:
-                coo = _coo[0]
-                if hasattr(coo, "__iter__"):
-                    space_coordinate += coo
-                else:
-                    space_coordinate.append(coo)
+            coo = descriptor.getSpaceCoords(stars)
+            if not hasattr(coo[0], "__iter__"):
+                coo = [[c] for c in coo]
+
+            if not space_coordinate:
+                space_coordinate = coo
             else:
-                return False
+                space_coordinate = [list(a)+list(b) for a,b in zip(space_coordinate, coo)]
         return space_coordinate
