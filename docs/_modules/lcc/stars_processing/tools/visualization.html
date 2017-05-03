@@ -1,0 +1,471 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>lcc.stars_processing.tools.visualization &#8212; LightCurvesClassifier 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../../',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for lcc.stars_processing.tools.visualization</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">matplotlib</span> <span class="k">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">from</span> <span class="nn">lcc.utils.helpers</span> <span class="k">import</span> <span class="n">checkDepth</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+
+<div class="viewcode-block" id="plotProbabSpace"><a class="viewcode-back" href="../../../../lcc.stars_processing.tools.html#lcc.stars_processing.tools.visualization.plotProbabSpace">[docs]</a><span class="k">def</span> <span class="nf">plotProbabSpace</span><span class="p">(</span><span class="n">star_filter</span><span class="p">,</span> <span class="n">plot_ranges</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">opt</span><span class="o">=</span><span class="s2">&quot;show&quot;</span><span class="p">,</span>
+                    <span class="n">path</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="n">file_name</span><span class="o">=</span><span class="s2">&quot;params_space.png&quot;</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span>
+                    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Params space&quot;</span><span class="p">,</span> <span class="n">x_lab</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">y_lab</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+                    <span class="n">searched_coords</span><span class="o">=</span><span class="p">[],</span> <span class="n">contamination_coords</span><span class="o">=</span><span class="p">[],</span> <span class="n">OVERLAY</span><span class="o">=</span><span class="mf">0.6</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Plot params space</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    star_filter : StarsFilter object</span>
+<span class="sd">        Trained stars filter object</span>
+
+<span class="sd">    plot_ranges : tuple, list</span>
+<span class="sd">        List of ranges. For example: [range(1,10), range(20,50)] - for 2D plot</span>
+
+<span class="sd">    opt : str</span>
+<span class="sd">        Option whether save/show/return</span>
+
+<span class="sd">    title : str</span>
+<span class="sd">        Title of the plot</span>
+
+<span class="sd">    path : str</span>
+<span class="sd">        Path to the output file location</span>
+
+<span class="sd">    file_name : str</span>
+<span class="sd">        Name of the file</span>
+
+<span class="sd">    OVERLAY : float</span>
+<span class="sd">        Percentage overlay of borders despite of data ranges</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">        None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">dim</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">star_filter</span><span class="o">.</span><span class="n">searched_coords</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">searched_coords</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">contamination_coords</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+        <span class="n">searched_coords</span> <span class="o">=</span> <span class="n">searched_coords</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="n">contamination_coords</span> <span class="o">=</span> <span class="n">contamination_coords</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">plot_ranges</span><span class="p">:</span>
+        <span class="n">plot_ranges</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">trained_coo</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+            <span class="n">star_filter</span><span class="o">.</span><span class="n">searched_coords</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span> <span class="o">+</span> <span class="n">star_filter</span><span class="o">.</span><span class="n">others_coords</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span><span class="o">.</span><span class="n">T</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">dim</span><span class="p">):</span>
+            <span class="n">rang</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">trained_coo</span><span class="p">[</span><span class="n">i</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">trained_coo</span><span class="p">[</span><span class="n">i</span><span class="p">])]</span>
+            <span class="n">overl</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">rang</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">rang</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">*</span> <span class="n">OVERLAY</span>
+            <span class="n">plot_ranges</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">rang</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">overl</span><span class="p">,</span> <span class="n">rang</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">overl</span><span class="p">])</span>
+
+    <span class="k">if</span> <span class="n">dim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">x_lab</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">y_lab</span><span class="p">:</span>
+            <span class="n">x_lab</span> <span class="o">=</span> <span class="n">star_filter</span><span class="o">.</span><span class="n">descriptors</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">LABEL</span>
+            <span class="n">y_lab</span> <span class="o">=</span> <span class="s2">&quot;Probability&quot;</span>
+        <span class="n">plt_data</span> <span class="o">=</span> <span class="n">plot1DProbabSpace</span><span class="p">(</span>
+            <span class="n">star_filter</span><span class="p">,</span> <span class="n">plot_ranges</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span>
+            <span class="n">searched_coords</span><span class="o">=</span><span class="n">searched_coords</span><span class="p">,</span>
+            <span class="n">contaminatiom_coords</span><span class="o">=</span><span class="n">contamination_coords</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">dim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">x_lab</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">y_lab</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">star_filter</span><span class="o">.</span><span class="n">descriptors</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="n">x_lab</span> <span class="o">=</span> <span class="n">star_filter</span><span class="o">.</span><span class="n">descriptors</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">LABEL</span>
+                <span class="n">y_lab</span> <span class="o">=</span> <span class="n">star_filter</span><span class="o">.</span><span class="n">descriptors</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">LABEL</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">labels</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">desc</span> <span class="ow">in</span> <span class="n">star_filter</span><span class="o">.</span><span class="n">descriptors</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">desc</span><span class="o">.</span><span class="n">LABEL</span><span class="p">,</span> <span class="s2">&quot;__iter__&quot;</span><span class="p">):</span>
+                        <span class="n">labels</span> <span class="o">+=</span> <span class="n">desc</span><span class="o">.</span><span class="n">LABEL</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">desc</span><span class="o">.</span><span class="n">LABEL</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                    <span class="n">x_lab</span> <span class="o">=</span> <span class="n">labels</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="n">y_lab</span> <span class="o">=</span> <span class="n">labels</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">x_lab</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
+                    <span class="n">y_lab</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">plt_data</span> <span class="o">=</span> <span class="n">plot2DProbabSpace</span><span class="p">(</span><span class="n">star_filter</span><span class="p">,</span> <span class="n">plot_ranges</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span>
+                                     <span class="n">searched_coords</span><span class="o">=</span><span class="n">searched_coords</span><span class="p">,</span>
+                                     <span class="n">contaminatiom_coords</span><span class="o">=</span><span class="n">contamination_coords</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[],</span> <span class="p">[],</span> <span class="p">[]])</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">x_lab</span><span class="p">))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">y_lab</span><span class="p">))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">title</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">opt</span> <span class="o">==</span> <span class="s2">&quot;show&quot;</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="n">opt</span> <span class="o">==</span> <span class="s2">&quot;save&quot;</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">file_name</span><span class="p">))</span>
+    <span class="k">elif</span> <span class="n">opt</span> <span class="o">==</span> <span class="s2">&quot;return&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">plt_data</span></div>
+
+
+<div class="viewcode-block" id="plot2DProbabSpace"><a class="viewcode-back" href="../../../../lcc.stars_processing.tools.html#lcc.stars_processing.tools.visualization.plot2DProbabSpace">[docs]</a><span class="k">def</span> <span class="nf">plot2DProbabSpace</span><span class="p">(</span><span class="n">star_filter</span><span class="p">,</span> <span class="n">plot_ranges</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">searched_coords</span><span class="o">=</span><span class="p">[],</span>
+                      <span class="n">contaminatiom_coords</span><span class="o">=</span><span class="p">[]):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Plot probability space</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    star_filter : StarsFilter object</span>
+<span class="sd">        Trained stars filter</span>
+
+<span class="sd">    plot_ranges : iterable</span>
+<span class="sd">        Ranges (max/min) for all axis</span>
+
+<span class="sd">    N : int</span>
+<span class="sd">        Number of points per axis</span>
+
+<span class="sd">    searched_coords : list, iterable</span>
+<span class="sd">        List of coordinates of searched objects</span>
+
+<span class="sd">    contaminatiom_coords : list, iterable</span>
+<span class="sd">        List of coordinates of contamination objects</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tuple</span>
+<span class="sd">        x, y, Z</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">checkDepth</span><span class="p">(</span><span class="n">plot_ranges</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">ifnotraise</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="n">plot_ranges</span> <span class="o">=</span> <span class="p">[</span><span class="n">plot_ranges</span><span class="p">,</span> <span class="n">plot_ranges</span><span class="p">]</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">plot_ranges</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">plot_ranges</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="n">N</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">plot_ranges</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">plot_ranges</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="n">N</span><span class="p">)</span>
+    <span class="n">X</span><span class="p">,</span> <span class="n">Y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+    <span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">star_filter</span><span class="o">.</span><span class="n">evaluateCoordinates</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">c_</span><span class="p">[</span><span class="n">X</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">Y</span><span class="o">.</span><span class="n">ravel</span><span class="p">()]))</span>
+    <span class="n">Z</span> <span class="o">=</span> <span class="n">z</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="n">plot_ranges</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">plot_ranges</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="n">plot_ranges</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">plot_ranges</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">pcolor</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Z</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">searched_coords</span> <span class="ow">or</span> <span class="n">contaminatiom_coords</span><span class="p">:</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">searched_coords</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">contaminatiom_coords</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;m*&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Searched objects&quot;</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">17</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+            <span class="n">c</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">c</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;k*&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Contamination objects&quot;</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">17</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">Z</span></div>
+
+
+<div class="viewcode-block" id="plot1DProbabSpace"><a class="viewcode-back" href="../../../../lcc.stars_processing.tools.html#lcc.stars_processing.tools.visualization.plot1DProbabSpace">[docs]</a><span class="k">def</span> <span class="nf">plot1DProbabSpace</span><span class="p">(</span><span class="n">star_filter</span><span class="p">,</span> <span class="n">plot_ranges</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span>
+                      <span class="n">searched_coords</span><span class="o">=</span><span class="p">[],</span> <span class="n">contaminatiom_coords</span><span class="o">=</span><span class="p">[]):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Plot probability space</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    star_filter : StarsFilter object</span>
+<span class="sd">        Trained stars filter</span>
+
+<span class="sd">    plot_ranges : iterable</span>
+<span class="sd">        Ranges (max/min) for all axis</span>
+
+<span class="sd">    N : int</span>
+<span class="sd">        Number of points per axis</span>
+
+<span class="sd">    searched_coords : list, iterable</span>
+<span class="sd">        List of coordinates of searched objects</span>
+
+<span class="sd">    contaminatiom_coords : list, iterable</span>
+<span class="sd">        List of coordinates of contamination objects</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tuple</span>
+<span class="sd">        x, y</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">checkDepth</span><span class="p">(</span><span class="n">plot_ranges</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">ifnotraise</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="n">plot_ranges</span> <span class="o">=</span> <span class="n">plot_ranges</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">plot_ranges</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">plot_ranges</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">star_filter</span><span class="o">.</span><span class="n">evaluateCoordinates</span><span class="p">([[</span><span class="n">y</span><span class="p">]</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">x</span><span class="p">])</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">searched_coords</span> <span class="ow">or</span> <span class="n">contaminatiom_coords</span><span class="p">:</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="p">[</span><span class="n">qq</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">qq</span> <span class="ow">in</span> <span class="n">searched_coords</span><span class="p">]</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="p">[</span><span class="n">qq</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">qq</span> <span class="ow">in</span> <span class="n">contaminatiom_coords</span><span class="p">]</span>
+        <span class="n">s_weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+        <span class="n">c_weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">x</span><span class="p">,</span>
+                 <span class="n">histtype</span><span class="o">=</span><span class="s1">&#39;bar&#39;</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">s_weights</span><span class="p">,</span>
+                 <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Searched objects&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">x</span><span class="p">,</span>
+                 <span class="n">histtype</span><span class="o">=</span><span class="s1">&#39;bar&#39;</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">c_weights</span><span class="p">,</span>
+                 <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Contamination objects&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">y</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="plotHist"><a class="viewcode-back" href="../../../../lcc.stars_processing.tools.html#lcc.stars_processing.tools.visualization.plotHist">[docs]</a><span class="k">def</span> <span class="nf">plotHist</span><span class="p">(</span><span class="n">searched_coo</span><span class="p">,</span> <span class="n">cont_coo</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="p">[],</span> <span class="n">bins</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">save_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+             <span class="n">file_name</span><span class="o">=</span><span class="s2">&quot;hist.png&quot;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Plot histogram</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    searched_coo : iterable</span>
+<span class="sd">        Coordinates of searched objects to plot the histogram</span>
+
+<span class="sd">    cont_coo : iterable</span>
+<span class="sd">        Coordinates of contamination objects to plot the histogram</span>
+
+<span class="sd">    labels : list, tuple of str</span>
+<span class="sd">        Labels for axis</span>
+
+<span class="sd">    save_path : str, NoneType</span>
+<span class="sd">        Path to the folder where plots are saved if not None, else</span>
+<span class="sd">        plots are showed immediately</span>
+
+<span class="sd">    bins : int, NoneType</span>
+<span class="sd">        Number of bins for histogram</span>
+
+<span class="sd">    file_name : str</span>
+<span class="sd">        Name of the plot file</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">searched_coo</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">cont_coo</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+            <span class="s2">&quot;Dimension of both searched and contamination sample have to be the same.</span><span class="se">\n</span><span class="s2">Got: </span><span class="si">%i</span><span class="s2">, </span><span class="si">%i</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">)))</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">labels</span><span class="p">):</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="s2">&quot;Dimension of the dimension of train sample and labels have to be the same.</span><span class="se">\n</span><span class="s2">Got: </span><span class="si">%i</span><span class="s2">, </span><span class="si">%i</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">labels</span><span class="p">)))</span>
+        <span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;&quot;</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">x</span><span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">x_param</span><span class="p">,</span> <span class="n">y_param</span><span class="p">,</span> <span class="n">lab</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">labels</span><span class="p">):</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">bins</span><span class="p">:</span>
+            <span class="n">x_bins</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="mf">3.32</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x_param</span><span class="p">))</span>
+            <span class="n">y_bins</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="mf">3.32</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">y_param</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">x_bins</span> <span class="o">=</span> <span class="n">bins</span>
+            <span class="n">y_bins</span> <span class="o">=</span> <span class="n">bins</span>
+
+        <span class="n">x_weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">x_param</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">x_param</span><span class="p">)</span>
+        <span class="n">y_weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">y_param</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">y_param</span><span class="p">)</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">x_param</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">x_bins</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">x_weights</span><span class="p">,</span>
+                 <span class="n">histtype</span><span class="o">=</span><span class="s1">&#39;bar&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;crimson&quot;</span><span class="p">,</span>
+                 <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Searched objects&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">y_param</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">y_bins</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">y_weights</span><span class="p">,</span>
+                 <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Others&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Distribution of the parameters coordinates&quot;</span><span class="p">)</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="n">lab</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Normalized counts&quot;</span><span class="p">)</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">save_path</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                <span class="n">save_path</span><span class="p">,</span> <span class="n">file_name</span> <span class="o">+</span> <span class="s2">&quot;_hist_</span><span class="si">%s</span><span class="s2">.png&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">lab</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">))))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="plotUnsupProbabSpace"><a class="viewcode-back" href="../../../../lcc.stars_processing.tools.html#lcc.stars_processing.tools.visualization.plotUnsupProbabSpace">[docs]</a><span class="k">def</span> <span class="nf">plotUnsupProbabSpace</span><span class="p">(</span><span class="n">coords</span><span class="p">,</span> <span class="n">decider</span><span class="p">,</span> <span class="n">opt</span><span class="o">=</span><span class="s2">&quot;show&quot;</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">list</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">coords</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">plot2DUnsupProbabSpace</span><span class="p">(</span><span class="n">coords</span><span class="p">,</span> <span class="n">decider</span><span class="p">,</span> <span class="n">opt</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">list</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">coords</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">plot1DUnsupProbabSpace</span><span class="p">(</span><span class="n">coords</span><span class="p">,</span> <span class="n">decider</span><span class="p">,</span> <span class="n">opt</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="plot2DUnsupProbabSpace"><a class="viewcode-back" href="../../../../lcc.stars_processing.tools.html#lcc.stars_processing.tools.visualization.plot2DUnsupProbabSpace">[docs]</a><span class="k">def</span> <span class="nf">plot2DUnsupProbabSpace</span><span class="p">(</span><span class="n">coords</span><span class="p">,</span> <span class="n">decider</span><span class="p">,</span> <span class="n">opt</span><span class="o">=</span><span class="s2">&quot;show&quot;</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">50</span><span class="p">):</span>
+    <span class="n">OVERLAY</span> <span class="o">=</span> <span class="mf">0.2</span>
+
+    <span class="n">x_min</span><span class="p">,</span> <span class="n">x_max</span> <span class="o">=</span> <span class="n">coords</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">coords</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+    <span class="n">y_min</span><span class="p">,</span> <span class="n">y_max</span> <span class="o">=</span> <span class="n">coords</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">coords</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+    <span class="n">xo</span> <span class="o">=</span> <span class="p">(</span><span class="n">x_max</span> <span class="o">-</span> <span class="n">x_min</span><span class="p">)</span> <span class="o">*</span> <span class="n">OVERLAY</span>
+    <span class="n">yo</span> <span class="o">=</span> <span class="p">(</span><span class="n">y_max</span> <span class="o">-</span> <span class="n">y_min</span><span class="p">)</span> <span class="o">*</span> <span class="n">OVERLAY</span>
+    <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span>
+        <span class="n">x_min</span> <span class="o">-</span> <span class="n">xo</span><span class="p">,</span> <span class="n">x_max</span> <span class="o">+</span> <span class="n">xo</span><span class="p">,</span> <span class="n">N</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">y_min</span> <span class="o">-</span> <span class="n">yo</span><span class="p">,</span> <span class="n">y_max</span> <span class="o">+</span> <span class="n">yo</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span>
+    <span class="n">xx</span><span class="p">,</span> <span class="n">yy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+    <span class="c1"># Obtain labels for each point in mesh. Use last trained model.</span>
+    <span class="n">Z</span> <span class="o">=</span> <span class="n">decider</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">c_</span><span class="p">[</span><span class="n">xx</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">yy</span><span class="o">.</span><span class="n">ravel</span><span class="p">()])</span>
+
+    <span class="c1"># Put the result into a color plot</span>
+    <span class="n">Z</span> <span class="o">=</span> <span class="n">Z</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">xx</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+
+    <span class="c1"># Plot the centroids as a white X</span>
+    <span class="n">centroids</span> <span class="o">=</span> <span class="n">decider</span><span class="o">.</span><span class="n">classifier</span><span class="o">.</span><span class="n">cluster_centers_</span>
+
+    <span class="k">if</span> <span class="n">opt</span> <span class="o">==</span> <span class="s2">&quot;show&quot;</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">Z</span><span class="p">,</span> <span class="n">interpolation</span><span class="o">=</span><span class="s1">&#39;nearest&#39;</span><span class="p">,</span>
+                   <span class="n">extent</span><span class="o">=</span><span class="p">(</span><span class="n">xx</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">xx</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span> <span class="n">yy</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">yy</span><span class="o">.</span><span class="n">max</span><span class="p">()),</span>
+                   <span class="n">cmap</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">Paired</span><span class="p">,</span>
+                   <span class="n">aspect</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="s1">&#39;lower&#39;</span><span class="p">)</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">coords</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">coords</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;k.&#39;</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">centroids</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">centroids</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span>
+                    <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">169</span><span class="p">,</span> <span class="n">linewidths</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+                    <span class="n">color</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="n">x_min</span><span class="p">,</span> <span class="n">x_max</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="n">y_min</span><span class="p">,</span> <span class="n">y_max</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(())</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">yticks</span><span class="p">(())</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">Z</span><span class="p">,</span> <span class="n">centroids</span></div>
+
+
+<div class="viewcode-block" id="plot1DUnsupProbabSpace"><a class="viewcode-back" href="../../../../lcc.stars_processing.tools.html#lcc.stars_processing.tools.visualization.plot1DUnsupProbabSpace">[docs]</a><span class="k">def</span> <span class="nf">plot1DUnsupProbabSpace</span><span class="p">(</span><span class="n">coords</span><span class="p">,</span> <span class="n">decider</span><span class="p">,</span> <span class="n">opt</span><span class="p">,</span> <span class="n">N</span><span class="p">):</span>
+    <span class="n">OVERLAY</span> <span class="o">=</span> <span class="mf">0.2</span>
+
+    <span class="n">x_min</span><span class="p">,</span> <span class="n">x_max</span> <span class="o">=</span> <span class="n">coords</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">coords</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+    <span class="n">xo</span> <span class="o">=</span> <span class="p">(</span><span class="n">x_max</span> <span class="o">-</span> <span class="n">x_min</span><span class="p">)</span> <span class="o">*</span> <span class="n">OVERLAY</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">x_min</span> <span class="o">-</span> <span class="n">xo</span><span class="p">,</span> <span class="n">x_max</span> <span class="o">+</span> <span class="n">xo</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span>
+
+    <span class="n">y</span> <span class="o">=</span> <span class="n">decider</span><span class="o">.</span><span class="n">evaluate</span><span class="p">([[</span><span class="n">xx</span><span class="p">]</span> <span class="k">for</span> <span class="n">xx</span> <span class="ow">in</span> <span class="n">x</span><span class="p">])</span>
+    <span class="n">centroids</span> <span class="o">=</span> <span class="n">decider</span><span class="o">.</span><span class="n">classifier</span><span class="o">.</span><span class="n">cluster_centers_</span>
+    <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">centroids</span></div>
+
+
+<span class="sd">&quot;&quot;&quot;def plotNDUnsupProbabSpace(coords, decider, opt=&quot;show&quot;, N=8):</span>
+<span class="sd">    OVERLAY = 0.2</span>
+
+<span class="sd">    coords = np.array(coords)</span>
+<span class="sd">    x_data = []</span>
+<span class="sd">    for x_coords in coords.T:</span>
+<span class="sd">        x_min, x_max = x_coords.min(), x_coords.max()</span>
+<span class="sd">        xo = (x_max - x_min) * OVERLAY</span>
+<span class="sd">        x_data.append( np.linspace(x_min - xo, x_max + xo, N) )</span>
+<span class="sd">        </span>
+<span class="sd">    x_meshed = np.meshgrid(*x_data)</span>
+
+<span class="sd">    # Obtain labels for each point in mesh. Use last trained model.</span>
+<span class="sd">    Z = decider.evaluate(np.c_[xx.ravel(), yy.ravel()])</span>
+
+<span class="sd">    # Put the result into a color plot</span>
+<span class="sd">    Z = Z.reshape(xx.shape)</span>
+
+<span class="sd">    # Plot the centroids as a white X</span>
+<span class="sd">    centroids = decider.classifier.cluster_centers_</span>
+
+<span class="sd">    if opt == &quot;show&quot;:</span>
+<span class="sd">        plt.figure(1)</span>
+<span class="sd">        plt.clf()</span>
+<span class="sd">        plt.imshow(Z, interpolation=&#39;nearest&#39;,</span>
+<span class="sd">                   extent=(xx.min(), xx.max(), yy.min(), yy.max()),</span>
+<span class="sd">                   cmap=plt.cm.Paired,</span>
+<span class="sd">                   aspect=&#39;auto&#39;, origin=&#39;lower&#39;)</span>
+
+<span class="sd">        plt.plot(coords[:, 0], coords[:, 1], &#39;k.&#39;, markersize=2)</span>
+<span class="sd">        plt.scatter(centroids[:, 0], centroids[:, 1],</span>
+<span class="sd">                    marker=&#39;x&#39;, s=169, linewidths=3,</span>
+<span class="sd">                    color=&#39;w&#39;, zorder=10)</span>
+<span class="sd">        plt.title(&#39;&#39;)</span>
+<span class="sd">        plt.xlim(x_min, x_max)</span>
+<span class="sd">        plt.ylim(y_min, y_max)</span>
+<span class="sd">        plt.xticks(())</span>
+<span class="sd">        plt.yticks(())</span>
+
+<span class="sd">        plt.show()</span>
+
+<span class="sd">    return x, y, Z, centroids&quot;&quot;&quot;</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Martin Vo.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

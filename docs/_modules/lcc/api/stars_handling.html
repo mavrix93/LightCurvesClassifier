@@ -1,0 +1,255 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>lcc.api.stars_handling &#8212; LightCurvesClassifier 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for lcc.api.stars_handling</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">random</span>
+
+<span class="kn">from</span> <span class="nn">lcc.data_manager.status_resolver</span> <span class="k">import</span> <span class="n">StatusResolver</span>
+<span class="kn">from</span> <span class="nn">lcc.db_tier.stars_provider</span> <span class="k">import</span> <span class="n">StarsProvider</span>
+<span class="kn">from</span> <span class="nn">lcc.entities.exceptions</span> <span class="k">import</span> <span class="n">QueryInputError</span>
+<span class="kn">from</span> <span class="nn">lcc.utils.helpers</span> <span class="k">import</span> <span class="n">progressbar</span>
+
+
+<div class="viewcode-block" id="getStars"><a class="viewcode-back" href="../../../lcc.api.html#lcc.api.stars_handling.getStars">[docs]</a><span class="k">def</span> <span class="nf">getStars</span><span class="p">(</span><span class="n">queries</span><span class="p">,</span> <span class="n">lcs_fold</span><span class="p">,</span> <span class="n">query_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">progb_txt</span><span class="o">=</span><span class="s2">&quot;Querying stars: &quot;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get stars from query text. According to format of the query text different</span>
+<span class="sd">    methods are called.</span>
+
+<span class="sd">        1.QUERY:db_name:query_file_in_inputs_folder</span>
+<span class="sd">            --&gt; Remote database is queried (db key is name of connector class)</span>
+
+<span class="sd">        2.stars_folder_key:number or stars_folder_key:float_number or stars_folder_key</span>
+<span class="sd">            --&gt; Light curves from folder according to first key is loaded</span>
+<span class="sd">                (according to settings.STARS_PATH dictionary). All stars are</span>
+<span class="sd">                loaded if there is no number and &#39;:&#39;, in case of integer after</span>
+<span class="sd">                &#39;:&#39; just this number of stars are loaded and if there are float</span>
+<span class="sd">                number after &#39;:&#39; this percentage number of all stars are loaded.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ORDINARY_QUERY_KEY</span> <span class="o">=</span> <span class="s2">&quot;QUERY:&quot;</span>
+
+    <span class="n">stars</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">query</span> <span class="ow">in</span> <span class="n">progressbar</span><span class="p">(</span><span class="n">queries</span><span class="p">,</span> <span class="n">progb_txt</span><span class="p">):</span>
+        <span class="n">query</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">query</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">ORDINARY_QUERY_KEY</span><span class="p">):</span>
+            <span class="n">stars</span> <span class="o">+=</span> <span class="n">getStarsFromRemoteDb</span><span class="p">(</span>
+                <span class="n">query</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">ORDINARY_QUERY_KEY</span><span class="p">):],</span> <span class="n">query_path</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">stars</span> <span class="o">+=</span> <span class="n">getStarsFromFolder</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">lcs_fold</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">stars</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">QueryInputError</span><span class="p">(</span><span class="s2">&quot;There no stars. Your query: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">queries</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">stars</span></div>
+
+
+<div class="viewcode-block" id="getStarsFromFolder"><a class="viewcode-back" href="../../../lcc.api.html#lcc.api.stars_handling.getStarsFromFolder">[docs]</a><span class="k">def</span> <span class="nf">getStarsFromFolder</span><span class="p">(</span><span class="n">single_path</span><span class="p">,</span> <span class="n">lcs_fold</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get stars from folder/s. If path is iterable (case that more folders were</span>
+<span class="sd">    given, light curves from that all folder will be loaded</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    -----------</span>
+<span class="sd">        single_path : str</span>
+<span class="sd">            Name of the folder of lightcurves from &quot;light_curve&quot; directory (specified</span>
+<span class="sd">            in settings).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    --------</span>
+<span class="sd">        stars : List of Star objects</span>
+<span class="sd">            Stars from the folder</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">p</span><span class="p">,</span> <span class="n">restr</span> <span class="o">=</span> <span class="n">_check_sample_name</span><span class="p">(</span><span class="n">single_path</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">st</span> <span class="o">=</span> <span class="n">StarsProvider</span><span class="p">()</span><span class="o">.</span><span class="n">getProvider</span><span class="p">(</span>
+            <span class="s2">&quot;FileManager&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;path&quot;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lcs_fold</span><span class="p">,</span> <span class="n">p</span><span class="p">)})</span><span class="o">.</span><span class="n">getStarsWithCurves</span><span class="p">()</span>
+        <span class="n">stars</span> <span class="o">=</span> <span class="n">_split_stars</span><span class="p">(</span><span class="n">st</span><span class="p">,</span> <span class="n">restr</span><span class="p">)</span>
+
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">There no folder with light curves named </span><span class="si">%s</span><span class="s2">.&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">p</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">stars</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+            <span class="s2">&quot;There are no stars in path with given restriction </span><span class="si">%s</span><span class="s2"> &quot;</span> <span class="o">%</span> <span class="n">single_path</span><span class="p">)</span>
+
+    <span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">stars</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">stars</span></div>
+
+
+<div class="viewcode-block" id="getStarsFromRemoteDb"><a class="viewcode-back" href="../../../lcc.api.html#lcc.api.stars_handling.getStarsFromRemoteDb">[docs]</a><span class="k">def</span> <span class="nf">getStarsFromRemoteDb</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">query_path</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This method parsing the query text in order to return desired stars</span>
+<span class="sd">    from remote database.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    -----------</span>
+<span class="sd">        query : str</span>
+<span class="sd">            Query text contains db_key and query file separated by &#39;:&#39;</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    --------</span>
+<span class="sd">        List of Star objects</span>
+
+<span class="sd">    Example</span>
+<span class="sd">    -------</span>
+<span class="sd">        _getStarsFromRemoteDb(&quot;OgleII:query_file.txt&quot;) --&gt; [Star objects]</span>
+
+<span class="sd">        query_file.txt:</span>
+<span class="sd">            #starid;field;target</span>
+<span class="sd">            1;1;lmc</span>
+<span class="sd">            10;1;smc</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">db_key</span><span class="p">,</span> <span class="n">query_file</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="n">QueryInputError</span><span class="p">(</span>
+            <span class="s2">&quot;Key for resolving stars source was not recognized:</span><span class="se">\n</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">query</span><span class="p">)</span>
+
+    <span class="n">queries</span> <span class="o">=</span> <span class="n">StatusResolver</span><span class="p">(</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">query_path</span><span class="p">,</span> <span class="n">query_file</span><span class="p">))</span><span class="o">.</span><span class="n">getQueries</span><span class="p">()</span>
+
+    <span class="n">stars</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">query</span> <span class="ow">in</span> <span class="n">progressbar</span><span class="p">(</span><span class="n">queries</span><span class="p">,</span> <span class="s2">&quot;Querying stars: &quot;</span><span class="p">):</span>
+        <span class="n">starsProvider</span> <span class="o">=</span> <span class="n">StarsProvider</span><span class="p">()</span><span class="o">.</span><span class="n">getProvider</span><span class="p">(</span><span class="n">obtain_method</span><span class="o">=</span><span class="n">db_key</span><span class="p">,</span>
+                                                    <span class="n">obtain_params</span><span class="o">=</span><span class="n">query</span><span class="p">)</span>
+
+        <span class="n">stars</span> <span class="o">+=</span> <span class="n">starsProvider</span><span class="o">.</span><span class="n">getStarsWithCurves</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">stars</span></div>
+
+
+<span class="k">def</span> <span class="nf">_split_stars</span><span class="p">(</span><span class="n">stars</span><span class="p">,</span> <span class="n">restr</span><span class="p">):</span>
+    <span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">stars</span><span class="p">)</span>
+    <span class="n">num</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">restr</span><span class="p">)</span> <span class="o">==</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">stars</span><span class="p">)</span>
+        <span class="n">num</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">n</span> <span class="o">*</span> <span class="n">restr</span><span class="p">)</span>
+
+    <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">restr</span><span class="p">)</span> <span class="o">==</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="n">num</span> <span class="o">=</span> <span class="n">restr</span>
+
+    <span class="k">return</span> <span class="n">stars</span><span class="p">[:</span><span class="n">num</span><span class="p">]</span>
+
+
+<span class="k">def</span> <span class="nf">_check_sample_name</span><span class="p">(</span><span class="n">star_class</span><span class="p">):</span>
+
+    <span class="k">if</span> <span class="s2">&quot;%&quot;</span> <span class="ow">in</span> <span class="n">star_class</span><span class="p">:</span>
+        <span class="n">parts</span> <span class="o">=</span> <span class="n">star_class</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;%&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">name</span><span class="p">,</span> <span class="n">ratio</span> <span class="o">=</span> <span class="n">parts</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">ratio</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">ratio</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Invalid float number after &#39;%&#39; </span><span class="si">%s</span><span class="s2"> &quot;</span> <span class="o">%</span> <span class="n">ratio</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">name</span><span class="p">,</span> <span class="n">ratio</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                <span class="s2">&quot;There have to be just one &#39;%&#39; special mark in the star class name.\Got </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">star_class</span><span class="p">)</span>
+
+    <span class="k">elif</span> <span class="s2">&quot;:&quot;</span> <span class="ow">in</span> <span class="n">star_class</span><span class="p">:</span>
+        <span class="n">parts</span> <span class="o">=</span> <span class="n">star_class</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">name</span><span class="p">,</span> <span class="n">num</span> <span class="o">=</span> <span class="n">parts</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">num</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">num</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Invalid integer after &#39;%&#39; </span><span class="si">%s</span><span class="s2"> &quot;</span> <span class="o">%</span> <span class="n">num</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">name</span><span class="p">,</span> <span class="n">num</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                <span class="s2">&quot;There have to be just one &#39;:&#39; special mark in the star class name.\Got </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">star_class</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">star_class</span><span class="p">,</span> <span class="kc">None</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Martin Vo.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

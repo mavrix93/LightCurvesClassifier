@@ -1,0 +1,255 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>lcc.db_tier.TAP_query &#8212; LightCurvesClassifier 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for lcc.db_tier.TAP_query</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">astropy.coordinates.sky_coordinate</span> <span class="k">import</span> <span class="n">SkyCoord</span>
+<span class="kn">from</span> <span class="nn">gavo</span> <span class="k">import</span> <span class="n">votable</span>
+<span class="kn">from</span> <span class="nn">gavo.votable.tapquery</span> <span class="k">import</span> <span class="n">RemoteError</span><span class="p">,</span> <span class="n">WrongStatus</span><span class="p">,</span> <span class="n">NetworkError</span>
+
+<span class="kn">from</span> <span class="nn">.base_query</span> <span class="k">import</span> <span class="n">LightCurvesDb</span>
+<span class="kn">from</span> <span class="nn">lcc.entities.exceptions</span> <span class="k">import</span> <span class="n">QueryInputError</span><span class="p">,</span> <span class="n">NoInternetConnection</span>
+
+
+<div class="viewcode-block" id="TapClient"><a class="viewcode-back" href="../../../lcc.db_tier.html#lcc.db_tier.TAP_query.TapClient">[docs]</a><span class="k">class</span> <span class="nc">TapClient</span><span class="p">(</span><span class="n">LightCurvesDb</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Common class for all TAP db clients</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    COO_UNIT_CONV : int, float</span>
+<span class="sd">        Conversion rate of coordinates from degrees</span>
+
+<span class="sd">    QUOTING : list, tuple</span>
+<span class="sd">        Expressions with any of these symbols are quoted</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="n">COO_UNIT_CONV</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">QUOTING</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;/&quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="s2">&quot;+&quot;</span><span class="p">]</span>
+
+    <span class="n">SPECIAL_SYMB</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;&lt;&quot;</span><span class="p">,</span> <span class="s2">&quot;&gt;&quot;</span><span class="p">,</span> <span class="s2">&quot;=&quot;</span><span class="p">]</span>
+
+    <span class="n">REPEAT_CON</span> <span class="o">=</span> <span class="mi">10</span>
+    <span class="n">COUNTER_CON</span> <span class="o">=</span> <span class="mi">0</span>
+
+<div class="viewcode-block" id="TapClient.postQuery"><a class="viewcode-back" href="../../../lcc.db_tier.html#lcc.db_tier.TAP_query.TapClient.postQuery">[docs]</a>    <span class="k">def</span> <span class="nf">postQuery</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tap_params</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Post query according to given parameters</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        -----------</span>
+<span class="sd">        tap_params : dict </span>
+<span class="sd">            Tap query parameters. It has to contains four keys.</span>
+
+<span class="sd">            Dict keys:</span>
+<span class="sd">                URL(str)</span>
+<span class="sd">                    Url of tap server</span>
+
+<span class="sd">                table(str)</span>
+<span class="sd">                    Name of table for query</span>
+
+<span class="sd">                select(str/list)</span>
+<span class="sd">                    Select string or list of column names</span>
+
+<span class="sd">                conditions(list/tuple)</span>
+<span class="sd">                    For each condition in the list of conditions there</span>
+<span class="sd">                    is a tuple - (&quot;name of column&quot;, &quot;condition&quot;) or</span>
+<span class="sd">                    (&quot;name of column&quot;, &quot;lower value&quot;, &quot;upper value&quot; for</span>
+<span class="sd">                    search in the range</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        list of lists</span>
+<span class="sd">            Result from the query as nested lists</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="c1"># Load tap protocol parameters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">URL</span> <span class="o">=</span> <span class="n">tap_params</span><span class="p">[</span><span class="s2">&quot;URL&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">table</span> <span class="o">=</span> <span class="n">tap_params</span><span class="p">[</span><span class="s2">&quot;table&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="s2">&quot;/&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;&quot;&#39;</span><span class="p">)</span> <span class="ow">or</span>
+                                      <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">)):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">table</span> <span class="o">=</span> <span class="s1">&#39;&quot;&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span> <span class="o">+</span> <span class="s1">&#39;&quot;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">conditions</span> <span class="o">=</span> <span class="n">tap_params</span><span class="p">[</span><span class="s2">&quot;conditions&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">select</span> <span class="o">=</span> <span class="n">tap_params</span><span class="p">[</span><span class="s2">&quot;select&quot;</span><span class="p">]</span>
+
+        <span class="n">query</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_select_text</span><span class="p">()</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_from_text</span><span class="p">()</span> <span class="o">+</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">_get_where_text</span><span class="p">()</span>
+
+        <span class="c1"># Run query</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">job</span> <span class="o">=</span> <span class="n">votable</span><span class="o">.</span><span class="n">ADQLTAPJob</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">URL</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">job</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+        <span class="k">except</span> <span class="n">RemoteError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">QueryInputError</span><span class="p">(</span>
+                <span class="s2">&quot;Wrong TAP query name column/table</span><span class="se">\n</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">query</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">WrongStatus</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">QueryInputError</span><span class="p">(</span><span class="s2">&quot;Wrong TAP query url&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">NetworkError</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">COUNTER_CON</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">REPEAT_CON</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">postQuery</span><span class="p">(</span><span class="n">tap_params</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">NoInternetConnection</span><span class="p">()</span>
+
+        <span class="n">retrieve_data</span> <span class="o">=</span> <span class="n">votable</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">openResult</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">job</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">retrieve_data</span></div>
+
+    <span class="k">def</span> <span class="nf">_get_select_text</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Get SELECT part for query&#39;&#39;&#39;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">select</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="nb">set</span><span class="p">))):</span>
+            <span class="n">select_text</span> <span class="o">=</span> <span class="s2">&quot;SELECT &quot;</span>
+            <span class="k">for</span> <span class="n">sel</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">select</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">sel</span><span class="p">:</span>
+                    <span class="n">select_text</span> <span class="o">+=</span> <span class="s1">&#39;&quot;</span><span class="si">%s</span><span class="s1">&quot;, &#39;</span> <span class="o">%</span> <span class="n">sel</span>
+            <span class="n">select_text</span> <span class="o">=</span> <span class="n">select_text</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span>
+        <span class="k">elif</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">select</span><span class="p">,</span> <span class="nb">str</span><span class="p">)):</span>
+            <span class="n">select_text</span> <span class="o">=</span> <span class="s2">&quot;SELECT </span><span class="si">%s</span><span class="s2"> &quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">select</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">QueryInputError</span><span class="p">(</span>
+                <span class="s2">&quot;Select option was not resolved for TAP query</span><span class="se">\n</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">select</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">select_text</span>
+
+    <span class="k">def</span> <span class="nf">_get_from_text</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Get GET part for query&#39;&#39;&#39;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">)</span> <span class="o">==</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">return</span> <span class="s2">&quot;FROM &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span>
+        <span class="k">raise</span> <span class="n">QueryInputError</span><span class="p">(</span><span class="s2">&quot;Given table name is not string&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_get_where_text</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Get WHERE part for query&#39;&#39;&#39;</span>
+
+        <span class="n">where_text</span> <span class="o">=</span> <span class="s2">&quot;WHERE &quot;</span>
+        <span class="k">for</span> <span class="n">_condition</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">conditions</span><span class="p">:</span>
+            <span class="n">condition</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transfromCoo</span><span class="p">(</span><span class="n">_condition</span><span class="p">)</span>
+            <span class="n">condition</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_quoteIfNeeded</span><span class="p">(</span><span class="n">cond</span><span class="p">)</span> <span class="k">for</span> <span class="n">cond</span> <span class="ow">in</span> <span class="n">condition</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">condition</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="ow">is</span> <span class="nb">tuple</span><span class="p">:</span>
+                <span class="n">condition</span> <span class="o">=</span> <span class="p">(</span><span class="n">condition</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">condition</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">condition</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">condition</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">):</span>
+                <span class="n">where_text</span> <span class="o">+=</span> <span class="s2">&quot;(</span><span class="si">{0}</span><span class="s2"> BETWEEN </span><span class="si">{1}</span><span class="s2"> AND </span><span class="si">{2}</span><span class="s2">) AND &quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span>
+                                                                      <span class="n">condition</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">condition</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">condition</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">condition</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;&quot;&#39;</span><span class="p">):</span>
+                    <span class="n">cleaned_cond</span> <span class="o">=</span> <span class="n">condition</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">cleaned_cond</span> <span class="o">=</span> <span class="n">condition</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+                <span class="k">if</span> <span class="n">cleaned_cond</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">SPECIAL_SYMB</span><span class="p">:</span>
+                    <span class="n">where_text</span> <span class="o">+=</span> <span class="s2">&quot;(</span><span class="si">{0}</span><span class="s2"> </span><span class="si">{1}</span><span class="s2">) AND &quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                        <span class="n">condition</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">cleaned_cond</span><span class="p">)</span>
+
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">where_text</span> <span class="o">+=</span> <span class="s2">&quot;(</span><span class="si">{0}</span><span class="s2"> = </span><span class="si">{1}</span><span class="s2">) AND &quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">condition</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">QueryInputError</span><span class="p">(</span>
+                    <span class="s2">&quot;Unresolved TAP query condition: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">condition</span><span class="p">)</span>
+        <span class="n">where_text</span> <span class="o">=</span> <span class="n">where_text</span><span class="p">[:</span><span class="o">-</span><span class="mi">4</span><span class="p">]</span>
+        <span class="nb">print</span> <span class="s2">&quot;whh&quot;</span><span class="p">,</span> <span class="n">where_text</span>
+        <span class="k">return</span> <span class="n">where_text</span>
+
+    <span class="k">def</span> <span class="nf">_transfromCoo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">condition</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">condition</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">SkyCoord</span><span class="p">):</span>
+            <span class="n">new_cond</span> <span class="o">=</span> <span class="p">[</span><span class="n">condition</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">condition</span><span class="p">)):</span>
+                <span class="n">new_cond</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">condition</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">degree</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">COO_UNIT_CONV</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">new_cond</span>
+        <span class="k">return</span> <span class="n">condition</span>
+
+    <span class="k">def</span> <span class="nf">_areaSearch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ra</span><span class="p">,</span> <span class="n">dec</span><span class="p">,</span> <span class="n">delta</span><span class="p">):</span>
+        <span class="n">ra1</span><span class="p">,</span> <span class="n">ra2</span><span class="p">,</span> <span class="n">dec1</span><span class="p">,</span> <span class="n">dec2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_getRanges</span><span class="p">(</span><span class="n">ra</span><span class="p">,</span> <span class="n">dec</span><span class="p">,</span> <span class="n">delta</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">ra1</span><span class="p">,</span> <span class="n">ra2</span><span class="p">),</span> <span class="p">(</span><span class="n">dec1</span><span class="p">,</span> <span class="n">dec2</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_quoteIfNeeded</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+        <span class="n">need_quoting</span> <span class="o">=</span> <span class="kc">True</span> <span class="ow">in</span> <span class="p">[</span><span class="n">let</span> <span class="ow">in</span> <span class="n">value</span> <span class="k">for</span> <span class="n">let</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">QUOTING</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">need_quoting</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">value</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">)</span> <span class="ow">and</span>
+                <span class="ow">not</span> <span class="n">value</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;&quot;&#39;</span><span class="p">)):</span>
+            <span class="k">return</span> <span class="s2">&quot;&#39;</span><span class="si">%s</span><span class="s2">&#39;&quot;</span> <span class="o">%</span> <span class="n">value</span>
+        <span class="k">return</span> <span class="n">value</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Martin Vo.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

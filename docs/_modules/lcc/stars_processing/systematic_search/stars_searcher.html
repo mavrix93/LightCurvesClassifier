@@ -1,0 +1,393 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>lcc.stars_processing.systematic_search.stars_searcher &#8212; LightCurvesClassifier 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../../',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for lcc.stars_processing.systematic_search.stars_searcher</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">collections</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">warnings</span> <span class="k">import</span> <span class="n">warn</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="kn">from</span> <span class="nn">lcc.data_manager.status_resolver</span> <span class="k">import</span> <span class="n">StatusResolver</span>
+<span class="kn">from</span> <span class="nn">lcc.db_tier.stars_provider</span> <span class="k">import</span> <span class="n">StarsProvider</span>
+<span class="kn">from</span> <span class="nn">lcc.entities.exceptions</span> <span class="k">import</span> <span class="n">QueryInputError</span><span class="p">,</span> <span class="n">InvalidFilesPath</span>
+<span class="kn">from</span> <span class="nn">lcc.utils.helpers</span> <span class="k">import</span> <span class="n">progressbar</span>
+<span class="kn">from</span> <span class="nn">lcc.utils.stars</span> <span class="k">import</span> <span class="n">saveStars</span>
+
+
+<div class="viewcode-block" id="StarsSearcher"><a class="viewcode-back" href="../../../../lcc.stars_processing.systematic_search.html#lcc.stars_processing.systematic_search.stars_searcher.StarsSearcher">[docs]</a><span class="k">class</span> <span class="nc">StarsSearcher</span><span class="p">():</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    The class manages systematic searching in databases. It also can be used</span>
+<span class="sd">    as base class for other star searchers.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    stars_filter : FilteringManager object</span>
+<span class="sd">        Filter which is prepared filter star objects</span>
+
+<span class="sd">    save_path : str</span>
+<span class="sd">        Path from &quot;run&quot; module to the folder where found</span>
+<span class="sd">        light curves will be saved</span>
+
+<span class="sd">    stat_file_path : str</span>
+<span class="sd">        Status file name</span>
+
+<span class="sd">    save_lim : int</span>
+<span class="sd">        Number of searched objects after which status file is saved</span>
+
+<span class="sd">    obth_method : str</span>
+<span class="sd">        Name of connector class</span>
+
+<span class="sd">    save_coords : bool</span>
+<span class="sd">        Save params space coordinates of inspected stars</span>
+
+<span class="sd">    status : pandas.DataFrame</span>
+<span class="sd">        Status table about results of queries</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="n">DEF_save_lim</span> <span class="o">=</span> <span class="mi">50</span>
+    <span class="n">DEF_unfound_lim</span> <span class="o">=</span> <span class="mi">150</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stars_filters</span><span class="p">,</span> <span class="n">save_path</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="n">stat_file_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">save_lim</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">unfound_lim</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">obth_method</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">save_coords</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        stars_filters : lists</span>
+<span class="sd">            Stars filters</span>
+
+<span class="sd">        save_path : str</span>
+<span class="sd">            Path from &quot;run&quot; module to the folder where found</span>
+<span class="sd">            light curves will be saved</span>
+
+<span class="sd">        stat_file_path : str</span>
+<span class="sd">            Status file name</span>
+
+<span class="sd">        save_lim : int</span>
+<span class="sd">            Number of searched objects after which status file is saved</span>
+
+<span class="sd">        obth_method : str</span>
+<span class="sd">            Name of connector class</span>
+
+<span class="sd">        save_coords : bool</span>
+<span class="sd">            Save params space coordinates of inspected stars</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">save_lim</span><span class="p">:</span>
+            <span class="n">save_lim</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">DEF_save_lim</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">unfound_lim</span><span class="p">:</span>
+            <span class="n">unfound_lim</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">DEF_unfound_lim</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">obth_method</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">QueryInputError</span><span class="p">(</span>
+                <span class="s2">&quot;Database for searching need to be specified.&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_path</span> <span class="o">=</span> <span class="n">save_path</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stat_file_path</span> <span class="o">=</span> <span class="n">stat_file_path</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">obth_method</span> <span class="o">=</span> <span class="n">obth_method</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_lim</span> <span class="o">=</span> <span class="n">save_lim</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">unfound_lim</span> <span class="o">=</span> <span class="n">unfound_lim</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">stars_filters</span> <span class="o">=</span> <span class="n">stars_filters</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">not_uploaded</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">passed_stars</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">if</span> <span class="n">save_coords</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">que_coords</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_coords</span> <span class="o">=</span> <span class="n">save_coords</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+
+<div class="viewcode-block" id="StarsSearcher.filterStar"><a class="viewcode-back" href="../../../../lcc.stars_processing.systematic_search.html#lcc.stars_processing.systematic_search.stars_searcher.StarsSearcher.filterStar">[docs]</a>    <span class="k">def</span> <span class="nf">filterStar</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">star</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        This method filter given star.</span>
+<span class="sd">        In case of match method &quot;matchOccured&quot; will be performed</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        stars : `Star` instance</span>
+<span class="sd">            Star to filter</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            If star passed thru filtering</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">for</span> <span class="n">star_filt</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">stars_filters</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">star_filt</span><span class="o">.</span><span class="n">filterStars</span><span class="p">([</span><span class="n">star</span><span class="p">])</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">result</span><span class="p">:</span>
+                <span class="k">break</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">stars_filters</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">matchOccured</span><span class="p">(</span><span class="n">star</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="StarsSearcher.matchOccured"><a class="viewcode-back" href="../../../../lcc.stars_processing.systematic_search.html#lcc.stars_processing.systematic_search.stars_searcher.StarsSearcher.matchOccured">[docs]</a>    <span class="k">def</span> <span class="nf">matchOccured</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">star</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        What to do with star which passed thru filtering</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        star : `Star` instance</span>
+<span class="sd">            Star object which will be saved as fits</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">            None</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">saveStars</span><span class="p">([</span><span class="n">star</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_path</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">passed_stars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">star</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="StarsSearcher.failProcedure"><a class="viewcode-back" href="../../../../lcc.stars_processing.systematic_search.html#lcc.stars_processing.systematic_search.stars_searcher.StarsSearcher.failProcedure">[docs]</a>    <span class="k">def</span> <span class="nf">failProcedure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">err</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        What to do if a fail occurs</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        query : optional</span>
+<span class="sd">            Query informations</span>
+
+<span class="sd">        err : str</span>
+<span class="sd">            Error message</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">            None</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Error occurred during filtering: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">err</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="StarsSearcher.statusFile"><a class="viewcode-back" href="../../../../lcc.stars_processing.systematic_search.html#lcc.stars_processing.systematic_search.stars_searcher.StarsSearcher.statusFile">[docs]</a>    <span class="k">def</span> <span class="nf">statusFile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">status</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        This method generates status file for overall query in certain db.</span>
+<span class="sd">        Every queried star will be noted.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        query : dict</span>
+<span class="sd">            Query informations</span>
+
+<span class="sd">        status : dict</span>
+<span class="sd">            Information whether queried star was found, filtered</span>
+<span class="sd">            and passed thru filtering</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">            None</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="n">query</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)]</span> <span class="o">+</span> <span class="n">query</span><span class="o">.</span><span class="n">values</span><span class="p">()</span> <span class="o">+</span> <span class="n">status</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+        <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">query</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="o">+</span> <span class="n">status</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+
+        <span class="n">this_status</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">data</span><span class="p">],</span> <span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">status</span><span class="p">)])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">status</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">this_status</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">stat_file_path</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">status</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stat_file_path</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="StarsSearcher.queryStars"><a class="viewcode-back" href="../../../../lcc.stars_processing.systematic_search.html#lcc.stars_processing.systematic_search.stars_searcher.StarsSearcher.queryStars">[docs]</a>    <span class="k">def</span> <span class="nf">queryStars</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">queries</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Query db according to list of queries. Stars passed thru filter</span>
+<span class="sd">        are managed by `matchOccured` method.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        queries : list, iterable</span>
+<span class="sd">            List of dictionaries of queries for certain db</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">            None</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="n">stars_num</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">passed_num</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="n">all_unfound</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">unfound_counter</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">query</span> <span class="ow">in</span> <span class="n">progressbar</span><span class="p">(</span><span class="n">queries</span><span class="p">,</span> <span class="s2">&quot;Query: &quot;</span><span class="p">):</span>
+            <span class="n">status</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">(</span>
+                <span class="p">((</span><span class="s2">&quot;found&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;lc&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;passed&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)))</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">stars</span> <span class="o">=</span> <span class="n">StarsProvider</span><span class="p">()</span><span class="o">.</span><span class="n">getProvider</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">obth_method</span><span class="p">,</span> <span class="n">query</span><span class="p">)</span><span class="o">.</span><span class="n">getStarsWithCurves</span><span class="p">()</span>
+            <span class="k">except</span> <span class="n">QueryInputError</span><span class="p">:</span>
+                <span class="k">raise</span>
+            <span class="k">except</span> <span class="p">(</span><span class="ne">KeyboardInterrupt</span><span class="p">,</span> <span class="ne">SystemExit</span><span class="p">):</span>
+                <span class="k">raise</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Couldn&#39;t download any light curve&quot;</span><span class="p">)</span>
+                <span class="n">stars</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="c1"># Check if the searched star was found</span>
+            <span class="n">result_len</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">stars</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">result_len</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">unfound_counter</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">all_unfound</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">if</span> <span class="n">unfound_counter</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">unfound_lim</span><span class="p">:</span>
+                    <span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Max number of unsatisfied queries reached: </span><span class="si">%i</span><span class="s2">&quot;</span> <span class="o">%</span>
+                         <span class="bp">self</span><span class="o">.</span><span class="n">unfound_lim</span><span class="p">)</span>
+
+            <span class="n">unfound_counter</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">for</span> <span class="n">one_star</span> <span class="ow">in</span> <span class="n">stars</span><span class="p">:</span>
+                <span class="n">status</span><span class="p">[</span><span class="s2">&quot;found&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="n">contain_lc</span> <span class="o">=</span> <span class="kc">True</span>
+
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">one_star</span><span class="o">.</span><span class="n">lightCurve</span><span class="o">.</span><span class="n">time</span>
+                <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+                    <span class="n">contain_lc</span> <span class="o">=</span> <span class="kc">False</span>
+
+                <span class="k">if</span> <span class="n">contain_lc</span><span class="p">:</span>
+
+                    <span class="c1"># TODO</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_coords</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">stars_filters</span><span class="p">:</span>
+                        <span class="n">spc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stars_filters</span><span class="p">[</span>
+                            <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">getSpaceCoordinates</span><span class="p">([</span><span class="n">one_star</span><span class="p">])</span><span class="o">.</span><span class="n">values</span>
+                        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">spc</span><span class="p">):</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">_saveCoords</span><span class="p">([</span><span class="n">one_star</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">+</span> <span class="n">spc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+
+                    <span class="c1"># Try to apply filters to the star</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">passed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filterStar</span><span class="p">(</span><span class="n">one_star</span><span class="p">,</span> <span class="n">query</span><span class="p">)</span>
+                        <span class="n">status</span><span class="p">[</span><span class="s2">&quot;lc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+                        <span class="n">status</span><span class="p">[</span><span class="s2">&quot;passed&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">passed</span>
+                        <span class="n">stars_num</span> <span class="o">+=</span> <span class="mi">1</span>
+                        <span class="k">if</span> <span class="n">passed</span><span class="p">:</span>
+                            <span class="n">passed_num</span> <span class="o">+=</span> <span class="mi">1</span>
+
+                    <span class="k">except</span> <span class="p">(</span><span class="ne">KeyboardInterrupt</span><span class="p">,</span> <span class="ne">SystemExit</span><span class="p">):</span>
+                        <span class="k">raise</span>
+                    <span class="k">except</span> <span class="ne">IOError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="n">InvalidFilesPath</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+                    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">failProcedure</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">err</span><span class="p">)</span>
+                        <span class="n">warn</span><span class="p">(</span>
+                            <span class="s2">&quot;Something went wrong during filtering:</span><span class="se">\n\t</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">err</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">status</span><span class="p">[</span><span class="s2">&quot;lc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+                    <span class="n">status</span><span class="p">[</span><span class="s2">&quot;passed&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+
+                <span class="n">query</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">one_star</span><span class="o">.</span><span class="n">name</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">statusFile</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">status</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">stars</span><span class="p">:</span>
+                <span class="n">query</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">statusFile</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">status</span><span class="p">)</span>
+
+        <span class="nb">print</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">************</span><span class="se">\t\t</span><span class="s2">Query is done</span><span class="se">\t\t</span><span class="s2">************&quot;</span>
+        <span class="nb">print</span> <span class="s2">&quot;Query results:</span><span class="se">\n</span><span class="s2">There are </span><span class="si">%i</span><span class="s2"> stars passed thru filtering from </span><span class="si">%s</span><span class="s2">.&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">passed_num</span><span class="p">,</span> <span class="n">stars_num</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">all_unfound</span><span class="p">:</span>
+            <span class="nb">print</span> <span class="s2">&quot;There are </span><span class="si">%i</span><span class="s2"> unsatisfied queries&quot;</span> <span class="o">%</span> <span class="n">all_unfound</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">not_uploaded</span><span class="p">:</span>
+            <span class="nb">print</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="si">%i</span><span class="s2"> stars have not been uploaded into local db, because they are already there.&quot;</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">not_uploaded</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_saveCoords</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">stars_filters</span><span class="p">:</span>
+            <span class="n">star_filter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stars_filters</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="n">labels</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">desc</span> <span class="ow">in</span> <span class="n">star_filter</span><span class="o">.</span><span class="n">descriptors</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">desc</span><span class="o">.</span><span class="n">LABEL</span><span class="p">,</span> <span class="s2">&quot;__iter__&quot;</span><span class="p">):</span>
+                    <span class="n">labels</span> <span class="o">+=</span> <span class="n">desc</span><span class="o">.</span><span class="n">LABEL</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">desc</span><span class="o">.</span><span class="n">LABEL</span><span class="p">)</span>
+
+            <span class="n">header</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;star_name&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">labels</span>
+
+            <span class="n">this_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([</span><span class="n">query</span><span class="p">],</span> <span class="n">columns</span><span class="o">=</span><span class="n">header</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">que_coords</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">que_coords</span> <span class="o">=</span> <span class="n">this_df</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">que_coords</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">que_coords</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">this_df</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">que_coords</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">save_path</span><span class="p">,</span> <span class="s2">&quot;..&quot;</span><span class="p">,</span> <span class="s2">&quot;space_coordinates.csv&quot;</span><span class="p">),</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;;&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="s2">&quot;There are no filters, so space coordinates cannot be obtained.</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Martin Vo.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

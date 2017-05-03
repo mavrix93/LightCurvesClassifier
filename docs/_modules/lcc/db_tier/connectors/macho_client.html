@@ -1,0 +1,124 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>lcc.db_tier.connectors.macho_client &#8212; LightCurvesClassifier 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../../',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for lcc.db_tier.connectors.macho_client</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">collections</span>
+
+<span class="kn">from</span> <span class="nn">lcc.db_tier.base_query</span> <span class="k">import</span> <span class="n">LightCurvesDb</span>
+<span class="kn">from</span> <span class="nn">lcc.db_tier.vizier_tap_base</span> <span class="k">import</span> <span class="n">VizierTapBase</span>
+
+
+<span class="c1"># TODO: Convert coo query from degrees to h:m:s, d:m:s</span>
+<span class="c1"># NOTE: Please note that coordinates query is not available now</span>
+<div class="viewcode-block" id="MachoDb"><a class="viewcode-back" href="../../../../lcc.db_tier.connectors.html#lcc.db_tier.connectors.macho_client.MachoDb">[docs]</a><span class="k">class</span> <span class="nc">MachoDb</span><span class="p">(</span><span class="n">VizierTapBase</span><span class="p">,</span> <span class="n">LightCurvesDb</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Client for MACHO database of variable stars. It inherits `VizierTapBase` - see</span>
+<span class="sd">    documentation of this class to class attributes description.</span>
+
+<span class="sd">    EXAMPLES</span>
+<span class="sd">    --------</span>
+<span class="sd">    queries = [{&quot;Field&quot;: 1 , &quot;Tile&quot;: 3441, &quot;Seqn&quot;: 25}]</span>
+<span class="sd">    client = StarsProvider.getProvider(obtain_method=&quot;MachoDb&quot;,</span>
+<span class="sd">                                       obtain_params=queries)</span>
+<span class="sd">    stars = client.getStarsWithCurves()</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="n">TABLE</span> <span class="o">=</span> <span class="s2">&quot;II/247/machovar&quot;</span>
+    <span class="n">LC_URL</span> <span class="o">=</span> <span class="s2">&quot;http://cdsarc.u-strasbg.fr/viz-bin/nph-Plot/w/Vgraph/txt?II</span><span class="si">%2f</span><span class="s2">247</span><span class="si">%2f</span><span class="s2">.</span><span class="si">%2f{macho_name}</span><span class="s2">&amp;F=b%2br&amp;P=</span><span class="si">{period}</span><span class="s2">&amp;-x&amp;0&amp;1&amp;-y&amp;-&amp;-&amp;-&amp;--bitmap-size&amp;600x400&quot;</span>
+
+    <span class="n">NAME</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{Field}</span><span class="s2">.</span><span class="si">{Tile}</span><span class="s2">.</span><span class="si">{Seqn}</span><span class="s2">&quot;</span>
+    <span class="n">LC_FILE</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+    <span class="n">LC_META</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;xlabel&quot;</span><span class="p">:</span> <span class="s2">&quot;Time&quot;</span><span class="p">,</span>
+               <span class="s2">&quot;xlabel_unit&quot;</span><span class="p">:</span> <span class="s2">&quot;MJD (JD-2400000.5)&quot;</span><span class="p">,</span>
+               <span class="s2">&quot;origin&quot;</span><span class="p">:</span> <span class="s2">&quot;MACHO&quot;</span><span class="p">}</span>
+
+    <span class="n">IDENT_MAP</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;MachoDb&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;Field&quot;</span><span class="p">,</span> <span class="s2">&quot;Tile&quot;</span><span class="p">,</span> <span class="s2">&quot;Seqn&quot;</span><span class="p">)}</span>
+    <span class="n">MORE_MAP</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">(((</span><span class="s2">&quot;Class&quot;</span><span class="p">,</span> <span class="s2">&quot;var_type&quot;</span><span class="p">),</span>
+                                        <span class="p">(</span><span class="s2">&quot;Vmag&quot;</span><span class="p">,</span> <span class="s2">&quot;v_mag&quot;</span><span class="p">),</span>
+                                        <span class="p">(</span><span class="s2">&quot;Rmag&quot;</span><span class="p">,</span> <span class="s2">&quot;r_mag&quot;</span><span class="p">),</span>
+                                        <span class="p">(</span><span class="s2">&quot;rPer&quot;</span><span class="p">,</span> <span class="s2">&quot;period_r&quot;</span><span class="p">),</span>
+                                        <span class="p">(</span><span class="s2">&quot;bPer&quot;</span><span class="p">,</span> <span class="s2">&quot;period_b&quot;</span><span class="p">)))</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Martin Vo.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

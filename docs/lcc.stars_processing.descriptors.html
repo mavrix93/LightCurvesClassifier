@@ -1,0 +1,690 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>lcc.stars_processing.descriptors package &#8212; LightCurvesClassifier 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="lcc.stars_processing.systematic_search package" href="lcc.stars_processing.systematic_search.html" />
+    <link rel="prev" title="lcc.stars_processing.deciders.unsupervised package" href="lcc.stars_processing.deciders.unsupervised.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="lcc-stars-processing-descriptors-package">
+<h1>lcc.stars_processing.descriptors package<a class="headerlink" href="#lcc-stars-processing-descriptors-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-lcc.stars_processing.descriptors.abbe_value_descr">
+<span id="lcc-stars-processing-descriptors-abbe-value-descr-module"></span><h2>lcc.stars_processing.descriptors.abbe_value_descr module<a class="headerlink" href="#module-lcc.stars_processing.descriptors.abbe_value_descr" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="lcc.stars_processing.descriptors.abbe_value_descr.AbbeValueDescr">
+<em class="property">class </em><code class="descclassname">lcc.stars_processing.descriptors.abbe_value_descr.</code><code class="descname">AbbeValueDescr</code><span class="sig-paren">(</span><em>bins=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/descriptors/abbe_value_descr.html#AbbeValueDescr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.descriptors.abbe_value_descr.AbbeValueDescr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="lcc.stars_processing.utilities.html#lcc.stars_processing.utilities.base_descriptor.BaseDescriptor" title="lcc.stars_processing.utilities.base_descriptor.BaseDescriptor"><code class="xref py py-class docutils literal"><span class="pre">lcc.stars_processing.utilities.base_descriptor.BaseDescriptor</span></code></a></p>
+<p>Filter implementation which denies stars with lower value then a limit
+of Abbe value</p>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="5%" />
+<col width="95%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>bins</td>
+<td>(int) Dimension of reduced light curve from which Abbe value is calculated</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods</p>
+<dl class="attribute">
+<dt id="lcc.stars_processing.descriptors.abbe_value_descr.AbbeValueDescr.LABEL">
+<code class="descname">LABEL</code><em class="property"> = 'Abbe value'</em><a class="headerlink" href="#lcc.stars_processing.descriptors.abbe_value_descr.AbbeValueDescr.LABEL" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="lcc.stars_processing.descriptors.abbe_value_descr.AbbeValueDescr.getSpaceCoords">
+<code class="descname">getSpaceCoords</code><span class="sig-paren">(</span><em>stars</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/descriptors/abbe_value_descr.html#AbbeValueDescr.getSpaceCoords"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.descriptors.abbe_value_descr.AbbeValueDescr.getSpaceCoords" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get list of Abbe values</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>stars</strong> : list of Star objects</p>
+<blockquote>
+<div><p>Stars with color magnitudes in their &#8216;more&#8217; attribute</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">list</p>
+<blockquote class="last">
+<div><p>List of list of floats</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-lcc.stars_processing.descriptors.color_index_descr">
+<span id="lcc-stars-processing-descriptors-color-index-descr-module"></span><h2>lcc.stars_processing.descriptors.color_index_descr module<a class="headerlink" href="#module-lcc.stars_processing.descriptors.color_index_descr" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="lcc.stars_processing.descriptors.color_index_descr.ColorIndexDescr">
+<em class="property">class </em><code class="descclassname">lcc.stars_processing.descriptors.color_index_descr.</code><code class="descname">ColorIndexDescr</code><span class="sig-paren">(</span><em>colors=[('b_mag', 'v_mag'), ('v_mag', 'i_mag')], pass_not_found=False, raise_if_not=False, without_notfound=True, *args, **kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/descriptors/color_index_descr.html#ColorIndexDescr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.descriptors.color_index_descr.ColorIndexDescr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="lcc.stars_processing.utilities.html#lcc.stars_processing.utilities.base_descriptor.BaseDescriptor" title="lcc.stars_processing.utilities.base_descriptor.BaseDescriptor"><code class="xref py py-class docutils literal"><span class="pre">lcc.stars_processing.utilities.base_descriptor.BaseDescriptor</span></code></a></p>
+<p>Filter star according their color indexes</p>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>colors</td>
+<td>(list of strings) List of magnitudes which will be used. They are keys to color indexes in star&#8217;s object attribute &#8216;more&#8217;, where can be stored anything</td>
+</tr>
+<tr class="row-even"><td>pass_not_found</td>
+<td>(bool) If False stars without color index will be denied</td>
+</tr>
+<tr class="row-odd"><td>raise_if_not</td>
+<td>(bool) If True it throws exception whenever a star has no color index</td>
+</tr>
+<tr class="row-even"><td>without_notfound</td>
+<td>(bool) If False coordinates of stars which have no color indexes will be returned as well, but with None instead of coordinates (list of values)</td>
+</tr>
+<tr class="row-odd"><td>labels</td>
+<td>(list of strings) Labels of color-diagram axis</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods</p>
+<dl class="method">
+<dt id="lcc.stars_processing.descriptors.color_index_descr.ColorIndexDescr.getSpaceCoords">
+<code class="descname">getSpaceCoords</code><span class="sig-paren">(</span><em>stars</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/descriptors/color_index_descr.html#ColorIndexDescr.getSpaceCoords"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.descriptors.color_index_descr.ColorIndexDescr.getSpaceCoords" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get list of desired colors</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>stars</strong> : list of Star objects</p>
+<blockquote>
+<div><p>Stars with color magnitudes in their &#8216;more&#8217; attribute</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">List of list of floats</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-lcc.stars_processing.descriptors.curve_density_descr">
+<span id="lcc-stars-processing-descriptors-curve-density-descr-module"></span><h2>lcc.stars_processing.descriptors.curve_density_descr module<a class="headerlink" href="#module-lcc.stars_processing.descriptors.curve_density_descr" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="lcc.stars_processing.descriptors.curve_density_descr.CurveDensityDescr">
+<em class="property">class </em><code class="descclassname">lcc.stars_processing.descriptors.curve_density_descr.</code><code class="descname">CurveDensityDescr</code><a class="reference internal" href="_modules/lcc/stars_processing/descriptors/curve_density_descr.html#CurveDensityDescr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.descriptors.curve_density_descr.CurveDensityDescr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="lcc.stars_processing.utilities.html#lcc.stars_processing.utilities.base_descriptor.BaseDescriptor" title="lcc.stars_processing.utilities.base_descriptor.BaseDescriptor"><code class="xref py py-class docutils literal"><span class="pre">lcc.stars_processing.utilities.base_descriptor.BaseDescriptor</span></code></a></p>
+<p>This filter throw out stars with low density light curves. It means light
+curves with huge non observing gaps or light curves with low amount
+of observations</p>
+<p class="rubric">Methods</p>
+<dl class="attribute">
+<dt id="lcc.stars_processing.descriptors.curve_density_descr.CurveDensityDescr.LABEL">
+<code class="descname">LABEL</code><em class="property"> = 'Curve density [points per time lag]'</em><a class="headerlink" href="#lcc.stars_processing.descriptors.curve_density_descr.CurveDensityDescr.LABEL" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="lcc.stars_processing.descriptors.curve_density_descr.CurveDensityDescr.getSpaceCoords">
+<code class="descname">getSpaceCoords</code><span class="sig-paren">(</span><em>stars</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/descriptors/curve_density_descr.html#CurveDensityDescr.getSpaceCoords"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.descriptors.curve_density_descr.CurveDensityDescr.getSpaceCoords" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get list of curve densities</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>stars</strong> : list of Star objects</p>
+<blockquote>
+<div><p>Stars with color magnitudes in their &#8216;more&#8217; attribute</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">list</p>
+<blockquote class="last">
+<div><p>Densities of points per time lag</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-lcc.stars_processing.descriptors.curve_descr">
+<span id="lcc-stars-processing-descriptors-curve-descr-module"></span><h2>lcc.stars_processing.descriptors.curve_descr module<a class="headerlink" href="#module-lcc.stars_processing.descriptors.curve_descr" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="lcc.stars_processing.descriptors.curve_descr.CurveDescr">
+<em class="property">class </em><code class="descclassname">lcc.stars_processing.descriptors.curve_descr.</code><code class="descname">CurveDescr</code><span class="sig-paren">(</span><em>bins=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/descriptors/curve_descr.html#CurveDescr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.descriptors.curve_descr.CurveDescr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="lcc.stars_processing.utilities.html#lcc.stars_processing.utilities.base_descriptor.BaseDescriptor" title="lcc.stars_processing.utilities.base_descriptor.BaseDescriptor"><code class="xref py py-class docutils literal"><span class="pre">lcc.stars_processing.utilities.base_descriptor.BaseDescriptor</span></code></a></p>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>bins</td>
+<td>(int) Dimension of reduced light curve</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods</p>
+<dl class="attribute">
+<dt id="lcc.stars_processing.descriptors.curve_descr.CurveDescr.LABEL">
+<code class="descname">LABEL</code><em class="property"> = 'Light curve points'</em><a class="headerlink" href="#lcc.stars_processing.descriptors.curve_descr.CurveDescr.LABEL" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="lcc.stars_processing.descriptors.curve_descr.CurveDescr.getSpaceCoords">
+<code class="descname">getSpaceCoords</code><span class="sig-paren">(</span><em>stars</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/descriptors/curve_descr.html#CurveDescr.getSpaceCoords"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.descriptors.curve_descr.CurveDescr.getSpaceCoords" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get reduced light curve as coordinates</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>stars</strong> : list of Star objects</p>
+<blockquote>
+<div><p>Stars with color magnitudes in their &#8216;more&#8217; attribute</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">list</p>
+<blockquote class="last">
+<div><p>List of list of floats</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-lcc.stars_processing.descriptors.curve_shape_descr">
+<span id="lcc-stars-processing-descriptors-curve-shape-descr-module"></span><h2>lcc.stars_processing.descriptors.curve_shape_descr module<a class="headerlink" href="#module-lcc.stars_processing.descriptors.curve_shape_descr" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="lcc.stars_processing.descriptors.curve_shape_descr.CurvesShapeDescr">
+<em class="property">class </em><code class="descclassname">lcc.stars_processing.descriptors.curve_shape_descr.</code><code class="descname">CurvesShapeDescr</code><span class="sig-paren">(</span><em>comp_stars</em>, <em>days_per_bin</em>, <em>alphabet_size</em>, <em>slide=0.25</em>, <em>meth='average'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/descriptors/curve_shape_descr.html#CurvesShapeDescr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.descriptors.curve_shape_descr.CurvesShapeDescr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="lcc.stars_processing.utilities.html#lcc.stars_processing.utilities.symbolic_representation.SymbolicRepresentation" title="lcc.stars_processing.utilities.symbolic_representation.SymbolicRepresentation"><code class="xref py py-class docutils literal"><span class="pre">lcc.stars_processing.utilities.symbolic_representation.SymbolicRepresentation</span></code></a>, <a class="reference internal" href="lcc.stars_processing.utilities.html#lcc.stars_processing.utilities.compare.ComparativeBase" title="lcc.stars_processing.utilities.compare.ComparativeBase"><code class="xref py py-class docutils literal"><span class="pre">lcc.stars_processing.utilities.compare.ComparativeBase</span></code></a>, <a class="reference internal" href="lcc.stars_processing.utilities.html#lcc.stars_processing.utilities.base_descriptor.BaseDescriptor" title="lcc.stars_processing.utilities.base_descriptor.BaseDescriptor"><code class="xref py py-class docutils literal"><span class="pre">lcc.stars_processing.utilities.base_descriptor.BaseDescriptor</span></code></a></p>
+<p>This descriptor which compares light curves of inspected star
+with the template in symbolic representation</p>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="6%" />
+<col width="94%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>comp_stars</td>
+<td>(list) Template stars</td>
+</tr>
+<tr class="row-even"><td>days_per_bin</td>
+<td>(float) Ratio which decides about length of the word</td>
+</tr>
+<tr class="row-odd"><td>alphabet_size</td>
+<td>(int) Range of of used letters</td>
+</tr>
+<tr class="row-even"><td>slide</td>
+<td>(bool) If True, words with different lengths are dynamically compared by sliding shorter word thru longer</td>
+</tr>
+<tr class="row-odd"><td>meth</td>
+<td>(str) Method key for calculating distance from comparative objects  average     : take mean distance in each coordinate as object coordinate closest     : take coordinate with closest distance as object coordinate</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods</p>
+<dl class="attribute">
+<dt id="lcc.stars_processing.descriptors.curve_shape_descr.CurvesShapeDescr.AVAIL_METHODS">
+<code class="descname">AVAIL_METHODS</code><em class="property"> = ['average', 'closest']</em><a class="headerlink" href="#lcc.stars_processing.descriptors.curve_shape_descr.CurvesShapeDescr.AVAIL_METHODS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="lcc.stars_processing.descriptors.curve_shape_descr.CurvesShapeDescr.LABEL">
+<code class="descname">LABEL</code><em class="property"> = 'Dissimilarity of the curve from the template'</em><a class="headerlink" href="#lcc.stars_processing.descriptors.curve_shape_descr.CurvesShapeDescr.LABEL" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="lcc.stars_processing.descriptors.curve_shape_descr.CurvesShapeDescr.getWord">
+<code class="descname">getWord</code><span class="sig-paren">(</span><em>star</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/descriptors/curve_shape_descr.html#CurvesShapeDescr.getWord"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.descriptors.curve_shape_descr.CurvesShapeDescr.getWord" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>Star object with light curve</strong></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">String representation of light curve</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="lcc.stars_processing.descriptors.curve_shape_descr.CurvesShapeDescr.getWords">
+<code class="descname">getWords</code><span class="sig-paren">(</span><em>star1</em>, <em>star2</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/descriptors/curve_shape_descr.html#CurvesShapeDescr.getWords"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.descriptors.curve_shape_descr.CurvesShapeDescr.getWords" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>star1</strong> : object</p>
+<blockquote>
+<div><p>Star object with light curve</p>
+</div></blockquote>
+<p><strong>star2</strong> : object</p>
+<blockquote>
+<div><p>Star object with light curve</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">list</p>
+<blockquote class="last">
+<div><p>String representations of light curve</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-lcc.stars_processing.descriptors.hist_shape_descr">
+<span id="lcc-stars-processing-descriptors-hist-shape-descr-module"></span><h2>lcc.stars_processing.descriptors.hist_shape_descr module<a class="headerlink" href="#module-lcc.stars_processing.descriptors.hist_shape_descr" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="lcc.stars_processing.descriptors.hist_shape_descr.HistShapeDescr">
+<em class="property">class </em><code class="descclassname">lcc.stars_processing.descriptors.hist_shape_descr.</code><code class="descname">HistShapeDescr</code><span class="sig-paren">(</span><em>comp_stars</em>, <em>bins</em>, <em>alphabet_size</em>, <em>slide=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/descriptors/hist_shape_descr.html#HistShapeDescr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.descriptors.hist_shape_descr.HistShapeDescr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="lcc.stars_processing.utilities.html#lcc.stars_processing.utilities.symbolic_representation.SymbolicRepresentation" title="lcc.stars_processing.utilities.symbolic_representation.SymbolicRepresentation"><code class="xref py py-class docutils literal"><span class="pre">lcc.stars_processing.utilities.symbolic_representation.SymbolicRepresentation</span></code></a>, <a class="reference internal" href="lcc.stars_processing.utilities.html#lcc.stars_processing.utilities.compare.ComparativeBase" title="lcc.stars_processing.utilities.compare.ComparativeBase"><code class="xref py py-class docutils literal"><span class="pre">lcc.stars_processing.utilities.compare.ComparativeBase</span></code></a>, <a class="reference internal" href="lcc.stars_processing.utilities.html#lcc.stars_processing.utilities.base_descriptor.BaseDescriptor" title="lcc.stars_processing.utilities.base_descriptor.BaseDescriptor"><code class="xref py py-class docutils literal"><span class="pre">lcc.stars_processing.utilities.base_descriptor.BaseDescriptor</span></code></a></p>
+<p>This descriptor compares histograms of light curves of inspected star
+with the template</p>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="11%" />
+<col width="89%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>comp_stars</td>
+<td>(list) Template stars</td>
+</tr>
+<tr class="row-even"><td>bins</td>
+<td>(int) Length of result histogram</td>
+</tr>
+<tr class="row-odd"><td>alphabet_size</td>
+<td>(int) Range of of used letters</td>
+</tr>
+<tr class="row-even"><td>slide</td>
+<td>(bool) If True, words with different lengths are dynamically compared by sliding shorter word thru longer</td>
+</tr>
+<tr class="row-odd"><td>slide</td>
+<td>(bool) If True, words with different lengths are dynamically compared by sliding shorter word thru longer</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods</p>
+<dl class="attribute">
+<dt id="lcc.stars_processing.descriptors.hist_shape_descr.HistShapeDescr.LABEL">
+<code class="descname">LABEL</code><em class="property"> = 'Dissimilarity of the light curves histogram from the template'</em><a class="headerlink" href="#lcc.stars_processing.descriptors.hist_shape_descr.HistShapeDescr.LABEL" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="lcc.stars_processing.descriptors.hist_shape_descr.HistShapeDescr.getWord">
+<code class="descname">getWord</code><span class="sig-paren">(</span><em>star</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/descriptors/hist_shape_descr.html#HistShapeDescr.getWord"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.descriptors.hist_shape_descr.HistShapeDescr.getWord" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>Star object with light curve</strong></p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">str</p>
+<blockquote class="last">
+<div><p>String representation of light curve&#8217;s histogram</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-lcc.stars_processing.descriptors.position_descriptor">
+<span id="lcc-stars-processing-descriptors-position-descriptor-module"></span><h2>lcc.stars_processing.descriptors.position_descriptor module<a class="headerlink" href="#module-lcc.stars_processing.descriptors.position_descriptor" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="lcc.stars_processing.descriptors.position_descriptor.PositionDescriptor">
+<em class="property">class </em><code class="descclassname">lcc.stars_processing.descriptors.position_descriptor.</code><code class="descname">PositionDescriptor</code><a class="reference internal" href="_modules/lcc/stars_processing/descriptors/position_descriptor.html#PositionDescriptor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.descriptors.position_descriptor.PositionDescriptor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="lcc.stars_processing.utilities.html#lcc.stars_processing.utilities.base_descriptor.BaseDescriptor" title="lcc.stars_processing.utilities.base_descriptor.BaseDescriptor"><code class="xref py py-class docutils literal"><span class="pre">lcc.stars_processing.utilities.base_descriptor.BaseDescriptor</span></code></a></p>
+<p>Describe stars according their position on the sky</p>
+<p class="rubric">Methods</p>
+<dl class="attribute">
+<dt id="lcc.stars_processing.descriptors.position_descriptor.PositionDescriptor.LABEL">
+<code class="descname">LABEL</code><em class="property"> = ['Right ascension', 'Declination']</em><a class="headerlink" href="#lcc.stars_processing.descriptors.position_descriptor.PositionDescriptor.LABEL" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="lcc.stars_processing.descriptors.position_descriptor.PositionDescriptor.getSpaceCoords">
+<code class="descname">getSpaceCoords</code><span class="sig-paren">(</span><em>stars</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/descriptors/position_descriptor.html#PositionDescriptor.getSpaceCoords"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.descriptors.position_descriptor.PositionDescriptor.getSpaceCoords" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get list of desired attributes</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>stars</strong> : list of Star objects</p>
+<blockquote>
+<div><p>Stars with <cite>coo</cite> attribute</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">list</p>
+<blockquote class="last">
+<div><p>List of list of floats</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-lcc.stars_processing.descriptors.property_desc">
+<span id="lcc-stars-processing-descriptors-property-desc-module"></span><h2>lcc.stars_processing.descriptors.property_desc module<a class="headerlink" href="#module-lcc.stars_processing.descriptors.property_desc" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="lcc.stars_processing.descriptors.property_desc.PropertyDescr">
+<em class="property">class </em><code class="descclassname">lcc.stars_processing.descriptors.property_desc.</code><code class="descname">PropertyDescr</code><span class="sig-paren">(</span><em>attribute_names</em>, <em>ifnot=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/descriptors/property_desc.html#PropertyDescr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.descriptors.property_desc.PropertyDescr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="lcc.stars_processing.utilities.html#lcc.stars_processing.utilities.base_descriptor.BaseDescriptor" title="lcc.stars_processing.utilities.base_descriptor.BaseDescriptor"><code class="xref py py-class docutils literal"><span class="pre">lcc.stars_processing.utilities.base_descriptor.BaseDescriptor</span></code></a></p>
+<p>Descriptor which using star&#8217;s attributes</p>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="13%" />
+<col width="87%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>attribute_names</td>
+<td>(iterable, str) Keys of star&#8217;s objects <cite>more</cite> attribute  For example: <cite>[&#8220;pm_ra&#8221;, &#8220;pm_de&#8221;]</cite></td>
+</tr>
+<tr class="row-even"><td>ifnot</td>
+<td>(str, NoneType) Value of coordinates which will be assigned if there is no <cite>attribute_name</cite> value</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods</p>
+<dl class="attribute">
+<dt id="lcc.stars_processing.descriptors.property_desc.PropertyDescr.LABEL">
+<code class="descname">LABEL</code><em class="property"> = &quot;Star's property&quot;</em><a class="headerlink" href="#lcc.stars_processing.descriptors.property_desc.PropertyDescr.LABEL" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="lcc.stars_processing.descriptors.property_desc.PropertyDescr.getSpaceCoords">
+<code class="descname">getSpaceCoords</code><span class="sig-paren">(</span><em>stars</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/descriptors/property_desc.html#PropertyDescr.getSpaceCoords"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.descriptors.property_desc.PropertyDescr.getSpaceCoords" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get list of desired attributes</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>stars</strong> : list of Star objects</p>
+<blockquote>
+<div><p>Stars with <cite>self.attribute_name</cite> keys in their &#8216;more&#8217; attribute</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">list</p>
+<blockquote class="last">
+<div><p>List of list of floats</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-lcc.stars_processing.descriptors.variogram_shape_descr">
+<span id="lcc-stars-processing-descriptors-variogram-shape-descr-module"></span><h2>lcc.stars_processing.descriptors.variogram_shape_descr module<a class="headerlink" href="#module-lcc.stars_processing.descriptors.variogram_shape_descr" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="lcc.stars_processing.descriptors.variogram_shape_descr.VariogramShapeDescr">
+<em class="property">class </em><code class="descclassname">lcc.stars_processing.descriptors.variogram_shape_descr.</code><code class="descname">VariogramShapeDescr</code><span class="sig-paren">(</span><em>comp_stars</em>, <em>bins</em>, <em>alphabet_size</em>, <em>slide=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/descriptors/variogram_shape_descr.html#VariogramShapeDescr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.descriptors.variogram_shape_descr.VariogramShapeDescr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="lcc.stars_processing.utilities.html#lcc.stars_processing.utilities.symbolic_representation.SymbolicRepresentation" title="lcc.stars_processing.utilities.symbolic_representation.SymbolicRepresentation"><code class="xref py py-class docutils literal"><span class="pre">lcc.stars_processing.utilities.symbolic_representation.SymbolicRepresentation</span></code></a>, <a class="reference internal" href="lcc.stars_processing.utilities.html#lcc.stars_processing.utilities.compare.ComparativeBase" title="lcc.stars_processing.utilities.compare.ComparativeBase"><code class="xref py py-class docutils literal"><span class="pre">lcc.stars_processing.utilities.compare.ComparativeBase</span></code></a>, <a class="reference internal" href="lcc.stars_processing.utilities.html#lcc.stars_processing.utilities.base_descriptor.BaseDescriptor" title="lcc.stars_processing.utilities.base_descriptor.BaseDescriptor"><code class="xref py py-class docutils literal"><span class="pre">lcc.stars_processing.utilities.base_descriptor.BaseDescriptor</span></code></a></p>
+<p>This descriptor compares variograms of light curves of inspected star
+with the template in symbolic representation.</p>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="11%" />
+<col width="89%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>comp_stars</td>
+<td>(list) Template stars</td>
+</tr>
+<tr class="row-even"><td>bins</td>
+<td>(int) Number of bins</td>
+</tr>
+<tr class="row-odd"><td>alphabet_size</td>
+<td>(int) Range of of used letters</td>
+</tr>
+<tr class="row-even"><td>slide</td>
+<td>(bool) If True, words with different lengths are dynamically compared by sliding shorter word thru longer</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods</p>
+<dl class="attribute">
+<dt id="lcc.stars_processing.descriptors.variogram_shape_descr.VariogramShapeDescr.LABEL">
+<code class="descname">LABEL</code><em class="property"> = &quot;Dissimilarity of the light curve's variogram from the template&quot;</em><a class="headerlink" href="#lcc.stars_processing.descriptors.variogram_shape_descr.VariogramShapeDescr.LABEL" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="lcc.stars_processing.descriptors.variogram_shape_descr.VariogramShapeDescr.getWord">
+<code class="descname">getWord</code><span class="sig-paren">(</span><em>star</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/descriptors/variogram_shape_descr.html#VariogramShapeDescr.getWord"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.descriptors.variogram_shape_descr.VariogramShapeDescr.getWord" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>Star object with a light curve</strong></p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">str</p>
+<blockquote class="last">
+<div><p>String representation of light curve&#8217;s variogram</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-lcc.stars_processing.descriptors.variogram_slope_descr">
+<span id="lcc-stars-processing-descriptors-variogram-slope-descr-module"></span><h2>lcc.stars_processing.descriptors.variogram_slope_descr module<a class="headerlink" href="#module-lcc.stars_processing.descriptors.variogram_slope_descr" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="lcc.stars_processing.descriptors.variogram_slope_descr.VariogramSlopeDescr">
+<em class="property">class </em><code class="descclassname">lcc.stars_processing.descriptors.variogram_slope_descr.</code><code class="descname">VariogramSlopeDescr</code><span class="sig-paren">(</span><em>days_per_bin</em>, <em>absolute=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/descriptors/variogram_slope_descr.html#VariogramSlopeDescr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.descriptors.variogram_slope_descr.VariogramSlopeDescr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="lcc.stars_processing.utilities.html#lcc.stars_processing.utilities.base_descriptor.BaseDescriptor" title="lcc.stars_processing.utilities.base_descriptor.BaseDescriptor"><code class="xref py py-class docutils literal"><span class="pre">lcc.stars_processing.utilities.base_descriptor.BaseDescriptor</span></code></a></p>
+<p>This filter sorting stars according slopes of their variograms</p>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="19%" />
+<col width="81%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>days_per_bin</td>
+<td>(float) Rate between light curve dimension and days</td>
+</tr>
+<tr class="row-even"><td>absolute</td>
+<td>(bool) If True absolute value of slope is taken</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods</p>
+<dl class="attribute">
+<dt id="lcc.stars_processing.descriptors.variogram_slope_descr.VariogramSlopeDescr.LABEL">
+<code class="descname">LABEL</code><em class="property"> = &quot;Light curve's variogram slope&quot;</em><a class="headerlink" href="#lcc.stars_processing.descriptors.variogram_slope_descr.VariogramSlopeDescr.LABEL" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="lcc.stars_processing.descriptors.variogram_slope_descr.VariogramSlopeDescr.getSpaceCoords">
+<code class="descname">getSpaceCoords</code><span class="sig-paren">(</span><em>stars</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/descriptors/variogram_slope_descr.html#VariogramSlopeDescr.getSpaceCoords"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.descriptors.variogram_slope_descr.VariogramSlopeDescr.getSpaceCoords" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get list of desired colors</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>stars</strong> : list of Star objects</p>
+<blockquote>
+<div><p>Stars with color magnitudes in their &#8216;more&#8217; attribute</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">list</p>
+<blockquote class="last">
+<div><p>Variogram slopes</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-lcc.stars_processing.descriptors">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-lcc.stars_processing.descriptors" title="Permalink to this headline">¶</a></h2>
+<p>There are implementations of filters</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">lcc.stars_processing.descriptors package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-lcc.stars_processing.descriptors.abbe_value_descr">lcc.stars_processing.descriptors.abbe_value_descr module</a></li>
+<li><a class="reference internal" href="#module-lcc.stars_processing.descriptors.color_index_descr">lcc.stars_processing.descriptors.color_index_descr module</a></li>
+<li><a class="reference internal" href="#module-lcc.stars_processing.descriptors.curve_density_descr">lcc.stars_processing.descriptors.curve_density_descr module</a></li>
+<li><a class="reference internal" href="#module-lcc.stars_processing.descriptors.curve_descr">lcc.stars_processing.descriptors.curve_descr module</a></li>
+<li><a class="reference internal" href="#module-lcc.stars_processing.descriptors.curve_shape_descr">lcc.stars_processing.descriptors.curve_shape_descr module</a></li>
+<li><a class="reference internal" href="#module-lcc.stars_processing.descriptors.hist_shape_descr">lcc.stars_processing.descriptors.hist_shape_descr module</a></li>
+<li><a class="reference internal" href="#module-lcc.stars_processing.descriptors.position_descriptor">lcc.stars_processing.descriptors.position_descriptor module</a></li>
+<li><a class="reference internal" href="#module-lcc.stars_processing.descriptors.property_desc">lcc.stars_processing.descriptors.property_desc module</a></li>
+<li><a class="reference internal" href="#module-lcc.stars_processing.descriptors.variogram_shape_descr">lcc.stars_processing.descriptors.variogram_shape_descr module</a></li>
+<li><a class="reference internal" href="#module-lcc.stars_processing.descriptors.variogram_slope_descr">lcc.stars_processing.descriptors.variogram_slope_descr module</a></li>
+<li><a class="reference internal" href="#module-lcc.stars_processing.descriptors">Module contents</a></li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="lcc.html">lcc package</a><ul>
+  <li><a href="lcc.stars_processing.html">lcc.stars_processing package</a><ul>
+      <li>Previous: <a href="lcc.stars_processing.deciders.unsupervised.html" title="previous chapter">lcc.stars_processing.deciders.unsupervised package</a></li>
+      <li>Next: <a href="lcc.stars_processing.systematic_search.html" title="next chapter">lcc.stars_processing.systematic_search package</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/lcc.stars_processing.descriptors.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Martin Vo.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/lcc.stars_processing.descriptors.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
