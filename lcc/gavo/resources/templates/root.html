@@ -1,0 +1,141 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns:n="http://nevow.com/ns/nevow/0.1" 
+		xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title n:render="prependsite"> Home</title>
+    <n:invisible n:render="commonhead"/>
+
+	<style type="text/css">
+		.panel {
+			position: relative;
+			background-color: #EAEBEE;
+			margin-top: 0px;
+			min-height:70ex;
+			margin-left: 5px;
+			padding: 5px;
+		}
+	</style>
+
+	<script type="text/javascript">
+		function makePanelShower(panelId) {
+			return function (){
+				$(".panel").css("display", "none");
+				$("#"+panelId).css("display", "block");
+			}
+		}
+			
+		$(document).ready(function() {
+			$("#tabset_tabs li").bind("click", makeTabCallback({
+				'by-subject': makePanelShower("subject-list"),
+				'by-title': makePanelShower("title-list"),
+			}));
+			$("#tabset_tabs li a").removeAttr("href");
+			makePanelShower("title-list")();
+		});
+	</script>
+
+  </head>
+  <body>
+		<div id="header">
+			<img src="/static/img/logo_medium.png" alt="[operator logo]" 
+				n:render="rootlink" class="logo"/>
+			<h1 id="pagehead" n:render="prependsite"/>
+		</div>
+		<p>Welcome to this data center.  The operators have not yet customized
+		their root.html template, which is why you're reading this template
+		text.</p>
+
+		<p>In addition to the services listed below, on this site you
+		probably can access
+		<a href="/__system__/dc_tables/list/form">numerous tables</a> using
+		<a href="/tap">TAP</a> or <a href="/adql">form-based ADQL</a>.</p>
+		<p>Please check out our <a href="/static/help.shtml">site help</a>.</p>
+		<hr/>
+		<h2>Services available here</h2>
+
+		<div class="container">
+		<ul id="tabset_tabs">
+        <li class="selected"><a href="#title-list" name="by-title"><span>By Title</span></a></li>
+        <li><a href="#subject-list" name="by-subject"><span>By Subject</span></a></li>
+		</ul>
+
+		<div id="title-list"
+				n:data="chunkedServiceList" n:render="sequence" class="panel">
+			<n:invisible n:pattern="item">
+				<h3><n:invisible n:render="string" n:data="0"/>...</h3>
+				<ul n:data="1" n:render="sequence">
+					<li n:pattern="item" n:render="mapping">
+						<span n:render="ifprotected">[P]</span>
+						<n:slot name="title"/>
+						<span class="hbox">
+						<a class="linkicon">
+							<n:attr name="href"><n:slot name="referenceURL"/></n:attr>
+							<img src="/static/img/icon_info.png" 
+								alt="[Service information]"
+								title="Service information"/>
+							</a>
+						<n:invisible n:render="ifslot browseable">
+							<a class="linkicon">
+								<n:attr name="href"><n:slot name="accessURL"/></n:attr>
+								<img src="/static/img/icon_query.png" 
+									alt="[Use the service]"
+									title="Use the service"/>
+							</a>
+						</n:invisible>
+						</span>
+						<br/>
+						<div class="srvDesc"><n:slot name="description"/></div>
+					</li>
+				</ul>
+			</n:invisible>
+		</div>
+
+		<div id="subject-list" n:data="subjectServiceList" n:render="sequence"
+				style="position:static" class="panel">
+			<n:invisible n:pattern="item" n:render="mapping">
+				<h3><n:slot name="subject"/></h3>
+				<ul n:data="chunk" n:render="sequence">
+					<li n:pattern="item" n:render="mapping">
+						<span n:render="ifprotected">[P]</span>
+						<n:invisible n:render="ifslot browseable">
+							<a class="servicelink">
+								<n:attr name="href"><n:slot name="accessURL"/></n:attr>
+								<n:slot name="title"/>
+							</a>
+						</n:invisible>
+						<n:invisible n:render="ifnoslot browseable">
+							<n:slot name="title"/>
+						</n:invisible>
+						<span class="hbox">
+						<a class="linkicon">
+							<n:attr name="href"><n:slot name="referenceURL"/></n:attr>
+							<img src="/static/img/icon_info.png" 
+								alt="[Service information]"
+								title="Service information"/>
+							</a>
+						<n:invisible n:render="ifslot browseable">
+							<a class="linkicon">
+								<n:attr name="href"><n:slot name="accessURL"/></n:attr>
+								<img src="/static/img/icon_query.png" 
+									alt="[Use the service]"
+									title="Use the service"/>
+							</a>
+						</n:invisible>
+						</span>
+					</li>
+				</ul>
+			</n:invisible>
+		</div>
+		</div>
+
+		<p class="attribution">
+			<a>
+				<n:attr name="href">mailto:<n:invisible render="meta"
+					>contact.address</n:invisible></n:attr
+				>Contact us</a>
+			<a href="/__system__/services/overview/form" n:render="rootlink">[s]</a>
+		</p>
+  </body>
+</html>

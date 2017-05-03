@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+	"http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns:n='http://nevow.com/ns/nevow/0.1'
+	xmlns="http://www.w3.org/1999/xhtml">
+<head n:render="commonhead">
+<title n:render="prependsite"> Site Help</title>
+</head>
+<body n:render="withsidebar">
+<h1 n:render="prependsite"> Site Help</h1>
+<p>This document is intended to help you discover the web interface
+features on the <span n:render="prependsite"/>.  Note that the site also 
+offers <a href="http://www.ivoa.net/">VO</a>-enabled services.  See,
+for example <a href="http://www.g-vo.org/pmwiki/About/GettingStarted">Getting
+Started on GAVO's web page</a> for more information on how to use them.</p>
+
+<p>Though most of the services should work even in text-based browsers, we
+recommend a web browser with CSS and Javascript enabled to access the
+web-based services.</p>
+
+<h2>Service discovery</h2>
+
+<p>The <a href="/" n:render="rootlink">index page</a> lists published 
+services available through web browsers.  A "[P]" in the service 
+listing means that the service is password protected, either because it is
+too rough for public consumption or because the data providers want
+exclusive access.  In either case, you can contact 
+<a href="mailto:gavo@ari.uni-heidelberg.de">
+<n:attr name="href">mailto:<n:invisible n:render="meta">contact.email</n:invisible></n:attr>the site operators</a> to inquire
+about access.</p>
+
+<p>In addition to web-based services, the data center also
+provides services accessible through IVOA standard protocols like SIAP (for
+images) and SCS (supporting cone searches).  These can be located through 
+a <a href="http://nvo.stsci.edu/voregistry/index.aspx">Virtual Observatory registry</a> or 
+<a href="http://www.g-vo.org/www/External/Tools">common VO tools</a>.</p>
+
+<h2>Search forms</h2>
+
+<h3>Query Fields</h3>
+
+<p>Services not using customized interfaces have standard query forms.  These
+consist of a series of input fields that either take</p>
+<ul>
+<li>numeric expressions -- you can recognize those from the little "[?num. expr.]" tag 
+behind them.  In addition to raw numbers, you can enter <a href="/static/help_vizier.shtml#floats" n:render="rootlink">Vizier-like numeric expressions</a> here.</li>
+<li>string expressions -- these have a little "[?char expr.]" tag and
+by default match using patterns, evaluating metacharacters like * or ?
+much like you may know from file name patterns.  To force literal matching,
+prepend your strings with ==.  <a href="/static/help_vizier.shtml#strings" n:render="rootlink">Other operators available for string expressions</a> include
+caseless matching, string comparisons, or negation.</li>
+<li>date expressions -- these are marked with "[?date expr.]" tags.  Dates must
+be given in the ISO format (YYYY-MM-DD).  Among the more useful of the
+<a href="/static/help_vizier.shtml#dates" n:render="rootlink">supported operators</a>
+is the range -- you can say 2004-01-02 .. 2005-05-01 to specify a range of
+dates between Jan 2nd, 2004 and May 1st, 2005.</li>
+<li>Selection boxes -- these are either drop down, in which case you can only 
+select one entry, or open boxes you can select more than one entry in,
+usually (depending on your user interface) using control-click.</li>
+<li>Others -- application-specific input fields (like, e.g., cone searches)
+should come with a short explanation.</li>
+</ul>
+
+<h3>Query Modifiers</h3>
+
+<p>For most queries, you will have a "Table" query field near the bottom of the
+form.  You can set sorting and limit options there.  Note that depending on the
+query, selecting a column to sort on may slow down the answer dramatically.
+This is because your query may match large amounts of data, and even if only
+100 items are returned, potentially millions of them may have to be sorted.</p>
+
+<p>On the other hand, results overflowing the match limit are not reproducible
+without a sort option, i.e., you may get a different set of, say, 100 items for
+identical query parameters at two different times.  The services
+warn you about this fact when they return truncated results.</p>
+
+<p>In cases in which the match limits provided by the form do not suit you, you
+can override the match limit by editing the result link (see below).  You want
+to substitute your value into _DBOPTIONS_LIMIT=100.  The system has has
+hardcoded match limit that you cannot override in this way, but it is unlikely
+that it will hurt you.</p>
+
+<p>You can usually select an output format.  
+<a name="outformats">Options here include</a></p>
+<ul>
+<li>HTML -- data is returned in your web browser.  You can select additional
+columns in your output from an input field that pops down when you mouse over 
+it.</li>
+<li>VOTable -- data is returned in IVOA's standard data format, the VOTable.
+This is XML that can be human-readable but is really intended to be consumed
+by tools like <a href="http://www.star.bris.ac.uk/~mbt/topcat/">Topcat</a>.
+You can select a "verbosity" specifying the fields present in the output, with
+1 standing for a minimal set of information, 2 for what the service author
+deemed useful for the average astronomer, 3 for (almost) all fields
+available, and finally H for (essentially) what the default HTML table gives.
+Furthermore, you can choose between a "human-readable" VOTable
+(select this to process your data with standard XML or text-based
+tools or peruse it with the naked eye) and a binary version that you
+should use for larger data sets since it is much more efficient.</li>
+<li>VOPlot -- starts up IndiaVO's VOPlot utility in your browser.  This lets
+you visualize the returned data without any software on your
+side (besides a java-capable browser).</li>
+<li>FITS -- this returns FITS tables.  The data is in the first
+extension.  This contains much less meta information than a VOTable of the
+same data and thus should only be used if your backend tools do not understand
+VOTables.</li>
+<li>TSV -- tab separated files.  If in a desperate pinch, you can get the 
+table contents as an ASCII file.  The fields a separated by tabs.  All metadata
+is lost.  Nullvalues are (almost) always rendered as the string "None".
+Strings containing non-ascii
+or control characters are rendered with C escapes (\n, \t, etc) or sedecimal
+unicode codepoints (\xe4, e.g., is an &auml;).  As I said: Don't use this
+unless you absolutely have to.</li>
+<li>CSV -- comma separated values.  This format carries almost no
+metadata as well, but it is understood by may database programs, spreadsheets,
+etc (note: don't use Excel to process astronomical data.  
+<a href="http://www.star.bris.ac.uk/~mbt/topcat/">TOPCAT</a> is so
+much nicer, and it has built-in VO support).  Null values are mostly
+rendered as empty fields, but float NULLs are NaNs.</li>
+<li>tar -- if the service contains "products" (usually FITS files of some
+kind), you can download all matching items in a tar file.</li>
+</ul>
+
+<p>Next to the output format selection, there are two links.  The one labeled
+"[Result link]" reflects your current query as a copyable URL.  You could use
+this to send a query result to colleagues, but it is particularly useful with
+the VOTable output format -- you can drag and drop that link into Topcat's
+"Open" dialogue, for example.</p>
+
+<p>The star (<img src="/static/img/bookmark.png"/>) lets you
+bookmark the current form -- it is basically like the result link but
+doesn't actually perform the query.  This should come in handy to store
+and communicate preset queries. Note that for split-up fields (e.g., date
+inputs with year, month and day) you need to enter all pieces of information
+for this to work.</p>
+
+<p>Both the result and the bookmark links require Javascript to work.</p>
+
+<h3>The sidebar</h3>
+
+<p>The sidebar on form and result pages contains ancillary information for the
+resource the data comes from.  In the Metadata section, only metadata titles
+are shown.  You can view the content by clicking on "&gt;&gt;" and hide it
+again by clicking on "&lt;&lt;".</p> 
+
+<p>The "Created" metadata item shown refers to the creation of the resource
+descriptor, i.e., is related to the service rather than the data.  The "Data 
+updated" item gives the date of the last "import" of a piece of the data.
+Unless a service supports online modification, it can be used as an indicator
+of the version of the underlying data.</p>
+
+
+<h2>Timeouts</h2>
+
+<p>With ADQL, it is not hard to construct queries that will run for days or
+weeks, and even normal web-based queries can select so much data that excessive
+runtimes and possibly huge data volumes result.  Ususally, this is not intended
+by the users, and thus by default relatively short timeouts are imposed on the
+run time of the queries on the server (of the order 10 seconds).</p>
+
+<p>You can usually increase the timeout by generating a link to your query
+(see "Result link" above) and appending <tt>"&amp;_TIMEOUT=100</tt> (or whatever
+number of seconds suits you) to the URL.  The ADQL form has an input field
+that does just this.</p>
+
+<p>However, usually long-running queries indicate that we should be adding
+some index to our tables.  Thus, please contact us with your queries and
+we will try to speed them up.</p>
+
+
+<h2>Login and logout</h2>
+
+<p>In the sidebar, you will usually see a login item.  You should normally
+not need to be concerned with this, since protected services will query your
+credentials as needed.  You may want to log out, though; if you click on
+the "log out &lt;user&gt;" link, a login mask will pop up.  Leave the
+username blank and click OK to log out.  If you click Cancel (or equivalent),
+<em>you will remain logged in</em>.  This slight weirdness is inevitable when
+using HTTP authentication with current browsers.</p>
+
+<p>There is one situation in which you will want to log in: Access to protected
+products from open services.  You will note that in such cases, the system
+will deny access to the protected products without asking your credentials.
+If you can provide those, log in and try again.</p>
+
+<p>To obtain usernames and passwords, contact 
+<n:invisible n:render="meta">contact.email</n:invisible>.</p>
+
+
+<h2>Software availability</h2>
+
+<p>The software driving this site is not really finished
+enough for a "real" release.  If that does not scare you, you are
+welcome to a
+<a href="http://vo.ari.uni-heidelberg.de/soft">download</a>.  All our
+code is released under the GPLv3 (even if it doesn't say so in all places
+yet).</p>
+
+<h2>Acknowledgements</h2>
+
+<p>This software uses services provided by the Centre de Données astronomiques de Strasbourg, France.</p>
+
+<p>Some of the services were created using software from astrometry.net.</p>
+
+<p>Some of the services use q3c indexing by Sergey Koposov and Oleg Bartunov,
+see <a href="http://lnfm1.sai.msu.ru/~math/docs/adass_proceedings2005.pdf">2006ASPC..351..735K</a>.</p>
+
+<h2>Privacy</h2>
+
+<p>As put down in our <a href="/static/doc/privpol.shtml">privacy policy</a>,
+we try to respect your privacy and store as little data as possible.  If you
+want us to by default delete all log entries, bring the funding agencies and
+others to sense.  Access data is no measure for usefulness.  But who's
+even reading this?</p>
+
+</body>
+</html>

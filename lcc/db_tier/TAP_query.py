@@ -1,6 +1,11 @@
 from astropy.coordinates.sky_coordinate import SkyCoord
-from gavo import votable
-from gavo.votable.tapquery import RemoteError, WrongStatus, NetworkError
+
+try:
+    from gavo import votable
+    from gavo.votable.tapquery import RemoteError, WrongStatus, NetworkError
+except ImportError:
+    from lcc.gavo import votable
+    from lcc.gavo.votable.tapquery import RemoteError, WrongStatus, NetworkError
 
 from .base_query import LightCurvesDb
 from lcc.entities.exceptions import QueryInputError, NoInternetConnection

@@ -1,0 +1,2 @@
+This directory contains code intended for use by resource-specific code (like
+processors for FITS files and the like).

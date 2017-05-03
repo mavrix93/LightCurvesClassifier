@@ -1,0 +1,18 @@
+An ADQL metadata inference and query morphing library.
+
+As a rule, I've tried to keep as much in plain strings as possible to
+avoid having gargantuous trees when we're really only interested in
+rather few "hot spots".  Of course, the downside is that tree processing
+becomes a bit tedious in places.
+
+What's where:
+
+* The grammar, parsing into basically nothing: grammar.py
+* Nodes, functioning as callbacks for the grammar and building a query
+  structure: nodes.py
+* Processing of nodes, actual tree building: tree.py
+* Metadata inference: annotations.py
+* Creation of actual postgres queries from the results of the above
+  modules: morphpg.py, morphhelpers.py; postproc.py belongs here
+  to some extent, but it's tree manipulation that's probably desirable
+  independent of the target language.

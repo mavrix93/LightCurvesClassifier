@@ -1,0 +1,47 @@
+/* CSS for tree-menu style root pages */
+
+input#textsearch {
+	width: 12em;
+	height: 0.9em;
+}
+
+dl.resrec {
+	margin-left: 2em;
+}
+
+#mainbox {
+	overflow: hidden;
+	display: block;
+	color: navy;
+	background-color: #EAEBEE;
+	margin-left: 5px;
+	margin-right: 5px;
+	margin-top: 0px;
+	min-height:70ex;
+}
+
+ul.servicelist {
+	list-style-type: none;
+	padding-top: 1ex;
+	padding-bottom: 1ex;
+}
+
+.servicelist li {
+	margin-top: 0.75ex;
+}
+
+.servicelist li a {
+	text-decoration: none;
+}
+
+button {
+	background-color: transparent;
+	border: 0px solid white;
+	font-size: 11pt;
+	text-align:left;
+	white-space:nowrap;
+}
+
+button .data {
+	color: #000099;
+}

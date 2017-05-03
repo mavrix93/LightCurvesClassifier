@@ -1,0 +1,43 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns:n="http://nevow.com/ns/nevow/0.1" 
+		xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<title>Specview</title>
+		<n:invisible n:render="commonhead"/>
+	</head>
+	<body>
+	<p>
+	<object 
+			type="application/x-java-applet"
+			classid="java:spv.SpecviewApplet"
+			codebase="http://specview.stsci.edu/applet"
+    	archive="specview_app.jar"
+			codetype="application/java-vm"
+    	width="800" 
+    	height="600">
+    <param name="archive" value="specview_app.jar"/>
+    <param name="codebase" value="http://specview.stsci.edu/applet"/>
+    <param name= "name"><n:attr name="value" n:render="data" n:data="parameter source"/></param>
+    <p style="padding-left:2em;padding-right:2em;border:2pt solid #eecccc"
+    >Specview is a Java applet.  This means you have to have a
+    java virtual machine active within your browser.  A common way
+    to get this is to install a plugin, available, e.g., from
+    <a href="http://java.sun.com">java.sun.com</a>, or by installing
+    a package like openjdk-?-jre on Debian-derived systems (where ? corresponds
+    to some version).</p>
+  </object>
+	</p>
+
+	<p><a href="http://www.stsci.edu/resources/software_hardware/specview"
+		>Specview</a> is a product of the Space Telescope Science 
+		Institute, which is operated by AURA for NASA.
+		Its source code is available under a BSD-style licence from
+		<a href="http://sourceforge.net/projects/specview/">its 
+		sourceforge page</a></p>
+	<p>If you see all kinds of security warnings, see
+		<a href="http://www.stsci.edu/resources/software_hardware/specview/applet_demo"
+		>STScI's explanations</a> on them.</p>
+	</body>
+</html>
+

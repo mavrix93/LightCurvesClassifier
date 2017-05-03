@@ -1,0 +1,164 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns:n="http://nevow.com/ns/nevow/0.1" 
+		xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title n:render="prependsite"> Home</title>
+  <n:invisible n:render="commonhead"/>
+  <link href="/static/css/fancyroot.css" type="text/css" rel="stylesheet"/>
+  <script src="/static/js/fancyroot.js" type="text/javascript"/>
+</head>
+<body>
+
+<div id="header" >
+	<img src="/static/img/logo_medium.png" alt="[operator logo]" 
+		n:render="rootlink" class="logo"/>
+	<h1 id="pagehead" n:render="prependsite"/>
+</div>
+
+<p>Welcome to this data center.  The operators have not yet customized
+their root.html template, which is why you're reading this template
+text.</p>
+
+<p>In addition to the services listed below, on this site you
+probably can access
+<a href="/__system__/dc_tables/list/form">numerous tables</a> using
+<a href="/tap">TAP</a> or <a href="/adql">form-based ADQL</a>.</p>
+<p>Please check out our <a href="/static/help.shtml">site help</a>.</p>
+
+<h2>Services Available</h2>
+
+<p id="tab_placeholder" style="border: 2pt dashed #bb9999;padding: 0.5ex">
+	Enable javascript to get fancier ways to explore this site's 
+	services.</p>
+
+<div id="mainbox">
+		
+<ul class="servicelist" n:render="sequence" n:data="titleList">
+	<li n:pattern="item" n:render="mapping">
+		<button class="handle" onclick="toggleDetails(this)">
+			<n:attr name="value"><n:slot name="sourcerd"/>,<n:slot name="resid"/></n:attr>
+			<span class="handlearrow">&#x25B6;</span>
+		</button>
+		<span n:render="ifprotected">[P]</span>
+		<a>
+			<n:attr name="href"><n:slot name="accessurl"/></n:attr>
+			<n:slot name="title"/>
+		</a>
+		<span class="hbox">
+			<a class="linkicon">
+				<n:attr name="href"><n:slot name="referenceurl"/></n:attr>
+				<img src="/static/img/icon_info.png" 
+					alt="[Service information]"
+					title="Service information"/>
+			</a>
+			<n:invisible n:render="ifslot browseable">
+			<a class="linkicon">
+				<n:attr name="href"><n:slot name="accessurl"/></n:attr>
+				<img src="/static/img/icon_query.png" 
+					alt="[Use the service]"
+					title="Use the service"/>
+			</a>
+			</n:invisible>
+		</span>
+	</li>
+</ul>
+
+</div>
+
+
+<p class="attribution">
+	<a>
+		<n:attr name="href">mailto:<n:invisible render="meta"
+			>contact.address</n:invisible></n:attr
+		>Contact us</a>
+	<a href="/__system__/services/overview/form" n:render="rootlink">[s]</a>
+</p>
+
+
+<!-- Templates for renderTemplate -->
+<script type="text/html" id="tmpl_resHead">
+	<li>
+		<button class="handle" value="$sourcerd,$resid" 
+			onclick="toggleDetails(this)">&#x25B6;</button>
+		<a href="$accessurl">$title</a>
+		<span class="hbox">
+			<a class="linkicon" href="$referenceurl">
+				<img src="/static/img/icon_info.png" 
+					alt="[Service information]"
+					title="Service information"/>
+			</a>
+			<a class="linkicon" href="$accessurl">
+				<img src="/static/img/icon_query.png" 
+					alt="[Use the service]"
+					title="Use the service"/>
+			</a>
+		</span>
+	</li>
+</script>
+
+<script type="text/html" id="tmpl_resHeadNobrowse">
+	<li>
+		<button class="handle" value="$sourcerd,$resid" 
+			onclick="toggleDetails(this)">
+			&#x25B6;</button>
+		<a href="$referenceurl">$title</a>
+		<span class="hbox">
+			<a class="linkicon" href="$referenceurl">
+				<img src="/static/img/icon_info.png" 
+					alt="[Service information]"
+					title="Service information"/>
+			</a>
+		</span>
+	</li>
+</script>
+
+
+<script type="text/html" id="tmpl_resDetails">
+	<dl class="resrec fold">
+		<dt>Authors</dt>
+			<dd>$authors</dd>
+		<dt>Description</dt>
+			<dd>$description</dd>
+	</dl>
+</script>
+
+<script type="text/html" id="tmpl_subjectHeader">
+	<li>
+		<button onclick="toggleSubjectResources(this)" value="$subject"
+				class="handle">
+			<span class="handlearrow">&#x25B6;</span>
+			<span class="data">$subject</span>
+			($nummatch)</button>
+	</li>
+</script>
+
+<script type="text/html" id="tmpl_authorHeader">
+	<li>
+		<button onclick="toggleAuthorResources(this)" value="$author"
+				class="handle">
+			<span class="handlearrow">&#x25B6;</span>
+			<span class="data">$author</span>
+			($nummatch)</button>
+	</li>
+</script>
+
+
+<script type="text/html" id="tabbar_store">
+<ul id="tabset_tabs">
+	<li class="selected"><a name="by-title"><span>By Title</span></a></li>
+	<li><a name="by-subject"><span>By Subject</span></a></li>
+	<li><a name="by-author"><span>By Author</span></a></li>
+	<li><a name="by-text"><span>
+		<input id="textsearch" type="text" name="q" size="20" maxlength="30"
+			title="Fulltext Search"/>
+		</span></a>
+	</li>
+</ul>
+</script>
+
+<!-- End Templates -->
+
+</body>
+</html>

@@ -1,0 +1,1 @@
+../../../../../share/pyshared/gavo/utils/fancyconfig.py

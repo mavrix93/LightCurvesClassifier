@@ -1,0 +1,24 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+		"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns:n='http://nevow.com/ns/nevow/0.1'
+	xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+		<title>Caches cleared</title>
+  </head>
+  <body>
+		<h1>Caches cleared</h1>
+		<p>The caches were cleared successfully.</p>
+		<p>Modules reloaded: 
+			<span n:render="sequence" n:data="reloadedModules">
+				<span n:pattern="item"><n:invisible n:render="data"/>, </span>
+			</span>
+		</p>
+		<p>You can:</p>
+		<ul>
+			<li><a href="/reload" n:render="rootlink">Reload again</a></li>
+			<li>Go to <a href="/" n:render="rootlink">Main Page</a></li>
+			<li><a href="/__system__/services/overview/form" 
+				n:render="rootlink">Inspect services</a></li>
+		</ul>
+  </body>
+</html>

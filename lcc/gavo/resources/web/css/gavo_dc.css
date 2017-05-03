@@ -1,0 +1,709 @@
+body {
+ 	font-family: Arial, Verdana, Helvetica, sans-serif;
+	background: #FFFFFF;
+	color: #042E74;
+	font-size: 11pt;
+}
+
+th {
+	vertical-align: top;
+}
+
+p, li {
+	max-width: 40em;
+}
+
+div.metadescription {
+	max-width: 350px;
+	margin-left: 25px;
+	margin-right: 25px;
+	background-color:#eeeeee;
+	padding-left: 15px;
+	padding-right: 15px;
+	padding-top: 5px;
+	padding-bottom: 5px;
+}
+
+.wrapuseservice {
+	float: right;
+	background: white;
+	width: 240px;
+}
+
+.useservice p {
+	margin-bottom: 0px;
+}
+
+.useservice {
+	background: white;
+	width: 200px;
+	padding: 1ex;
+	background: #D2DCF0;
+	margin-bottom: 2ex;
+	margin-left: 2ex;
+}
+
+p.attribution {
+	max-width:100%;
+	width:100%;
+	text-align:right;
+}
+
+.errmsg {
+	font-style: italic;
+	max-width:50em;
+	padding-left: 1em;
+	border-left: 1em solid #cccccc;
+}
+
+.rdbacklink {
+	padding-left: 1em;
+	border-left: 1em solid #cccccc;
+}
+
+.wide {
+	max-width: 100%;
+}
+
+ul {
+	max-width: 30em;
+}
+
+code {
+	background: #EEEEEE;
+}
+
+pre {
+	background: #EEEEEE;
+}
+
+form.sortArrow {
+	text-align:center;
+}
+
+button.transparent {
+	background: white;
+	display:inline;
+	border-style:None;
+}
+
+button.popButton {
+	background: white;
+	border: 2px solid gray;
+}
+
+.silentlink {
+	border-style:None;
+}
+
+div#querysel {
+	position:absolute;
+	top: 0%;
+	right: 0%;
+	background: #FFFFFF;
+	padding-right:5px;
+	padding-left:5px;
+}
+
+p.description {
+	background: #EEDDDD;
+}
+
+div.clabel {
+	font-weight: bold;
+	background: white;
+	width: 250px;
+	display: table-cell;
+	vertical-align:top;
+}
+
+div.legend {
+	padding: 2px;
+	display: table-cell;
+	vertical-align: bottom;
+	font-size:80%;
+	text-align:right;
+}
+
+div.quwidget {
+	display: table-row;
+	vertical-align:top;
+}
+
+div.condition {
+	padding: 10px;
+	display: table-row;
+}
+
+div.legal {
+	padding-top: 10px;
+	font-size: 72%;
+	max-width: 30em;
+}
+
+table.results {
+	background: white;
+}
+
+.results tr td {
+	padding-left: 2px;
+	padding-right: 2px;
+}
+
+.resultMeta {
+	background: #EEEEFF;
+}
+
+.fieldlegend {
+	font-size:72%;
+	vertical-align:top;
+}
+
+.invisible { /* for items for non-css browsers */
+	width: 0px;
+	height: 0px;
+	position: absolute;
+	top: -100px;
+}
+
+div#header, div#chdr {
+	background: #899dbf;
+	margin-bottom: 34px;
+	height: 58px;
+	width: 100%;
+}
+
+div#chdr {
+	position: absolute;
+}
+
+h1, h2, h3, h4, h5 { color: #666; }
+h1 { 
+	font-size: 17pt;
+	font-weight: bold;
+	font-family: Arial, Verdana, Helvetica, sans-serif;
+	color: #042E74;
+	background: #F0F4FF;
+	padding-left: 0.5ex;
+	margin-top: 0px;
+	padding-top: 1ex;
+	padding-bottom: 1ex;
+}
+
+h2 { 
+	font-size: 14pt; 
+	font-weight: bold; 
+	margin-top:24pt; 
+	padding-top: 3pt;
+}
+
+h2.section {
+	border-top: 1px dotted grey; 
+}
+
+h3 { font-size: 12pt; font-weight: bold;}
+h4 { font-size: 12pt} 
+h5 { font-size: 11pt; font-style: italic; }
+
+h4.metacat {
+	font-size: 10pt; 
+	background: none;
+}
+
+#header h1 {
+	display: inline;
+	color: white;
+	font-family: Helvetica,Arial;
+	font-weight: bold;
+	font-size: 28px;
+	white-space: nowrap;
+	position: absolute;
+	background:none;
+	padding-top:11px;
+	left:150px;
+	overflow:hidden;
+}
+
+#chdr h1 {
+	display: inline;
+	color: white;
+	font-family: Helvetica,Arial;
+	font-weight: bold;
+	font-size: 28px;
+	letter-spacing: 1px;
+	white-space: nowrap;
+	position: absolute;
+	background:none;
+	left:125px;
+	bottom: -28px;
+	overflow:hidden;
+}
+
+table.results {
+	empty-cells: show;
+	border-style: none;
+	border-spacing: 0px;
+}
+
+table.keyvalue {
+	border-spacing: 1pt;
+}
+
+th.thHorizontal {
+	text-align: left;
+	background-color: #dddddd;
+	padding-right: 10pt;
+	position: relative;
+}
+
+.keyvalue tr td {
+	max-width: 400pt;
+	padding-left: 5pt;
+}
+
+.keyvaluedesc td {
+	text-align: left;
+	font-style: italic;
+	color: #707070;
+	padding-bottom: 7pt;
+}
+
+th.thVertical {
+	border-top: 1px solid black;
+	border-bottom: 1px solid black;
+	padding-top: 4px;
+	padding-bottom: 4px;
+	margin-bottom: 2px;
+	padding-left: 3px;
+	padding-right: 3px;
+	margin: 0px 0px 0px 0px;
+	position: relative;
+}
+
+.results td {
+	padding-left: 4px;
+	padding-right: 40px;
+	border-collapse: collapse;
+	border:2px solid white;
+}
+
+tr.even {
+	padding-top:4px;
+	padding-bottom:4px;
+	background: #EEEEFF;
+}
+
+div#sidebar {
+	float: left;
+	width: 120px;
+	background: #d2dcf0;
+}
+
+#sidebar p {
+	margin-top: 2pt;
+	margin-bottom: 2pt;
+	padding: 1px;
+}
+
+.sidebaritem {
+	margin-bottom:15px;	/* 5px */
+	position: relative;
+	z-index:10;
+}
+
+.sidebarnote {
+	font-size: 90%; 
+	padding-top:2ex;
+	border-top: 1px solid grey; 
+	margin-top:4ex;
+}
+
+.sidebarmicro {
+	font-size: 62%; 
+	padding-top:2ex;
+	border-top: 1px solid grey; 
+	margin-top:3ex;
+}
+
+div#body {
+	min-width: 450px;
+	width: 80%;
+	position: absolute;
+	border-left: 120px solid #d2dcf0;
+	padding-left: 10px;
+	float:left;
+	background:white;
+}
+
+.metaEnum {
+	list-style-type: none;
+	padding-left: 0px;
+	margin-top: 0px;
+	font-size: 10px;
+}
+
+li.metaItem {
+	margin-bottom: 5px;
+}
+
+/* defuse breakage with rst insisting on a p element around meta items */
+.sidebarEnum li p {
+ margin: 4px;
+}
+
+div.explodable {
+	padding: 1px; /* must be in sync with gavo.js:*Meta */
+}
+
+div.explodable h4 {
+	margin-bottom: 1px;
+}
+
+h4.exploHead {
+	font-weight:bold;
+	font-size:11px;
+	height: 13pt;
+	margin: 0px;
+	padding: 0px;
+	background: none;
+	cursor: pointer;
+	overflow: visible;
+	white-space: nowrap;
+}
+
+div.exploBody {
+	overflow: auto;
+	height: 0px;
+	/* width is set in gavo.js:expandMeta */
+	visibility: hidden;
+	font-size: 11px;
+}
+
+.sidebaritem h3 {
+	font-size: 14px;
+	margin-top:7px;
+	margin-bottom:5px;
+	background: #F0F4FF;
+}
+
+.sidebaritem div.navimainitem {
+	background: url(/static/img/grey-s.png);
+	border: 1px solid silver;
+	margin: 5px;
+	padding: 2px;
+	text-align: center;
+	margin-bottom: 10px;
+} 
+
+div.navimainitem a {
+	text-decoration: none;
+	color: #042e74;
+}
+
+.sidebaritem a.button :hover {
+        text-decoration: underline;
+}
+
+.sidebaritem a.button :visited {
+	color: #9d11b3
+}
+
+
+
+div.copyright {
+	background-color: #cccccc;
+	padding: 5px;
+	margin-top: 5px;
+	max-width: 30em;
+}
+
+div.intro {
+	margin-bottom: 15px;
+	max-width: 30em;
+}
+
+textarea { /* fix silly nevow formal css */
+  width: auto !important;
+  height: auto !important;
+}
+
+.nevow-form .multiinputs {
+  margin-left: 110px;
+}
+
+hr.scoreBar {
+	height: 10px;
+	background-color: #44bb66;
+	margin-left: 0px;
+	text-align: left;
+}
+
+.srvDesc {
+	font-size: 72%;
+	padding-left: 1em;
+	margin-bottom: 0.5ex;
+}
+
+table.shorttable {
+	border-spacing: 0px;
+	border-collapse: collapse;
+	border-bottom: 1px solid grey;
+}
+
+.shorttable * th {
+	border: 1px solid grey;
+	padding-top:6px;
+	padding-bottom:6px;
+	padding-left: 4px;
+	padding-right: 4px;
+}
+
+.shorttable * td {
+	border-left: 1px solid grey;
+	border-right: 1px solid grey;
+	padding: 4px
+}
+
+.indexed {
+	background: #d2dcf0;
+}
+
+.warning {
+	border: 2pt solid red;
+	padding: 5pt;
+	margin-bottom: 5pt;
+}
+
+.note {
+	padding-left: 5pt;
+	border-left: 1pt solid gray;
+}
+
+.admonition-title {
+	font-style: italic;
+}
+
+div.errors {
+	border: 2pt solid red;
+	padding: 5pt;
+	margin-bottom: 5pt;
+}
+
+
+.metaItem p span.target {
+	font-size: 12pt;
+	font-weight: bold;
+}
+
+div.innerWin { 
+	/* reset font parameters in case we're embedded somewhere funky */
+	text-decoration: none;
+	font-style: normal;
+	font-size: medium;
+	font-weight: normal;
+	overflow: hidden;
+	text-align: left;
+	background: #ffffff;
+	border: 1px solid black;
+	z-index:100;
+}
+
+p.innerTitle {
+	z-index: 3000;
+	background: #d2dcf0;
+	text-align: right;
+	font-weight: bold;
+	margin: 0px;
+	cursor: pointer;
+	width: auto;
+	max-width: none;
+}
+
+div.innerBody { /* like an iframe, except not in a frame */
+	border: 1px solid #d2dcf0;
+	background: white;
+	overflow: auto;
+	padding: 0.3ex;
+}
+
+div.formLinks {
+	text-align:right;
+	margin-top: -10px;
+}
+
+table#addSelection {
+	width:400px;
+}
+
+table#addSelection tr td {
+	vertical-align: middle;
+}
+
+.footsep {
+	width: 30%;
+	left: 0px;
+	margin-left: 0px;
+	margin-top: 2ex;
+	color: #CCCCCC;
+}
+
+dl.footnotes {
+	border-top: 1px solid black;
+	margin-top: 3ex;
+}
+
+dt {
+	margin-top: 1ex;
+	font-weight: bold;
+}
+
+.notehead {
+	font-weight: bold;
+	border-left: 3px solid blue;
+	padding-left: 3px;
+	margin-top: 2ex;
+}
+
+a.linkicon img {
+	border: none;
+	margin-bottom: -2px;
+}
+
+
+img.logo {
+	padding: 0px;
+	margin-bottom: 0px;
+}
+
+table.docutils {
+	empty-cells: show;
+	border-style: none;
+	border-spacing: 0px;
+	border-collapse: collapse;
+	border: 2px solid #999999;
+}	
+
+table.citation {
+	border-style: none;
+}
+
+.docutils th {
+	padding-top: 0.8ex;
+	padding-bottom: 0.3ex;
+	border-style: none;
+}
+
+table.docutils td {
+	padding: 0.5ex;
+	border: 1px solid #999999;
+}
+
+table.citation td {
+	border-style: none;
+}
+
+table.footnote {
+	border: none;
+	max-width: 30em;
+}
+
+.footnote-reference, .fn-backref {
+	position: relative;
+	font-size: 70%;
+	bottom: 4pt;
+}
+
+.footnote tbody tr td{
+	border: none;
+}
+
+a.servicelink {
+	text-decoration: none;
+	color: #3333AA;
+}
+
+a.servicelink:hover {
+	text-decoration: underline;
+}
+
+.busy:after {
+	content: ' (\231A)';
+}
+
+.hbox {
+	white-space:nowrap;
+	margin-left: 1ex;
+}
+
+
+input.formkey_min {width:4em}
+input.formkey_max {width:4em}
+span.formkey_min:before { content:" between "; }
+span.formkey_max:before { content:" and "; }
+
+/* fairly simple tabs (see develNotes) */
+ul#tabset_tabs {
+	position: relative;
+	display: block;
+	list-style: none;
+	padding-left: 0px;
+	padding-bottom: 0px;
+	margin-bottom: 0px;
+	margin-left: 5px;
+	max-width: none;
+	overflow: hidden;
+}
+
+ul#tabset_tabs li {
+	cursor: pointer;
+	display: inline-block;
+	line-height: 1;
+	margin-right: 0.245em;
+	background: #DADDE3 url(/static/img/tab-tl.png) no-repeat top left;
+	vertical-align: top;
+}
+
+ul#tabset_tabs li.selected {
+	background: #EAEBEE url(/static/img/round-tl.png) no-repeat top left;
+}
+
+ul#tabset_tabs li.selected a {
+	height: 1.5em;
+	color: #1f2126;
+	background: #EAEBEE url(/static/img/round-tr.png) no-repeat top right;
+}
+
+ul#tabset_tabs li span {
+	color: #616571;
+}
+
+ul#tabset_tabs li a {
+	height: 1.5em;
+	color: #365D95;
+	display: block;
+	padding: 0.515em 1.3em 0.215em 0.8em;
+	background: #DADDE3 url(/static/img/tab-tr.png) no-repeat top right;
+	margin-left: 0.5em;
+	font-size: 0.9em;
+	font-weight: bold;
+	text-decoration: none;
+	overflow: hidden;
+}
+
+ul#tabset_tabs li a:hover, ul#tabset_tabs li a:active {
+	color: #1f2126;
+}
+
+/* jquery css */
+
+.ui-resizable-se { 
+	cursor: se-resize; 
+	width: 12px; 
+	height: 12px; 
+	right: 1px; 
+	bottom: 1px; 
+}
+
+.ui-resizable-handle {
+	background:red;
+}

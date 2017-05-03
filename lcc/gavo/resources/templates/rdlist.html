@@ -1,0 +1,21 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+		"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+		xmlns:n="http://nevow.com/ns/nevow/0.1">
+  <head>
+    <title>Public Resource Descriptors Defined Here</title>
+		<meta name="robots" content="nofollow"/>
+		<n:invisible n:render="commonhead"/>
+	 </head>
+	<body>
+		<h1>Resource Descriptors With Published Services</h1>
+		<ul n:data="publishedRDs" n:render="sequence">
+			<li n:pattern="item">
+				<a n:render="data">
+					<n:attr name="href" n:render="rootlink"
+						>/browse/<n:invisible n:render="data"/></n:attr>
+				</a>
+			</li>
+		</ul>
+	</body>
+</html>

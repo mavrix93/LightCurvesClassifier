@@ -1,0 +1,18 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+		"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns:n='http://nevow.com/ns/nevow/0.1'
+	xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<title n:render="prependsite">: Credentials Info</title>
+	</head>
+	<body>
+		<h1>Credentials Info</h1>
+		<p n:render="iflogged">You are currently logged in as
+			<span class_="loggedUser" n:render="data" n:data="loggedUser"/>.</p>
+		<p n:render="ifnotlogged">You are currently logged out.</p>
+		<p>Go to <a n:render="nextURL">the last page</a>
+			or
+			<a href="/" n:render="rootlink">DC home</a>.
+		</p>
+	</body>
+</html>

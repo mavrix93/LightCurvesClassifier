@@ -1,0 +1,1 @@
+../../../../../share/pyshared/gavo/stc/cli.py

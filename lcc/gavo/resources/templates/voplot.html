@@ -1,0 +1,62 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns:n="http://nevow.com/ns/nevow/0.1" 
+		xmlns="http://www.w3.org/1999/xhtml"
+		class="fullscreen">
+	<head>
+		<title>VOPlot</title>
+		<n:invisible n:render="commonhead"/>
+		<style type="text/css">
+			.fullscreen {
+				max-width: 6000px;
+				width:100%;
+				height:100%;
+			}
+
+			object.fullscreen {
+				padding: 1ex;
+				width:1200px;
+			}
+
+			html.fullscreen, body.fullscreen {
+				padding: 0px;
+				margin: 0px;
+			}
+		</style>
+	</head>
+	<body class="fullscreen">
+	<p>
+	<object n:render="voplotArea"
+			type="application/x-java-applet"
+			codetype="application/java-vm"
+			codebase="http://voi.iucaa.ernet.in/voplotapplet/"
+			standby="Loading VOPlot by VO india -- please wait"
+    	height="420"
+    	width="870">
+		<param name="code" value="com.jvt.applets.PlotVOApplet"/>
+    <param name="userguideURL" 
+    	value="http://vo.iucaa.ernet.in/~voi/VOPlot_UserGuide_1_8/index-frames.html"/>
+    <param name="MAYSCRIPT" value="true"/>
+    <param name="scriptable" value="true"/>
+    <param name="background" value="#faf0e6"/>
+    <param name="parameters">
+    	<n:attr name="value" n:render="data" n:data="parameter source"/></param>
+    <p style="padding-left:2em;padding-right:2em;border:2pt solid #eecccc"
+    >VOPlot is a Java applet.  This means you have to have a
+    java virtual machine active within your browser.  A common way
+    to get this is to install a plugin, available, e.g., from
+    <a href="http://java.sun.com">java.sun.com</a>, or by installing
+    a package like openjdk-?-jre on Debian-derived systems (where ? corresponds
+    to some version).</p>
+    <p>Also, this HTML page assumes you run a post-Y2k (i.e., at least
+    HTML 4.01) standards-compliant browser.  There are plenty of those
+    out there.</p>
+  </object>
+	</p>
+	 <p><em>If neither applet nor fallback content appears above, your browser's
+  java support is broken. Sometimes a reload helps.</em></p>
+  <p>VOPlot is developed by <a href="http://www.persistentsys.com/">Persistent Systems</a> in cooperation with <a href="http://vo.iucaa.ernet.in/~voi">VO india</a>.
+  Standalone versions and user guides are available at <a href="http://vo.iucaa.ernet.in/~voi/voplot.htm">VO India's VOPlot page</a>.</p>
+	</body>
+</html>
+

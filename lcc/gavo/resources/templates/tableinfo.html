@@ -1,0 +1,79 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+		"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+		xmlns:n="http://nevow.com/ns/nevow/0.1">
+  <head>
+    <title n:render="title"/>
+		<meta name="robots" content="nofollow"/>
+		<n:invisible n:render="commonhead"/>
+  </head>
+	<body n:render="withsidebar">
+		<h1 n:render="title"/>
+		<h2 class="section">General</h2>
+		<p n:render="ifownmeta description"><strong>Table Description:</strong>
+			<n:invisible n:render="metahtml">description</n:invisible></p>
+
+		<p>This table is <strong n:render="ifnodata" n:data="forADQL">not</strong>
+			available for 
+			<a href="/__system__/adql/query/form" n:render="rootlink">
+				<strong>ADQL</strong> queries</a> and through the
+			<a href="/tap">TAP</a> endpoint.</p>
+
+		<p n:render="ifrdmeta description"><strong>Resource Description:</strong>
+			<n:invisible n:render="rdmeta">description</n:invisible></p>
+
+		<p>For a list of <strong>all services and tables</strong> belonging 
+			to this table's 
+			resource, see <a n:data="tableDef" n:render="rdInfoLink"/></p>
+
+		<p n:render="ifrdmeta referenceURL"><strong>Further Information at:</strong>
+			<n:invisible n:render="rdmeta">referenceURL</n:invisible></p>
+	
+		<n:invisible n:render="ifownmeta _longdoc">
+			<h2 class="section">Table Documentation</h2>
+
+			<n:invisible n:render="metahtml">_longdoc</n:invisible>
+		</n:invisible>
+
+		<h2 class="section">Fields</h2>
+		<p n:render="sortOrder"/>
+		<table n:data="fields" n:render="sequence" class="shorttable">
+			<tr n:pattern="header"><th>Name</th><th>Table Head</th>
+				<th>Description</th><th>Unit</th><th>UCD</th></tr>
+			<tr n:pattern="item" n:render="mapping">
+				<n:attr name="class"><n:slot name="indexState"/></n:attr>
+				<td><n:slot name="name"/></td>
+				<td><n:slot name="tablehead"/></td>
+				<td><n:slot name="description"/>
+					<a n:render="ifkey noteKey">
+						<n:attr name="href">#note-<n:slot name="noteKey"/></n:attr>
+						[Note <n:slot name="noteKey"/>]</a>
+				</td>
+				<td><n:slot name="unit"/></td>
+				<td><n:slot name="ucd"/></td>
+			</tr>
+		</table>
+
+		<p>Columns that are parts of indices are marked 
+			<span class="indexed">like this</span>.</p>
+
+		<h2 class="section">Other</h2>
+		<div id="siblings" n:render="ifdata" n:data="otherServices">
+			<p>The following services <em>may</em> use the data contained in this
+				table:</p>
+			<ul n:render="sequence">
+				<li n:render="mapping" n:pattern="item">
+					<a><n:attr name="href"><n:slot name="infoURL"/></n:attr>
+						<n:slot name="title"/></a>
+				</li>
+			</ul>
+		</div>
+		<n:invisible n:render="ifmeta note">
+			<h2 class="section">Notes</h2>
+			<n:invisible n:render="metahtml">note</n:invisible>
+		</n:invisible>
+		<p n:render="ifmeta copyright"><strong>Copyright and such:</strong> 
+			<n:invisible n:render="meta">copyright</n:invisible></p>
+	</body>
+</html>
+

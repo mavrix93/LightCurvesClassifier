@@ -1,0 +1,33 @@
+<n:invisible xmlns:n="http://nevow.com/ns/nevow/0.1">
+
+  <span n:pattern="editable" class="select-with-other">
+    <n:attr name="id"><n:slot name="id"/></n:attr>
+    <select>
+      <n:attr name="name"><n:slot name="key"/></n:attr>
+      <n:slot name="options">
+      <option n:pattern="option"><n:attr name="value"><n:slot name="value"/></n:attr><n:slot name="label">One</n:slot></option>
+      <option selected="selected" n:pattern="selectedOption"><n:attr name="value"><n:slot name="value"/></n:attr><n:slot name="label">One</n:slot></option>
+      <option>Two</option>
+      <option>Three</option>
+      <option value="...">Other ...</option>
+      </n:slot>
+    </select>
+    <input type="text"><n:attr name="name"><n:slot name="key" />-other</n:attr><n:attr name="value"><n:slot name="otherValue"/></n:attr></input>
+  </span>
+
+  <span n:pattern="immutable" class="select-with-other">
+    <n:attr name="id"><n:slot name="id"/></n:attr>
+    <select disabled="disabled">
+      <n:attr name="name"><n:slot name="key"/></n:attr>
+      <n:slot name="options">
+      <option n:pattern="option"><n:attr name="value"><n:slot name="value"/></n:attr><n:slot name="label">One</n:slot></option>
+      <option selected="selected" n:pattern="selectedOption"><n:attr name="value"><n:slot name="value"/></n:attr><n:slot name="label">One</n:slot></option>
+      <option>Two</option>
+      <option>Three</option>
+      <option value="...">Other ...</option>
+      </n:slot>
+    </select>
+    <input readonly="readonly" type="text"><n:attr name="name"><n:slot name="key" />-other</n:attr><n:attr name="value"><n:slot name="otherValue"/></n:attr></input>
+  </span>
+
+</n:invisible>
