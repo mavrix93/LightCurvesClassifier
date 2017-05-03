@@ -1,1 +1,0 @@
-../../../../../../../share/pyshared/gavo/imp/formal/widgets/__init__.py

@@ -1,1 +1,0 @@
-"undefined"==typeof Forms&&(Forms={});"undefined"==typeof Forms.Util&&(Forms.Util={});Forms.Util.previewShow=function(a,b,c){a=document.getElementById(a);b=document.getElementById(b);a.className="preview-show";b.src=c;return!1};Forms.Util.previewHide=function(a){document.getElementById(a).className="preview-hidden";return!1};
