@@ -12,7 +12,7 @@ def getPackages(path="."):
 setup(
   name = 'lcc',
   packages = getPackages(), # this must be the same as the name above
-  version = '0.9',
+  version = '0.9.1',
   description = 'Light Curves Classifier is package for classification stars by using their light curves and metadata',
   author = 'Martin Vo',
   author_email = 'mavrix@seznam.cz',

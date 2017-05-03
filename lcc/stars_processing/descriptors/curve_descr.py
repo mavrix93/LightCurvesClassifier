@@ -90,7 +90,7 @@ class CurveDescr(BaseDescriptor):
         if self.red_dim:
             _coords = [c for c in coords if c]
 
-            if len(_coords) > self.red_dim:
+            if len(_coords[0]) > self.red_dim:
                 _coords = self._reduceDimension(_coords)
             else:
                 QueryInputError("Number of samples have to be greater then reduced dimension")
@@ -110,11 +110,8 @@ class CurveDescr(BaseDescriptor):
     def _reduceDimension(self, data):
         try:
             if not self.pca:
-                print "re", self.red_dim
-                print  "da", np.shape(data)
                 self.pca = decomposition.PCA(n_components=self.red_dim)
                 self.pca.fit(data)
             return self.pca.transform(data).tolist()
         except ValueError as e:
-            raise
             raise QueryInputError(str(e))

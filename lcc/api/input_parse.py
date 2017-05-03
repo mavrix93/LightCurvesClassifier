@@ -27,7 +27,6 @@ def parse_query_ranges(raw_params, split_by=":", enum_by=";"):
     for params in raw_params:
         par_ranges = [par.strip() for par in params.split(split_by)]
 
-        print "pra", par_ranges, params
         if len(par_ranges) == 1:
             this_combs = [convert_input_value(t) for t in params.split(enum_by)]
 
@@ -108,6 +107,5 @@ def _parse_tun_query(one_param):
                     except:
                         pass
 
-        print this_comb
         this_comb[obj_name][col] = value
     return this_comb

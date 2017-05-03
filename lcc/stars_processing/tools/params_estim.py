@@ -2,6 +2,7 @@ import random
 import types
 import warnings
 
+import multiprocessing
 from lcc.entities.exceptions import InvalidOption
 from lcc.entities.exceptions import QueryInputError
 from lcc.stars_processing.stars_filter import StarsFilter
@@ -31,10 +32,13 @@ class ParamsEstimator(object):
 
     static_params : dict
         Constant values for descriptors and deciders
+
+    num_proc : NoneType, bool, int
+        Number of cores to use for parallel computing. If 'True' all cores will be used.
     """
 
     def __init__(self, searched, others, descriptors, deciders, tuned_params,
-                 split_ratio=0.7, static_params={}, **kwargs):
+                 split_ratio=0.7, static_params={}, num_proc=None):
         """
         Parameters
         ----------
@@ -62,6 +66,9 @@ class ParamsEstimator(object):
         static_params : dict
             Constant values for descriptors and deciders. Format is the
             same one item of tuned_params
+
+        num_proc : NoneType, bool, int
+            Number of cores to use for parallel computing. If 'True' all cores will be used.
         """
 
         random.shuffle(searched)
@@ -80,9 +87,54 @@ class ParamsEstimator(object):
         self.stats = {}
         self.filters = None
 
-    def evaluateCombinations(self):
+        if num_proc == True:
+            num_proc = multiprocessing.cpu_count()
+        self.num_proc = num_proc
+
+    def evaluateCombinationsParal(self, tuned_params):
         """
         Evaluate all combination of the filter parameters
+
+        Parameters
+        ----------
+        tuned_params : list, iterable
+            Parameters to tune
+
+        Returns
+        -------
+        list
+            Filters created from particular combinations
+
+        list
+            Statistical values of all combinations
+
+        list
+            Input parameters of all combinations
+        """
+
+        pool = multiprocessing.Pool(self.num_proc)
+        print "qqqqwwwee"
+        results = pool.map(self.evaluateCombinations, np.array_split(np.array(tuned_params), self.num_proc))
+        print "nbnbn"
+        filters = []
+        stats_list = []
+        for job in results:
+            stats_list += job[0]
+            filters += job[1]
+
+        self.stats_list = stats_list
+        self.filters = filters
+
+        return stats_list, filters, tuned_params
+
+    def evaluateCombinations(self, tuned_params):
+        """
+        Evaluate all combination of the filter parameters
+
+        Parameters
+        ----------
+        tuned_params : list, iterable
+            Parameters to tune
 
         Returns
         -------
@@ -98,7 +150,7 @@ class ParamsEstimator(object):
         filters = []
         stats_list = []
         i = 0
-        for tun_param in progressbar(self.tuned_params,
+        for tun_param in progressbar(tuned_params,
                                      "Evaluating the combinations: "):
             i += 1
             stars_filter, stats = self.evaluate(tun_param)
@@ -110,7 +162,7 @@ class ParamsEstimator(object):
 
         return stats_list, filters, self.tuned_params
 
-    def fit(self, score_func=None, opt="max", save_params={}):
+    def fit(self, score_func=None, opt="max", save_params=None):
         """
         Find the best combination of the filter parameters
 
@@ -156,7 +208,13 @@ class ParamsEstimator(object):
         dict
             Input parameters of the best combination
         """
-        stats_list, filters, tuned_params = self.evaluateCombinations()
+        if not save_params:
+            save_params = {}
+
+        if not self.num_proc:
+            stats_list, filters, tuned_params = self.evaluateCombinations(self.tuned_params)
+        else:
+            stats_list, filters, tuned_params = self.evaluateCombinationsParal(self.tuned_params)
 
         try:
             self.saveOutput(save_params)
