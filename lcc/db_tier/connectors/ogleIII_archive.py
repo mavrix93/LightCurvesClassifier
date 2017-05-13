@@ -17,11 +17,11 @@ class OgleIII(LightCurvesDb):
 
     Example:
     --------
-    que1 = {"ra": 5.549147 * 15,
-       "dec": -70.55792, "delta": 5, "nearest": True}
+    que1 = {"ra": 69.329, "dec": -69.81986, "delta": 5,
+        "nearest": True, "types": ["ACep", "LPV"]}
 
     client = StarsProvider().getProvider(
-        obtain_method="OgleIIT", obtain_params=[que1, que2])
+        obtain_method="OgleIII", obtain_params=que1)
     stars = client.getStarsWithCurves()
     '''
 
@@ -57,19 +57,19 @@ class OgleIII(LightCurvesDb):
                "ID": "name"}
 
     MORE = ["i_mag", "type", "subtype", "remarks", "i_ampl", "period", "v_mag"]
+    TYPES = ["Cep", "ACep", "LPV", "T2Cep", "RRLyr", "RCB", "DSCT", "DPV"]
 
     def __init__(self, queries):
-        '''
+        """
         Parameters
         ----------
         queries : list, dict, iterable
             Query is list of dictionaries of query parameters or single
             dictionary.
-        '''
+        """
         if isinstance(queries, dict):
             queries = [queries]
         self.queries = self._parseQueries(queries)
-        print "x", self.queries
 
     def getStarsWithCurves(self):
         return self.getStars(lc=True)
@@ -142,6 +142,15 @@ class OgleIII(LightCurvesDb):
             "sorting": "ASC",
             "pagelen": PAGE_LEN,
         }
+        if "types" in query:
+            star_types = {"use_type" "on"}
+            if not hasattr(query["types"], "__iter__"):
+                query["types"] = [query["types"]]
+            for star_type in query["types"]:
+                star_types["val_type"+star_type] = "on"
+
+            params.update(star_types)
+
         # Delete unneeded parameters
         to_del = []
         for key, value in params.iteritems():
@@ -183,6 +192,10 @@ class OgleIII(LightCurvesDb):
                         "target"].upper() + "_SC" + str(query["field_num"])
                 else:
                     raise QueryInputError("Unresolved target")
+
+            if "types" in query and sum([1 for star_type in query["types"] if not star_type in self.TYPES]):
+                raise QueryInputError("Invalid star type in the query.\nAvailable types: %s" % self.TYPES)
+
 
         return [item for i, item in enumerate(
             queries) if i not in todel_queries] + new_queries

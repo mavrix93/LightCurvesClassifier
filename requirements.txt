@@ -6,7 +6,7 @@
 PyBrain == 0.3
 
 # LightCurvesClassifier/lcc/stars_processing/deciders/supervised_deciders.py: 1
-astroML == 0.3.egg
+astroML == 0.3
 
 # LightCurvesClassifier/lcc/_playground/_.py: 5,6
 # LightCurvesClassifier/lcc/db_tier/TAP_query.py: 1
@@ -15,7 +15,7 @@ astroML == 0.3.egg
 # LightCurvesClassifier/lcc/db_tier/connectors/ogleIII_archive.py: 1
 # LightCurvesClassifier/lcc/db_tier/connectors/ogle_client.py: 1
 # LightCurvesClassifier/lcc/entities/star.py: 3,7
-astropy == 1.0.5.egg
+astropy == 1.0.5
 
 # LightCurvesClassifier/lcc/db_tier/connectors/ogleIII_archive.py: 2
 # LightCurvesClassifier/lcc/db_tier/connectors/ogle_client.py: 2
@@ -26,7 +26,7 @@ beautifulsoup4 == 4.4.1
 conf == 0.0.23
 
 # LightCurvesClassifier/lcc/db_tier/TAP_query.py: 3
-gavodachs == 0.9.8.egg
+# gavodachs == 0.9.8
 
 # LightCurvesClassifier/lcc/db_tier/connectors/kepler_archive.py: 5
 kplr == 0.2.1
@@ -95,7 +95,7 @@ pelican-entities == 0.2.0
 
 # LightCurvesClassifier/lcc/db_tier/connectors/corot_archive.py: 6
 # LightCurvesClassifier/lcc/db_tier/connectors/file_manager.py: 3
-pyfits == 3.3.egg
+pyfits == 3.3
 
 # LightCurvesClassifier/lcc/_playground/_exopla_archive/base.py: 7
 # LightCurvesClassifier/lcc/db_tier/connectors/asas_archive.py: 2
@@ -113,5 +113,3 @@ scikit_learn == 0.18.1
 # LightCurvesClassifier/lcc/stars_processing/descriptors/skewness_desc.py: 2
 scipy == 0.18.1
 
-# LightCurvesClassifier/lcc/bin/plot_lcs.py: 12,13
-utils == 0.9.0

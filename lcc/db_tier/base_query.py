@@ -50,10 +50,12 @@ class StarsCatalogue(object):
             distances = []
             passed_stars = []
             for star in stars:
-                dist = coo.separation(star.coo)
-                if dist < delta_deg:
+                if star.coo:
+                    dist = coo.separation(star.coo)
+                    if dist < delta_deg:
+                        passed_stars.append(star)
+                else:
                     passed_stars.append(star)
-                    distances.append(dist.degree)
 
         except AttributeError:
             raise QueryInputError("Invalid query coordinates")
