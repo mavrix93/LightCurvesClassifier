@@ -32,26 +32,25 @@ class CatalinaArchive(LightCurvesDb):
                "color": "V",
                "origin": "CRTS"}
 
-
-    def __init__(self, queries):
+    def __init__(self, queries, multiproc=True):
         if isinstance(queries, dict):
             queries = [queries]
         self.queries = queries
+        self.multiproc = multiproc
 
     def getStarsWithCurves(self):
-        return self.getStars(lc=True)
+        return self.getStars(load_lc=True)
 
-    def getStars(self, lc=False):
-        stars = []
-        for query in self.queries:
-            stars += self.postQuery(query, lc)
-            if "RA" in query and "Dec" in query and "Rad" in query:
-                stars = self.coneSearch(SkyCoord(float(query["RA"]), float(query["Dec"]), unit="deg"),
-                                        stars, float(query["Rad"] / 3600.),
-                                        nearest=query.get("nearest", False))
+    def getStar(self, query, load_lc=False):
+
+        stars = self.postQuery(query, load_lc)
+        if "RA" in query and "Dec" in query and "Rad" in query:
+            stars = self.coneSearch(SkyCoord(float(query["RA"]), float(query["Dec"]), unit="deg"),
+                                    stars, float(query["Rad"] / 3600.),
+                                    nearest=query.get("nearest", False))
         return stars
 
-    def postQuery(self, query, lc=True):
+    def postQuery(self, query, load_lc=True):
         self.parseQuery(query)
         query_type = self.getQueryType(query)
         if query_type == "coo":
@@ -61,9 +60,9 @@ class CatalinaArchive(LightCurvesDb):
             query.update(self.ID_BASE_QUERY)
             root = self.ID_QUERY_ROOT
 
-        return self.parseRawStar(requests.post(root, data=query).text, lc)
+        return self.parseRawStar(requests.post(root, data=query).text, load_lc)
 
-    def parseRawStar(self, raw_html, lc):
+    def parseRawStar(self, raw_html, load_lc):
         json_data = re.search('var dataSet0 = {(?P<json_data>.*)}', raw_html)
         if not json_data:
             return []
@@ -78,9 +77,9 @@ class CatalinaArchive(LightCurvesDb):
         json_data = eval("{%s}" % json_data)
 
         star = Star(name=json_data.get("label"), ident={"CRST" : {"name" : star_id}})
-        if lc:
+        if load_lc:
             lc = LightCurve(json_data["data"])
-        star.putLightCurve(lc)
+            star.putLightCurve(lc)
         return [star]
 
     def parseQuery(self, query):

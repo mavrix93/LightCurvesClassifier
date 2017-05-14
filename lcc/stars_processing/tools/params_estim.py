@@ -95,7 +95,7 @@ class ParamsEstimator(object):
         self.multiproc = multiproc
 
 
-    def evaluateCombinations(self):
+    def evaluateCombinations(self, tuned_params=None):
         """
         Evaluate all combination of the filter parameters
 
@@ -110,9 +110,9 @@ class ParamsEstimator(object):
         list
             Input parameters of all combinations
         """
-        filters = []
-        stats_list = []
-        i = 0
+
+        if not tuned_params:
+            tuned_params = self.tuned_params
 
         if self.multiproc:
             if self.multiproc is True:
@@ -121,15 +121,15 @@ class ParamsEstimator(object):
                 n_cpu = self.multiproc
 
             pool = multiprocessing.Pool(n_cpu)
-            result = pool.map(self.evaluate, self.tuned_params)
+            result = pool.map(self.evaluate, tuned_params)
         else:
-            result = [self.evaluate(tp) for tp in self.tuned_params]
+            result = [self.evaluate(tp) for tp in tuned_params]
 
         for stars_filter, stats in result:
             self.stats_list.append(stats)
             self.filters.append(stars_filter)
 
-        return stats_list, filters, self.tuned_params
+        return self.stats_list, self.filters, tuned_params
 
     def fit(self, score_func=None, opt="max", save_params=None):
         """
@@ -180,7 +180,7 @@ class ParamsEstimator(object):
         if not save_params:
             save_params = {}
 
-        stats_list, filters, tuned_params = self.evaluateCombinations(self.tuned_params)
+        stats_list, filters, tuned_params = self.evaluateCombinations()
 
         try:
             self.saveOutput(save_params)

@@ -6,7 +6,7 @@ from lcc.db_tier.vizier_tap_base import VizierTapBase
 
 
 class AsasArchive(VizierTapBase, LightCurvesDb):
-    '''
+    """
     Asas archive of variable stars. It inherits `VizierTapBase` - see
     documentation of this class to class attributes description.
 
@@ -20,7 +20,7 @@ class AsasArchive(VizierTapBase, LightCurvesDb):
     client = StarsProvider.getProvider(obtain_method="AsasArchive",
                                           obtain_params=queries)
     stars = client.getStarsWithCurves(do_per=True)
-    '''
+    """
 
     TAP_URL = "http://tapvizier.u-strasbg.fr/TAPVizieR/tap"
     LC_URL = "http://cdsarc.u-strasbg.fr/viz-bin/nph-Plot/Vgraph/txt?II%2f264%2f.%2f{asas_id}&P=0"

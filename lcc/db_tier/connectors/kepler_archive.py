@@ -14,7 +14,7 @@ from lcc.entities.exceptions import QueryInputError
 
 
 class KeplerArchive(LightCurvesDb):
-    '''
+    """
     This is connector to Kepler archive of light curves using kplr package
 
     EXAMPLE
@@ -25,7 +25,7 @@ class KeplerArchive(LightCurvesDb):
     client = StarsProvider().getProvider(obtain_method="KeplerArchive",
                                          obtain_params=queries)
     stars = client.getStarsWithCurves()
-    '''
+    """
 
     RA_IDENT = "kic_degree_ra"
     DEC_IDENT = "kic_dec"
@@ -53,7 +53,7 @@ class KeplerArchive(LightCurvesDb):
                "invert_yaxis": False}
 
     def __init__(self, obtain_params):
-        '''
+        """
         Parameters
         ----------
             obtain_params : list, iterable
@@ -63,7 +63,7 @@ class KeplerArchive(LightCurvesDb):
                 1) "kic_num" - for query by the kepler unique identifier
 
                 2) "ra" (degrees), "dec" (degrees), "delta" (arcseconds) - for query in certain are 
-        '''
+        """
         if type(obtain_params) == dict:
             obtain_params = [obtain_params]
         self.query = obtain_params
@@ -103,7 +103,7 @@ class KeplerArchive(LightCurvesDb):
                 stars += _stars
         return stars
 
-    def _getStars(self, que, lc=True):
+    def _getStars(self, que, save_lc=True):
         """Get stars from one query"""
 
         kic_num = que.get("kic_num", None)
@@ -138,7 +138,7 @@ class KeplerArchive(LightCurvesDb):
             except:
                 raise QueryInputError("Unresolved query.\n%s" % query)
 
-        return [self._parseStar(_star, lc) for _star in _stars]
+        return [self._parseStar(_star, save_lc) for _star in _stars]
 
     def _parseStar(self, _star, lc):
         """Transform kplr Star object into package Star object"""

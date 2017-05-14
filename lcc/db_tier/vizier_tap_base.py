@@ -7,7 +7,7 @@ from lcc.entities.star import Star
 
 
 class VizierTapBase(TapClient):
-    '''
+    """
     Base class for all tap connectors using VizieR database. In the most
     situations new connectors will contain just few class attributes and 
     there will not be need to write new or overwrite current methods.
@@ -113,7 +113,7 @@ class VizierTapBase(TapClient):
     new _getLightCurve method.
 
     Brief description of methods can be found below at their declaration.
-    '''
+    """
 
     # Common attribute for all vizier tap connectors
     TAP_URL = "http://tapvizier.u-strasbg.fr/TAPVizieR/tap"
@@ -134,13 +134,13 @@ class VizierTapBase(TapClient):
     DELIM = None
 
     def __init__(self, queries):
-        '''
+        """
         Parameters
         -----------
         queries : list, dict
             List of queries. Each query is dictionary of query parameters
             and its values
-        '''
+        """
         # Case of just one query
         if isinstance(queries, dict):
             queries = [queries]
@@ -148,7 +148,7 @@ class VizierTapBase(TapClient):
         self.queries = queries
 
     def getStars(self, lc=False, **kwargs):
-        '''
+        """
         Get star objects
 
         Parameters
@@ -160,7 +160,7 @@ class VizierTapBase(TapClient):
         -------
         list
             List of stars
-        '''
+        """
         select = set([self.RA, self.DEC, self.LC_FILE] + self.MORE_MAP.keys())
 
         for val in self.IDENT_MAP.values():
@@ -206,7 +206,7 @@ class VizierTapBase(TapClient):
         return self._createStar(raw_stars, select, lc, **kwargs)
 
     def getStarsWithCurves(self, **kwargs):
-        '''
+        """
         Get star objects with light curves
 
         Parameters
@@ -223,7 +223,7 @@ class VizierTapBase(TapClient):
         --------
         list
             List of stars with their light curves
-        '''
+        """
         return self.getStars(lc=True, **kwargs)
 
     def _createStar(self, data, keys, lc_opt, **kwargs):

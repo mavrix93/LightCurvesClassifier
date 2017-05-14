@@ -15,7 +15,7 @@ from lcc.utils.data_analysis import to_ekvi_PAA
 
 
 class CorotBrightArchive(VizierTapBase, LightCurvesDb):
-    '''
+    """
     CoRoT connector. TAP query and downloading of the light curve fits are
     executed on Vizier catalog. It inherits `VizierTapBase` - see
     documentation of this class to class attributes description.
@@ -30,7 +30,7 @@ class CorotBrightArchive(VizierTapBase, LightCurvesDb):
     client = StarsProvider.getProvider(obtain_method="CorotBrightArchive",
                                        obtain_params=queries)
     stars = client.getStarsWithCurves(max_bins=10000)
-    '''
+    """
 
     LC_URL = "http://vizier.u-strasbg.fr/viz-bin/nph-Cat?-plus=-%2b&B/corot/files/"
     TABLE = "B/corot/Bright_star"
@@ -72,8 +72,8 @@ class CorotBrightArchive(VizierTapBase, LightCurvesDb):
         """
         EXT_NUM = 2
 
-        warnings.warn('''COROT: Downloading super huge light curves from this
-        database can take few minutes...''')
+        warnings.warn("""COROT: Downloading super huge light curves from this
+        database can take few minutes...""")
         response = requests.get(os.path.join(self.LC_URL, file_name))
         lcs = []
         with pyfits.open(cStringIO.StringIO(response.content)) as f:

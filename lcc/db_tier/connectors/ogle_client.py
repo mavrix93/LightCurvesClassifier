@@ -12,7 +12,7 @@ import numpy as np
 
 
 class OgleII(LightCurvesDb):
-    '''
+    """
     Connector to OGLEII. It is divided into two subdatabases - "phot" and "bvi".
     The first one contains light curves and metadata about coordinates, identifiers
     and V magnitude. The second one also contains information about V and I. 
@@ -31,7 +31,7 @@ class OgleII(LightCurvesDb):
     client = StarsProvider().getProvider(
         obtain_method="OgleII", obtain_params=[que1, que2])
     stars = client.getStarsWithCurves()
-    '''
+    """
 
     ROOT = "http://ogledb.astrouw.edu.pl/~ogle/photdb"
 
@@ -57,32 +57,35 @@ class OgleII(LightCurvesDb):
                "I": "i_mag",
                "B": "b_mag"}
 
-    def __init__(self, queries):
-        '''
+    def __init__(self, queries, multiproc=True):
+        """
         Parameters
         ----------
         queries : list, dict, iterable
             Query is list of dictionaries of query parameters or single
-            dictionary.
-        '''
+            dictionary
+            
+        multiproc : bool, int
+            If True task will be distributed into threads by using all cores. If it is number,
+            just that number of cores are used
+        """
         if isinstance(queries, dict):
             queries = [queries]
         self.queries = self._parseQueries(queries)
+        self.multiproc = multiproc
 
     def getStarsWithCurves(self):
-        return self.getStars(lc=True)
+        return self.getStars(load_lc=True)
 
-    def getStars(self, lc=False):
-        stars = []
-        for query in self.queries:
-            stars += self.postQuery(query, lc)
-            if "ra" in query and "dec" in query and "delta" in query:
-                stars = self.coneSearch(SkyCoord(float(query["ra"]), float(query["dec"]), unit="deg"),
-                                        stars, float(query["delta"] / 3600.),
-                                        nearest=query.get("nearest", False))
+    def getStar(self, query, load_lc=False):
+        stars = self.postQuery(query, load_lc)
+        if "ra" in query and "dec" in query and "delta" in query:
+            stars = self.coneSearch(SkyCoord(float(query["ra"]), float(query["dec"]), unit="deg"),
+                                    stars, float(query["delta"] / 3600.),
+                                    nearest=query.get("nearest", False))
         return stars
 
-    def postQuery(self, query, lc):
+    def postQuery(self, query, load_lc):
         PAGE_LEN = 1e10
         valmin_ra, valmax_ra, valmin_dec, valmax_dec = self._getRanges(query.get("ra"),
                                                                        query.get(
@@ -139,7 +142,7 @@ class OgleII(LightCurvesDb):
         [params.pop(x, None) for x in to_del]
         result = urllib2.urlopen(
             url, urllib.urlencode(params), timeout=100)
-        return self._parseResult(result, lc=lc)
+        return self._parseResult(result, lc=load_lc)
 
     def _parseQueries(self, queries):
         todel_queries = []

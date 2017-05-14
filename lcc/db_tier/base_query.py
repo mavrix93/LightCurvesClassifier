@@ -1,5 +1,6 @@
 import abc
 
+from pathos import multiprocessing
 import astropy.units as u
 from lcc.entities.exceptions import QueryInputError
 import numpy as np
@@ -9,7 +10,7 @@ class StarsCatalogue(object):
     __metaclass__ = abc.ABCMeta
     '''Common class for all catalogs containing informations about stars'''
 
-    def getStars(self):
+    def getStars(self, load_lc=False):
         """
         Query `Star` objects
 
@@ -18,7 +19,25 @@ class StarsCatalogue(object):
         list
             List of `Star` objects
         """
-        raise NotImplementedError
+        if hasattr(self, "multiproc") and self.multiproc:
+
+            if self.multiproc is True:
+                n_cpu = multiprocessing.cpu_count()
+            else:
+                n_cpu = self.multiproc
+
+            print "Using {} cpus".format(n_cpu)
+            pool = multiprocessing.Pool(n_cpu)
+            result = pool.map(self.getStar, self.queries, load_lc)
+        else:
+            print "Using just one cpu"
+            result = [self.getStar(q, load_lc) for q in self.queries]
+
+        stars = []
+        for oneq_stars in result:
+            stars += oneq_stars
+
+        return stars
 
     def coneSearch(self, coo, stars, delta_deg, nearest=False):
         """

@@ -64,13 +64,19 @@ class FileManager(LightCurvesDb):
 
     FITS_SUFFIX = ("fits", "FITS")
 
+    BAD_VALUES = ("-99", "-99.0", "99", None, "N/A", np.NaN)
+    TIME_COL = 0  # Order of columns in the light curve file
+    MAG_COL = 1
+    ERR_COL = 2
+    ROUND_DIGITS = 3
+
     def __init__(self, obtain_params):
-        '''
+        """
         Parameters
         ----------
         obtain_params : dict
             Query dictionary (see class Attributes doc above)
-        '''
+        """
         if isinstance(obtain_params, list) and len(obtain_params) == 1:
             obtain_params = obtain_params[0]
 
@@ -95,7 +101,8 @@ class FileManager(LightCurvesDb):
         self.object_file_name = obtain_params.get("object_file_name")
 
     def getStarsWithCurves(self):
-        '''Common method for all stars provider
+        """
+        Common method for all stars provider
 
         If there are object_file_name in query dictionary, the object file
         of list of stars is loaded. In other case files from given path of
@@ -105,15 +112,14 @@ class FileManager(LightCurvesDb):
         --------
         list of `Star` objects
             Star objects with light curves
-        '''
+        """
 
         if self.object_file_name:
             return self._load_stars_object()
 
         else:
-            paths = self.path
             stars = []
-            for path in paths:
+            for path in self.path:
                 self.path = path
 
                 stars += self._load_stars_from_folder()
@@ -121,7 +127,7 @@ class FileManager(LightCurvesDb):
         return stars
 
     def _load_stars_from_folder(self):
-        '''Load all files with a certain suffix as light curves'''
+        """Load all files with a certain suffix as light curves"""
 
         # Check whether the path ends with "/" sign, if not add
         if not (self.path.endswith("/")):
@@ -184,8 +190,8 @@ class FileManager(LightCurvesDb):
         return stars
 
     @classmethod
-    def _loadLcFromDat(self, file_name):
-        '''
+    def _loadLcFromDat(cls, file_name):
+        """
         Load Light curve from dat file of light curve
 
         Parameters
@@ -196,19 +202,15 @@ class FileManager(LightCurvesDb):
         Returns
         --------
             List of tuples of (time, mag, err)
-        '''
-        BAD_VALUES = ("-99", "-99.0", "99", None, "N/A", np.NaN)
-        TIME_COL = 0        # Order of columns in the light curve file
-        MAG_COL = 1
-        ERR_COL = 2
-        ROUND_DIGITS = 3
+        """
+
 
         try:
             dat = np.loadtxt(file_name, usecols=(
-                TIME_COL, MAG_COL, ERR_COL), skiprows=0)
+                cls.TIME_COL, cls.MAG_COL, cls.ERR_COL), skiprows=0)
         except IndexError:
             dat = np.loadtxt(file_name, usecols=(
-                TIME_COL, MAG_COL, ERR_COL), skiprows=2)
+                cls.TIME_COL, cls.MAG_COL, cls.ERR_COL), skiprows=2)
 
         except IOError, Argument:
             raise InvalidFilesPath(
@@ -222,15 +224,15 @@ class FileManager(LightCurvesDb):
         else:
             clean_dat = []
             for x, y, z in zip(mag, time, err):
-                if (x not in BAD_VALUES and y not in BAD_VALUES and
-                        z not in BAD_VALUES):
-                    clean_dat.append([round(x, ROUND_DIGITS),
-                                      round(y, ROUND_DIGITS),
-                                      round(z, ROUND_DIGITS)])
+                if (x not in cls.BAD_VALUES and y not in cls.BAD_VALUES and
+                        z not in cls.BAD_VALUES):
+                    clean_dat.append([round(x, cls.ROUND_DIGITS),
+                                      round(y, cls.ROUND_DIGITS),
+                                      round(z, cls.ROUND_DIGITS)])
             return clean_dat
 
     def _load_stars_object(self):
-        '''Load object file of list of stars'''
+        """Load object file of list of stars"""
 
         stars = loadFromFile(os.path.join(self.path, self.object_file_name))
 
@@ -243,7 +245,7 @@ class FileManager(LightCurvesDb):
 
     @staticmethod
     def parseFileName(file_path):
-        '''Return cleaned name of the star without path and suffix'''
+        """Return cleaned name of the star without path and suffix"""
         end = None
         if file_path.rfind(".") != -1:
             end = file_path.rfind(".")
