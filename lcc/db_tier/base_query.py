@@ -1,18 +1,24 @@
 import abc
+import warnings
 
-from pathos import multiprocessing
 import astropy.units as u
-from lcc.entities.exceptions import QueryInputError
 import numpy as np
+from lcc.entities.exceptions import QueryInputError
+from pathos import multiprocessing
 
 
 class StarsCatalogue(object):
     __metaclass__ = abc.ABCMeta
-    '''Common class for all catalogs containing informations about stars'''
+    """Common class for all catalogs containing information about stars"""
 
-    def getStars(self, load_lc=False):
+    def getStars(self, load_lc=True):
         """
         Query `Star` objects
+        
+        Parameters
+        ----------
+        load_lc : bool
+            Append light curves to star objects
 
         Returns
         -------
@@ -95,15 +101,8 @@ class StarsCatalogue(object):
 
 class LightCurvesDb(StarsCatalogue):
     __metaclass__ = abc.ABCMeta
-    '''This is common class for every database containing light curves'''
+    """This is common class for every database containing light curves"""
 
-    def getStarsWithCurves(self):
-        """
-        Query `Star` objects
-
-        Returns
-        -------
-        list
-            List of `Star` objects appended by `LightCurve` instances
-        """
-        raise NotImplementedError
+    def getStarsWitCurves(self, *args, **kwargs):
+        warnings.warn("This method will be deprecated in the future version. Please used getStar(load_lc=True) instead")
+        return self.getStars(*args, **kwargs)

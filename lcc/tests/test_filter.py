@@ -18,12 +18,12 @@ class Test(unittest.TestCase):
         s_queries = [{"path": "quasars"}]
         client = StarsProvider().getProvider(
             obtain_method="FileManager", obtain_params=s_queries)
-        self.s_stars = client.getStarsWithCurves()
+        self.s_stars = client.getStars()
 
         c_queries = [{"path": "some_stars"}]
         client = StarsProvider().getProvider(
             obtain_method="FileManager", obtain_params=c_queries)
-        self.c_stars = client.getStarsWithCurves()
+        self.c_stars = client.getStars()
 
         self.N = int(np.mean([len(self.s_stars), len(self.c_stars)]))
 

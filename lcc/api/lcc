@@ -6,16 +6,16 @@ if len(sys.argv) > 1:
     sys.argv = sys.argv[:1] + sys.argv[2:]
 
     if option == "create_project":
-    from lcc.bin.create_project import main
-    main()
+        from lcc.bin.create_project import main
+        main()
     else:
-    import imp
+        import imp
     try:
         project_settings = imp.load_source('module.name', os.path.join(os.getcwd(),'project_settings.py'))
     except IOError:
         raise IOError("There are not 'project_settings.py' in the currect directory. Create project first by 'lcc create_project'")
 
-        if option == "make_filter":
+    if option == "make_filter":
         from lcc.bin.make_filter import main
         main(project_settings)
 

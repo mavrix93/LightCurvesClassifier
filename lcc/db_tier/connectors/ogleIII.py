@@ -12,7 +12,7 @@ import numpy as np
 
 
 class OgleIII(LightCurvesDb):
-    '''
+    """
     Connector to OGLEIII
 
     Example:
@@ -23,7 +23,7 @@ class OgleIII(LightCurvesDb):
     client = StarsProvider().getProvider(
         obtain_method="OgleIII", obtain_params=que1)
     stars = client.getStarsWithCurves()
-    '''
+    """
 
     ROOT = "http://ogledb.astrouw.edu.pl/~ogle/CVS/"
     SUFF = "query.php?first=1&qtype=catalog"
@@ -35,8 +35,8 @@ class OgleIII(LightCurvesDb):
                "xlabel_unit": "days",
                "ylabel": "magnitude",
                "ylabel_unit": "mag",
-               "color": "V",
-               "origin": "OgleII"}
+               "color": "I",
+               "origin": "OgleIII"}
 
     COL_MAP = {"Field": "field",
                "StarID": "starid",
@@ -59,29 +59,34 @@ class OgleIII(LightCurvesDb):
     MORE = ["i_mag", "type", "subtype", "remarks", "i_ampl", "period", "v_mag"]
     TYPES = ["Cep", "ACep", "LPV", "T2Cep", "RRLyr", "RCB", "DSCT", "DPV"]
 
-    def __init__(self, queries):
+    QUERY_OPTION = ["ra", "dec", "delta", "nearest", "field", "starid", "types",
+                    "mag_i_min", "mag_v_min", "mag_i_max", "mag_v_max",
+                    "p1_min", "p1_max", "ogleii_id", "macho_id", "asas_id",
+                    "gvcs_id", "remarks"]
+
+    def __init__(self, queries, multiproc=True):
         """
         Parameters
         ----------
         queries : list, dict, iterable
             Query is list of dictionaries of query parameters or single
-            dictionary.
+            dictionary
+            
+        multiproc : bool, int
+            If True task will be distributed into threads by using all cores. If it is number,
+            just that number of cores are used
         """
         if isinstance(queries, dict):
             queries = [queries]
         self.queries = self._parseQueries(queries)
+        self.multiproc = multiproc
 
-    def getStarsWithCurves(self):
-        return self.getStars(lc=True)
-
-    def getStars(self, lc=False):
-        stars = []
-        for query in self.queries:
-            stars += self.postQuery(query, lc)
-            if "ra" in query and "dec" in query and "delta" in query:
-                stars = self.coneSearch(SkyCoord(float(query["ra"]), float(query["dec"]), unit="deg"),
-                                        stars, float(query["delta"] / 3600.),
-                                        nearest=query.get("nearest", False))
+    def getStar(self, query, load_lc=True):
+        stars = self.postQuery(query, load_lc)
+        if "ra" in query and "dec" in query and "delta" in query:
+            stars = self.coneSearch(SkyCoord(float(query["ra"]), float(query["dec"]), unit="deg"),
+                                    stars, float(query["delta"] / 3600.),
+                                    nearest=query.get("nearest", False))
         return stars
 
     def postQuery(self, query, lc):
@@ -143,7 +148,7 @@ class OgleIII(LightCurvesDb):
             "pagelen": PAGE_LEN,
         }
         if "types" in query:
-            star_types = {"use_type" "on"}
+            star_types = {"use_type": "on"}
             if not hasattr(query["types"], "__iter__"):
                 query["types"] = [query["types"]]
             for star_type in query["types"]:
@@ -195,7 +200,6 @@ class OgleIII(LightCurvesDb):
 
             if "types" in query and sum([1 for star_type in query["types"] if not star_type in self.TYPES]):
                 raise QueryInputError("Invalid star type in the query.\nAvailable types: %s" % self.TYPES)
-
 
         return [item for i, item in enumerate(
             queries) if i not in todel_queries] + new_queries
@@ -254,7 +258,7 @@ class OgleIII(LightCurvesDb):
         stars = []
         for row in rows:
             field = str(row[cols_map.get("field")])
-            starid = int(row[cols_map.get("starid")])
+            starid = str(row[cols_map.get("starid")])
             ra = float(row[cols_map.get("ra")])
             dec = float(row[cols_map.get("dec")])
 

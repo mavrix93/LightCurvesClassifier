@@ -1,12 +1,11 @@
-'''
+"""
 Created on Mar 5, 2017
 
 @author: martin
-'''
+"""
 import unittest
 import numpy as np
 from lcc.utils.data_analysis import to_ekvi_PAA
-from matplotlib import pyplot as plt
 
 
 class Test(unittest.TestCase):

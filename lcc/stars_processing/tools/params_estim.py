@@ -7,7 +7,6 @@ from lcc.entities.exceptions import InvalidOption
 from lcc.entities.exceptions import QueryInputError
 from lcc.stars_processing.stars_filter import StarsFilter
 from lcc.stars_processing.tools.stats_manager import StatsManager
-from lcc.utils.helpers import progressbar
 import numpy as np
 
 

@@ -100,7 +100,7 @@ class FileManager(LightCurvesDb):
         self.files_to_load = obtain_params.get("files_to_load")
         self.object_file_name = obtain_params.get("object_file_name")
 
-    def getStarsWithCurves(self):
+    def getStars(self, load_lc=True):
         """
         Common method for all stars provider
 

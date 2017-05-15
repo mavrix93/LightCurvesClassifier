@@ -61,7 +61,7 @@ def getStarsFromFolder(single_path, lcs_fold):
     p, restr = _check_sample_name(single_path)
     try:
         st = StarsProvider().getProvider(
-            "FileManager", {"path": os.path.join(lcs_fold, p)}).getStarsWithCurves()
+            "FileManager", {"path": os.path.join(lcs_fold, p)}).getStars()
         stars = _split_stars(st, restr)
 
     except KeyError:
@@ -113,7 +113,7 @@ def getStarsFromRemoteDb(query, query_path):
         starsProvider = StarsProvider().getProvider(obtain_method=db_key,
                                                     obtain_params=query)
 
-        stars += starsProvider.getStarsWithCurves()
+        stars += starsProvider.getStars()
 
     return stars
 

@@ -8,7 +8,7 @@ from lcc.entities.light_curve import LightCurve
 from lcc.entities.star import Star
 
 
-class CatalinaArchive(LightCurvesDb):
+class Catalina(LightCurvesDb):
     """
     
     """
@@ -38,11 +38,23 @@ class CatalinaArchive(LightCurvesDb):
         self.queries = queries
         self.multiproc = multiproc
 
-    def getStarsWithCurves(self):
-        return self.getStars(load_lc=True)
+    def getStar(self, query, load_lc=True):
+        """
+        Query `Star` object
 
-    def getStar(self, query, load_lc=False):
+        Parameters
+        ----------
+        query : dict
+            Database query
+            
+        load_lc : bool
+            Append light curves to star objects
 
+        Returns
+        -------
+        list
+            List of `Star` objects
+        """
         stars = self.postQuery(query, load_lc)
         if "RA" in query and "Dec" in query and "Rad" in query:
             stars = self.coneSearch(SkyCoord(float(query["RA"]), float(query["Dec"]), unit="deg"),

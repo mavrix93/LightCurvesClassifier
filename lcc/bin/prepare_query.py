@@ -21,7 +21,7 @@ __updated__ = '2017-02-02'
 
 
 def main(project_settings, argv=None):
-    '''Command line options.'''
+    """Command line options."""
 
     program_info = """ABOUT
     

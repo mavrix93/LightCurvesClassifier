@@ -12,7 +12,7 @@ from lcc.data_manager.status_resolver import StatusResolver
 from lcc.entities.exceptions import QueryInputError
 from lcc.data_manager.filter_serializer import FiltersSerializer
 from lcc.data_manager.prepare_package import prepare_run
-from __builtin__ import True
+
 
 
 __all__ = []

@@ -57,6 +57,8 @@ class OgleII(LightCurvesDb):
                "I": "i_mag",
                "B": "b_mag"}
 
+    QUERY_OPTION = ["ra", "dec", "delta", "nearest", "field", "field_num", "starid", "target"]
+
     def __init__(self, queries, multiproc=True):
         """
         Parameters
@@ -74,10 +76,20 @@ class OgleII(LightCurvesDb):
         self.queries = self._parseQueries(queries)
         self.multiproc = multiproc
 
-    def getStarsWithCurves(self):
-        return self.getStars(load_lc=True)
+    def getStar(self, query, load_lc=True):
+        """
+        Query `Star` object
 
-    def getStar(self, query, load_lc=False):
+        Parameters
+        ----------
+        load_lc : bool
+            Append light curves to star objects
+
+        Returns
+        -------
+        list
+            List of `Star` objects
+        """
         stars = self.postQuery(query, load_lc)
         if "ra" in query and "dec" in query and "delta" in query:
             stars = self.coneSearch(SkyCoord(float(query["ra"]), float(query["dec"]), unit="deg"),

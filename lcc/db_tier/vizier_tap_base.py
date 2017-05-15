@@ -80,7 +80,7 @@ class VizierTapBase(TapClient):
 
         Example
         --------
-            IDENT_MAP = {"MachoDb" :  ("Field", "Tile", "Seqn") }
+            IDENT_MAP = {"Macho" :  ("Field", "Tile", "Seqn") }
 
             This allows NAME attribute to access these keys (see above)
             and construct unique identifier for the star.
@@ -147,20 +147,30 @@ class VizierTapBase(TapClient):
 
         self.queries = queries
 
-    def getStars(self, lc=False, **kwargs):
+    # TODO multiprocessing
+    def getStars(self, load_lc=True, **kwargs):
         """
-        Get star objects
+        Get star objects with light curves
 
         Parameters
         ----------
-        lc : bool
+        load_lc : bool
             Star is appended by light curve if True
+            
+        kwargs : dict
+            Optional parameters which have effect just if certain database
+            provides this option.
+
+            For example CoRoT archive contains very large light curves,
+            so the dimension of light curve can be reduced by `max_bins`
+            keyword.
 
         Returns
-        -------
+        --------
         list
-            List of stars
+            List of stars with their light curves
         """
+
         select = set([self.RA, self.DEC, self.LC_FILE] + self.MORE_MAP.keys())
 
         for val in self.IDENT_MAP.values():
@@ -203,28 +213,7 @@ class VizierTapBase(TapClient):
             if res:
                 raw_stars += res
 
-        return self._createStar(raw_stars, select, lc, **kwargs)
-
-    def getStarsWithCurves(self, **kwargs):
-        """
-        Get star objects with light curves
-
-        Parameters
-        ----------
-        kwargs : dict
-            Optional parameters which have effect just if certain database
-            provides this option.
-
-            For example CoRoT archive contains very large light curves,
-            so the dimension of light curve can be reduced by `max_bins`
-            keyword.
-
-        Returns
-        --------
-        list
-            List of stars with their light curves
-        """
-        return self.getStars(lc=True, **kwargs)
+        return self._createStar(raw_stars, select, load_lc, **kwargs)
 
     def _createStar(self, data, keys, lc_opt, **kwargs):
         """

@@ -13,7 +13,7 @@ from lcc.entities.exceptions import QueryInputError
 # TODO: Delete fits files downloaded to .kplr/data
 
 
-class KeplerArchive(LightCurvesDb):
+class Kepler(LightCurvesDb):
     """
     This is connector to Kepler archive of light curves using kplr package
 
@@ -22,7 +22,7 @@ class KeplerArchive(LightCurvesDb):
     queries = [{"ra": 297.8399, "dec": 46.57427, "delta": 10},
                {"kic_num": 9787239},
                {"kic_jkcolor": (0.3, 0.4), "max_records": 5}]
-    client = StarsProvider().getProvider(obtain_method="KeplerArchive",
+    client = StarsProvider().getProvider(obtain_method="Kepler",
                                          obtain_params=queries)
     stars = client.getStarsWithCurves()
     """
@@ -52,56 +52,58 @@ class KeplerArchive(LightCurvesDb):
                "origin": "Kepler",
                "invert_yaxis": False}
 
-    def __init__(self, obtain_params):
+    def __init__(self, queries, multiproc=True):
         """
         Parameters
         ----------
-            obtain_params : list, iterable
+            queries : list, iterable
                 Array of dictionaries of queries. There have to be one of these
                 set of keys in the dictionary:
 
                 1) "kic_num" - for query by the kepler unique identifier
 
                 2) "ra" (degrees), "dec" (degrees), "delta" (arcseconds) - for query in certain are 
+            multiproc : bool, int
+                If True task will be distributed into threads by using all cores. If it is number,
+                just that number of cores are used
         """
-        if type(obtain_params) == dict:
-            obtain_params = [obtain_params]
-        self.query = obtain_params
+        if type(queries) == dict:
+            queries = [queries]
+        self.queries = queries
         self.client = kplr.API()
 
         # Default value to resolve if not area search
         self.delta = None
+        self.multiproc = multiproc
 
-    def getStarsWithCurves(self):
+    def getStar(self, query, load_lc=True):
         """
+        Query `Star` object
+
+        Parameters
+        ----------
+        query : dict
+            Database query
+            
+        load_lc : bool
+            Append light curves to star objects
+
         Returns
-        --------
-        list of `Star` objects
-            List of Star objects with light curves according to queries
+        -------
+        list
+            List of `Star` objects
         """
-        return self.getStars(lc=True)
+        _stars = self._getStars(query, load_lc)
+        if self.delta:
+            nearest = query.get("nearest", False)
 
-    def getStars(self, lc=False):
-        """
-        Returns
-        --------
-        list of `Star` objects
-            List of Star objects according to queries
-        """
-        stars = []
-        for que in self.query:
-            _stars = self._getStars(que, lc)
-            if self.delta:
-                nearest = que.get("nearest", False)
-
-                checked_stars = self.coneSearch(SkyCoord(self.ra,
-                                                         self.dec, unit="deg"),
-                                                _stars, self.delta,
-                                                nearest=nearest)
-                stars += checked_stars
-            else:
-                stars += _stars
-        return stars
+            checked_stars = self.coneSearch(SkyCoord(self.ra,
+                                                     self.dec, unit="deg"),
+                                            _stars, self.delta,
+                                            nearest=nearest)
+            return checked_stars
+        else:
+            return _stars
 
     def _getStars(self, que, save_lc=True):
         """Get stars from one query"""

@@ -5,7 +5,7 @@ from lcc.db_tier.base_query import LightCurvesDb
 from lcc.db_tier.vizier_tap_base import VizierTapBase
 
 
-class AsasArchive(VizierTapBase, LightCurvesDb):
+class Asas(VizierTapBase, LightCurvesDb):
     """
     Asas archive of variable stars. It inherits `VizierTapBase` - see
     documentation of this class to class attributes description.
@@ -17,7 +17,7 @@ class AsasArchive(VizierTapBase, LightCurvesDb):
     -------
     queries = [{"ASAS": "000030-3937.5"},
                {"ra": 0.4797, "dec": -67.1290, "delta": 10}]
-    client = StarsProvider.getProvider(obtain_method="AsasArchive",
+    client = StarsProvider.getProvider(obtain_method="Asas",
                                           obtain_params=queries)
     stars = client.getStarsWithCurves(do_per=True)
     """
@@ -42,7 +42,7 @@ class AsasArchive(VizierTapBase, LightCurvesDb):
                                         ("Hmag", "h_mag"),
                                         ("LC", "lc_file")))
 
-    def _getLightCurve(self, star, do_per=False, *args, **kwars):
+    def _getLightCurve(self, star, do_per=False, *args, **kwargs):
         url = self.LC_URL.format(asas_id=star.name)
         if do_per:
             per = star.more.get("period", None)

@@ -14,7 +14,7 @@ import numpy as np
 from lcc.utils.data_analysis import to_ekvi_PAA
 
 
-class CorotBrightArchive(VizierTapBase, LightCurvesDb):
+class CorotBright(VizierTapBase, LightCurvesDb):
     """
     CoRoT connector. TAP query and downloading of the light curve fits are
     executed on Vizier catalog. It inherits `VizierTapBase` - see
@@ -27,7 +27,7 @@ class CorotBrightArchive(VizierTapBase, LightCurvesDb):
     ---------
     queries = [{"ra": 102.707, "dec": -0.54089, "delta": 10},
                {"CoRot": 116}]
-    client = StarsProvider.getProvider(obtain_method="CorotBrightArchive",
+    client = StarsProvider.getProvider(obtain_method="CorotBright",
                                        obtain_params=queries)
     stars = client.getStarsWithCurves(max_bins=10000)
     """
@@ -47,7 +47,7 @@ class CorotBrightArchive(VizierTapBase, LightCurvesDb):
                "invert_yaxis": False}
 
     IDENT_MAP = collections.OrderedDict(
-        (("VizierDb", "Star"), ("CorotBrightArchive", "CoRoT")))
+        (("VizierDb", "Star"), ("CorotBright", "CoRoT")))
     MORE_MAP = collections.OrderedDict((("(B-V)", "b_v_mag"),
                                         ("SpT", "spectral_type"),
                                         ("Vmag", "v_mag"),
@@ -113,7 +113,7 @@ class CorotBrightArchive(VizierTapBase, LightCurvesDb):
         return red_time, red_mag, red_err
 
 
-class CorotFaintArchive(CorotBrightArchive):
+class CorotFaint(CorotBright):
     """
     Corot archive of faint stars
 
@@ -122,12 +122,12 @@ class CorotFaintArchive(CorotBrightArchive):
     ---------
         queries = [ { "Corot" : "102706554"},
                     {"ra": 100.94235, "dec" : -00.89651, "delta" : 10}]        
-        client = StarsProvider().getProvider( obtain_method = "CorotFaintArchive", obtain_params = queries)
+        client = StarsProvider().getProvider( obtain_method = "CorotFaint", obtain_params = queries)
         stars = client.getStarsWithCurves(max_bins = 10000 )    
     """
 
     TABLE = "B/corot/Faint_star"
-    IDENT_MAP = {"CorotFaintArchive": "CoRoT"}
+    IDENT_MAP = {"CorotFaint": "CoRoT"}
     NAME = "CoRoT"
 
     MORE_MAP = collections.OrderedDict((("SpT", "spectral_type"),

@@ -18,9 +18,9 @@ class Test(unittest.TestCase):
                    {"kic_num": 9787239},
                    {"kic_jkcolor": (0.3, 0.4), "max_records": 2}]
 
-        client = StarsProvider().getProvider(obtain_method="KeplerArchive",
+        client = StarsProvider().getProvider(obtain_method="Kepler",
                                              obtain_params=queries)
-        stars = client.getStarsWithCurves()
+        stars = client.getStars()
         self.failIf(np.NaN in stars[1].lightCurve.getHistogram()[1])
         self.failUnless(stars and len(stars) == RESULTS_NUM)
 
@@ -28,8 +28,8 @@ class Test(unittest.TestCase):
         queries = [{"Corot": "102706554"},
                    {"ra": 100.94235, "dec": -00.89651, "delta": 10}]
         client = StarsProvider().getProvider(
-            obtain_method="CorotFaintArchive", obtain_params=queries)
-        stars = client.getStarsWithCurves(max_bins=10000)
+            obtain_method="CorotFaint", obtain_params=queries)
+        stars = client.getStars(max_bins=10000)
         # plotStarsPicture(stars)
 
     def testCorotBright(self):
@@ -38,9 +38,9 @@ class Test(unittest.TestCase):
         queries = [{"ra": 102.707, "dec": -0.54089, "delta": 10},
                    {"CoRot": 116}]
         client = StarsProvider().getProvider(
-            obtain_method="CorotBrightArchive", obtain_params=queries)
+            obtain_method="CorotBright", obtain_params=queries)
 
-        stars = client.getStarsWithCurves(max_bins=100)
+        stars = client.getStars(max_bins=100)
         self.failUnless(len(stars) == RESULTS_NUM)
         self.failIf(None in [st.lightCurve for st in stars])
 
@@ -48,9 +48,9 @@ class Test(unittest.TestCase):
         #
         RESULTS_NUM = 1
         queries = [{"Field": 1, "Tile": 3441, "Seqn": 25}]
-        client = StarsProvider().getProvider(obtain_method="MachoDb",
+        client = StarsProvider().getProvider(obtain_method="Macho",
                                              obtain_params=queries)
-        stars = client.getStarsWithCurves()
+        stars = client.getStars()
         self.failUnless(len(stars) == RESULTS_NUM)
         self.failUnless(isinstance(stars[0], Star))
 
@@ -59,7 +59,7 @@ class Test(unittest.TestCase):
                    {"ra": 5.545575 * 15, "dec": -70.55272, "delta": 30}]
         client = StarsProvider().getProvider(obtain_method="OgleII",
                                              obtain_params=queries)
-        stars = client.getStarsWithCurves()
+        stars = client.getStars()
         print len(stars)
         plotStarsPicture(stars[1:])
         self.failUnless(len(stars) == 2)
@@ -69,9 +69,9 @@ class Test(unittest.TestCase):
         queries = [{"ASAS": "000030-3937.5"},
                    {"ra": 10.08, "dec": -39.625, "delta": 20},
                    {"ra": 0.1251, "dec": -39.6250, "delta": 10}]
-        client = StarsProvider().getProvider(obtain_method="AsasArchive",
+        client = StarsProvider().getProvider(obtain_method="Asas",
                                              obtain_params=queries)
-        stars = client.getStarsWithCurves()
+        stars = client.getStars()
 
         self.failIf(len(stars) == 0)
         self.failUnless(isinstance(stars[0], Star))

@@ -230,8 +230,12 @@ class StarsSearcher:
         status = collections.OrderedDict(
             (("found", False), ("lc", False), ("passed", False)))
         try:
-            stars = StarsProvider().getProvider(
-                self.obth_method, query).getStarsWithCurves()
+            provider = StarsProvider().getProvider(self.obth_method)
+            if hasattr(provider, "multiproc"):
+                stars = provider(query, multiproc=False).getStars()
+            else:
+                stars = provider(query).getStars()
+
         except QueryInputError:
             raise
         except (KeyboardInterrupt, SystemExit):
