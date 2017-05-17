@@ -3,6 +3,9 @@ import types
 import warnings
 
 import pathos.multiprocessing as multiprocessing
+import sys
+
+import time
 from lcc.entities.exceptions import InvalidOption
 from lcc.entities.exceptions import QueryInputError
 from lcc.stars_processing.stars_filter import StarsFilter
@@ -93,7 +96,6 @@ class ParamsEstimator(object):
 
         self.multiproc = multiproc
 
-
     def evaluateCombinations(self, tuned_params=None):
         """
         Evaluate all combination of the filter parameters
@@ -120,7 +122,19 @@ class ParamsEstimator(object):
                 n_cpu = self.multiproc
 
             pool = multiprocessing.Pool(n_cpu)
-            result = pool.map(self.evaluate, tuned_params)
+
+            result = pool.map_async(self.evaluate, tuned_params)
+            pool.close()  # No more work
+            n = len(tuned_params)
+            while True:
+                if result.ready():
+                    break
+                sys.stderr.write('\rEvaluated combinations: {0} / {1}'.format(n - result._number_left, n))
+                time.sleep(0.6)
+            result = result.get()
+            sys.stderr.write('\rAll {0} combinations have been evaluated'.format(n))
+
+            # result = pool.map(self.evaluate, tuned_params)
         else:
             result = [self.evaluate(tp) for tp in tuned_params]
 

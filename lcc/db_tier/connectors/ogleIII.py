@@ -263,7 +263,7 @@ class OgleIII(LightCurvesDb):
             dec = float(row[cols_map.get("dec")])
 
             identifiers = {}
-            identifiers["MACHO"] = row[cols_map.get("macho_id")]
+            identifiers["Macho"] = row[cols_map.get("macho_id")]
             identifiers["Asas"] = row[cols_map.get("asas_id")]
             identifiers["OgleII"] = row[cols_map.get("ogle_ii_id")]
             identifiers["GCVS"] = row[cols_map.get("gcvs_id")]
@@ -276,6 +276,10 @@ class OgleIII(LightCurvesDb):
             for ide, val in identifiers.iteritems():
                 if val != u"\xa0":
                     ident[ide] = {"name": str(val)}
+
+                    query_ide = self._parseDbNames(ide, val)
+                    if query_ide:
+                        ident[ide]["db_ident"] = query_ide
 
             more = {}
             for col in self.MORE:
@@ -322,3 +326,16 @@ class OgleIII(LightCurvesDb):
                 star_curve.append(
                     [round(float(parts[0]), 4), round(float(parts[1]), 3), round(float(parts[2]), 3)])
             return star_curve
+
+
+    def _parseDbNames(self, db, name):
+        if db == "Macho":
+            parts = name.split(".")
+            if len(parts) == 3:
+                return {"Field": parts[0], "Tile": parts[1], "Seqn": parts[2]}
+
+        elif db == "OgleII":
+            parts = name.split("_")
+            if len(parts) == 3:
+                return {"field": parts[0]+"_"+parts[1], "starid" : parts[2]}
+

@@ -42,6 +42,10 @@ def plotProbabSpace(star_filter, plot_ranges=None, opt="show",
     -------
         None
     """
+    if (not searched_coords and not contamination_coords and
+            hasattr(star_filter, "searched_coords") and hasattr(star_filter, "others_coords")):
+        searched_coords = star_filter.searched_coords.values
+        contamination_coords = star_filter.others_coords.values
 
     dim = len(star_filter.searched_coords.columns)
 

@@ -3,7 +3,7 @@ from lcc.stars_processing.utilities.base_descriptor import BaseDescriptor
 
 
 class VariogramSlopeDescr(BaseDescriptor):
-    '''
+    """
     This filter sorting stars according slopes of their variograms
 
     Attributes
@@ -13,12 +13,12 @@ class VariogramSlopeDescr(BaseDescriptor):
 
     absolute : bool
         If True absolute value of slope is taken
-    '''
+    """
 
     LABEL = "Light curve's variogram slope"
 
     def __init__(self, days_per_bin, absolute=False):
-        '''
+        """
         Parameters
         ----------
         days_per_bin : float
@@ -26,7 +26,7 @@ class VariogramSlopeDescr(BaseDescriptor):
 
         absolute : bool
             If True absolute value of slope is taken
-        '''
+        """
         self.days_per_bin = days_per_bin
         self.absolute = absolute
 

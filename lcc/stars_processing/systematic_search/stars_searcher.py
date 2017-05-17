@@ -5,9 +5,13 @@ from warnings import warn
 
 import pathos.multiprocessing as multiprocessing
 import pandas as pd
+import time
+
+import sys
 from lcc.db_tier.stars_provider import StarsProvider
 from lcc.entities.exceptions import QueryInputError, InvalidFilesPath
 from lcc.utils.stars import saveStars
+import tqdm
 
 
 class StarsSearcher:
@@ -197,7 +201,19 @@ class StarsSearcher:
                 n_cpu = self.multiproc
 
             pool = multiprocessing.Pool(n_cpu)
-            result = pool.map(self.queryStar, queries)
+
+            result = pool.map_async(self.queryStar, queries)
+            pool.close()  # No more work
+            n = len(queries)
+            while True:
+                if result.ready():
+                    break
+                sys.stderr.write('\rProcessed stars: {0} / {1}'.format(n - result._number_left,  n))
+
+                time.sleep(0.6)
+            result = result.get()
+            sys.stderr.write('\rAll {0} stars have been processed'.format(n))
+            # result = pool.map(self.queryStar, queries)
         else:
             result = [self.queryStar(q) for q in queries]
 
@@ -230,19 +246,20 @@ class StarsSearcher:
         status = collections.OrderedDict(
             (("found", False), ("lc", False), ("passed", False)))
         try:
-            provider = StarsProvider().getProvider(self.obth_method)
+            provider = StarsProvider().getProvider(self.obth_method, query)
             if hasattr(provider, "multiproc"):
-                stars = provider(query, multiproc=False).getStars()
-            else:
-                stars = provider(query).getStars()
+                provider.multiproc = False
+
+            stars = provider.getStars()
 
         except QueryInputError:
             raise
         except (KeyboardInterrupt, SystemExit):
             raise
 
-        except:
-            warn("Couldn't download any light curve")
+        except Exception as e:
+            warn(str(e))
+            warn("Couldn't download any star for query %s" % query )
             stars = []
 
         # TODO: status attribute is rewrited and just status of the last star is noted
@@ -289,7 +306,6 @@ class StarsSearcher:
             self.statusFile(query, status)
 
         return stars, status
-
 
     def _saveCoords(self, query):
         if self.stars_filters:

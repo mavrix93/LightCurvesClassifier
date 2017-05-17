@@ -36,7 +36,6 @@ class StarsCatalogue(object):
             pool = multiprocessing.Pool(n_cpu)
             result = pool.map(self.getStar, self.queries, load_lc)
         else:
-            print "Using just one cpu"
             result = [self.getStar(q, load_lc) for q in self.queries]
 
         stars = []
@@ -103,6 +102,6 @@ class LightCurvesDb(StarsCatalogue):
     __metaclass__ = abc.ABCMeta
     """This is common class for every database containing light curves"""
 
-    def getStarsWitCurves(self, *args, **kwargs):
-        warnings.warn("This method will be deprecated in the future version. Please used getStar(load_lc=True) instead")
+    def getStarsWithCurves(self, *args, **kwargs):
+        warnings.warn("This method will be deprecated in the future version. Please used getStars() instead")
         return self.getStars(*args, **kwargs)

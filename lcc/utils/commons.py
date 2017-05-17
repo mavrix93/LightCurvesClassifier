@@ -1,6 +1,6 @@
-'''
+"""
 There are common functions and decorators mainly for query classes
-'''
+"""
 from functools import wraps
 import functools
 
@@ -168,14 +168,14 @@ def mandatory_args(*args_options):
 
 
 def returns(*accepted_return_type_tuple):
-    '''
+    """
     Validates the return type. Since there's only ever one
     return type, this makes life simpler. Along with the
     accepts() decorator, this also only does a check for
     the top argument. For example you couldn't check
     (<type 'tuple'>, <type 'int'>, <type 'str'>).
     In that case you could only check if it was a tuple.
-    '''
+    """
     def return_decorator(validate_function):
         # No return type has been specified.
         if len(accepted_return_type_tuple) == 0:
@@ -208,7 +208,7 @@ def returns(*accepted_return_type_tuple):
 
 
 def accepts(*accepted_arg_types):
-    '''
+    """
     A decorator to validate the parameter types of a given function.
     It is passed a tuple of types. eg. (<type 'tuple'>, <type 'int'>)
 
@@ -216,7 +216,7 @@ def accepts(*accepted_arg_types):
     -----
     It doesn't do a deep check, for example checking through a
     tuple of types. The argument passed must only be types.
-    '''
+    """
 
     def accept_decorator(validate_function):
         # Check if the number of arguments to the validator
@@ -248,36 +248,3 @@ def accepts(*accepted_arg_types):
             return validate_function(*to_return_args)
         return decorator_wrapper
     return accept_decorator
-
-
-class Spinner:
-    busy = False
-    delay = 0.1
-
-    @staticmethod
-    def spinning_cursor():
-        while 1:
-            for cursor in '|/-\\':
-                yield cursor
-
-    def __init__(self, txt="", delay=None):
-        self.spinner_generator = self.spinning_cursor()
-        if delay and float(delay):
-            self.delay = delay
-        self.txt = txt
-
-    def spinner_task(self):
-        while self.busy:
-            sys.stdout.write(self.txt + next(self.spinner_generator))
-            sys.stdout.flush()
-            time.sleep(self.delay)
-            sys.stdout.write('\b')
-            sys.stdout.flush()
-
-    def start(self):
-        self.busy = True
-        threading.Thread(target=self.spinner_task).start()
-
-    def stop(self):
-        self.busy = False
-        time.sleep(self.delay)
