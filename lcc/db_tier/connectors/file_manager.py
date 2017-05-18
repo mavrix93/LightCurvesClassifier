@@ -7,6 +7,7 @@ from lcc.entities.exceptions import InvalidFilesPath, InvalidFile
 from lcc.entities.light_curve import LightCurve
 from lcc.entities.star import Star
 from lcc.utils.output_process_modules import loadFromFile
+from lcc.utils.helpers import progressbar
 import numpy as np
 
 
@@ -164,10 +165,12 @@ class FileManager(LightCurvesDb):
         return stars
 
     def _loadDatFiles(self, star_paths, numberOfFiles):
+        if not star_paths:
+            return []
         stars = []
         counter = 1
         # Load every light curve and put it into star object
-        for singleFile in star_paths[:numberOfFiles]:
+        for singleFile in progressbar(star_paths[:numberOfFiles], "Loading dat files:"):
             if self.files_to_load and os.path.basename(singleFile) not in self.files_to_load:
                 break
 
@@ -252,8 +255,10 @@ class FileManager(LightCurvesDb):
         return file_path[file_path.rfind("/") + 1:end]
 
     def _loadFromFITS(self, star_paths, files_lim=None):
+        if not star_paths:
+            return []
         stars = []
-        for path in star_paths:
+        for path in progressbar(star_paths, "Loading FITS files:"):
             try:
                 fits = pyfits.open(os.path.join(self.path, path))
 

@@ -326,7 +326,7 @@ class StarsSearcher:
             self.que_coords = self.que_coords.append(this_df)
 
             self.que_coords.to_csv(
-                os.path.join(self.save_path, "..", "space_coordinates.csv"), index=False, delimiter=";")
+                os.path.join(self.save_path, "..", "space_coordinates.csv"), index=False, sep=";")
         else:
             warnings.warn(
                 "There are no filters, so space coordinates cannot be obtained.\n")

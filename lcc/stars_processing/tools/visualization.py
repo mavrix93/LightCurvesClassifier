@@ -238,7 +238,7 @@ def plot2DProbabSpace(star_filter, plot_ranges, N, searched_coords=[],
     plt.pcolor(X, Y, Z)
     plt.colorbar()
 
-    if searched_coords or contaminatiom_coords:
+    if len(searched_coords) or len(contaminatiom_coords):
         s = np.array(searched_coords).T
         c = np.array(contaminatiom_coords).T
         plt.plot(s[0], s[1], "m*", label="Searched objects", markersize=17)
@@ -284,7 +284,7 @@ def plot1DProbabSpace(star_filter, plot_ranges, N,
 
     plt.plot(x, y, linewidth=3)
 
-    if searched_coords or contaminatiom_coords:
+    if len(searched_coords) or len(contaminatiom_coords):
         s = [qq[0] for qq in searched_coords]
         c = [qq[0] for qq in contaminatiom_coords]
         s_weights = np.ones_like(s) / len(s)
