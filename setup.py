@@ -7,13 +7,13 @@ from setuptools import setup
 
 
 def getPackages(path="."):
-    p = set()
+    p = list()
     for importer, modname, ispkg in pkgutil.walk_packages(path=path, onerror=lambda x: None):
 	if "." in modname:
-	    p.add( modname[:modname.rfind(".")] )
-    p.add("lcc/gavo/votable/")
-    p.add("lcc/gavo/utils/")
-    p.add("lcc/gavo/stc/")
+	    p.append( modname[:modname.rfind(".")] )
+    p.append("lcc.gavo.votable")
+    p.append("lcc.gavo.utils")
+    p.append("lcc.gavo.stc")
     return p
 
 setup(
