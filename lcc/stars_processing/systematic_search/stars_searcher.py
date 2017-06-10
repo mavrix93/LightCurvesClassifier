@@ -2,6 +2,7 @@ import collections
 import os
 import warnings
 from warnings import warn
+import logging
 
 import pathos.multiprocessing as multiprocessing
 import pandas as pd
@@ -12,6 +13,8 @@ from lcc.db_tier.stars_provider import StarsProvider
 from lcc.entities.exceptions import QueryInputError, InvalidFilesPath
 from lcc.utils.stars import saveStars
 import tqdm
+
+logger = logging.getLogger(__name__)
 
 
 class StarsSearcher:
@@ -178,7 +181,10 @@ class StarsSearcher:
         self.status = self.status.append(this_status)
 
         if self.stat_file_path:
-            self.status.to_csv(self.stat_file_path, index=False)
+            if not os.path.isfile(self.stat_file_path):
+                self.status.to_csv(self.stat_file_path, index=False)
+            else:
+                self.status.to_csv(self.stat_file_path, index=False, mode='a', header=False)                
 
     def queryStars(self, queries):
         """

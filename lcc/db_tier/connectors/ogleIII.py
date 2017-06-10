@@ -8,6 +8,7 @@ import warnings
 from lcc.db_tier.base_query import LightCurvesDb
 from lcc.entities.exceptions import QueryInputError
 from lcc.entities.star import Star
+from lcc.utils.helpers import progressbar
 import numpy as np
 
 
@@ -256,7 +257,7 @@ class OgleIII(LightCurvesDb):
 
         cols_map = self._parseHeader(header)
         stars = []
-        for row in rows:
+        for row in progressbar(rows, "Parsing stars"):
             field = str(row[cols_map.get("field")])
             starid = str(row[cols_map.get("starid")])
             ra = float(row[cols_map.get("ra")])

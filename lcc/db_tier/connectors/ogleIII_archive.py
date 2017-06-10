@@ -4,46 +4,32 @@ import re
 import urllib
 import urllib2
 import warnings
-import logging
 
 from lcc.db_tier.base_query import LightCurvesDb
 from lcc.entities.exceptions import QueryInputError
 from lcc.entities.star import Star
 import numpy as np
 
-logger = logging.getLogger(__name__)
 
-
-class OgleII(LightCurvesDb):
-    """
-    Connector to OGLEII. It is divided into two subdatabases - "phot" and "bvi".
-    The first one contains light curves and metadata about coordinates, identifiers
-    and V magnitude. The second one also contains information about V and I. 
-
-    Identifier of the stars in OgleII db are: field, starid and target.
-
-    In case of cone search (if coordinates are provided), "nearest" key can
-    be used. If it is True just nearest star to the target point is returned.
+class OgleIII(LightCurvesDb):
+    '''
+    Connector to OGLEIII
 
     Example:
     --------
     que1 = {"ra": 5.549147 * 15,
        "dec": -70.55792, "delta": 5, "nearest": True}
-    que2 = {"field":"LMC_SC1","starid":"152248","target":"lmc"}
 
     client = StarsProvider().getProvider(
-        obtain_method="OgleII", obtain_params=[que1, que2])
+        obtain_method="OgleIIT", obtain_params=[que1, que2])
     stars = client.getStarsWithCurves()
-    """
+    '''
 
-    ROOT = "http://ogledb.astrouw.edu.pl/~ogle/photdb"
-
-    BVI_TARGETS = ["lmc", "smc", "bul"]
-    PHOT_TARGETS = ["lmc", "smc", "bul", "car"]
-
-    QUERY_TYPES = ["bvi", "phot"]
+    ROOT = "http://ogledb.astrouw.edu.pl/~ogle/CVS/"
+    SUFF = "query.php?first=1&qtype=catalog"
 
     MAX_TIMEOUT = 60
+    DEFAULT_DELTA = 10
 
     LC_META = {"xlabel": "hjd",
                "xlabel_unit": "days",
@@ -58,49 +44,47 @@ class OgleII(LightCurvesDb):
                "Decl": "dec",
                "V": "v_mag",
                "I": "i_mag",
-               "B": "b_mag"}
+               "Type": "type",
+               "Subtype": "subtype",
+               "P_1": "period",
+               "A_1": "i_ampl",
+               "ID_OGLE_II": "ogle_ii_id",
+               "ID_MACHO": "macho_id",
+               "ID_ASAS": "asas_id",
+               "ID_GCVS": "gcvs_id",
+               "ID_OTHER": "other_id",
+               "Remarks": "remarks",
+               "ID": "name"}
 
-    QUERY_OPTION = ["ra", "dec", "delta", "nearest", "field", "field_num", "starid", "target"]
+    MORE = ["i_mag", "type", "subtype", "remarks", "i_ampl", "period", "v_mag"]
+    TYPES = ["Cep", "ACep", "LPV", "T2Cep", "RRLyr", "RCB", "DSCT", "DPV"]
 
-    def __init__(self, queries, multiproc=True):
+    def __init__(self, queries):
         """
         Parameters
         ----------
         queries : list, dict, iterable
             Query is list of dictionaries of query parameters or single
-            dictionary
-            
-        multiproc : bool, int
-            If True task will be distributed into threads by using all cores. If it is number,
-            just that number of cores are used
+            dictionary.
         """
         if isinstance(queries, dict):
             queries = [queries]
         self.queries = self._parseQueries(queries)
-        self.multiproc = multiproc
 
-    def getStar(self, query, load_lc=True):
-        """
-        Query `Star` object
+    def getStarsWithCurves(self):
+        return self.getStars(lc=True)
 
-        Parameters
-        ----------
-        load_lc : bool
-            Append light curves to star objects
-
-        Returns
-        -------
-        list
-            List of `Star` objects
-        """
-        stars = self.postQuery(query, load_lc)
-        if "ra" in query and "dec" in query and "delta" in query:
-            stars = self.coneSearch(SkyCoord(float(query["ra"]), float(query["dec"]), unit="deg"),
-                                    stars, float(query["delta"] / 3600.),
-                                    nearest=query.get("nearest", False))
+    def getStars(self, lc=False):
+        stars = []
+        for query in self.queries:
+            stars += self.postQuery(query, lc)
+            if "ra" in query and "dec" in query and "delta" in query:
+                stars = self.coneSearch(SkyCoord(float(query["ra"]), float(query["dec"]), unit="deg"),
+                                        stars, float(query["delta"] / 3600.),
+                                        nearest=query.get("nearest", False))
         return stars
 
-    def postQuery(self, query, load_lc):
+    def postQuery(self, query, lc):
         PAGE_LEN = 1e10
         valmin_ra, valmax_ra, valmin_dec, valmax_dec = self._getRanges(query.get("ra"),
                                                                        query.get(
@@ -116,8 +100,12 @@ class OgleII(LightCurvesDb):
             "sort": "field",
             "use_field": "field" in query,
             "val_field": query.get("field"),
+            "disp_field": "on",
             "use_starid": "starid" in query,
             "val_starid": query.get("starid"),
+            "disp_starid": "on",
+            "disp_type": "on",
+            "disp_subtype": "on",
             "disp_starcat": "off",
             "use_starcat": "off",
             "disp_ra": "on",
@@ -130,60 +118,71 @@ class OgleII(LightCurvesDb):
             "valmax_decl": valmax_dec,
             "disp_imean": "on",
             "use_imean": "mag_i_min" in query,
-            "valmin_imean": query.get("mag_i_min"),
-            "valmax_imean": query.get("mag_i_max"),
-            "disp_pgood": "off",
-            "disp_bmean": "on",
+            "valmin_i": query.get("mag_i_min"),
+            "valmax_i": query.get("mag_i_max"),
+            "valmin_v": query.get("mag_v_min"),
+            "valmax_v": query.get("mag_v_max"),
+            "disp_p1": "on",
+            "valmin_p1": query.get("p1_min"),
+            "valmax_p1": query.get("p1_max"),
+            "disp_id_ogle_ii": "on",
+            "val_id_ogle_ii": query.get("ogleii_id"),
+            "disp_id_macho": "on",
+            "val_id_macho": query.get("macho_id"),
+            "disp_id_asas": "on",
+            "val_id_asas": query.get("asas_id"),
+            "disp_id_gcvs": "on",
+            "val_id_gcvs": query.get("gvcs_id"),
+            "disp_id_other": "on",
+            "disp_remarsk": "on",
+            "val_remarks": query.get("remarks"),
             "disp_vmean": "on",
-            "disp_imean": "on",
-            "disp_imed": "off",
-            "disp_bsig": "off",
-            "disp_vsig": "off",
-            "disp_isig": "off",
-            "disp_imederr": "off",
-            "disp_ndetect": "off",
-            "disp_v_i": "off",
-            "disp_b_v": "off",
+            "disp_i": "on",
+            "disp_v": "on",
             "sorting": "ASC",
             "pagelen": PAGE_LEN,
         }
+        if "types" in query:
+            star_types = {"use_type" "on"}
+            if not hasattr(query["types"], "__iter__"):
+                query["types"] = [query["types"]]
+            for star_type in query["types"]:
+                star_types["val_type"+star_type] = "on"
+
+            params.update(star_types)
+
         # Delete unneeded parameters
         to_del = []
         for key, value in params.iteritems():
             if not value or value == "off":
                 to_del.append(key)
         # Url for query
-        url = "%s/query.php?qtype=%s&first=1" % (self.ROOT, query.get("db"))
+        url = "%s/%s" % (self.ROOT, self.SUFF)
         [params.pop(x, None) for x in to_del]
         result = urllib2.urlopen(
             url, urllib.urlencode(params), timeout=100)
-        return self._parseResult(result, lc=load_lc)
+        return self._parseResult(result, lc=lc)
 
     def _parseQueries(self, queries):
         todel_queries = []
         new_queries = []
         for i, query in enumerate(queries):
-            if "db" not in query:
-                query["db"] = self.QUERY_TYPES[0]
 
-            if "coo" in query and isinstance(query["coo"], SkyCoord) and "delta" in query:
+            if "coo" in query and isinstance(query["coo"], SkyCoord):
+                if not "delta" in query:
+                    query["delta"] = self.DEFAULT_DELTA
                 todel_queries.append(i)
                 coo = query["coo"]
-                query["ra"] = coo.ra.degree
-                query["dec"] = coo.dec.degree
+                new_queries.append(
+                    {"ra": coo.ra.degree, "dec": coo.dec.degree,
+                     "delta": query["delta"], "target": "all"})
 
-            if "ra" in query and "dec" in query and "target" not in query:
-                todel_queries.append(i)
+            if "ra" in query and "dec" in query:
+                if not "delta" in query:
+                    query["delta"] = self.DEFAULT_DELTA
 
-                if query["db"] == "phot":
-                    targets = self.PHOT_TARGETS
-                else:
-                    targets = self.BVI_TARGETS
-
-                for target in targets:
-                    z = query.copy()
-                    z["target"] = target
-                    new_queries.append(z)
+                if "target" not in query:
+                    query["target"] = "all"
 
             elif "starid" in query:
                 if "field" in query:
@@ -194,9 +193,9 @@ class OgleII(LightCurvesDb):
                 else:
                     raise QueryInputError("Unresolved target")
 
-            if query["db"] not in self.QUERY_TYPES:
-                raise QueryInputError(
-                    "Invalid db. Available OgleII databases: %s" % self.QUERY_TYPES)
+            if "types" in query and sum([1 for star_type in query["types"] if not star_type in self.TYPES]):
+                raise QueryInputError("Invalid star type in the query.\nAvailable types: %s" % self.TYPES)
+
 
         return [item for i, item in enumerate(
             queries) if i not in todel_queries] + new_queries
@@ -230,12 +229,12 @@ class OgleII(LightCurvesDb):
                 raw_table += line
 
         if not raw_table:
+            warnings.warn("OgleIII query failed")
             return []
 
         soup = BeautifulSoup(raw_table, "lxml")
         table = soup.find('table')
         rows = table.findAll('tr')
-
         res_rows = []
         for tr in rows[1:]:
             cols = tr.findAll('td')
@@ -259,26 +258,40 @@ class OgleII(LightCurvesDb):
             ra = float(row[cols_map.get("ra")])
             dec = float(row[cols_map.get("dec")])
 
-            colors = ["i_mag", "b_mag", "v_mag"]
-            more = {}
-            for col in colors:
-                if cols_map.get(col) and cols_map.get(col):
-                    try:
-                        more[col] = float(row[cols_map.get(col)])
-                    except:
-                        pass
+            identifiers = {}
+            identifiers["MACHO"] = row[cols_map.get("macho_id")]
+            identifiers["Asas"] = row[cols_map.get("asas_id")]
+            identifiers["OgleII"] = row[cols_map.get("ogle_ii_id")]
+            identifiers["GCVS"] = row[cols_map.get("gcvs_id")]
 
-            name = field + "_" + str(starid)
+            name = str(row[cols_map.get("name")])
+            ident = {"OgleIII": {"name": name,
+                                 "db_ident": {"field": field,
+                                              "starid": starid}}}
+
+            for ide, val in identifiers.iteritems():
+                if val != u"\xa0":
+                    ident[ide] = {"name": str(val)}
+
+            more = {}
+            for col in self.MORE:
+                if cols_map.get(col) and cols_map.get(col):
+                    val = row[cols_map.get(col)]
+                    if val != u"\xa0":
+                        try:
+                            val = float(val)
+                        except:
+                            val = str(val)
+
+                        more[col] = val
+
             coo = (ra * 15, dec, "deg")
 
-            ident = {"OgleII": {"name": name,
-                                "db_ident": {"field": field,
-                                             "starid": starid}}}
-
             st = Star(ident, name, coo, more)
+            st.starClass = str(row[cols_map.get("type")])
 
             if lc_tmp:
-                lc = self._getLc(field, starid, lc_tmp)
+                lc = self._getLc(name)
                 if lc and len(lc) != 0:
                     st.putLightCurve(np.array(lc), meta=self.LC_META)
 
@@ -292,20 +305,10 @@ class OgleII(LightCurvesDb):
                 cols_map[self.COL_MAP[col]] = i
         return cols_map
 
-    def _getLc(self, field, starid, lc_tmp):
-        params = {
-            "field": field,
-            "starid": starid,
-            "tmpdir": lc_tmp,
-            "db": "DIA",
-            "points": "good",
-        }
+    def _getLc(self, name):
+        num = name.split("-")[-1][-2:]
 
-        _url = "%s/getobj.php" % self.ROOT
-        _result = urllib2.urlopen(_url, urllib.urlencode(params))
-
-        url = "%s/data/%s/%s_i_%s.dat" % (self.ROOT,
-                                          lc_tmp, field.lower(), starid)
+        url = "%sdata/I/%s/%s.dat" % (self.ROOT, num, name)
         result = urllib2.urlopen(url)
 
         if (result.code == 200):

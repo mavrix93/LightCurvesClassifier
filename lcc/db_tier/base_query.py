@@ -1,3 +1,5 @@
+import sys
+import time
 import abc
 import warnings
 
@@ -25,16 +27,32 @@ class StarsCatalogue(object):
         list
             List of `Star` objects
         """
+        n = len(self.queries)
         if hasattr(self, "multiproc") and self.multiproc:
 
             if self.multiproc is True:
                 n_cpu = multiprocessing.cpu_count()
             else:
                 n_cpu = self.multiproc
-
             print "Using {} cpus".format(n_cpu)
+                
             pool = multiprocessing.Pool(n_cpu)
-            result = pool.map(self.getStar, self.queries, load_lc)
+            
+            result = pool.map_async(self.getStar, self.queries, load_lc)
+            pool.close()  # No more work
+            
+            while True:
+                if result.ready():
+                    break
+                sys.stderr.write('\rQueries done: {0} / {1}'.format(n - result._number_left,  n))
+
+                time.sleep(0.6)
+            result = result.get()
+            
+
+            
+            # pool = multiprocessing.Pool(n_cpu)
+            # result = pool.map(self.getStar, self.queries, load_lc)
         else:
             result = [self.getStar(q, load_lc) for q in self.queries]
 
@@ -42,6 +60,8 @@ class StarsCatalogue(object):
         for oneq_stars in result:
             stars += oneq_stars
 
+        sys.stderr.write('\rAll {0} stars have been downloaded from {1} query'.format(len(stars), n))
+        
         return stars
 
     def coneSearch(self, coo, stars, delta_deg, nearest=False):
