@@ -60,7 +60,7 @@ class OgleII(LightCurvesDb):
                "I": "i_mag",
                "B": "b_mag"}
 
-    QUERY_OPTION = ["ra", "dec", "delta", "nearest", "field", "field_num", "starid", "target"]
+    QUERY_OPTIONS = ["ra", "dec", "delta", "nearest", "field", "field_num", "starid", "target"]
 
     def __init__(self, queries, multiproc=True):
         """

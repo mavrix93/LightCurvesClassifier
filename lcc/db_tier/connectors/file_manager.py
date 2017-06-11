@@ -70,6 +70,8 @@ class FileManager(LightCurvesDb):
     MAG_COL = 1
     ERR_COL = 2
     ROUND_DIGITS = 3
+    
+    QUERY_OPTIONS = ["path"]
 
     def __init__(self, obtain_params):
         """

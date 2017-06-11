@@ -18,12 +18,23 @@ class OgleIII(LightCurvesDb):
 
     Example:
     --------
-    que1 = {"ra": 69.329, "dec": -69.81986, "delta": 5,
-        "nearest": True, "types": ["ACep", "LPV"]}
+    que1 = {"ra":72.798405,
+            "dec": -69.00918, "delta": 5, "nearest": True}
+
+    que2 = {"types" : ["DPV"], "target" : "lmc"}
+
+    que3 = {"field": "LMC135.5", "starid" : 19670}
 
     client = StarsProvider().getProvider(
-        obtain_method="OgleIII", obtain_params=que1)
+        obtain_method="OgleIII", obtain_params=[que1, que2, que3])
     stars = client.getStarsWithCurves()
+    
+    
+    Possible keys for query:
+                    ["ra", "dec", "delta", "nearest", "field", "starid", "types",
+                    "mag_i_min", "mag_v_min", "mag_i_max", "mag_v_max",
+                    "p1_min", "p1_max", "ogleii_id", "macho_id", "asas_id",
+                    "gvcs_id", "remarks"]
     """
 
     ROOT = "http://ogledb.astrouw.edu.pl/~ogle/CVS/"
@@ -60,7 +71,7 @@ class OgleIII(LightCurvesDb):
     MORE = ["i_mag", "type", "subtype", "remarks", "i_ampl", "period", "v_mag"]
     TYPES = ["Cep", "ACep", "LPV", "T2Cep", "RRLyr", "RCB", "DSCT", "DPV"]
 
-    QUERY_OPTION = ["ra", "dec", "delta", "nearest", "field", "starid", "types",
+    QUERY_OPTIONS = ["ra", "dec", "delta", "nearest", "field", "starid", "types",
                     "mag_i_min", "mag_v_min", "mag_i_max", "mag_v_max",
                     "p1_min", "p1_max", "ogleii_id", "macho_id", "asas_id",
                     "gvcs_id", "remarks"]
