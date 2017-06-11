@@ -1,25 +1,11 @@
-
-from distutils.core import setup
 import pkgutil
-
 import os
-from setuptools import setup
-
-
-def getPackages(path="."):
-    p = list()
-    for importer, modname, ispkg in pkgutil.walk_packages(path=path, onerror=lambda x: None):
-	if "." in modname:
-	    p.append( modname[:modname.rfind(".")] )
-    p.append("lcc.gavo.votable")
-    p.append("lcc.gavo.utils")
-    p.append("lcc.gavo.stc")
-    return p
+from setuptools import setup, find_packages
 
 setup(
   name = 'lcc',
-  packages = getPackages(),
-  version = '1.0.2',
+  packages = find_packages(),
+  version = '1.0.4',
   description = 'Light Curves Classifier is package for classification stars by using their light curves and metadata',
   author = 'Martin Vo',
   author_email = 'mavrix@seznam.cz',
