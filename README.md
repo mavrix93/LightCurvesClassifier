@@ -15,7 +15,7 @@ by any other attribute of stars. The package can used for several tasks:
 New filters, database connectors or classifiers can be easily implemented thanks to class interfaces (see "Implementing new classes" section). However there are many of them already included. Package can be used in two ways:
 
 + Using the package programmatically
-+ Using [Website Interface](http://vocloud-dev.asu.cas.cz/lcc/)
++ Using [Web Interface](http://vocloud-dev.asu.cas.cz/lcc/)
 + Via command line API
 
 The easist way how to start is to use Web Interface. There are also section "Guide" with instructions how to use the site. However for more sophisticated tasks is using the package directly as Python package. The package has been designed to be developed easily, so there no limitations.
