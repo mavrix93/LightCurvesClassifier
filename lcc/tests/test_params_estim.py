@@ -1,7 +1,7 @@
 '''
 Created on Jan 25, 2017
 
-@author: martin
+@author: Martin Vo
 '''
 import unittest
 import numpy as np
@@ -9,7 +9,6 @@ import numpy as np
 from lcc.stars_processing.deciders.supervised_deciders import QDADec
 from lcc.stars_processing.tools.params_estim import ParamsEstimator
 from lcc.stars_processing.descriptors.abbe_value_descr import AbbeValueDescr
-from lcc.conf import deciders_settings
 from lcc.entities.star import Star
 from matplotlib import pyplot
 from lcc.stars_processing.tools.visualization import plotProbabSpace
@@ -17,6 +16,7 @@ from lcc.stars_processing.descriptors.variogram_slope_descr import VariogramSlop
 from lcc.stars_processing.descriptors.curve_shape_descr import CurvesShapeDescr
 
 
+# TODO: Need to be fixed
 class Test(unittest.TestCase):
 
     def setUp(self):
@@ -38,7 +38,7 @@ class Test(unittest.TestCase):
 
         self.noisy = []
         for ii in range(N):
-            st = Star(name="VariableStar%i" % ii)
+            st = Star(name="NonvariableStar%i" % ii)
             st.putLightCurve([x, np.random.normal(x) * 2])
             self.noisy.append(st)
 
@@ -49,22 +49,12 @@ class Test(unittest.TestCase):
                          "CurvesShapeDescr": {"comp_stars": self.template}}
         tuned_params = [{"CurvesShapeDescr": {"days_per_bin": 3, "alphabet_size": 10}},
                         {"CurvesShapeDescr": {"days_per_bin": 0.5, "alphabet_size": 12}}]
-
+        
         est = ParamsEstimator(self.variables, self.noisy, descriptors, deciders,
                               tuned_params, static_params=static_params)
 
-        save_params = {"roc_plot_path": ".",
-                       "roc_plot_name": "roc_curve",
-                       "roc_data_path": ".",
-                       "roc_data_name": "roc_data",
-                       "stats_path": ".",
-                       "stats_name": "stats.dat"}
-
-        star_filter, stat, best_params = est.fit(
-            deciders_settings.PRECISION, save_params=save_params)
-        print best_params
-        plotProbabSpace(star_filter,
-                        [[0.01, 0.05], [1, 0.5]], save=True, N=100)
+        star_filter, stat, best_params = est.fit()
+        assert best_params != None
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']
