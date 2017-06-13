@@ -2,19 +2,23 @@
 
 ## Introduction
 The Light Curve Classifier is a Python package for classifying astronomical objects. It is
-accomplished mainly by their light curves, but there are no limits to achieve that
+accomplished mainly by their light curves (time serie), but there are no limits to achieve that
 by any other attribute of stars. The package can used for several tasks:
 
-+ Download light curves from implemented databases
-+ Teach implemented filters on train sample in order to filter another stars
-+ Run systematic search and filter stars directly in databases
++ Download light curves from implemented databases by using common query interface
++ Create pipeline for extracting features from data
++ Train filters from the train sample
++ Run systematic search by using filter to find new objects of interest
++ Show distribution of objects of interest in chosen feature space
++ Visualize natural separation of data by using unsupervised clustering
 
 New filters, database connectors or classifiers can be easily implemented thanks to class interfaces (see "Implementing new classes" section). However there are many of them already included. Package can be used in two ways:
 
++ Using the package programmatically
++ Using [Website Interface](http://vocloud-dev.asu.cas.cz/lcc/)
 + Via command line API
 
-+ By using the package programmatically 
-Of course the second option brings much more functionality. However command line API allows accomplish the most of tasks.
+The easist way how to start is to use Web Interface. There are also section "Guide" with instructions how to use the site. However for more sophisticated tasks is using the package directly as Python package. The package has been designed to be developed easily, so there no limitations.
 
 ## Philosophy of the program
 
