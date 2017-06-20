@@ -16,6 +16,7 @@ class VariogramSlopeDescr(BaseDescriptor):
     """
 
     LABEL = "Light curve's variogram slope"
+    LC_NEEDED = True
 
     def __init__(self, days_per_bin, absolute=False):
         """
@@ -30,30 +31,24 @@ class VariogramSlopeDescr(BaseDescriptor):
         self.days_per_bin = days_per_bin
         self.absolute = absolute
 
-    def getSpaceCoords(self, stars):
+    def getFeatures(self, star):
         """
-        Get list of desired colors
+        Get variogram slope
 
         Parameters
         -----------
-        stars : list of Star objects
-            Stars with color magnitudes in their 'more' attribute
+        star : lcc.entities.star.Star object
+            Star to process
 
         Returns
         -------
-        list
-            Variogram slopes
+        float
+            Variogram slope of the investigated star
         """
+        x, y = star.lightCurve.getVariogram(
+            days_per_bin=self.days_per_bin)
+        slope = np.polyfit(x, y, 1)[0]
+        if self.absolute:
+            return abs(slope)
+        return slope
 
-        coords = []
-        for star in stars:
-            if star.lightCurve:
-                x, y = star.lightCurve.getVariogram(
-                    days_per_bin=self.days_per_bin)
-                slope = np.polyfit(x, y, 1)[0]
-                if self.absolute:
-                    slope = abs(slope)
-                coords.append(slope)
-            else:
-                coords.append(None)
-        return coords

@@ -5,15 +5,30 @@ from lcc.utils.commons import returns, accepts
 
 class BaseDescriptor(object):
     __metaclass__ = abc.ABCMeta
-    '''
+    """
     Base class for all filters. It is something like interface (check whether
     subclasses have certain methods
-    '''
+    """
 
     LABEL = ""
 
-    @accepts(list)
-    @returns(list)
+    def getFeatures(self, star):
+        """
+        Get feature from star object
+
+        Parameters
+        -----------
+        star : lcc.entities.star.Star object
+            Star to process
+
+        Returns
+        -------
+        list, iterable, int, float
+            Features of the processed star
+        """
+        raise NotImplementedError
+
+
     def getSpaceCoords(self, stars):
         """
         Get list of parameters coordinates according to descriptor
@@ -29,7 +44,28 @@ class BaseDescriptor(object):
         list
             List of coordinates
         """
-        raise NotImplementedError
+        if hasattr(self, "LC_NEEDED"):
+            lc_needed = self.LC_NEEDED
+        else:
+            lc_needed = False
+
+        space_coords = []
+        for star in stars:
+            if lc_needed:
+                if star.lightCurve:
+                    features = self.getFeatures(star)
+                else:
+                    if hasattr(self, "LABEL"):
+                        if hasattr(self.LABEL, "__iter__"):
+                            features = [None for _ in self.LABEL]
+                        else:
+                            features = None
+                    else:
+                        features = None
+                space_coords.append(features)
+
+            space_coords.append(self.getFeatures(star))
+        return space_coords
 
     # TODO: Check whether these lists contains object of Star class type
 

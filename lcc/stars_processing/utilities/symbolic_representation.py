@@ -1,14 +1,16 @@
 import abc
+import logging
+
+import numpy as np
 
 from lcc.stars_processing.utilities.sax import SAX
-import numpy as np
 
 
 class SymbolicRepresentation(object):
-    '''
+    """
     This common class for all descriptors based on symbolic representation
     of data.
-    '''
+    """
     __metaclass__ = abc.ABCMeta
 
     def compareTwoStars(self, star, comp_star):
@@ -34,22 +36,26 @@ class SymbolicRepresentation(object):
         if not self.slide or not hasattr(self, "getWords"):
             inspected_word = self.getWord(star)
             comp_word = self.getWord(comp_star)
+            logging.debug("Comparing {0} and {1}".format(inspected_word, comp_word))
             score = self._getDissmilarity(inspected_word, comp_word, curve_len)
-            return score
 
         else:
             one_word, words = self.getWords(comp_star, star)
-            return self._getDissmilaritySlide(one_word, words)
+            logging.debug("Comparing {0} and {1}".format(one_word, words))
+            score = self._getDissmilaritySlide(one_word, words)
+
+        logging.debug("Score is {}".format(score))
+        return score
 
     def _getWord(self, x, word_size, alphabet_size):
         self.sax = SAX(word_size, alphabet_size)
         return self.sax.to_letter_rep(x)[0]
 
     def _getDissmilaritySlide(self, sliding_word, words):
-        '''
+        """
         This method go through string curve of a star and trying to match filter
         sentence pattern.
-        '''
+        """
         best_score = 1e9
         for word in words:
             score = self.sax.compare_strings(word, sliding_word)
@@ -58,10 +64,10 @@ class SymbolicRepresentation(object):
         return best_score
 
     def _getDissmilarity(self, inspected_word, filter_word, curve_len):
-        '''
+        """
         This method go through string curve of a star and trying to match filter
         sentence pattern.
-        '''
+        """
         if not inspected_word or not filter_word:
             raise Exception("There are no words for comparing")
 

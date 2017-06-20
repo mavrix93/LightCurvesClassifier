@@ -5,37 +5,33 @@ from lcc.stars_processing.utilities.base_descriptor import BaseDescriptor
 
 
 class CurveDensityDescr(BaseDescriptor):
-    '''
+    """
     This filter throw out stars with low density light curves. It means light
     curves with huge non observing gaps or light curves with low amount
     of observations
 
     Attributes
     ----------
-    '''
+    """
 
     LABEL = "Curve density [points per time lag]"
+    LC_NEEDED = True
 
-    def getSpaceCoords(self, stars):
+    def getFeatures(self, star):
         """
-        Get list of curve densities
+        Get density of the star's light curve
 
         Parameters
         -----------
-        stars : list of Star objects
-            Stars with color magnitudes in their 'more' attribute
+        star : lcc.entities.star.Star object
+            Star to process
 
         Returns
         -------
-        list
-            Densities of points per time lag
+        list, iterable, int, float
+            Density (points per time lag) of the investigated star
         """
-        coo = []
-        for star in stars:
-            if star.lightCurve:
-                x, _ = to_ekvi_PAA(star.lightCurve.time, star.lightCurve.mag)
-                ren = x.max() - x.min()
-                coo.append(len(x) / ren)
-            else:
-                coo.append([None])
-        return coo
+        x, _ = to_ekvi_PAA(star.lightCurve.time, star.lightCurve.mag)
+        ren = x.max() - x.min()
+        return len(x) / ren
+

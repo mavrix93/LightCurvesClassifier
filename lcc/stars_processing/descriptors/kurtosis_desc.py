@@ -19,6 +19,7 @@ class KurtosisDescr(BaseDescriptor):
         Absolute value of kurtosis is taken if it is `True`
     """
     LABEL = "Kurtosis"
+    LC_NEEDED = True
 
     def __init__(self, bins=None, absolute=False):
         """
@@ -33,34 +34,28 @@ class KurtosisDescr(BaseDescriptor):
         self.bins = bins
         self.absolute = absolute
 
-    def getSpaceCoords(self, stars):
+    def getFeatures(self, star):
         """
-        Get list of skewness values
+        Get  skewness
 
         Parameters
         -----------
-        stars : list of Star objects
-            Stars which contain light curves
+        star : lcc.entities.star.Star object
+            Star to process
 
         Returns
         -------
-        list
-            List of list of floats
+        float
+            Kurtosis of investigated star
         """
-        kurtosis_list = []
-        for star in stars:
-            if star.lightCurve:
-                lc = star.lightCurve
-                if self.bins:
-                    _, mags = to_ekvi_PAA(lc.time, lc.mag, self.bins)
-                else:
-                    mags = lc.mag
-                kurt = kurtosis(mags)
+        lc = star.lightCurve
+        if self.bins:
+            _, mags = to_ekvi_PAA(lc.time, lc.mag, self.bins)
+        else:
+            mags = lc.mag
+        kurt = kurtosis(mags)
 
-                if self.absolute:
-                    kut = abs(kurt)
+        if self.absolute:
+            kurt = abs(kurt)
 
-            else:
-                kurt = None
-            kurtosis_list.append(kurt)
-        return kurtosis_list
+        return kurt

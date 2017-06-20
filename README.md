@@ -78,7 +78,7 @@ Or it can be "installed" manually.
 
 1) Download the package from git repository
 
-2) Export the root of the package to sys path
+2) Export the root of the package to PYTHON PATH
 	
 There is one extra step if you want to use the command line API:
 
@@ -308,8 +308,8 @@ decider = PackageReader().getClassesDict("deciders").get(decid_name)
 
 tun_params = [{descr_name : {tun_param : abbe_value}} for abbe_value in range(bin_from, bin_to, bin_step)]
 
-quasars = StarsProvider.getProvider(obt_method, {"path" : quasars_path}).getStarsWithCurves()
-stars = StarsProvider.getProvider(obt_method, {"path" : stars_path}).getStarsWithCurves()
+quasars = StarsProvider.getProvider(obt_method, {"path" : quasars_path}).getStars()
+stars = StarsProvider.getProvider(obt_method, {"path" : stars_path}).getStars()
 
 # Estimate all combinations and get the best one
 es = ParamsEstimator(searched=quasars,
@@ -334,6 +334,95 @@ passed_stars = searcher.passed_stars
 
 ```
 
+# Fundamental objects
+
+The basic object for processing data is "Star" object (lcc.entities.star.Star). It carries all possible information about particular astronomical bodies. Main attributes are:
+
+    ident : dict
+            Dictionary of identifiers of the star. Each key of the dict
+            is name of a database and its value is another dict of database
+            identifiers for the star (e.g. 'name') which can be used
+            as an unique identifier for querying the star. For example:
+                ident = {"OgleII" : {"name" : "LMC_SC1_1",
+                                    "db_ident" : {"field_num" : 1,
+                                                  "starid" : 1,
+                                                  "target" : "lmc"},
+                                                  ...}
+            Please keep convention as is shown above. Star is able to
+            be queried again automatically if ident key is name of
+            database connector and it contains dictionary called
+            "db_ident". This dictionary contains unique query for
+            the star in the database.
+            
+    name : str
+        Optional name of the star across the all databases
+        
+    coo : astropy.coordinates.sky_coordinate.SkyCoord
+        Coordinate of the star
+        
+    more : dict
+        Additional informations about the star in dictionary. This
+        attribute can be considered as a container. These parameters
+        can be then used for filtering. For example it can contains
+        color indexes:
+            more = { "b_mag" : 17.56, "v_mag" : 16.23 }
+            
+    star_class : str
+        Name of category of the star e.g. 'cepheid', 'RR Lyrae', etc.
+        
+    light_curves : list
+        Light curve objects of the star
+        
+"Star" objects is the standart input/output of all methods working with star-like data. This unification allows compatible of the whole package with any kind of data (it even don't have to be stars data). They be loaded from dat or fits files (first extension contains metadata and second binary extension contains light curve). Also they can be downloaded by using database connectors or created manually. 
+
+## Creating a Star object manually and exporting to FITS
+
+```
+import numpy as np
+
+from lcc.entities.star import Star
+from lcc.utils.stars import saveStars
+
+## Preparation of data of the star
+# Name of the star
+star_name = "LMC_SC_1_1"
+
+# Identifier of the star (names of the same object in different databases)
+# In our example no counterpart in other catalogs is know so just one entry is saved
+# "db_ident" key is query dict which can be used to query the object in particular databases
+ident = {"OgleII" : {"name" : "LMC_SC_1_1",
+                     "db_ident" : {"field_num" : 1,
+                                   "starid" : 1,
+                                   "target" : "lmc"}}}
+
+# Coordinates of the star in degrees. Also it can be astropy SkyCoord object
+coordinates = (83.2372045, -70.55790)
+         
+# All other information about the object
+# This values are just demonstrative (not real)
+other_info = {"b_mag" : 14.28,
+             "i_mag" : 13.54,
+             "mass_sun" : 1.12,
+             "distance_pc" : 346.12,
+             "period_days" : 16.57}
+
+# Light curve created from from 3 arrays (list or other iterable)
+time = np.linspace(1, 200, 20)
+mag = np.sin(time)
+error = np.random.random_sample(20)
+
+# Create Star object
+star = Star(name=star_name, ident=ident, coo=coordinates, more=other_info)
+
+# Put light curve into the star object
+star.putLightCurve([time, mag, error])
+
+# List of Star object can be saved as fits files
+# File is saved in /tmp folder with name according to "name" attribute. In our example it is "LMC_SC_1_1.fits".
+saveStars([star], "/tmp")
+```
+
+
 # Database connectors
 ## Usage
 
@@ -353,7 +442,7 @@ In term of program structure - all connectors return star objects, but just Ligh
                 {"kic_jkcolor": (0.3, 0.4), "max_records": 5}]
     client = StarsProvider().getProvider(obtain_method="KeplerArchive",
                                          obtain_params=queries)
-    stars = client.getStarsWithCurves()
+    stars = client.getStars()
 
 Because of common API for all connectors therefore databases can be queried by the same syntax. Keys for quering depends on designation in particular databases. However there are common keys for cone search:
 
@@ -378,7 +467,7 @@ Stars can be then easily crossmatched:
     for archive in ["AsasArchive", "OgleII", "CorotBrightArchive", "KeplerArchive"] :
         client = StarsProvider().getProvider(obtain_method=archive,
                                              obtain_params=queries)
-        one_star_in_many_databases += client.getStarsWithCurves()
+        one_star_in_many_databases += client.getStars()
 
 ## Implementing new connectors
 
@@ -386,7 +475,7 @@ All connectors accept input (queries) in unitary format (list of dictionaries) a
 
 The connectors have to inherit *StarsCatalogue* or *LightCurvesDb* classes. This ensures that all connectors are able to return unitary Star objects in the same manner. Inheritage of these classes helps *StarsProvider* to find connectors.
 
-Moreover connectors can inherite other interface classes which bring more funcionality to child classes. For example *TapClient* can be used for VO archives providing TAP access. 
+Moreover connectors can inherite other interface classes which bring more funcionality to child classes. For example *TapClient* can be used for VO archives providing TAP access. See section "New modules" below.
 
 ### VizierTapBase
 
@@ -401,7 +490,7 @@ Common interface for all databases accessible via Vizier. For many databases the
             queries = [{"Field": 1 , "Tile": 3441, "Seqn": 25}]
             client = StarsProvider().getProvider(obtain_method="MachoDb",
                                                  obtain_params=queries)
-            stars = client.getStarsWithCurves()
+            stars = client.getStars()
         '''
 
         TABLE = "II/247/machovar"
@@ -422,3 +511,67 @@ Common interface for all databases accessible via Vizier. For many databases the
                                         ("bPer", "period_b")))
 
    
+
+# New modules
+
+Module which are ment to be developted by needs of user are:
+
++ Connectors
++ Descriptors
++ Deciders
+
+All these modules can be imported by normal import statements (such as: from lcc.stars_processing.descriptors.abbe_value_descr import AbbeValueDescr). Anyway there is a shortcut. Class "lcc.data_manager.package_reader.PackageReader" allows to get all modules of desired group as a dictionary. For example:
+
+```
+PackageReader.getClassesDict("deciders")
+```
+
+produces
+
+```
+{'CustomDecider': lcc.stars_processing.deciders.custom_decider.CustomDecider,
+ 'GMMBayesDec': lcc.stars_processing.deciders.supervised_deciders.GMMBayesDec,
+ 'GaussianNBDec': lcc.stars_processing.deciders.supervised_deciders.GaussianNBDec,
+ 'LDADec': lcc.stars_processing.deciders.supervised_deciders.LDADec,
+ 'NeuronDecider': lcc.stars_processing.deciders.neuron_decider.NeuronDecider,
+ 'QDADec': lcc.stars_processing.deciders.supervised_deciders.QDADec,
+ 'SVCDec': lcc.stars_processing.deciders.supervised_deciders.SVCDec,
+ 'TreeDec': lcc.stars_processing.deciders.supervised_deciders.TreeDec}
+```
+
+One can see what is available and easily get method what one needs.  Moreover we can say our discovery method to look to other places for classes. It is looking to predefined locations (in the package by default) for classes of interest. Trick is in inheritance. All groups inherit different classes. Besides other perks, it is labeling classes. For example all descriptrs inherits "BaseDescriptor" which ensures that all descriptors are able to do all things which are required. Hence it's very easy to implement new methods.
+
+Let's suppose that one has own descriptors in "/some_path/my_modules/my_descriptors" and new method in "std_desc.py" for calculating standart deviation of magnitudes:
+
+```
+import numpy as np
+
+from lcc.stars_processing.utilities.base_descriptor import BaseDescriptor
+
+
+class StdDesc(BaseDescriptor):
+    
+    def getFeatures(self, star):
+        """
+        Get standart deviation of magnitudes
+        
+        Parameters
+        -----------
+        star : lcc.entities.star.Star object
+            Star to process
+
+        Returns
+        -------
+        list, iterable, int, float
+            Abbe value of investigated star
+        """
+        return np.std(star.lightCurve.mag)
+```
+
+It's pretty short, but inheriting "BaseDescriptor" it is fully funcional descriptor. The point is to express by "getFeatures" method how to get features (describe star object by some numbers) from "Star" object.  Question is how to say lcc that we have own descriptor? Easy again:
+
+```
+PackageReader.appendModules("descriptors", "some_path/my_modules/my_descriptors")
+```
+
+That's all. After calling "PackageReader.getClassesDict('descriptors')" there will be our new module ready to use. 

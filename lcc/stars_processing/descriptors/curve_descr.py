@@ -1,4 +1,6 @@
 from __future__ import  division
+
+import logging
 import numpy as np
 
 from lcc.entities.exceptions import QueryInputError
@@ -62,7 +64,7 @@ class CurveDescr(BaseDescriptor):
         if not self.bins:
             self.bins = np.min([len(st.lightCurve.mag) for st in stars if st.lightCurve])
             self.LABEL = ["Light curve point " + str(i+1) for i in range(self.bins)]
-            print "Setting bins as min: ", self.bins
+            logging.info("Setting bins as min: ".format(self.bins))
 
         coords = []
         for star in stars:

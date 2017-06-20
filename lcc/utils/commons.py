@@ -233,8 +233,11 @@ def accepts(*accepted_arg_types):
                 function_args = function_args[1:]
 
             elif len(accepted_arg_types) is not len(function_args):
+                print accepted_arg_types, "fd",function_args
                 raise InvalidArgumentNumberError(
-                    "Function: %s " % validate_function.__name__)
+                    "Function: {0}. Expected {1}, but got {2} ".format(validate_function.__name__,
+                                                                       len(accepted_arg_types),
+                                                                       len(function_args)))
 
             # We're using enumerate to get the index, so we can pass the
             # argument number with the incorrect type to

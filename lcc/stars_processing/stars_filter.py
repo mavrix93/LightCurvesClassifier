@@ -2,11 +2,12 @@ from __future__ import division
 
 import warnings
 
+import numpy as np
+import pandas as pd
+
 from lcc.entities.exceptions import QueryInputError
 from lcc.utils.commons import check_attribute
 from lcc.utils.helpers import getMeanDict
-import numpy as np
-import pandas as pd
 
 
 class StarsFilter(object):

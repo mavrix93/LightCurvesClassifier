@@ -1,7 +1,9 @@
-from lcc.stars_processing.descriptors.curve_shape_descr import CurvesShapeDescr
-from lcc.entities.star import Star
-import numpy as np
 import unittest
+
+import numpy as np
+
+from lcc.entities.star import Star
+from lcc.stars_processing.descriptors.curve_shape_descr import CurvesShapeDescr
 from lcc.stars_processing.descriptors.hist_shape_descr import HistShapeDescr
 from lcc.stars_processing.descriptors.variogram_shape_descr import VariogramShapeDescr
 
@@ -11,29 +13,28 @@ class TestComparative(unittest.TestCase):
     def setUp(self):
         self.star1 = Star()
         x = np.linspace(1, 10, 100)
-        self.star1.lightCurve = [x, np.sin(x)]
+        x2 = x**2
+        self.star1.putLightCurve([x, x2 / x2[-1]])
         self.star2 = Star()
-        self.star2.lightCurve = [x, np.cos(x)]
+        self.star2.putLightCurve([x, np.cos(x)])
         self.star3 = Star()
-        self.star3.lightCurve = [x, np.cos(x + 0.5)]
+        xx = np.linspace(1,45, 600)
+        self.star3.putLightCurve([xx, np.cos(xx + 0.1)*xx])
 
     def testCurveShape(self):
-        lcdes = CurvesShapeDescr(50, 5)
-        lcdes.loadCompStars([self.star2, self.star3])
+        lcdes = CurvesShapeDescr([self.star2], 0.6, 10)
         assert lcdes.getSpaceCoords(
-            [self.star1], "closest")[0] < lcdes.getSpaceCoords([self.star1])[0]
+            [self.star3])[0] < lcdes.getSpaceCoords([self.star1])[0]
 
     def testHistShape(self):
-        hist = HistShapeDescr(10, 5)
-        hist.loadCompStars([self.star2, self.star3])
+        hist = HistShapeDescr([self.star2], 10, 5)
         assert hist.getSpaceCoords(
-            [self.star1], "closest")[0] == hist.getSpaceCoords([self.star1])[0]
+            [self.star3])[0] > hist.getSpaceCoords([self.star1])[0]
 
     def testVarioShape(self):
-        vario = VariogramShapeDescr(10, 5)
-        vario.loadCompStars([self.star2, self.star3])
+        vario = VariogramShapeDescr([self.star2], 10, 5)
         assert vario.getSpaceCoords(
-            [self.star1]) == vario.getSpaceCoords([self.star1], "closest")
+            [self.star3]) > vario.getSpaceCoords([self.star1])
 
 
 if __name__ == "__main__":

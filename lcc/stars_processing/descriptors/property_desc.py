@@ -2,7 +2,7 @@ from lcc.stars_processing.utilities.base_descriptor import BaseDescriptor
 
 
 class PropertyDescr(BaseDescriptor):
-    '''
+    """
     Descriptor which using star's attributes
 
     Attributes
@@ -18,12 +18,13 @@ class PropertyDescr(BaseDescriptor):
         `attribute_name` value
 
 
-    '''
+    """
 
     LABEL = "Star's property"
+    LC_NEEDED = False
 
     def __init__(self, attribute_names, ifnot=None):
-        '''
+        """
         Parameters
         -----------
         attribute_names : iterable, str
@@ -32,7 +33,7 @@ class PropertyDescr(BaseDescriptor):
         ifnot : str, NoneType
             Value of coordinates which will be assigned if there is no
             `attribute_name` value
-        '''
+        """
         if hasattr(attribute_names, "__iter__"):
             attribute_names = list(attribute_names)
         else:
@@ -43,31 +44,27 @@ class PropertyDescr(BaseDescriptor):
 
         self.LABEL = attribute_names
 
-    def getSpaceCoords(self, stars):
+    def getFeatures(self, star):
         """
-        Get list of desired attributes
+        Get desired attributes
 
         Parameters
         -----------
-        stars : list of Star objects
-            Stars with `self.attribute_name` keys in their 'more' attribute
+        star : lcc.entities.star.Star object
+            Star to process
 
         Returns
         -------
         list
-            List of list of floats
+            Desired more attributes of the investigated star
         """
-        coords = []
+        coo = [star.more.get(attribute_name, self.ifnot)
+               for attribute_name in self.attribute_names]
+        if coo != self.ifnot:
+            try:
+                coo = [float(c) for c in coo]
+            except ValueError:
+                raise ValueError(
+                    "Attributes of stars for PropertyDescriptors have to be numbers.\nGot: %s" % coo)
 
-        for star in stars:
-            coo = [star.more.get(attribute_name, self.ifnot)
-                   for attribute_name in self.attribute_names]
-            if coo != self.ifnot:
-                try:
-                    coo = [float(c) for c in coo]
-                except ValueError:
-                    raise ValueError(
-                        "Attributes of stars for PropertyDescriptors have to be numbers.\nGot: %s" % coo)
-            coords.append(coo)
-
-        return coords
+        return coo

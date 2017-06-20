@@ -2,31 +2,29 @@ from lcc.stars_processing.utilities.base_descriptor import BaseDescriptor
 
 
 class PositionDescriptor(BaseDescriptor):
-    '''
+    """
     Describe stars according their position on the sky
-    '''
+    """
 
     LABEL = ["Right ascension", "Declination"]
+    LC_NEEDED = False
 
-    def getSpaceCoords(self, stars):
+    def getFeatures(self, star):
         """
-        Get list of desired attributes
+        Get coordinates
 
         Parameters
         -----------
-        stars : list of Star objects
-            Stars with `coo` attribute
+        star : lcc.entities.star.Star object
+            Star to process
 
         Returns
         -------
         list
-            List of list of floats
+            Abbe value of the investigated star
         """
+        if star.coo:
+            return [star.coo.ra.degree, star.coo.dec.degree]
+        else:
+            return [None, None]
 
-        coords = []
-        for star in stars:
-            if star.coo:
-                coords.append([star.coo.ra.degree, star.coo.dec.degree])
-            else:
-                coords.append([None, None])
-        return coords

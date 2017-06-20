@@ -13,6 +13,7 @@ class AbbeValueDescr(BaseDescriptor):
         is calculated
     """
     LABEL = "Abbe value"
+    LC_NEEDED = True
 
     def __init__(self, bins=None):
         """
@@ -25,34 +26,24 @@ class AbbeValueDescr(BaseDescriptor):
         """
         self.bins = bins
 
-    def getSpaceCoords(self, stars):
+    def getFeatures(self, star):
         """
-        Get list of Abbe values
+        Get  Abbe value
 
         Parameters
         -----------
-        stars : list of Star objects
-            Stars which contain light curves
+        star : lcc.entities.star.Star object
+            Star to process
 
         Returns
         -------
-        list
-            List of list of floats
+        float
+            Abbe value of the investigated star
         """
-        abbe_values = []
+        if not self.bins:
+            bins = len(star.lightCurve.time)
+        else:
+            bins = self.bins
 
-        for star in stars:
-            if star.lightCurve:
+        return star.lightCurve.getAbbe(bins=bins)
 
-                if not self.bins:
-                    bins = len(star.lightCurve.time)
-                else:
-                    bins = self.bins
-
-                ab = star.lightCurve.getAbbe(bins=bins)
-            else:
-                ab = None
-
-            abbe_values.append(ab)
-
-        return abbe_values

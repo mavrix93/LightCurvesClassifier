@@ -1,7 +1,7 @@
 '''There are implementations of filters'''
 from abbe_value_descr import AbbeValueDescr
 from curve_density_descr import CurveDensityDescr
-from curve_shape_descr import CurvesShapeDescr
+from curves_shape_descr import CurvesShapeDescr
 from hist_shape_descr import HistShapeDescr
 from property_desc import PropertyDescr
 from variogram_shape_descr import VariogramShapeDescr

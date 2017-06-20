@@ -1,18 +1,17 @@
 import collections
+import logging
 import os
+import sys
+import time
 import warnings
 from warnings import warn
-import logging
 
-import pathos.multiprocessing as multiprocessing
 import pandas as pd
-import time
-
-import sys
+import pathos.multiprocessing as multiprocessing
+import tqdm
 from lcc.db_tier.stars_provider import StarsProvider
 from lcc.entities.exceptions import QueryInputError, InvalidFilesPath
 from lcc.utils.stars import saveStars
-import tqdm
 
 logger = logging.getLogger(__name__)
 

@@ -19,6 +19,7 @@ class SkewnessDescr(BaseDescriptor):
         Absolute value of skewness is taken if it is `True`
     """
     LABEL = "Skewness"
+    LC_NEEDED = True
 
     def __init__(self, bins=None, absolute=False):
         """
@@ -33,35 +34,30 @@ class SkewnessDescr(BaseDescriptor):
         self.bins = bins
         self.absolute = absolute
 
-    def getSpaceCoords(self, stars):
+    def getFeatures(self, star):
         """
-        Get list of skewness values
+        Get skewness
 
         Parameters
         -----------
-        stars : list of Star objects
-            Stars which contain light curves
+        star : lcc.entities.star.Star object
+            Star to process
 
         Returns
         -------
-        list
-            List of list of floats
+        float
+            Skewness of the investigated star
         """
-        skew_list = []
-        for star in stars:
-            if star.lightCurve:
-                lc = star.lightCurve
-                if self.bins:
-                    _, mags = to_ekvi_PAA(lc.time, lc.mag, self.bins)
-                else:
-                    mags = lc.mag
-                sk =skew(mags)
+        lc = star.lightCurve
+        if self.bins:
+            _, mags = to_ekvi_PAA(lc.time, lc.mag, self.bins)
+        else:
+            mags = lc.mag
+        sk =skew(mags)
 
-                if self.absolute:
-                    sk = abs(sk)
-            else:
-                sk = None
+        if self.absolute:
+            sk = abs(sk)
 
-            skew_list.append(sk)
+        return  sk
 
-        return skew_list
+

@@ -3,7 +3,7 @@ from lcc.stars_processing.utilities.base_descriptor import BaseDescriptor
 
 
 class ColorIndexDescr(BaseDescriptor):
-    '''
+    """
     Filter star according their color indexes
 
     Attributes
@@ -25,12 +25,14 @@ class ColorIndexDescr(BaseDescriptor):
 
     labels : list of strings
         Labels of color-diagram axis
-    '''
+    """
+
+    LC_NEEDED = False
 
     def __init__(self, colors=[("b_mag", "v_mag"), ("v_mag", "i_mag")],
                  pass_not_found=False, raise_if_not=False,
                  without_notfound=True, *args, **kwargs):
-        '''
+        """
         Parameters
         -----------
         colors : list of strings
@@ -51,7 +53,7 @@ class ColorIndexDescr(BaseDescriptor):
             be returned as well, but with None instead of coordinates (list of
             values)
 
-        '''
+        """
         self.pass_not_found = pass_not_found
         self.colors = colors
         self.labels = self.colors
@@ -64,35 +66,33 @@ class ColorIndexDescr(BaseDescriptor):
         else:
             self.LABEL = colors
 
-    def getSpaceCoords(self, stars):
+    def getFeatures(self, star):
         """
-        Get list of desired colors
+        Get color indexes
 
         Parameters
         -----------
-        stars : list of Star objects
-            Stars with color magnitudes in their 'more' attribute
+        star : lcc.entities.star.Star object
+            Star to process
 
         Returns
         -------
-        List of list of floats
+        list
+            Color indexes of the investigated star
         """
-        coords = []
-        for star in stars:
-            this_coords = []
-            for col in self.colors:
-                if hasattr(col, "__iter__"):
-                    if len(col) == 2:
-                        mag1 = star.more.get(col[0])
-                        mag2 = star.more.get(col[1])
-                        if mag1 and mag2:
-                            this_coords.append(float(mag2) - float(mag1))
-                        else:
-                            this_coords.append(None)
+        this_coords = []
+        for col in self.colors:
+            if hasattr(col, "__iter__"):
+                if len(col) == 2:
+                    mag1 = star.more.get(col[0])
+                    mag2 = star.more.get(col[1])
+                    if mag1 and mag2:
+                        this_coords.append(float(mag2) - float(mag1))
                     else:
-                        raise QueryInputError(
-                            "Colors have to be list of tuples of the length of two (second - first magnitude)")
+                        this_coords.append(None)
                 else:
-                    this_coords.append(star.more.get(col))
-            coords.append(this_coords)
-        return coords
+                    raise QueryInputError(
+                        "Colors have to be list of tuples of the length of two (second - first magnitude)")
+            else:
+                this_coords.append(star.more.get(col))
+        return this_coords

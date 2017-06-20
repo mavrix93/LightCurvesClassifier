@@ -1,9 +1,10 @@
+import logging
+import numpy as np
+
 from lcc.stars_processing.utilities.base_descriptor import BaseDescriptor
 from lcc.stars_processing.utilities.compare import ComparativeBase
 from lcc.stars_processing.utilities.symbolic_representation import SymbolicRepresentation
 from lcc.utils.data_analysis import compute_bins
-from lcc.entities.exceptions import QueryInputError
-import numpy as np
 
 
 class CurvesShapeDescr(SymbolicRepresentation, ComparativeBase, BaseDescriptor):
@@ -37,6 +38,8 @@ class CurvesShapeDescr(SymbolicRepresentation, ComparativeBase, BaseDescriptor):
     """
 
     LABEL = "Dissimilarity of the curve from the template"
+    LC_NEEDED = True
+    MAX_ITER = 500
 
     def __init__(self, comp_stars, days_per_bin, alphabet_size,
                  slide=0.25, meth="average"):
@@ -75,7 +78,7 @@ class CurvesShapeDescr(SymbolicRepresentation, ComparativeBase, BaseDescriptor):
         self.meth = meth
 
     def getWord(self, star):
-        '''
+        """
         Parameters
         -----------
         Star object with light curve
@@ -83,12 +86,14 @@ class CurvesShapeDescr(SymbolicRepresentation, ComparativeBase, BaseDescriptor):
         Returns
         --------
         String representation of light curve
-        '''
+        """
         word_size = compute_bins(star.lightCurve.time, self.days_per_bin)
+        logging.debug("Curve Shape Descr word size: {}".format(word_size))
+
         return self._getWord(star.lightCurve.mag, word_size, self.alphabet_size)
 
     def getWords(self, star1, star2):
-        '''
+        """
         Parameters
         -----------
         star1 : object
@@ -101,11 +106,14 @@ class CurvesShapeDescr(SymbolicRepresentation, ComparativeBase, BaseDescriptor):
         --------
         list
             String representations of light curve
-        '''
-        MAX_ITER = 500
-
+        """
         word_size1 = compute_bins(star1.lightCurve.time, self.days_per_bin)
         word_size2 = compute_bins(star2.lightCurve.time, self.days_per_bin)
+
+        if word_size1 == word_size2:
+            logging.debug("Stars with equal word sizes")
+            return self.getWord(star1), [self.getWord(star2)]
+
         stars = [star1, star2]
         _words = [word_size1, word_size2]
         min_arg = np.argmin(_words)
@@ -124,7 +132,7 @@ class CurvesShapeDescr(SymbolicRepresentation, ComparativeBase, BaseDescriptor):
         from_i = 0
         to_i = 0
         i = 0
-        while i < MAX_ITER:
+        while i < self.MAX_ITER:
 
             to_i = int(from_i + window_size)
 

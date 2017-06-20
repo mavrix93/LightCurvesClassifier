@@ -1,19 +1,18 @@
 from __future__ import division
 
-from astropy.coordinates.sky_coordinate import SkyCoord
-import numpy
+import warnings
 from warnings import warn
 
 import astropy.units as u
-from lcc.entities.exceptions import StarAttributeError
+import numpy
+from astropy.coordinates.sky_coordinate import SkyCoord
 from lcc.entities.light_curve import LightCurve
-import warnings
 
 
 class Star(object):
     """
     Star is base object in astronomy. This class is responsible for keeping
-    basic informations about stellar objects. It's possible to create empty
+    basic information about stellar objects. It's possible to create empty
     star and add parameters additionally
 
     Attributes
@@ -33,20 +32,26 @@ class Star(object):
             database connector and it contains dictionary called
             "db_ident". This dictionary contains unique query for
             the star in the database.
+            
     name : str
         Optional name of the star across the all databases
+        
     coo : astropy.coordinates.sky_coordinate.SkyCoord
         Coordinate of the star
+        
     more : dict
         Additional informations about the star in dictionary. This
         attribute can be considered as a container. These parameters
         can be then used for filtering. For example it can contains
         color indexes:
             more = { "b_mag" : 17.56, "v_mag" : 16.23 }
+            
     star_class : str
         Name of category of the star e.g. 'cepheid', 'RR Lyrae', etc.
+        
     light_curves : list
         Light curve objects of the star
+        
     EPS : float
         Max distance in degrees to consider two stars equal
     """
@@ -75,10 +80,13 @@ class Star(object):
             database connector and it contains dictionary called
             "db_ident". This dictionary contains unique query for
             the star in the database.
+            
         name : str
             Optional name of the star across the all databases
+            
         coo : SkyCoord object
             Coordinate of the star
+            
         more : dict
             Additional informations about the star in dictionary. This
             attribute can be considered as a container. These parameters
@@ -86,6 +94,7 @@ class Star(object):
             color indexes:
 
                 more = { "b_mag" : 17.56, "v_mag" : 16.23 }
+                
         star_class : str
             Name of category of the star e.g. 'cepheid', 'RR Lyrae', etc.
         """

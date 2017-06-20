@@ -1,16 +1,15 @@
 import random
+import sys
+import time
 import types
 import warnings
 
+import numpy as np
 import pathos.multiprocessing as multiprocessing
-import sys
-
-import time
 from lcc.entities.exceptions import InvalidOption
 from lcc.entities.exceptions import QueryInputError
 from lcc.stars_processing.stars_filter import StarsFilter
 from lcc.stars_processing.tools.stats_manager import StatsManager
-import numpy as np
 
 
 class ParamsEstimator(object):
