@@ -52,6 +52,9 @@ class Kepler(LightCurvesDb):
                "origin": "Kepler",
                "invert_yaxis": False}
 
+
+    QUERY_OPTIONS = ["ra", "dec", "delta", "nearest", "kic_num"]
+
     def __init__(self, queries, multiproc=True):
         """
         Parameters

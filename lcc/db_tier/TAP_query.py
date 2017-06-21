@@ -1,5 +1,5 @@
-import sys
 import os
+import sys
 
 from astropy.coordinates.sky_coordinate import SkyCoord
 
@@ -16,7 +16,7 @@ from lcc.entities.exceptions import QueryInputError, NoInternetConnection
 
 
 class TapClient(LightCurvesDb):
-    '''
+    """
     Common class for all TAP db clients
 
     Attributes
@@ -26,7 +26,7 @@ class TapClient(LightCurvesDb):
 
     QUOTING : list, tuple
         Expressions with any of these symbols are quoted
-    '''
+    """
 
     COO_UNIT_CONV = 1
     QUOTING = [" ", "/", "_", "-", ".", "+"]
@@ -37,7 +37,7 @@ class TapClient(LightCurvesDb):
     COUNTER_CON = 0
 
     def postQuery(self, tap_params):
-        '''
+        """
         Post query according to given parameters
 
         Parameters
@@ -65,7 +65,7 @@ class TapClient(LightCurvesDb):
         --------
         list of lists
             Result from the query as nested lists
-        '''
+        """
 
         # Load tap protocol parameters
         self.URL = tap_params["URL"]
@@ -100,7 +100,7 @@ class TapClient(LightCurvesDb):
         return retrieve_data
 
     def _get_select_text(self):
-        '''Get SELECT part for query'''
+        """Get SELECT part for query"""
 
         if (isinstance(self.select, (list, tuple, set))):
             select_text = "SELECT "
@@ -116,14 +116,14 @@ class TapClient(LightCurvesDb):
         return select_text
 
     def _get_from_text(self):
-        '''Get GET part for query'''
+        """Get GET part for query"""
 
         if (type(self.table) == str):
             return "FROM " + self.table + " "
         raise QueryInputError("Given table name is not string")
 
     def _get_where_text(self):
-        '''Get WHERE part for query'''
+        """Get WHERE part for query"""
 
         where_text = "WHERE "
         for _condition in self.conditions:
@@ -169,7 +169,11 @@ class TapClient(LightCurvesDb):
     def _quoteIfNeeded(self, value):
         value = str(value).strip()
 
-        need_quoting = True in [let in value for let in self.QUOTING]
+        try:
+            float(value)
+            need_quoting = False
+        except ValueError:
+            need_quoting = True in [let in value for let in self.QUOTING]
 
         if (need_quoting and not value.startswith("'") and
                 not value.startswith('"')):

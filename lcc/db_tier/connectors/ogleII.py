@@ -302,7 +302,7 @@ class OgleII(LightCurvesDb):
         }
 
         _url = "%s/getobj.php" % self.ROOT
-        _result = urllib2.urlopen(_url, urllib.urlencode(params))
+        urllib2.urlopen(_url, urllib.urlencode(params))
 
         url = "%s/data/%s/%s_i_%s.dat" % (self.ROOT,
                                           lc_tmp, field.lower(), starid)

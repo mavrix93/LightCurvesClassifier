@@ -17,8 +17,7 @@ class Asas(VizierTapBase, LightCurvesDb):
     -------
     queries = [{"ASAS": "000030-3937.5"},
                {"ra": 0.4797, "dec": -67.1290, "delta": 10}]
-    client = StarsProvider.getProvider(obtain_method="Asas",
-                                          obtain_params=queries)
+    client = StarsProvider.getProvider("Asas",queries)
     stars = client.getStarsWithCurves(do_per=True)
     """
 
@@ -41,6 +40,8 @@ class Asas(VizierTapBase, LightCurvesDb):
                                         ("Kmag", "k_mag"),
                                         ("Hmag", "h_mag"),
                                         ("LC", "lc_file")))
+
+    QUERY_OPTIONS = ["ra", "dec", "delta", "nearest", "ASAS"]
 
     def _getLightCurve(self, star, do_per=False, *args, **kwargs):
         url = self.LC_URL.format(asas_id=star.name)

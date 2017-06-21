@@ -3,14 +3,15 @@ from __future__ import division
 import cStringIO
 import collections
 import os
+import warnings
+
+import numpy as np
 import pyfits
 import requests
-import warnings
 
 from lcc.db_tier.base_query import LightCurvesDb
 from lcc.db_tier.vizier_tap_base import VizierTapBase
 from lcc.entities.light_curve import LightCurve
-import numpy as np
 from lcc.utils.data_analysis import to_ekvi_PAA
 
 
@@ -27,9 +28,8 @@ class CorotBright(VizierTapBase, LightCurvesDb):
     ---------
     queries = [{"ra": 102.707, "dec": -0.54089, "delta": 10},
                {"CoRot": 116}]
-    client = StarsProvider.getProvider(obtain_method="CorotBright",
-                                       obtain_params=queries)
-    stars = client.getStarsWithCurves(max_bins=10000)
+    client = StarsProvider.getProvider("CorotBright", queries)
+    stars = client.getStars(max_bins=10000)
     """
 
     LC_URL = "http://vizier.u-strasbg.fr/viz-bin/nph-Cat?-plus=-%2b&B/corot/files/"
@@ -54,20 +54,23 @@ class CorotBright(VizierTapBase, LightCurvesDb):
                                         ("VMAG", "abs_v_mag"),
                                         ("Teff", "temp")))
 
+    QUERY_OPTIONS = ["ra", "dec", "delta", "nearest", "CoRot"]
+
     def _getLightCurve(self, file_name, max_bins=1e3, *args, **kwargs):
         """
         Obtain light curve
 
         Parameters
         -----------
-            file_name : str
-                Path to the light curve file from root url
+        file_name : str
+            Path to the light curve file from root url
 
-            max_bins : int
-                Maximal number of dimension of the light curve
+        max_bins : int
+            Maximal number of dimension of the light curve
 
         Returns
         --------
+        tuple
             Tuple of times, magnitudes, errors lists
         """
         EXT_NUM = 2
@@ -117,13 +120,12 @@ class CorotFaint(CorotBright):
     """
     Corot archive of faint stars
 
-
     Examples
     ---------
-        queries = [ { "Corot" : "102706554"},
-                    {"ra": 100.94235, "dec" : -00.89651, "delta" : 10}]        
-        client = StarsProvider().getProvider( obtain_method = "CorotFaint", obtain_params = queries)
-        stars = client.getStarsWithCurves(max_bins = 10000 )    
+    queries = [ { "CoRot" : "102706554"},
+                {"ra": 100.94235, "dec" : -00.89651, "delta" : 10}]        
+    client = StarsProvider().getProvider("CorotFaint", queries)
+    stars = client.getStars(max_bins = 10000 )    
     """
 
     TABLE = "B/corot/Faint_star"

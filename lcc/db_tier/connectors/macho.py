@@ -4,8 +4,6 @@ from lcc.db_tier.base_query import LightCurvesDb
 from lcc.db_tier.vizier_tap_base import VizierTapBase
 
 
-# TODO: Convert coo query from degrees to h:m:s, d:m:s
-# NOTE: Please note that coordinates query is not available now
 class Macho(VizierTapBase, LightCurvesDb):
     """
     Client for MACHO database of variable stars. It inherits `VizierTapBase` - see
@@ -13,9 +11,9 @@ class Macho(VizierTapBase, LightCurvesDb):
 
     EXAMPLES
     --------
-    queries = [{"Field": 1 , "Tile": 3441, "Seqn": 25}]
-    client = StarsProvider.getProvider(obtain_method="Macho",
-                                       obtain_params=queries)
+    queries = [{"Field": 1 , "Tile": 3441, "Seqn": 25},
+               {'dec': -69.3948,'ra': 75.3546, 'delta': 10}]
+    client = StarsProvider.getProvider("Macho", queries)
     stars = client.getStars()
     """
 
