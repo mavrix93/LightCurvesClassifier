@@ -91,17 +91,18 @@ class Catalina(LightCurvesDb):
         """
         self.parseQuery(query)
         query_type = self.getQueryType(query)
+        updated_query = query.copy()
         if query_type == "coo":
-            query.update(self.COO_BASE_QUERY)
+            updated_query.update(self.COO_BASE_QUERY)
             root = self.COO_QUERY_ROOT
 
         elif query_type == "id":
-            query.update(self.ID_BASE_QUERY)
+            updated_query.update(self.ID_BASE_QUERY)
             root = self.ID_QUERY_ROOT
 
-        multiple_lcs = query_type == "coo" and not query.get("nearest", False)
+        multiple_lcs = query_type == "coo" and not updated_query.get("nearest", False)
 
-        return self.parseRawStar(requests.post(root, data=query).text, load_lc, multiple_lcs)
+        return self.parseRawStar(requests.post(root, data=updated_query).text, load_lc, multiple_lcs)
 
     def parseRawStar(self, raw_html, load_lc, multiple_lcs=False):
         """

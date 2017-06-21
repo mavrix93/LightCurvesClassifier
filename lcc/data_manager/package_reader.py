@@ -66,11 +66,14 @@ class PackageReader(object):
             for package_module in contents:
                 path = os.path.join(
                     package_name, package_module).replace("/", ".")
-                module_classes = cls.getModuleClasses(
-                    importlib.import_module(path))
-                for module_class in module_classes:
-                    if issubclass(module_class, base_class):
-                        searched_classes.append(module_class)
+                try:
+                    module_classes = cls.getModuleClasses(
+                        importlib.import_module(path))
+                    for module_class in module_classes:
+                        if issubclass(module_class, base_class):
+                            searched_classes.append(module_class)
+                except:
+                    pass
         return searched_classes
 
     @classmethod
