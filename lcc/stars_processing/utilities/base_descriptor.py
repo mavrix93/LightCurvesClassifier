@@ -63,8 +63,8 @@ class BaseDescriptor(object):
                     else:
                         features = None
                 space_coords.append(features)
-
-            space_coords.append(self.getFeatures(star))
+            else:
+                space_coords.append(self.getFeatures(star))
         return space_coords
 
     # TODO: Check whether these lists contains object of Star class type
