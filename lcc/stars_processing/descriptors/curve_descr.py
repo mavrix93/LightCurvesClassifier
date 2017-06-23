@@ -43,9 +43,9 @@ class CurveDescr(BaseDescriptor):
         self.red_dim = red_dim
 
         if red_dim:
-            self.LABEL = ["Light curve point " + str(i+1) for i in range(red_dim)]
+            self.LABEL = ["" for i in range(red_dim)]
         elif bins:
-            self.LABEL = ["Light curve point " + str(i+1) for i in range(bins)]
+            self.LABEL = ["" for i in range(bins)]
 
     def getSpaceCoords(self, stars):
         """
@@ -87,7 +87,7 @@ class CurveDescr(BaseDescriptor):
                 y -= y.mean()
                 coords.append(y.tolist())
             else:
-                coords.append(None)
+                coords.append([None for _ in self.LABEL])
 
         if self.red_dim:
             _coords = [c for c in coords if c]
