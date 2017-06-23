@@ -5,7 +5,7 @@ from lcc.utils.data_analysis import histogram, variogram, to_ekvi_PAA,\
 import matplotlib.pyplot as plt
 import numpy as np
 
-
+# TODO move descriptors method to descriptors
 class LightCurve(object):
     """
     Attributes
@@ -38,7 +38,7 @@ class LightCurve(object):
                     "color": "N/A"
                     }
 
-    BAD_VALUES = (np.NaN, None, "", "-99", "-99.0")
+    BAD_VALUES = (np.NaN, np.nan, None, "", "-99", "-99.0")
 
     def __init__(self, param, meta={}):
         '''
@@ -193,9 +193,13 @@ class LightCurve(object):
     def _cleanLC(self, time, mag, err):
         cl_time, cl_mag, cl_err = [], [], []
         for t, m, e in zip(time, mag, err):
-            if not (t in self.BAD_VALUES or m in self.BAD_VALUES or
-                    e in self.BAD_VALUES):
+            mind_me = [t in self.BAD_VALUES, m in self.BAD_VALUES, e in self.BAD_VALUES, not np.isfinite(t), not np.isfinite(m), not np.isfinite(e)]
+            if not True in mind_me:
                 cl_time.append(round(t, 5))
                 cl_mag.append(round(m, 3))
                 cl_err.append(round(e, 3))
         return np.array(cl_time), np.array(cl_mag), np.array(cl_err)
+
+    def selfClean(self):
+        self.time, self.mag, self.err = self._cleanLC(self.time, self.mag, self.err)
+        return True

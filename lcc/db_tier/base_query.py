@@ -98,8 +98,10 @@ class StarsCatalogue(object):
                     dist = coo.separation(star.coo)
                     if dist < delta_deg:
                         passed_stars.append(star)
+                        distances.append(dist.degree)
                 else:
                     passed_stars.append(star)
+                    distances.append(np.inf)
 
         except AttributeError:
             raise QueryInputError("Invalid query coordinates")
