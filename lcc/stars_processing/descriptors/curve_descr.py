@@ -90,21 +90,22 @@ class CurveDescr(BaseDescriptor):
                 coords.append([None for _ in self.LABEL])
 
         if self.red_dim:
-            _coords = [c for c in coords if c]
+            _coords = [c for c in coords if None not in c]
 
             if len(_coords[0]) > self.red_dim:
                 _coords = self._reduceDimension(_coords)
             else:
                 QueryInputError("Number of samples have to be greater then reduced dimension")
+            
 
             k = 0
             red_coo = []
             for c in coords:
-                if c:
+                if None not in c:
                     red_coo.append(_coords[k])
                     k += 1
                 else:
-                    red_coo.append([np.NaN])
+                    red_coo.append([np.NaN for _ in range(self.red_dim)])
             coords = red_coo
 
         return coords
@@ -116,4 +117,5 @@ class CurveDescr(BaseDescriptor):
                 self.pca.fit(data)
             return self.pca.transform(data).tolist()
         except ValueError as e:
+            logging.debug("Data: {0}".format(str(data)))
             raise QueryInputError(str(e))

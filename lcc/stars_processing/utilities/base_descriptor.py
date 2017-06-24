@@ -11,6 +11,7 @@ class BaseDescriptor(object):
     """
 
     LABEL = ""
+    NONE_VALUE = None
 
     def getFeatures(self, star):
         """
@@ -57,11 +58,11 @@ class BaseDescriptor(object):
                 else:
                     if hasattr(self, "LABEL"):
                         if hasattr(self.LABEL, "__iter__"):
-                            features = [None for _ in self.LABEL]
+                            features = [self.NONE_VALUE for _ in self.LABEL]
                         else:
-                            features = None
+                            features = self.NONE_VALUE
                     else:
-                        features = None
+                        features = self.NONE_VALUE
                 space_coords.append(features)
             else:
                 space_coords.append(self.getFeatures(star))
