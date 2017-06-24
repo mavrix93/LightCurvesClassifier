@@ -323,11 +323,18 @@ class FileManager(LightCurvesDb):
         mag = []
         err = []
         for line in fits.data:
-            try:
+            if len(line) == 3:
                 t, m, e = line
-            except:
+            elif len(line) == 2:
+                t,m =line
+                e = 0
+            else:
+                if hasattr(line, "__iter__"):
+                    n = len(line)
+                else:
+                    n = None
                 raise InvalidFile(
-                    "Light curve extension of fits couldn't be parsed\n%s" % line)
+                    "Light curve binary extension of the fitst couldn't be parsed\nbecause of line {1}\n type: {0}, lenght: {2}"format(type(line), line, n))
 
             time.append(t)
             mag.append(m)

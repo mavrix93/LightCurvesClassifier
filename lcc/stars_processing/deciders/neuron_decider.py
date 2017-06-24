@@ -1,5 +1,8 @@
+import logging
+
 from lcc.entities.exceptions import QueryInputError
 from pybrain import FeedForwardNetwork, LinearLayer, SigmoidLayer, FullConnection
+from pybrain.structure.modules   import SoftmaxLayer
 from pybrain.datasets import ClassificationDataSet
 from pybrain.datasets import SupervisedDataSet
 from pybrain.supervised.trainers import BackpropTrainer
@@ -11,7 +14,13 @@ import numpy as np
 
 class NeuronDecider(BaseDecider):
     """
-    The class is responsible for learning to recognize certain group of objects.
+    The class is responsible for learning to recognize certain group of objects by using NN.
+    So far there just one architecture available:
+        Three layered Feed Forward Network with Backpropagation Trainer:
+            Input layer - LinearLayer
+            Hidden layer - SigmoidLayer
+            Output layer - SoftmaxLayer
+        
 
     Attributes
     -----------
@@ -42,8 +51,8 @@ class NeuronDecider(BaseDecider):
         object belongs. Position in the array
         corresponds to item in X_test.
 
-    maxErr : float
-        Maximal error which would satisfy trainer
+    continueEpochs : int
+        Number of epochs to continue for testing after convergence
 
     maxEpochs : int
         Maximum number of epochs for training
@@ -52,16 +61,15 @@ class NeuronDecider(BaseDecider):
     OUTPUT_NEURONS = 1
 
     def __init__(self, treshold=0.5, hidden_neurons=2,
-                 maxErr=None, maxEpochs=20000):
+                 continueEpochs=50, maxEpochs=20000):
         """
         Parameters
         -----------
         hidden_neurons: int
             Number of hidden neurons
 
-        maxErr : NoneType, float
-            Maximal error which would satisfy the trainer. In case of None trainUntilConvergence methods
-            is used
+        continueEpochs : int
+            Number of epochs to continue for testing after convergence
 
         maxEpochs : int
             Maximum number of epochs for training
@@ -80,7 +88,7 @@ class NeuronDecider(BaseDecider):
 
         self.treshold = treshold
         self.maxEpochs = maxEpochs
-        self.maxErr = maxErr
+        self.continueEpochs = continueEpochs
 
         self.net = None
 
@@ -132,7 +140,7 @@ class NeuronDecider(BaseDecider):
 
         inLayer = LinearLayer(self.input_neurons)
         hiddenLayer = SigmoidLayer(self.hiden_neurons)
-        outLayer = LinearLayer(self.OUTPUT_NEURONS)
+        outLayer = SoftmaxLayer(self.OUTPUT_NEURONS)
 
         self.net.addInputModule(inLayer)
 
@@ -151,16 +159,9 @@ class NeuronDecider(BaseDecider):
             ds.addSample(coord, (self.y[i],))
 
         trainer = BackpropTrainer(self.net, dataset=ds, momentum=0.1, verbose=True, weightdecay=0.01)
+        trainer.trainUntilConvergence(maxEpochs=self.maxEpochs, continueEpochs=self.continueEpochs)
 
-        if self.maxErr:
-            for i in range(self.maxEpochs):
-                if trainer.train() < self.maxErr:
-                    print "Desired error reached"
-                    break
-        else:
-            trainer.trainUntilConvergence(maxEpochs=self.maxEpochs)
-
-        print "Successfully finished"
+        logging.info("Training of NN successfully finished")
 
     def evaluate(self, coords):
         """
