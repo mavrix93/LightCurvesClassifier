@@ -334,7 +334,7 @@ class FileManager(LightCurvesDb):
                 else:
                     n = None
                 raise InvalidFile(
-                    "Light curve binary extension of the fitst couldn't be parsed\nbecause of line {1}\n type: {0}, lenght: {2}"format(type(line), line, n))
+                    "Light curve binary extension of the fitst couldn't be parsed\nbecause of line {1}\n type: {0}, lenght: {2}".format(type(line), line, n))
 
             time.append(t)
             mag.append(m)
