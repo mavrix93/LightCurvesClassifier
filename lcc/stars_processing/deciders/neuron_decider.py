@@ -1,15 +1,13 @@
 import logging
 
-from lcc.entities.exceptions import QueryInputError
-from pybrain import FeedForwardNetwork, LinearLayer, SigmoidLayer, FullConnection
-from pybrain.structure.modules   import SoftmaxLayer
-from pybrain.datasets import ClassificationDataSet
-from pybrain.datasets import SupervisedDataSet
-from pybrain.supervised.trainers import BackpropTrainer
-from pybrain.tools.shortcuts import buildNetwork
-
-from lcc.stars_processing.utilities.base_decider import BaseDecider
 import numpy as np
+from pybrain import FeedForwardNetwork, LinearLayer, SigmoidLayer, FullConnection
+from pybrain.datasets import ClassificationDataSet
+from pybrain.structure.modules import SoftmaxLayer
+from pybrain.supervised.trainers import BackpropTrainer
+
+from lcc.entities.exceptions import QueryInputError
+from lcc.stars_processing.utilities.base_decider import BaseDecider
 
 
 class NeuronDecider(BaseDecider):

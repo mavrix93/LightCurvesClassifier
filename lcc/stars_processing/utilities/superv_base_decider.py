@@ -30,12 +30,12 @@ class SupervisedBase(BaseDecider):
             Border probability value (objects with probability higher then this
             value is considered as searched object)
 
-        learner: sklearn object
+        learner: sklearn instance
             Learner object for desired method of supervised learning
         """
 
         self.treshold = treshold
-        self.learner = clf()
+        self.learner = clf
 
     def learn(self, right_coords, wrong_coords):
         """

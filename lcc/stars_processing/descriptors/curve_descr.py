@@ -80,7 +80,7 @@ class CurveDescr(BaseDescriptor):
 
                 if self.height:
                     y = self.height * y / (y.max() - y.min())
-                    y = np.array([int(round(q)) for q in y])
+                    y = np.array([round(q) for q in y])
                 else:
                     y = y / (y.max() - y.min())
 

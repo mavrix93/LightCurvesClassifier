@@ -146,10 +146,16 @@ class BaseDecider(object):
 
         Returns
         -------
-        statistic information : dict
+        statistical information : dict
 
             precision (float)
                 True positive / (true positive + false positive)
+                
+            accuracy (float)
+                (True positive + true negative) / (no of all samples)
+                
+            f1_score (float)
+                2 * true positive / (2 * true positive + false positive + false negative)
 
             true_positive_rate (float)
                 Proportion of positives that are correctly identified as such
@@ -182,15 +188,11 @@ class BaseDecider(object):
         precision = round(computePrecision(true_pos, false_pos), 3)
 
         stat = (("precision", precision),
-                ("true_positive_rate", round(true_pos / right_num, 3)),
-                ("true_negative_rate", round(true_neg / wrong_num, 3)),
-                ("false_positive_rate", round(1 - (true_pos / right_num), 3)),
-                ("false_negative_rate", round(1 - (true_neg / wrong_num), 3)))
+                ("accuracy", (true_pos + true_neg) / (right_num + wrong_num)),
+                ("f1_score", 2 * true_pos / (2 * true_pos + false_pos + false_neg)),
+                ("true_positive_rate", np.round(true_pos / right_num, 3)),
+                ("true_negative_rate", np.round(true_neg / wrong_num, 3)),
+                ("false_positive_rate", np.round(1 - (true_neg / wrong_num), 3)),
+                ("false_negative_rate", np.round(1 - (true_pos / right_num), 3)))
 
         return collections.OrderedDict(stat)
-
-        """return {"precision" : precision,
-                "true_positive_rate" : true_pos / (false_neg + true_pos) ,
-                "true_negative_rate" : true_neg / (false_pos + true_neg),
-                "false_positive_rate" : false_pos / (false_pos + true_neg),
-                "false_negative_rate" : false_neg / (false_neg + true_pos)}"""
