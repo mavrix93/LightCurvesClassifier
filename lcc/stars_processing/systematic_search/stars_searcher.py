@@ -178,12 +178,13 @@ class StarsSearcher:
         this_status = pd.DataFrame(
             [data], columns=columns, index=[len(self.status)])
         self.status = self.status.append(this_status)
+        self.status.to_csv(self.stat_file_path, index=False)
 
-        if self.stat_file_path:
-            if not os.path.isfile(self.stat_file_path):
-                self.status.to_csv(self.stat_file_path, index=False)
-            else:
-                self.status.to_csv(self.stat_file_path, index=False, mode='a', header=False)                
+        # if self.stat_file_path:
+        #     if not os.path.isfile(self.stat_file_path):
+        #         self.status.to_csv(self.stat_file_path, index=False)
+        #     else:
+        #        self.status.to_csv(self.stat_file_path, index=False, mode='a', header=False)
 
     def queryStars(self, queries):
         """
@@ -206,7 +207,6 @@ class StarsSearcher:
                 n_cpu = self.multiproc
 
             pool = multiprocessing.Pool(n_cpu)
-
             result = pool.map_async(self.queryStar, queries)
             pool.close()  # No more work
             n = len(queries)

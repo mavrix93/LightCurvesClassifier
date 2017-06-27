@@ -1,17 +1,15 @@
-from astropy.coordinates.sky_coordinate import SkyCoord
-from bs4 import BeautifulSoup
 import re
 import urllib
 import urllib2
 import warnings
-import logging
+
+import numpy as np
+from astropy.coordinates.sky_coordinate import SkyCoord
+from bs4 import BeautifulSoup
 
 from lcc.db_tier.base_query import LightCurvesDb
 from lcc.entities.exceptions import QueryInputError
 from lcc.entities.star import Star
-import numpy as np
-
-logger = logging.getLogger(__name__)
 
 
 class OgleII(LightCurvesDb):
