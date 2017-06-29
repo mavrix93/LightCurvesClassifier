@@ -303,8 +303,8 @@ target = "lmc"
 
 
 # Prepare for tuning
-descriptor = PackageReader().getClassesDict("descriptors").get(descr_name)
-decider = PackageReader().getClassesDict("deciders").get(decid_name)
+descriptor = PackageReader.getClassesDict("descriptors").get(descr_name)
+decider = PackageReader.getClassesDict("deciders").get(decid_name)
 
 tun_params = [{descr_name : {tun_param : abbe_value}} for abbe_value in range(bin_from, bin_to, bin_step)]
 
@@ -440,7 +440,7 @@ In term of program structure - all connectors return star objects, but just Ligh
     queries = [{"ra": 297.8399, "dec": 46.57427, "delta": 10},
                 {"kic_num": 9787239},
                 {"kic_jkcolor": (0.3, 0.4), "max_records": 5}]
-    client = StarsProvider().getProvider("Kepler", queries)
+    client = StarsProvider.getProvider("Kepler", queries)
     stars = client.getStars()
 
 Because of common API for all connectors therefore databases can be queried by the same syntax. Keys for quering depends on designation in particular databases. However there are common keys for cone search:
@@ -464,7 +464,7 @@ Stars can be then easily crossmatched:
     
     one_star_in_many_databases = []
     for archive in ["Asas", "OgleII", "CorotBright", "Kepler"] :
-        client = StarsProvider().getProvider(archive, queries)
+        client = StarsProvider.getProvider(archive, queries)
         one_star_in_many_databases += client.getStars()
 
 ## Implementing new connectors
@@ -486,7 +486,7 @@ Common interface for all databases accessible via Vizier. For many databases the
         EXAMPLES:
         ---------
             queries = [{"Field": 1 , "Tile": 3441, "Seqn": 25}]
-            client = StarsProvider().getProvider(obtain_method="Macho",
+            client = StarsProvider.getProvider(obtain_method="Macho",
                                                  obtain_params=queries)
             stars = client.getStars()
         """
@@ -560,8 +560,8 @@ class StdDesc(BaseDescriptor):
 
         Returns
         -------
-        list, iterable, int, float
-            Abbe value of investigated star
+        float
+            Standart deviation of investigated light curve
         """
         return np.std(star.lightCurve.mag)
 ```
