@@ -440,8 +440,7 @@ In term of program structure - all connectors return star objects, but just Ligh
     queries = [{"ra": 297.8399, "dec": 46.57427, "delta": 10},
                 {"kic_num": 9787239},
                 {"kic_jkcolor": (0.3, 0.4), "max_records": 5}]
-    client = StarsProvider().getProvider(obtain_method="KeplerArchive",
-                                         obtain_params=queries)
+    client = StarsProvider().getProvider("Kepler", queries)
     stars = client.getStars()
 
 Because of common API for all connectors therefore databases can be queried by the same syntax. Keys for quering depends on designation in particular databases. However there are common keys for cone search:
@@ -464,9 +463,8 @@ Stars can be then easily crossmatched:
     queries = [{"ra": 0.4797, "dec": -67.1290, "delta": 10, "nearest": True}]
     
     one_star_in_many_databases = []
-    for archive in ["AsasArchive", "OgleII", "CorotBrightArchive", "KeplerArchive"] :
-        client = StarsProvider().getProvider(obtain_method=archive,
-                                             obtain_params=queries)
+    for archive in ["Asas", "OgleII", "CorotBright", "Kepler"] :
+        client = StarsProvider().getProvider(archive, queries)
         one_star_in_many_databases += client.getStars()
 
 ## Implementing new connectors
@@ -482,16 +480,16 @@ Moreover connectors can inherite other interface classes which bring more funcio
 Common interface for all databases accessible via Vizier. For many databases there is no need to write any new methods. Let's look at an example of implementation of MACHO database:
 
     class MachoDb(VizierTapBase, LightCurvesDb):
-        '''
+        """
         Client for MACHO database
 
         EXAMPLES:
         ---------
             queries = [{"Field": 1 , "Tile": 3441, "Seqn": 25}]
-            client = StarsProvider().getProvider(obtain_method="MachoDb",
+            client = StarsProvider().getProvider(obtain_method="Macho",
                                                  obtain_params=queries)
             stars = client.getStars()
-        '''
+        """
 
         TABLE = "II/247/machovar"
         LC_URL = "http://cdsarc.u-strasbg.fr/viz-bin/nph-Plot/w/Vgraph/txt?II%2f247%2f.%2f{macho_name}&F=b%2br&P={period}&-x&0&1&-y&-&-&-&--bitmap-size&600x400"
