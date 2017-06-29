@@ -170,7 +170,7 @@ the contamination sample.
 
 
 | option | flag option |  description | default value |
-|:-------:|:---------:|:------:|:---------:|:-----:|:--------:|:------:|
+|:-------:|:---------:|:------:|:---------:|
 | -i | --input | Name of the file of the tuning combinations (present in PROJEC_DIR/tun_params)| |
 | -n | --name | Name of the filter (the filter file will be appended by ".filter" | Unnamed |
 | -f | --descriptor | Descriptors (this key can be used multiple times | |
