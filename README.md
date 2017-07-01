@@ -1,4 +1,5 @@
 # Light Curves Classifier
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.806951.svg)](https://doi.org/10.5281/zenodo.806951)
 
 ## Introduction
 The Light Curve Classifier is a Python package for classifying astronomical objects. It is
