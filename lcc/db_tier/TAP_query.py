@@ -7,9 +7,8 @@ try:
     from gavo import votable
     from gavo.votable.tapquery import RemoteError, WrongStatus, NetworkError
 except ImportError:
-    sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
-    from gavo import votable
-    from gavo.votable.tapquery import RemoteError, WrongStatus, NetworkError
+    from lcc.gavo import votable
+    from lcc.gavo.votable.tapquery import RemoteError, WrongStatus, NetworkError
 
 from .base_query import LightCurvesDb
 from lcc.entities.exceptions import QueryInputError, NoInternetConnection
@@ -87,6 +86,7 @@ class TapClient(LightCurvesDb):
             raise QueryInputError(
                 "Wrong TAP query name column/table\n%s" % query)
         except WrongStatus:
+            raise
             raise QueryInputError("Wrong TAP query url")
         except NetworkError:
             if self.COUNTER_CON < self.REPEAT_CON:
@@ -102,7 +102,7 @@ class TapClient(LightCurvesDb):
     def _get_select_text(self):
         """Get SELECT part for query"""
 
-        if (isinstance(self.select, (list, tuple, set))):
+        if isinstance(self.select, (list, tuple, set)):
             select_text = "SELECT "
             for sel in set(self.select):
                 if sel:
@@ -151,7 +151,6 @@ class TapClient(LightCurvesDb):
                 raise QueryInputError(
                     "Unresolved TAP query condition: %s" % condition)
         where_text = where_text[:-4]
-        print "whh", where_text
         return where_text
 
     def _transfromCoo(self, condition):

@@ -81,7 +81,7 @@ and given coordinates match.</p>
 <tr class="row-odd"><td>boundaries</td>
 <td>(list, iterable) List of tuples of two values - lower and higher border value</td>
 </tr>
-<tr class="row-even"><td>treshold</td>
+<tr class="row-even"><td>threshold</td>
 <td>(float) Treshold value for evaluating</td>
 </tr>
 </tbody>
@@ -148,7 +148,7 @@ and given coordinates match.</p>
 <span id="lcc-stars-processing-deciders-neuron-decider-module"></span><h2>lcc.stars_processing.deciders.neuron_decider module<a class="headerlink" href="#module-lcc.stars_processing.deciders.neuron_decider" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="lcc.stars_processing.deciders.neuron_decider.NeuronDecider">
-<em class="property">class </em><code class="descclassname">lcc.stars_processing.deciders.neuron_decider.</code><code class="descname">NeuronDecider</code><span class="sig-paren">(</span><em>treshold=0.5</em>, <em>hidden_neurons=2</em>, <em>validationProportion=0.15</em>, <em>maxEpochs=100</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/deciders/neuron_decider.html#NeuronDecider"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.deciders.neuron_decider.NeuronDecider" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">lcc.stars_processing.deciders.neuron_decider.</code><code class="descname">NeuronDecider</code><span class="sig-paren">(</span><em>threshold=0.5</em>, <em>hidden_neurons=2</em>, <em>validationProportion=0.15</em>, <em>maxEpochs=100</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/deciders/neuron_decider.html#NeuronDecider"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.deciders.neuron_decider.NeuronDecider" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="lcc.stars_processing.utilities.html#lcc.stars_processing.utilities.base_decider.BaseDecider" title="lcc.stars_processing.utilities.base_decider.BaseDecider"><code class="xref py py-class docutils literal"><span class="pre">lcc.stars_processing.utilities.base_decider.BaseDecider</span></code></a></p>
 <p>The class is responsible for learning to recognize certain group of objects.</p>
 <p class="rubric">Attributes</p>
@@ -264,7 +264,7 @@ test samples according to user.</p>
 <span id="lcc-stars-processing-deciders-supervised-deciders-module"></span><h2>lcc.stars_processing.deciders.supervised_deciders module<a class="headerlink" href="#module-lcc.stars_processing.deciders.supervised_deciders" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="lcc.stars_processing.deciders.supervised_deciders.GMMBayesDec">
-<em class="property">class </em><code class="descclassname">lcc.stars_processing.deciders.supervised_deciders.</code><code class="descname">GMMBayesDec</code><span class="sig-paren">(</span><em>treshold=0.5</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/deciders/supervised_deciders.html#GMMBayesDec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.deciders.supervised_deciders.GMMBayesDec" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">lcc.stars_processing.deciders.supervised_deciders.</code><code class="descname">GMMBayesDec</code><span class="sig-paren">(</span><em>threshold=0.5</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/deciders/supervised_deciders.html#GMMBayesDec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.deciders.supervised_deciders.GMMBayesDec" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="lcc.stars_processing.utilities.html#lcc.stars_processing.utilities.superv_base_decider.SupervisedBase" title="lcc.stars_processing.utilities.superv_base_decider.SupervisedBase"><code class="xref py py-class docutils literal"><span class="pre">lcc.stars_processing.utilities.superv_base_decider.SupervisedBase</span></code></a></p>
 <p>Sklearn implementation of Bayesian Regression</p>
 <p><a class="reference external" href="http://scikit-learn.org/stable/modules/linear_model.html#bayesian-regression">http://scikit-learn.org/stable/modules/linear_model.html#bayesian-regression</a></p>
@@ -273,7 +273,7 @@ test samples according to user.</p>
 
 <dl class="class">
 <dt id="lcc.stars_processing.deciders.supervised_deciders.GaussianNBDec">
-<em class="property">class </em><code class="descclassname">lcc.stars_processing.deciders.supervised_deciders.</code><code class="descname">GaussianNBDec</code><span class="sig-paren">(</span><em>treshold=0.5</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/deciders/supervised_deciders.html#GaussianNBDec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.deciders.supervised_deciders.GaussianNBDec" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">lcc.stars_processing.deciders.supervised_deciders.</code><code class="descname">GaussianNBDec</code><span class="sig-paren">(</span><em>threshold=0.5</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/deciders/supervised_deciders.html#GaussianNBDec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.deciders.supervised_deciders.GaussianNBDec" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="lcc.stars_processing.utilities.html#lcc.stars_processing.utilities.superv_base_decider.SupervisedBase" title="lcc.stars_processing.utilities.superv_base_decider.SupervisedBase"><code class="xref py py-class docutils literal"><span class="pre">lcc.stars_processing.utilities.superv_base_decider.SupervisedBase</span></code></a></p>
 <p>Sklearn implementation of Gaussian Naive Bayes</p>
 <p><a class="reference external" href="http://scikit-learn.org/stable/modules/naive_bayes.html#gaussian-naive-bayes">http://scikit-learn.org/stable/modules/naive_bayes.html#gaussian-naive-bayes</a></p>
@@ -282,7 +282,7 @@ test samples according to user.</p>
 
 <dl class="class">
 <dt id="lcc.stars_processing.deciders.supervised_deciders.LDADec">
-<em class="property">class </em><code class="descclassname">lcc.stars_processing.deciders.supervised_deciders.</code><code class="descname">LDADec</code><span class="sig-paren">(</span><em>treshold=0.5</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/deciders/supervised_deciders.html#LDADec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.deciders.supervised_deciders.LDADec" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">lcc.stars_processing.deciders.supervised_deciders.</code><code class="descname">LDADec</code><span class="sig-paren">(</span><em>threshold=0.5</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/deciders/supervised_deciders.html#LDADec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.deciders.supervised_deciders.LDADec" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="lcc.stars_processing.utilities.html#lcc.stars_processing.utilities.superv_base_decider.SupervisedBase" title="lcc.stars_processing.utilities.superv_base_decider.SupervisedBase"><code class="xref py py-class docutils literal"><span class="pre">lcc.stars_processing.utilities.superv_base_decider.SupervisedBase</span></code></a></p>
 <p>Sklearn implementation of Linear Discriminant Analysis</p>
 <p><a class="reference external" href="http://scikit-learn.org/stable/modules/lda_qda.html">http://scikit-learn.org/stable/modules/lda_qda.html</a></p>
@@ -291,7 +291,7 @@ test samples according to user.</p>
 
 <dl class="class">
 <dt id="lcc.stars_processing.deciders.supervised_deciders.QDADec">
-<em class="property">class </em><code class="descclassname">lcc.stars_processing.deciders.supervised_deciders.</code><code class="descname">QDADec</code><span class="sig-paren">(</span><em>treshold=0.5</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/deciders/supervised_deciders.html#QDADec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.deciders.supervised_deciders.QDADec" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">lcc.stars_processing.deciders.supervised_deciders.</code><code class="descname">QDADec</code><span class="sig-paren">(</span><em>threshold=0.5</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/deciders/supervised_deciders.html#QDADec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.deciders.supervised_deciders.QDADec" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="lcc.stars_processing.utilities.html#lcc.stars_processing.utilities.superv_base_decider.SupervisedBase" title="lcc.stars_processing.utilities.superv_base_decider.SupervisedBase"><code class="xref py py-class docutils literal"><span class="pre">lcc.stars_processing.utilities.superv_base_decider.SupervisedBase</span></code></a></p>
 <p>Sklearn implementation of Quadratic Discriminant Analysis</p>
 <p><a class="reference external" href="http://scikit-learn.org/stable/modules/lda_qda.html">http://scikit-learn.org/stable/modules/lda_qda.html</a></p>
@@ -300,7 +300,7 @@ test samples according to user.</p>
 
 <dl class="class">
 <dt id="lcc.stars_processing.deciders.supervised_deciders.SVCDec">
-<em class="property">class </em><code class="descclassname">lcc.stars_processing.deciders.supervised_deciders.</code><code class="descname">SVCDec</code><span class="sig-paren">(</span><em>treshold=0.5</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/deciders/supervised_deciders.html#SVCDec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.deciders.supervised_deciders.SVCDec" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">lcc.stars_processing.deciders.supervised_deciders.</code><code class="descname">SVCDec</code><span class="sig-paren">(</span><em>threshold=0.5</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/deciders/supervised_deciders.html#SVCDec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.deciders.supervised_deciders.SVCDec" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="lcc.stars_processing.utilities.html#lcc.stars_processing.utilities.superv_base_decider.SupervisedBase" title="lcc.stars_processing.utilities.superv_base_decider.SupervisedBase"><code class="xref py py-class docutils literal"><span class="pre">lcc.stars_processing.utilities.superv_base_decider.SupervisedBase</span></code></a></p>
 <p>Sklearn implementation of Support Vector Machines</p>
 <p><a class="reference external" href="http://scikit-learn.org/stable/modules/svm.html">http://scikit-learn.org/stable/modules/svm.html</a></p>
@@ -309,7 +309,7 @@ test samples according to user.</p>
 
 <dl class="class">
 <dt id="lcc.stars_processing.deciders.supervised_deciders.TreeDec">
-<em class="property">class </em><code class="descclassname">lcc.stars_processing.deciders.supervised_deciders.</code><code class="descname">TreeDec</code><span class="sig-paren">(</span><em>treshold=0.5</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/deciders/supervised_deciders.html#TreeDec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.deciders.supervised_deciders.TreeDec" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">lcc.stars_processing.deciders.supervised_deciders.</code><code class="descname">TreeDec</code><span class="sig-paren">(</span><em>threshold=0.5</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/deciders/supervised_deciders.html#TreeDec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.deciders.supervised_deciders.TreeDec" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="lcc.stars_processing.utilities.html#lcc.stars_processing.utilities.superv_base_decider.SupervisedBase" title="lcc.stars_processing.utilities.superv_base_decider.SupervisedBase"><code class="xref py py-class docutils literal"><span class="pre">lcc.stars_processing.utilities.superv_base_decider.SupervisedBase</span></code></a></p>
 <p>Sklearn implementation of Decision Trees</p>
 <p><a class="reference external" href="http://scikit-learn.org/stable/modules/tree.html">http://scikit-learn.org/stable/modules/tree.html</a></p>

@@ -1,19 +1,18 @@
-'''
+"""
 Created on Jan 25, 2017
 
 @author: Martin Vo
-'''
+"""
+
 import unittest
+
 import numpy as np
 
-from lcc.stars_processing.deciders.supervised_deciders import QDADec
-from lcc.stars_processing.tools.params_estim import ParamsEstimator
-from lcc.stars_processing.descriptors.abbe_value_descr import AbbeValueDescr
 from lcc.entities.star import Star
-from matplotlib import pyplot
-from lcc.stars_processing.tools.visualization import plotProbabSpace
-from lcc.stars_processing.descriptors.variogram_slope_descr import VariogramSlopeDescr
-from lcc.stars_processing.descriptors.curve_shape_descr import CurvesShapeDescr
+from lcc.stars_processing.deciders.supervised_deciders import QDADec
+from lcc.stars_processing.descriptors.abbe_value_descr import AbbeValueDescr
+from lcc.stars_processing.descriptors.curves_shape_descr import CurvesShapeDescr
+from lcc.stars_processing.tools.params_estim import ParamsEstimator
 
 
 # TODO: Need to be fixed
@@ -54,8 +53,8 @@ class Test(unittest.TestCase):
                               tuned_params, static_params=static_params)
 
         star_filter, stat, best_params = est.fit()
-        assert best_params != None
+        assert best_params is not None
+
 
 if __name__ == "__main__":
-    #import sys;sys.argv = ['', 'Test.testName']
     unittest.main()

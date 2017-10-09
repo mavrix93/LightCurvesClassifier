@@ -14,7 +14,7 @@ class CustomDecider(BaseDecider):
     boundaries : list, iterable
         List of tuples of two values - lower and higher border value
 
-    treshold : float
+    threshold : float
         Treshold value for evaluating
     '''
 
@@ -38,7 +38,7 @@ class CustomDecider(BaseDecider):
             raise QueryInputError(
                 "List of boundaries have to be consist of tuples of two values")
         self.boundaries = boundaries
-        self.treshold = 0.5
+        self.threshold = 0.5
 
     def evaluate(self, star_coords):
         """

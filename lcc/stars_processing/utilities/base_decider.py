@@ -17,16 +17,16 @@ class BaseDecider(object):
 
     All decider classes have to inherit this abstract class. That means that they
     need to implement several methods: "learn" and "evaluate". Also all of them
-    have to have "treshold" attribute. To be explained read comments below.
+    have to have "threshold" attribute. To be explained read comments below.
 
     Attributes
     -----------
-    treshold : float
+    threshold : float
         Probability (1.0  means 100 %) level. All objects with probability of
-        membership to the group higher then the treshold are considered
+        membership to the group higher then the threshold are considered
         as members.
 
-    treshold = 0.8
+    threshold = 0.8
     """
 
     __metaclass__ = abc.ABCMeta
@@ -112,26 +112,26 @@ class BaseDecider(object):
 
         return best_coo
 
-    def filter(self, stars_coords, treshold=None):
+    def filter(self, stars_coords, threshold=None):
         """
         Parameters
         ----------
         stars_coords : list
             Coordinates of inspected stars
 
-        treshold : float
+        threshold : float
             Treshold value for filtering (number from 0 to 1)
 
         Returns
         -------
         List of True/False whether coordinates belong to the searched group of objects
         """
-        if not treshold:
-            treshold = self.treshold
+        if not threshold:
+            threshold = self.threshold
         check_depth(stars_coords, 2)
-        return [self.evaluate([coo])[0] >= treshold for coo in stars_coords]
+        return [self.evaluate([coo])[0] >= threshold for coo in stars_coords]
 
-    def getStatistic(self, right_coords, wrong_coords, treshold=None):
+    def getStatistic(self, right_coords, wrong_coords, threshold=None):
         """
         Parameters
         ----------
@@ -141,7 +141,7 @@ class BaseDecider(object):
         wrong_coords : list
             Parameter-space coordinates of other objects
 
-        treshold : float
+        threshold : float
             Treshold value for filtering (number from 0 to 1)
 
         Returns
@@ -178,11 +178,11 @@ class BaseDecider(object):
         wrong_num = len(wrong_coords)
 
         true_pos = sum(
-            [1 for guess in self.filter(right_coords, treshold) if guess == True])
+            [1 for guess in self.filter(right_coords, threshold) if guess])
         false_neg = right_num - true_pos
 
         true_neg = sum(
-            [1 for guess in self.filter(wrong_coords, treshold) if guess == False])
+            [1 for guess in self.filter(wrong_coords, threshold) if not guess])
         false_pos = wrong_num - true_neg
 
         precision = round(computePrecision(true_pos, false_pos), 3)

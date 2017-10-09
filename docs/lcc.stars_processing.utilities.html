@@ -59,7 +59,7 @@ learn identify inspected group of objects according to &#8220;coordinates&#8221;
 searched objects and other objects.</p>
 <p>All decider classes have to inherit this abstract class. That means that they
 need to implement several methods: &#8220;learn&#8221; and &#8220;evaluate&#8221;. Also all of them
-have to have &#8220;treshold&#8221; attribute. To be explained read comments below.</p>
+have to have &#8220;threshold&#8221; attribute. To be explained read comments below.</p>
 <p class="rubric">Attributes</p>
 <table border="1" class="docutils">
 <colgroup>
@@ -67,10 +67,10 @@ have to have &#8220;treshold&#8221; attribute. To be explained read comments bel
 <col width="92%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td>treshold</td>
-<td>(float) Probability (1.0  means 100 %) level. All objects with probability of membership to the group higher then the treshold are considered as members.</td>
+<tr class="row-odd"><td>threshold</td>
+<td>(float) Probability (1.0  means 100 %) level. All objects with probability of membership to the group higher then the threshold are considered as members.</td>
 </tr>
-<tr class="row-even"><td>treshold = 0.8</td>
+<tr class="row-even"><td>threshold = 0.8</td>
 <td>&#160;</td>
 </tr>
 </tbody>
@@ -126,7 +126,7 @@ group of objects</p>
 
 <dl class="method">
 <dt id="lcc.stars_processing.utilities.base_decider.BaseDecider.filter">
-<code class="descname">filter</code><span class="sig-paren">(</span><em>stars_coords</em>, <em>treshold=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/utilities/base_decider.html#BaseDecider.filter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.utilities.base_decider.BaseDecider.filter" title="Permalink to this definition">¶</a></dt>
+<code class="descname">filter</code><span class="sig-paren">(</span><em>stars_coords</em>, <em>threshold=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/utilities/base_decider.html#BaseDecider.filter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.utilities.base_decider.BaseDecider.filter" title="Permalink to this definition">¶</a></dt>
 <dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -135,7 +135,7 @@ group of objects</p>
 <blockquote>
 <div><p>Coordinates of inspected stars</p>
 </div></blockquote>
-<p><strong>treshold</strong> : float</p>
+<p><strong>threshold</strong> : float</p>
 <blockquote>
 <div><p>Treshold value for filtering (number from 0 to 1)</p>
 </div></blockquote>
@@ -174,7 +174,7 @@ searched group (one list of coordinates)</p>
 
 <dl class="method">
 <dt id="lcc.stars_processing.utilities.base_decider.BaseDecider.getStatistic">
-<code class="descname">getStatistic</code><span class="sig-paren">(</span><em>right_coords</em>, <em>wrong_coords</em>, <em>treshold=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/utilities/base_decider.html#BaseDecider.getStatistic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.utilities.base_decider.BaseDecider.getStatistic" title="Permalink to this definition">¶</a></dt>
+<code class="descname">getStatistic</code><span class="sig-paren">(</span><em>right_coords</em>, <em>wrong_coords</em>, <em>threshold=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/utilities/base_decider.html#BaseDecider.getStatistic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.utilities.base_decider.BaseDecider.getStatistic" title="Permalink to this definition">¶</a></dt>
 <dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -187,7 +187,7 @@ searched group (one list of coordinates)</p>
 <blockquote>
 <div><p>Parameter-space coordinates of other objects</p>
 </div></blockquote>
-<p><strong>treshold</strong> : float</p>
+<p><strong>threshold</strong> : float</p>
 <blockquote>
 <div><p>Treshold value for filtering (number from 0 to 1)</p>
 </div></blockquote>
@@ -616,7 +616,7 @@ to a string representation.</p>
 <span id="lcc-stars-processing-utilities-superv-base-decider-module"></span><h2>lcc.stars_processing.utilities.superv_base_decider module<a class="headerlink" href="#module-lcc.stars_processing.utilities.superv_base_decider" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="lcc.stars_processing.utilities.superv_base_decider.SupervisedBase">
-<em class="property">class </em><code class="descclassname">lcc.stars_processing.utilities.superv_base_decider.</code><code class="descname">SupervisedBase</code><span class="sig-paren">(</span><em>clf</em>, <em>treshold=0.5</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/utilities/superv_base_decider.html#SupervisedBase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.utilities.superv_base_decider.SupervisedBase" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">lcc.stars_processing.utilities.superv_base_decider.</code><code class="descname">SupervisedBase</code><span class="sig-paren">(</span><em>clf</em>, <em>threshold=0.5</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/utilities/superv_base_decider.html#SupervisedBase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.utilities.superv_base_decider.SupervisedBase" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#lcc.stars_processing.utilities.base_decider.BaseDecider" title="lcc.stars_processing.utilities.base_decider.BaseDecider"><code class="xref py py-class docutils literal"><span class="pre">lcc.stars_processing.utilities.base_decider.BaseDecider</span></code></a></p>
 <p>Base class for <cite>sklearn</cite> library supervised classes transformed
 to the package content. It is not intended to use this directly,
@@ -628,7 +628,7 @@ but thru certain method subclasses.</p>
 <col width="93%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td>treshold</td>
+<tr class="row-odd"><td>threshold</td>
 <td>(float) Border probability value (objects with probability higher then this value is considered as searched object)</td>
 </tr>
 <tr class="row-even"><td>learner</td>
@@ -736,7 +736,7 @@ of data.</p>
 <span id="lcc-stars-processing-utilities-unsupervised-base-module"></span><h2>lcc.stars_processing.utilities.unsupervised_base module<a class="headerlink" href="#module-lcc.stars_processing.utilities.unsupervised_base" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="lcc.stars_processing.utilities.unsupervised_base.UnsupervisedBase">
-<em class="property">class </em><code class="descclassname">lcc.stars_processing.utilities.unsupervised_base.</code><code class="descname">UnsupervisedBase</code><span class="sig-paren">(</span><em>classifier</em>, <em>params</em>, <em>treshold=0.5</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/utilities/unsupervised_base.html#UnsupervisedBase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.utilities.unsupervised_base.UnsupervisedBase" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">lcc.stars_processing.utilities.unsupervised_base.</code><code class="descname">UnsupervisedBase</code><span class="sig-paren">(</span><em>classifier</em>, <em>params</em>, <em>threshold=0.5</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/utilities/unsupervised_base.html#UnsupervisedBase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.utilities.unsupervised_base.UnsupervisedBase" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#lcc.stars_processing.utilities.base_decider.BaseDecider" title="lcc.stars_processing.utilities.base_decider.BaseDecider"><code class="xref py py-class docutils literal"><span class="pre">lcc.stars_processing.utilities.base_decider.BaseDecider</span></code></a></p>
 <p>classdocs</p>
 <p class="rubric">Methods</p>

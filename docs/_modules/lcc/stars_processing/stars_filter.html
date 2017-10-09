@@ -130,11 +130,11 @@
 <span class="sd">        pass_method : str</span>
 <span class="sd">            Inspected star pass if it fulfill the selected condition.</span>
 <span class="sd">            Methods for filtering:</span>
-<span class="sd">                all - all probabilities have to be greater then the treshold</span>
+<span class="sd">                all - all probabilities have to be greater then the threshold</span>
 
-<span class="sd">                mean - mean probability has to be greater then the treshold</span>
+<span class="sd">                mean - mean probability has to be greater then the threshold</span>
 
-<span class="sd">                one - at least one has to be greater then the treshold</span>
+<span class="sd">                one - at least one has to be greater then the threshold</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -143,7 +143,7 @@
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="n">stars_coords</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getSpaceCoordinates</span><span class="p">(</span><span class="n">stars</span><span class="p">)</span>
 
-        <span class="n">treshold</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">([</span><span class="n">dec</span><span class="o">.</span><span class="n">treshold</span> <span class="k">for</span> <span class="n">dec</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">deciders</span><span class="p">])</span>
+        <span class="n">threshold</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">([</span><span class="n">dec</span><span class="o">.</span><span class="n">threshold</span> <span class="k">for</span> <span class="n">dec</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">deciders</span><span class="p">])</span>
 
         <span class="k">if</span> <span class="n">pass_method</span> <span class="o">==</span> <span class="s2">&quot;all&quot;</span><span class="p">:</span>
             <span class="n">probabilities</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluateCoordinates</span><span class="p">(</span><span class="n">stars_coords</span><span class="p">,</span> <span class="s2">&quot;lowest&quot;</span><span class="p">)</span>
@@ -157,7 +157,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">QueryInputError</span><span class="p">(</span><span class="s2">&quot;Invalid filtering method&quot;</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="p">[</span><span class="n">stars</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">probab</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">probabilities</span><span class="p">)</span> <span class="k">if</span> <span class="n">probab</span> <span class="o">&gt;=</span> <span class="n">treshold</span><span class="p">]</span></div>
+        <span class="k">return</span> <span class="p">[</span><span class="n">stars</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">probab</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">probabilities</span><span class="p">)</span> <span class="k">if</span> <span class="n">probab</span> <span class="o">&gt;=</span> <span class="n">threshold</span><span class="p">]</span></div>
 
 <div class="viewcode-block" id="StarsFilter.learnOnCoords"><a class="viewcode-back" href="../../../lcc.stars_processing.html#lcc.stars_processing.stars_filter.StarsFilter.learnOnCoords">[docs]</a>    <span class="k">def</span> <span class="nf">learnOnCoords</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">searched_coords</span><span class="p">,</span> <span class="n">others_coords</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -315,7 +315,7 @@
                 <span class="s2">&quot;Invalid method for calculating membership probability&quot;</span><span class="p">)</span></div>
 
     <span class="nd">@check_attribute</span><span class="p">(</span><span class="s2">&quot;learned&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;raise&quot;</span><span class="p">)</span>
-<div class="viewcode-block" id="StarsFilter.getStatistic"><a class="viewcode-back" href="../../../lcc.stars_processing.html#lcc.stars_processing.stars_filter.StarsFilter.getStatistic">[docs]</a>    <span class="k">def</span> <span class="nf">getStatistic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s_stars</span><span class="p">,</span> <span class="n">c_stars</span><span class="p">,</span> <span class="n">treshold</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="StarsFilter.getStatistic"><a class="viewcode-back" href="../../../lcc.stars_processing.html#lcc.stars_processing.stars_filter.StarsFilter.getStatistic">[docs]</a>    <span class="k">def</span> <span class="nf">getStatistic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s_stars</span><span class="p">,</span> <span class="n">c_stars</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -325,7 +325,7 @@
 <span class="sd">        c_stars : list of `Star` objects</span>
 <span class="sd">            Contamination stars</span>
 
-<span class="sd">        treshold : float</span>
+<span class="sd">        threshold : float</span>
 <span class="sd">            Treshold value for filtering (number from 0 to 1)</span>
 
 <span class="sd">        Returns</span>
@@ -353,7 +353,7 @@
         <span class="n">contamination_stars_coords</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getSpaceCoordinates</span><span class="p">(</span><span class="n">c_stars</span><span class="p">)</span><span class="o">.</span><span class="n">values</span>
 
         <span class="k">return</span> <span class="n">getMeanDict</span><span class="p">([</span><span class="n">decider</span><span class="o">.</span><span class="n">getStatistic</span><span class="p">(</span><span class="n">searched_stars_coords</span><span class="p">,</span>
-                                                 <span class="n">contamination_stars_coords</span><span class="p">,</span> <span class="n">treshold</span><span class="p">)</span> <span class="k">for</span> <span class="n">decider</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">deciders</span><span class="p">])</span></div>
+                                                 <span class="n">contamination_stars_coords</span><span class="p">,</span> <span class="n">threshold</span><span class="p">)</span> <span class="k">for</span> <span class="n">decider</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">deciders</span><span class="p">])</span></div>
 
     <span class="k">def</span> <span class="nf">_getSpaceCoordinates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">star</span><span class="p">):</span>
         <span class="n">space_coordinate</span> <span class="o">=</span> <span class="p">[]</span>

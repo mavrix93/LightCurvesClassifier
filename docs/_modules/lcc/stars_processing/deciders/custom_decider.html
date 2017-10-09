@@ -58,7 +58,7 @@
 <span class="sd">    boundaries : list, iterable</span>
 <span class="sd">        List of tuples of two values - lower and higher border value</span>
 
-<span class="sd">    treshold : float</span>
+<span class="sd">    threshold : float</span>
 <span class="sd">        Treshold value for evaluating</span>
 <span class="sd">    &#39;&#39;&#39;</span>
 
@@ -82,7 +82,7 @@
             <span class="k">raise</span> <span class="n">QueryInputError</span><span class="p">(</span>
                 <span class="s2">&quot;List of boundaries have to be consist of tuples of two values&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">boundaries</span> <span class="o">=</span> <span class="n">boundaries</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">treshold</span> <span class="o">=</span> <span class="mf">0.5</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">threshold</span> <span class="o">=</span> <span class="mf">0.5</span>
 
 <div class="viewcode-block" id="CustomDecider.evaluate"><a class="viewcode-back" href="../../../../lcc.stars_processing.deciders.html#lcc.stars_processing.deciders.custom_decider.CustomDecider.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">star_coords</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>

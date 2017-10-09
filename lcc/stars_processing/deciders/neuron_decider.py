@@ -1,10 +1,8 @@
 import logging
 
 import numpy as np
-from pybrain import FeedForwardNetwork, LinearLayer, SigmoidLayer, FullConnection
-from pybrain.datasets import ClassificationDataSet
-from pybrain.structure.modules import SoftmaxLayer
-from pybrain.supervised.trainers import BackpropTrainer
+from keras.layers  import Dense
+from keras.models import Sequential
 
 from lcc.entities.exceptions import QueryInputError
 from lcc.stars_processing.utilities.base_decider import BaseDecider
@@ -58,16 +56,12 @@ class NeuronDecider(BaseDecider):
 
     OUTPUT_NEURONS = 1
 
-    def __init__(self, treshold=0.5, hidden_neurons=2,
-                 continueEpochs=50, maxEpochs=20000):
+    def __init__(self, threshold=0.5, hidden_neurons=2, maxEpochs=1000):
         """
         Parameters
         -----------
         hidden_neurons: int
             Number of hidden neurons
-
-        continueEpochs : int
-            Number of epochs to continue for testing after convergence
 
         maxEpochs : int
             Maximum number of epochs for training
@@ -80,15 +74,11 @@ class NeuronDecider(BaseDecider):
 
         self.hiden_neurons = hidden_neurons
 
-        self.input_neurons = None
-        self.X = None
-        self.y = None
-
-        self.treshold = treshold
+        self.threshold = threshold
         self.maxEpochs = maxEpochs
-        self.continueEpochs = continueEpochs
 
-        self.net = None
+        self.history = None
+        self.model = None
 
     def learn(self, searched, others):
         """
@@ -112,54 +102,40 @@ class NeuronDecider(BaseDecider):
         if not len(searched) or not len(others):
             raise QueryInputError("Decider can't be learned on an empty sample")
 
-        # Resolve number of input neurons
-        self.input_neurons = len(searched[0])
-
         # Input is accepted as a numpy array or as a list
-        if type(searched) != list:
+        if isinstance(searched, np.ndarray):
             try:
-                X = searched.tolist() + others.tolist()
+                searched = searched.tolist()
+                others = others.tolist()
+
             except AttributeError as err:
                 raise AttributeError("Wrong coordinates input: %s" % err)
-        elif type(searched) == list:
-            X = np.array(searched + others)
+        elif not isinstance(searched, list):
+            raise AttributeError("Input type ({}) not supported".format(type(searched)))
+
+        X = np.array(searched + others)
 
         # Note searched objects as 1 and others as 0
-        self.y = np.array(
+        y = np.array(
             [1 for i in range(len(searched))] + [0 for i in range(len(others))])
-        self.X = X
 
-        self.train()
+        dim = X.shape[1]
 
-    def train(self):
-        """Train neuron grid by training sample"""
+        model = Sequential()
+        model.add(Dense(self.hiden_neurons, input_dim=dim, activation="relu"))
+        model.add(Dense(1, activation="sigmoid"))
+        # Compile model
+        model.compile(loss="binary_crossentropy", optimizer="adam", metrics=["accuracy"])
 
-        self.net = FeedForwardNetwork()
+        # Fit the model
+        self.history = model.fit(X, y, epochs=150, batch_size=10)
 
-        inLayer = LinearLayer(self.input_neurons)
-        hiddenLayer = SigmoidLayer(self.hiden_neurons)
-        outLayer = SoftmaxLayer(self.OUTPUT_NEURONS)
-
-        self.net.addInputModule(inLayer)
-
-        self.net.addModule(hiddenLayer)
-        self.net.addOutputModule(outLayer)
-
-        in_to_hidden = FullConnection(inLayer, hiddenLayer)
-        hidden_to_out = FullConnection(hiddenLayer, outLayer)
-
-        self.net.addConnection(in_to_hidden)
-        self.net.addConnection(hidden_to_out)
-        self.net.sortModules()
-
-        ds = ClassificationDataSet(self.input_neurons, self.OUTPUT_NEURONS, nb_classes=3)
-        for i, coord in enumerate(self.X):
-            ds.addSample(coord, (self.y[i],))
-
-        trainer = BackpropTrainer(self.net, dataset=ds, momentum=0.1, verbose=True, weightdecay=0.01)
-        trainer.trainUntilConvergence(maxEpochs=self.maxEpochs, continueEpochs=self.continueEpochs)
+        self.model = model
 
         logging.info("Training of NN successfully finished")
+
+    def fit(self, *args, **kwargs):
+        return self.learn(*args, **kwargs)
 
     def evaluate(self, coords):
         """
@@ -176,13 +152,4 @@ class NeuronDecider(BaseDecider):
         numpy.array
             Probabilities of membership to searched group objects
         """
-        pred = []
-        for coord in coords:
-            p = self.net.activate(coord)[0]
-            if p < 0:
-                p = 0
-            elif p > 1:
-                p = 1
-            pred.append(p)
-
-        return np.array(pred)
+        return self.model.predict_proba(coords)[:,0]

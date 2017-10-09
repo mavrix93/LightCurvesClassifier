@@ -10,7 +10,7 @@ class UnsupervisedBase(BaseDecider):
     classdocs
     '''
 
-    def __init__(self,  classifier, params, treshold=0.5, **kwargs):
+    def __init__(self,  classifier, params, threshold=0.5, **kwargs):
         super(UnsupervisedBase, self).__init__(**kwargs)
         self.classifier = classifier(**params)
 

@@ -87,11 +87,11 @@ class StarsFilter(object):
         pass_method : str
             Inspected star pass if it fulfill the selected condition.
             Methods for filtering:
-                all - all probabilities have to be greater then the treshold
+                all - all probabilities have to be greater then the threshold
 
-                mean - mean probability has to be greater then the treshold
+                mean - mean probability has to be greater then the threshold
 
-                one - at least one has to be greater then the treshold
+                one - at least one has to be greater then the threshold
 
         Returns
         -------
@@ -100,7 +100,7 @@ class StarsFilter(object):
         """
         stars_coords = self.getSpaceCoordinates(stars)
 
-        treshold = np.mean([dec.treshold for dec in self.deciders])
+        threshold = np.mean([dec.threshold for dec in self.deciders])
 
         if pass_method == "all":
             probabilities = self.evaluateCoordinates(stars_coords, "lowest")
@@ -114,7 +114,7 @@ class StarsFilter(object):
         else:
             raise QueryInputError("Invalid filtering method")
 
-        return [stars[i] for i, probab in enumerate(probabilities) if probab >= treshold]
+        return [stars[i] for i, probab in enumerate(probabilities) if probab >= threshold]
 
     def learnOnCoords(self, searched_coords, others_coords):
         """
@@ -197,8 +197,10 @@ class StarsFilter(object):
 
         df_coords = pd.DataFrame(
             space_coordinates, columns=desc_labels, index=labels)
-        df_coords.fillna(np.NaN)
-        df_coords.dropna(inplace=True)
+
+        # TODO: Is it safe?
+        # df_coords.fillna(np.NaN)
+        # df_coords.dropna(inplace=True)
 
         return df_coords
 
@@ -224,8 +226,9 @@ class StarsFilter(object):
         list
             Probabilities of membership according to selected the method
         """
-        stars_coords = self.getSpaceCoordinates(stars)
-        return self.evaluateCoordinates(stars_coords, meth)
+        stars_coords_df = self.getSpaceCoordinates(stars)
+        pred = self.evaluateCoordinates(stars_coords_df.values, meth)
+        return pd.Series(pred, index=stars_coords_df.index)
 
     @check_attribute("learned", True, "raise")
     def evaluateCoordinates(self, stars_coords, meth="mean"):
@@ -267,7 +270,7 @@ class StarsFilter(object):
                 "Invalid method for calculating membership probability")
 
     @check_attribute("learned", True, "raise")
-    def getStatistic(self, s_stars, c_stars, treshold=None):
+    def getStatistic(self, s_stars, c_stars, threshold=None):
         """
         Parameters
         ----------
@@ -277,7 +280,7 @@ class StarsFilter(object):
         c_stars : list of `Star` objects
             Contamination stars
 
-        treshold : float
+        threshold : float
             Treshold value for filtering (number from 0 to 1)
 
         Returns
@@ -294,7 +297,7 @@ class StarsFilter(object):
                 Proportion of negatives that are correctly identified as such
 
             false_positive_rate (float)
-                Proportion of positives that are incorrectly identified
+                Proportion of positives that are incorrectly identifiexd
                 as negatives
 
             false_negative_rate (float)
@@ -305,7 +308,15 @@ class StarsFilter(object):
         contamination_stars_coords = self.getSpaceCoordinates(c_stars).values
 
         return getMeanDict([decider.getStatistic(searched_stars_coords,
-                                                 contamination_stars_coords, treshold) for decider in self.deciders])
+                                                 contamination_stars_coords, threshold) for decider in self.deciders])
+
+    def getROC(self, s_stars, c_stars, n=30):
+        tp, fp = [], []
+        for thr in np.linspace(0.01, 0.99, n):
+            stat = self.getStatistic(s_stars, c_stars, thr)
+            tp.append(stat["true_positive_rate"])
+            fp.append(stat["false_positive_rate"])
+        return fp, tp
 
     def _getSpaceCoordinates(self, stars):
         space_coordinate = []
@@ -317,5 +328,5 @@ class StarsFilter(object):
             if not space_coordinate:
                 space_coordinate = coo
             else:
-                space_coordinate = [list(a)+list(b) for a,b in zip(space_coordinate, coo)]
+                space_coordinate = [list(a)+list(b) for a, b in zip(space_coordinate, coo)]
         return space_coordinate

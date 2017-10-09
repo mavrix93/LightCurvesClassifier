@@ -8,12 +8,10 @@ from warnings import warn
 
 import pandas as pd
 import pathos.multiprocessing as multiprocessing
-import tqdm
+
 from lcc.db_tier.stars_provider import StarsProvider
 from lcc.entities.exceptions import QueryInputError, InvalidFilesPath
 from lcc.utils.stars import saveStars
-
-logger = logging.getLogger(__name__)
 
 
 class StarsSearcher:
@@ -218,7 +216,7 @@ class StarsSearcher:
 
                 time.sleep(0.6)
             result = result.get()
-            sys.stderr.write('\rAll {0} stars have been processed'.format(n))
+            logging.info('\rAll {0} stars have been processed'.format(n))
             # result = pool.map(self.queryStar, queries)
         else:
             result = [self.queryStar(q) for q in queries]
@@ -238,12 +236,12 @@ class StarsSearcher:
                 passed_num += 1
             overview.append(status)
 
-        print "\n************\t\tQuery is done\t\t************"
-        print "Query results:\nThere are %i stars passed thru filtering from %s." % (passed_num, stars_n)
+        logging.info("\n************\t\tQuery is done\t\t************")
+        logging.info("Query results:\nThere are %i stars passed thru filtering from %s." % (passed_num, stars_n))
         if not_found:
-            print "There are %i unsatisfied queries" % not_found
+            logging.info("There are %i unsatisfied queries" % not_found)
         if self.not_uploaded:
-            print "\t%i stars have not been uploaded into local db, because they are already there." % len(self.not_uploaded)
+            logging.info("\t%i stars have not been uploaded into local db, because they are already there." % len(self.not_uploaded))
 
         self.overview = pd.DataFrame(overview)
         self.stars = stars

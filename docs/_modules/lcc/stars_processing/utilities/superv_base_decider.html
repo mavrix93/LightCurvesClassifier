@@ -58,7 +58,7 @@
 
 <span class="sd">    Attributes</span>
 <span class="sd">    ----------</span>
-<span class="sd">    treshold : float</span>
+<span class="sd">    threshold : float</span>
 <span class="sd">        Border probability value (objects with probability higher then this</span>
 <span class="sd">        value is considered as searched object)</span>
 
@@ -66,11 +66,11 @@
 <span class="sd">        Learner object for desired method of supervised learning</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clf</span><span class="p">,</span> <span class="n">treshold</span><span class="o">=</span><span class="mf">0.5</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clf</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mf">0.5</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Parameters</span>
 <span class="sd">        -----------</span>
-<span class="sd">        treshold: float</span>
+<span class="sd">        threshold: float</span>
 <span class="sd">            Border probability value (objects with probability higher then this</span>
 <span class="sd">            value is considered as searched object)</span>
 
@@ -78,7 +78,7 @@
 <span class="sd">            Learner object for desired method of supervised learning</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">treshold</span> <span class="o">=</span> <span class="n">treshold</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">threshold</span> <span class="o">=</span> <span class="n">threshold</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">learner</span> <span class="o">=</span> <span class="n">clf</span><span class="p">()</span>
 
 <div class="viewcode-block" id="SupervisedBase.learn"><a class="viewcode-back" href="../../../../lcc.stars_processing.utilities.html#lcc.stars_processing.utilities.superv_base_decider.SupervisedBase.learn">[docs]</a>    <span class="k">def</span> <span class="nf">learn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">right_coords</span><span class="p">,</span> <span class="n">wrong_coords</span><span class="p">):</span>

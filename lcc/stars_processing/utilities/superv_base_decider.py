@@ -14,7 +14,7 @@ class SupervisedBase(BaseDecider):
 
     Attributes
     ----------
-    treshold : float
+    threshold : float
         Border probability value (objects with probability higher then this
         value is considered as searched object)
 
@@ -22,11 +22,11 @@ class SupervisedBase(BaseDecider):
         Learner object for desired method of supervised learning
     """
 
-    def __init__(self, clf, treshold=0.5):
+    def __init__(self, clf, threshold=0.5):
         """
         Parameters
         -----------
-        treshold: float
+        threshold: float
             Border probability value (objects with probability higher then this
             value is considered as searched object)
 
@@ -34,7 +34,7 @@ class SupervisedBase(BaseDecider):
             Learner object for desired method of supervised learning
         """
 
-        self.treshold = treshold
+        self.threshold = threshold
         self.learner = clf
 
     def learn(self, right_coords, wrong_coords):

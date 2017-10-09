@@ -10,10 +10,10 @@ class KMeansDecider(UnsupervisedBase):
     classdocs
     '''
 
-    def __init__(self, treshold=0.5, n_clusters=3):
+    def __init__(self, threshold=0.5, n_clusters=3):
         '''
         Constructor
         '''
         params = {"n_clusters": n_clusters}
         super(KMeansDecider, self).__init__(
-            classifier=KMeans, params=params, treshold=treshold)
+            classifier=KMeans, params=params, threshold=threshold)

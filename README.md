@@ -459,13 +459,13 @@ Support tool for making files of queries or files of tuning combinations in give
 Example
 
 ```
-lcc prepare_query -o tune_lc_shape.txt -p CurvesShapeDescr:alphabet_size -r 5:19:3 -p CurvesShapeDescr:days_per_bin -r 30:120:40 -p QDADec:treshold -r 0.1:0.99:0.08
+lcc prepare_query -o tune_lc_shape.txt -p CurvesShapeDescr:alphabet_size -r 5:19:3 -p CurvesShapeDescr:days_per_bin -r 30:120:40 -p QDADec:threshold -r 0.1:0.99:0.08
 ```
 
 Thi genarates *tune_lc_shape.txt* file in *tun_params* directory which looks like that:
 
 ```
-#QDADec:treshold;CurvesShapeDescr:alphabet_size;CurvesShapeDescr:days_per_bin
+#QDADec:threshold;CurvesShapeDescr:alphabet_size;CurvesShapeDescr:days_per_bin
 0.1;5;30
 0.18;5;30
 0.26;5;30

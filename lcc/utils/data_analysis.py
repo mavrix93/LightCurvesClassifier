@@ -1,6 +1,6 @@
-'''
+"""
 There are functions for processing data series
-'''
+"""
 
 from __future__ import division
 
@@ -93,42 +93,31 @@ def to_ekvi_PAA(x, y, bins=None, days_per_bin=None):
         if bins > len(x):
             bins = len(x)
 
-    n_x = len(x)
-    n_y = len(y)
-    if not n_x == n_y:
-        raise Exception("X and Y have no same length (%i and %i" % (n_x, n_y))
+    if not len(x) == len(y):
+        raise Exception("X and Y have no same length (%i and %i" % (len(x), len(y)))
 
-    # Check if sorted times
-    sorting = np.argsort(x)
-    x = x[sorting]
-    y = y[sorting]
-    n = len(x)
-    x_beg = x.min()
-    x_end = x.max()
-    x_width = x_end - x_beg
-    frame_len = x_width / bins
+    if bins > len(x):
+        warnings.warn("Bin number can't be higher then sample size. Setting to sample size")
+        bins = len(x)
+
+    xmax = x.max()
+    xmin = x.min()
+    half_step = (xmax - xmin) / bins / 2.
     x_aprox = []
     y_aprox = []
-    i = 0
-    frame_num = 1
-    x_frame_sum = 0
-    y_frame_sum = 0
-    items_in_this_frame = 0
-    for i in range(n):
-        y_frame_sum += y[i]
-        x_frame_sum += x[i]
-        items_in_this_frame += 1
-        if (x[i] >= x_beg + frame_len * frame_num):
-            val_y = y_frame_sum / items_in_this_frame
-            val_x = x_frame_sum / items_in_this_frame
+    borders = np.linspace(xmin - half_step, xmax - half_step, bins).tolist() + [np.inf]
+    for i in range(len(borders) - 1):
+        indx = (x >= borders[i]) & (x < borders[i + 1])
+        if indx.any():
+            x_aprox.append(x[indx].mean())
+            y_aprox.append(y[indx].mean())
+        else:
+            x_aprox.append((borders[i + 1] / borders[i]) / 2)
+            y_aprox.append(np.nan)
 
-            if val_x and val_y:
-                y_aprox.append(val_y)
-                x_aprox.append(val_x)
-            x_frame_sum = 0
-            y_frame_sum = 0
-            items_in_this_frame = 0
-            frame_num += 1
+    assert len(x_aprox) == bins
+    assert len(y_aprox) == bins
+
     return np.array(x_aprox), np.array(y_aprox)
 
 
@@ -155,17 +144,15 @@ def normalize(x, eps=1e-6):
         return [0 for _ in X]
     return (X - X.mean()) / X.std()
 
-# TODO: Check n==1
-
 
 def abbe(x, n):
-    '''
+    """
     Calculation of Abbe value
 
     Parameters
     ----------
     x : numpy.array
-        Input data serie
+        Input data series
 
     n : int
         Dimension of original data (before dimension reduction)
@@ -174,7 +161,7 @@ def abbe(x, n):
     -------
     float
         Abbe value
-    '''
+    """
 
     sum1 = ((x[1:] - x[:-1])**2).sum()
     sum2 = ((x - x.mean())**2).sum()
@@ -182,7 +169,7 @@ def abbe(x, n):
 
 
 def variogram(x, y, bins=None, log_opt=True):
-    '''
+    """
     Variogram of function shows variability of function in various time steps
 
     Parameters
@@ -203,7 +190,7 @@ def variogram(x, y, bins=None, log_opt=True):
     -------
     tuple
         Variogram as two numpy arrays
-    '''
+    """
     if not bins:
         bins = 20
 
@@ -235,7 +222,7 @@ def variogram(x, y, bins=None, log_opt=True):
 
 
 def histogram(xx, yy, bins_num=None, centred=True, normed=True):
-    '''
+    """
     Parameters
     ----------
     xx : numpy.array
@@ -260,7 +247,7 @@ def histogram(xx, yy, bins_num=None, centred=True, normed=True):
 
     numpy.array
         Ranges
-    '''
+    """
     if not bins_num:
         warnings.warn(
             "Number of bins of histogram was not specified. Setting default value.")
@@ -284,7 +271,7 @@ def histogram(xx, yy, bins_num=None, centred=True, normed=True):
 
 
 def sort_pairs(x, y, rev=False):
-    '''Sort two numpy arrays according to the first'''
+    """Sort two numpy arrays according to the first"""
 
     x = np.array(x)
     y = np.array(y)
@@ -300,7 +287,7 @@ def sort_pairs(x, y, rev=False):
 
 
 def compute_bins(x_time, days_per_bin, set_min=5):
-    '''
+    """
     Compute number of bins for given time series according to given ratio
     of number of days per one bin
 
@@ -313,21 +300,21 @@ def compute_bins(x_time, days_per_bin, set_min=5):
         Transformation rate for dimension reduction
 
     set_min
-    '''
+    """
 
     BORDER_AREA = 5
 
-    if (type(x_time) == list):
+    if isinstance(x_time, list):
         x_time = np.array(x_time)
 
     n = len(x_time)
-    if (n < BORDER_AREA * 5):
+    if n < BORDER_AREA * 5:
         BORDER_AREA = 1
 
     time_range = x_time[-BORDER_AREA:].mean() - x_time[:BORDER_AREA].mean()
     num_bins = int(round(time_range / float(days_per_bin)))
 
-    if (set_min and num_bins < set_min):
+    if set_min and num_bins < set_min:
         warnings.warn(
             "Too low number of bins for given ratio. Setting bin number to minimal default value.")
         num_bins = 5

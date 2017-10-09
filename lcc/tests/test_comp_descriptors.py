@@ -3,7 +3,7 @@ import unittest
 import numpy as np
 
 from lcc.entities.star import Star
-from lcc.stars_processing.descriptors.curve_shape_descr import CurvesShapeDescr
+from lcc.stars_processing.descriptors.curves_shape_descr import CurvesShapeDescr
 from lcc.stars_processing.descriptors.hist_shape_descr import HistShapeDescr
 from lcc.stars_processing.descriptors.variogram_shape_descr import VariogramShapeDescr
 
