@@ -5,7 +5,7 @@ from setuptools import setup, find_packages
 setup(
   name = 'lcc',
   packages = find_packages(),
-  version = '1.1.8',
+  version = '1.1.11',
   description = 'Light Curves Classifier is package for classification stars by using their light curves and metadata',
   author = 'Martin Vo',
   author_email = 'mavrix@seznam.cz',

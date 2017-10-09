@@ -3,6 +3,7 @@ import importlib
 import inspect
 import os
 import sys
+import warnings
 
 from lcc.db_tier.base_query import StarsCatalogue
 from lcc.stars_processing.utilities.base_decider import BaseDecider
@@ -72,8 +73,9 @@ class PackageReader(object):
                     for module_class in module_classes:
                         if issubclass(module_class, base_class):
                             searched_classes.append(module_class)
-                except:
-                    pass
+                except Exception as e:
+                    warnings.warn(str(e) + "/n" + path)
+                    warnings.warn("Couldn't import {}".format(package_module))
         return searched_classes
 
     @classmethod

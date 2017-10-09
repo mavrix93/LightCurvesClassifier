@@ -27,7 +27,7 @@ class OgleII(LightCurvesDb):
     --------
     que1 = {"ra": 5.549147 * 15,
        "dec": -70.55792, "delta": 5, "nearest": True}
-    que2 = {"field":"LMC_SC1","starid":"152248","target":"lmc"}
+    que2 = {"field":"LMC_SC1","starid":"152248"}
 
     client = StarsProvider().getProvider(
         obtain_method="OgleII", obtain_params=[que1, que2])
@@ -91,6 +91,9 @@ class OgleII(LightCurvesDb):
         list
             List of `Star` objects
         """
+        if "starid" in query and query["starid"] < 1:
+            raise ValueError("Starid has to be greater then 0")
+
         stars = self.postQuery(query, load_lc)
         if "ra" in query and "dec" in query and "delta" in query:
             stars = self.coneSearch(SkyCoord(float(query["ra"]), float(query["dec"]), unit="deg"),
@@ -304,12 +307,20 @@ class OgleII(LightCurvesDb):
 
         url = "%s/data/%s/%s_i_%s.dat" % (self.ROOT,
                                           lc_tmp, field.lower(), starid)
-        result = urllib2.urlopen(url)
+        try:
+            result = urllib2.urlopen(url)
 
-        if (result.code == 200):
-            star_curve = []
-            for line in result.readlines():
-                parts = line.strip().split(" ")
-                star_curve.append(
-                    [round(float(parts[0]), 4), round(float(parts[1]), 3), round(float(parts[2]), 3)])
-            return star_curve
+            if (result.code == 200):
+                star_curve = []
+                for line in result.readlines():
+                    parts = line.strip().split(" ")
+                    star_curve.append(
+                        [round(float(parts[0]), 4), round(float(parts[1]), 3), round(float(parts[2]), 3)])
+                return star_curve
+
+        except urllib2.HTTPError as err:
+            if err.code == 404:
+                warnings.warn("Could't find lc")
+                return None
+            else:
+                raise

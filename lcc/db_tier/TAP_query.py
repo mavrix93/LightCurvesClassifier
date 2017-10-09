@@ -7,8 +7,9 @@ try:
     from gavo import votable
     from gavo.votable.tapquery import RemoteError, WrongStatus, NetworkError
 except ImportError:
-    from lcc.gavo import votable
-    from lcc.gavo.votable.tapquery import RemoteError, WrongStatus, NetworkError
+    sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
+    from gavo import votable
+    from gavo.votable.tapquery import RemoteError, WrongStatus, NetworkError
 
 from .base_query import LightCurvesDb
 from lcc.entities.exceptions import QueryInputError, NoInternetConnection
@@ -86,7 +87,6 @@ class TapClient(LightCurvesDb):
             raise QueryInputError(
                 "Wrong TAP query name column/table\n%s" % query)
         except WrongStatus:
-            raise
             raise QueryInputError("Wrong TAP query url")
         except NetworkError:
             if self.COUNTER_CON < self.REPEAT_CON:
@@ -108,7 +108,7 @@ class TapClient(LightCurvesDb):
                 if sel:
                     select_text += '"%s", ' % sel
             select_text = select_text[:-2] + " "
-        elif (isinstance(self.select, str)):
+        elif isinstance(self.select, str):
             select_text = "SELECT %s " % self.select
         else:
             raise QueryInputError(
@@ -132,10 +132,10 @@ class TapClient(LightCurvesDb):
 
             if type(condition[1]) is tuple:
                 condition = (condition[0], condition[1][0], condition[1][1])
-            if (len(condition) == 3):
+            if len(condition) == 3:
                 where_text += "({0} BETWEEN {1} AND {2}) AND ".format(*
                                                                       condition)
-            elif (len(condition) == 2):
+            elif len(condition) == 2:
                 if condition[1].strip().startswith("'") or condition[1].strip().startswith('"'):
                     cleaned_cond = condition[1].strip()[1:-1]
                 else:
