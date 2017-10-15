@@ -1,4 +1,5 @@
 *pyc
 .idea
 .cache
-__*
+__
+lcc.egg-info

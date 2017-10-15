@@ -1,12 +1,13 @@
+import abc
 import sys
 import time
-import abc
 import warnings
 
 import astropy.units as u
 import numpy as np
-from lcc.entities.exceptions import QueryInputError
 from pathos import multiprocessing
+
+from lcc.entities.exceptions import QueryInputError
 
 
 class StarsCatalogue(object):
@@ -37,10 +38,9 @@ class StarsCatalogue(object):
             print "Using {} cpus".format(n_cpu)
                 
             pool = multiprocessing.Pool(n_cpu)
-            
+
             result = pool.map_async(self.getStar, self.queries, load_lc)
             pool.close()  # No more work
-            
             while True:
                 if result.ready():
                     break
@@ -48,13 +48,12 @@ class StarsCatalogue(object):
 
                 time.sleep(0.6)
             result = result.get()
-            
-
-            
             # pool = multiprocessing.Pool(n_cpu)
             # result = pool.map(self.getStar, self.queries, load_lc)
         else:
-            result = [self.getStar(q, load_lc) for q in self.queries]
+            result = []
+            for q in self.queries:
+                result.append(self.getStar(q, load_lc))
 
         stars = []
         for oneq_stars in result:

@@ -200,7 +200,7 @@ class StarsFilter(object):
 
         # TODO: Is it safe?
         # df_coords.fillna(np.NaN)
-        # df_coords.dropna(inplace=True)
+        df_coords.dropna(inplace=True)
 
         return df_coords
 
@@ -229,6 +229,36 @@ class StarsFilter(object):
         stars_coords_df = self.getSpaceCoordinates(stars)
         pred = self.evaluateCoordinates(stars_coords_df.values, meth)
         return pd.Series(pred, index=stars_coords_df.index)
+
+    def getEvaluations(self, stars):
+        """
+        Get probabilities of membership of inspected stars for all deciders
+
+        Parameters
+        ----------
+        stars : list
+            Star objects
+
+        meth : str
+            Method for filtering:
+                mean - mean probability
+
+                highest - highest probability
+
+                lowest - lowest probability
+
+        Returns
+        -------
+        list
+            Probabilities of membership according to selected the method
+        """
+        stars_coords_df = self.getSpaceCoordinates(stars)
+
+        decisions = []
+        for decider in self.deciders:
+            decisions.append(decider.evaluate(stars_coords_df.values))
+
+        return pd.DataFrame(np.transpose(decisions), index=stars_coords_df.index, columns=[dec.__class__.__name__ for dec in self.deciders])
 
     @check_attribute("learned", True, "raise")
     def evaluateCoordinates(self, stars_coords, meth="mean"):

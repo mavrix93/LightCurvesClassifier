@@ -25,9 +25,8 @@ class OgleIII(LightCurvesDb):
 
     que3 = {"field": "LMC135.5", "starid" : 19670}
 
-    client = StarsProvider().getProvider(
-        obtain_method="OgleIII", obtain_params=[que1, que2, que3])
-    stars = client.getStarsWithCurves()
+    client = StarsProvider().getProvider("OgleIII", [que1, que2, que3])
+    stars = client.getStars()
     
     
     Possible keys for query:

@@ -6,24 +6,24 @@ import numpy as np
 
 
 class StatsManager(object):
-    '''
+    """
     Attributes
     ----------
     stats : list
         List of dictionaries. They consists of statistical values.
         Or at least with "false_positive_rate" and "true_positive_rate"
         in order to work properly.
-    '''
+    """
 
     def __init__(self, stats):
-        '''
+        """
         Parameters
         ----------
         stats : list
             List of dictionaries. They consists of statistical values.
             Or at least with "false_positive_rate" and "true_positive_rate"
             in order to work properly.
-        '''
+        """
 
         self.stats = stats
 
@@ -66,9 +66,9 @@ class StatsManager(object):
         if not delim:
             delim = "\t"
         roc = np.array(self.getROC()).T
-        with open(os.path.join(path, file_name), 'w') as f:
-            f.write('#fp%stp\n' % delim)
-            np.savetxt(f, roc, fmt='%.2f', delimiter=delim)
+        with open(os.path.join(path, file_name), "w") as f:
+            f.write("#fp%stp\n" % delim)
+            np.savetxt(f, roc, fmt="%.2f", delimiter=delim)
         return roc
 
     def plotROC(self, save=False, title="ROC curve", path=".",

@@ -1,7 +1,9 @@
+import pickle
+
 import numpy as np
+from lcc.stars_processing.deciders import LDADec, QDADec
 
 from lcc.entities.star import Star
-from lcc.stars_processing.deciders.neuron_decider import NeuronDecider
 from lcc.stars_processing.descriptors.abbe_value_descr import AbbeValueDescr
 from lcc.stars_processing.stars_filter import StarsFilter
 
@@ -9,7 +11,8 @@ from lcc.stars_processing.stars_filter import StarsFilter
 def test_filtering():
 
     descriptors = [AbbeValueDescr()]
-    deciders = [NeuronDecider(maxEpochs=800)]
+    # deciders = [NeuronDecider(maxEpochs=800)]
+    deciders = [LDADec(), QDADec()]
     s_stars = [Star(name="Searched_{}".format(i)) for i in range(100)]
     c_stars = [Star(name="Contam_{}".format(i)) for i in range(100)]
 
@@ -33,4 +36,9 @@ def test_filtering():
 
     assert c_coo["Abbe value"].mean() - s_coo["Abbe value"].mean() > c_coo["Abbe value"].std() + s_coo[
         "Abbe value"].std()
+
+    ev = filt.getEvaluations(c_stars)
+
+    with open("../resources/test_filter.pickle", "wb") as fi:
+        pickle.dump(filt, fi)
 

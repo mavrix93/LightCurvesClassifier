@@ -15,20 +15,20 @@ class TestDescriptors(unittest.TestCase):
     def setUp(self):
         self.descriptors = PackageReader.getClassesDict("descriptors")
         self.stars = []
-        for _ in range(self.n_stars):
+        for i in range(self.n_stars):
             star = Star()
-            x = np.linspace(0, 100)
-            y = np.sin(x)
+            x = np.linspace(0, 100, 10)
+            y = np.sin(x) + i *10
             star.putLightCurve([x, y])
             self.stars.append(star)
 
     def testAbbe(self):
-        first_abbe = 1.7096658186181843
-
         abbe_filter = self.descriptors["AbbeValueDescr"]
         abbe_values = abbe_filter(bins=10).getSpaceCoords(self.stars)
         self.failUnless(len(abbe_values) == self.n_stars)
-        self.failUnless(abbe_values[0] == first_abbe)
+
+        print abbe_values
+        [abbe_values[i] < abbe_values[i + 1]]
 
     def testComparative(self):
         logging.debug("Starting comparative test")

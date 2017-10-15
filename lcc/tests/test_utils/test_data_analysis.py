@@ -10,7 +10,7 @@ def test_to_PAA():
         assert len(to_PAA(x, bins)[0]) == bins
 
 
-def test_to_ekvi_PAA():
+def test_to_ekvi_PAA1():
     n = 100
     x = np.linspace(0, 1, n)
     y = np.random.random_sample(n)

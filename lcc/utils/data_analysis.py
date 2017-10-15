@@ -4,6 +4,7 @@ There are functions for processing data series
 
 from __future__ import division
 
+import logging
 import math
 import warnings
 
@@ -258,7 +259,11 @@ def histogram(xx, yy, bins_num=None, centred=True, normed=True):
     x = to_ekvi_PAA(xx, yy, bins=len(xx))[1]
     # Center values to zero
     if centred:
-        x = x - x.mean()
+        x = x - np.nanmean(x)
+
+    bef = len(x)
+    x = x[~np.isnan(x)]
+    logging.info("Deleted nans for hist: {}/{}".format(bef - len(x), bef))
 
     bins = np.linspace(x.min(), x.max(), bins_num)
 
