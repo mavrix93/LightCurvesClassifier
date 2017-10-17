@@ -125,7 +125,7 @@ def to_ekvi_PAA(x, y, bins=None, days_per_bin=None, max_bins=None, remove_nans=T
     x, y = np.array(x_aprox), np.array(y_aprox)
     # assert not np.isnan(y_aprox).any()
     if remove_nans:
-        x, y = fix_missing(x, y, ekvi_thr=None)
+        x, y = fix_missing(x, y)
 
     assert len(x_aprox) == bins
     assert len(y_aprox) == bins
@@ -351,7 +351,7 @@ def computePrecision(true_pos, false_pos):
 
 
 # TODO: Distribute to multiple functions
-def fix_missing(x, y, ekvi_thr=0.5, max_iter=1000, replace_at_borders=True):
+def fix_missing(x, y, max_iter=1000, replace_at_borders=True):
     x, y = x.copy(), y.copy()
     n_to = len(x)
     start_from = 0
@@ -360,9 +360,7 @@ def fix_missing(x, y, ekvi_thr=0.5, max_iter=1000, replace_at_borders=True):
     for cc in range(max_iter):
         if n_to == start_from:
             break
-        if ekvi_thr and _missing_n(y) > ekvi_thr:
-            x, y = to_ekvi_PAA(x, y)
-            n_to = len(x)
+
         else:
             substitute_pos = None
             for ii in range(start_from, n_to):

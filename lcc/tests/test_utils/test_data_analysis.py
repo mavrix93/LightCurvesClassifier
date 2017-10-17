@@ -70,14 +70,14 @@ def test_fix_missing():
     yy[0] = np.nan
     yy[-1] = np.nan
 
-    res1 = fix_missing(xx, yy, ekvi_thr=0.35, replace_at_borders=False)
+    res1 = fix_missing(xx, yy, replace_at_borders=False)
 
     assert len(res1[0]) == len(res1[1])
     assert len(res1[0]) == len(xx) - 2
     assert not np.isnan(res1[0]).any()
     assert not np.isnan(res1[1]).any()
 
-    res2 = fix_missing(xx, yy, ekvi_thr=0.35, replace_at_borders=True)
+    res2 = fix_missing(xx, yy, replace_at_borders=True)
 
     assert len(res2[0]) == len(res2[1])
     assert len(res2[0]) == len(xx)
