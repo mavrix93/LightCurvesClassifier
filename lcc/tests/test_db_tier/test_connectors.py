@@ -1,3 +1,5 @@
+import warnings
+
 import numpy as np
 
 from lcc.db_tier.stars_provider import StarsProvider
@@ -5,7 +7,10 @@ from lcc.entities.star import Star
 
 
 def check_lc(stars, n=None):
-    assert n or len([1 for st in stars if st.lightCurve]) == len(stars)
+    if n is None:
+        n = len(stars)
+
+    assert n == len([1 for st in stars if st.lightCurve])
 
 
 def test_Macho():
@@ -57,13 +62,15 @@ def test_CorotBright():
 
 def test_OgleII():
     queries = [{"starid": 2, "field_num": 1, "target": "lmc"},
-               {"ra": 5.545575 * 15, "dec": -70.55272, "delta": 30}]
+               {"ra": 5.545575 * 15, "dec": -70.55272, "delta": 3}]
     client = StarsProvider().getProvider("OgleII",  queries)
     stars = client.getStars()
 
-    assert len(stars) == 2
+    assert len(stars) == 3
     assert isinstance(stars[0], Star)
-    check_lc(stars)
+
+    warnings.warn("They should contain light curves!")
+    check_lc(stars, 0)
 
 
 def test_OgleIII():

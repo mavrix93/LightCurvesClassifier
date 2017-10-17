@@ -39,6 +39,6 @@ def test_filtering():
 
     ev = filt.getEvaluations(c_stars)
 
-    with open("../resources/test_filter.pickle", "wb") as fi:
-        pickle.dump(filt, fi)
+    # with open("../resources/test_filter.pickle", "wb") as fi:
+    #     pickle.dump(filt, fi)
 

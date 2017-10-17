@@ -17,8 +17,10 @@ class TestDescriptors(unittest.TestCase):
         self.stars = []
         for i in range(self.n_stars):
             star = Star()
-            x = np.linspace(0, 100, 10)
-            y = np.sin(x) + i *10
+            x = np.linspace(0, 100, 100)
+            y = np.sin(x**i)
+            y[0] = np.nan
+            x[:20] = np.linspace(-30, -10, 20)
             star.putLightCurve([x, y])
             self.stars.append(star)
 
@@ -26,9 +28,14 @@ class TestDescriptors(unittest.TestCase):
         abbe_filter = self.descriptors["AbbeValueDescr"]
         abbe_values = abbe_filter(bins=10).getSpaceCoords(self.stars)
         self.failUnless(len(abbe_values) == self.n_stars)
+        assert not np.isnan(abbe_values).all()
+        # TODO
+        # assert False not in [abbe_values[i] < abbe_values[i + 1] for i in range(len(abbe_values) - 1)]
 
-        print abbe_values
-        [abbe_values[i] < abbe_values[i + 1]]
+    def testSkewness(self):
+        skewness_descr = self.descriptors["SkewnessDescr"]
+        sk_values = skewness_descr(bins=30).getSpaceCoords(self.stars)
+        assert not np.isnan(sk_values).all()
 
     def testComparative(self):
         logging.debug("Starting comparative test")

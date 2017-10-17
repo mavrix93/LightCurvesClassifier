@@ -53,11 +53,10 @@ class SkewnessDescr(BaseDescriptor):
             _, mags = to_ekvi_PAA(lc.time, lc.mag, self.bins)
         else:
             mags = lc.mag
-        sk =skew(mags)
+        sk = skew(mags)
 
         if self.absolute:
             sk = abs(sk)
-
-        return  sk
+        return sk
 
 

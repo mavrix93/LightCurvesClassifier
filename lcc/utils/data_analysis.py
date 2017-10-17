@@ -51,7 +51,7 @@ def to_PAA(x, bins):
     return np.array(approximation), indices
 
 
-def to_ekvi_PAA(x, y, bins=None, days_per_bin=None):
+def to_ekvi_PAA(x, y, bins=None, days_per_bin=None, max_bins=None, remove_nans=True):
     """
     This method perform PAA (see above) on y data set, but it will consider
     different time steps between values (in x data set) and return corrected
@@ -65,8 +65,8 @@ def to_ekvi_PAA(x, y, bins=None, days_per_bin=None):
     y : list, numpy.array, iterable
         List of values
 
-    bins : int
-        Dimension of result data
+    bins : int, float
+        Dimension of result data, also can be percentage number (0, 1)
 
     days_per_bin : float
         This value can be used for calculating bins
@@ -79,6 +79,8 @@ def to_ekvi_PAA(x, y, bins=None, days_per_bin=None):
     list
         Reduced `y` data
     """
+    if bins > 0 and bins <= 1:
+        bins = int(len(x) * bins)
 
     if isinstance(x, list):
         x = np.array(x)
@@ -101,6 +103,10 @@ def to_ekvi_PAA(x, y, bins=None, days_per_bin=None):
         warnings.warn("Bin number can't be higher then sample size. Setting to sample size")
         bins = len(x)
 
+    if max_bins and bins > max_bins * len(x):
+        warnings.warn("Bin number is higher max_bins. Setting to max size")
+        bins = int(len(x) * max_bins)
+
     xmax = x.max()
     xmin = x.min()
     half_step = (xmax - xmin) / bins / 2.
@@ -116,10 +122,15 @@ def to_ekvi_PAA(x, y, bins=None, days_per_bin=None):
             x_aprox.append((borders[i + 1] / borders[i]) / 2)
             y_aprox.append(np.nan)
 
+    x, y = np.array(x_aprox), np.array(y_aprox)
+    # assert not np.isnan(y_aprox).any()
+    if remove_nans:
+        x, y = fix_missing(x, y, ekvi_thr=None)
+
     assert len(x_aprox) == bins
     assert len(y_aprox) == bins
 
-    return np.array(x_aprox), np.array(y_aprox)
+    return x, y
 
 
 def normalize(x, eps=1e-6):
@@ -146,7 +157,7 @@ def normalize(x, eps=1e-6):
     return (X - X.mean()) / X.std()
 
 
-def abbe(x, n):
+def abbe(x, n, dropna=True):
     """
     Calculation of Abbe value
 
@@ -158,11 +169,17 @@ def abbe(x, n):
     n : int
         Dimension of original data (before dimension reduction)
 
+    dropna : bool
+        Drop all nans in x
+
     Returns
     -------
     float
         Abbe value
     """
+
+    if dropna:
+        x = x[~np.isnan(x)]
 
     sum1 = ((x[1:] - x[:-1])**2).sum()
     sum2 = ((x - x.mean())**2).sum()
@@ -331,3 +348,71 @@ def computePrecision(true_pos, false_pos):
     if true_pos + false_pos > 0:
         return true_pos / (true_pos + false_pos)
     return 0
+
+
+# TODO: Distribute to multiple functions
+def fix_missing(x, y, ekvi_thr=0.5, max_iter=1000, replace_at_borders=True):
+    x, y = x.copy(), y.copy()
+    n_to = len(x)
+    start_from = 0
+    deleted_n = 0
+    first = 0
+    for cc in range(max_iter):
+        if n_to == start_from:
+            break
+        if ekvi_thr and _missing_n(y) > ekvi_thr:
+            x, y = to_ekvi_PAA(x, y)
+            n_to = len(x)
+        else:
+            substitute_pos = None
+            for ii in range(start_from, n_to):
+                i = ii - deleted_n
+                if substitute_pos is None:
+                    if np.isnan(y[i]):
+                        if i == first:
+                            if replace_at_borders:
+                                replace_with = None
+                                for sent_i in range(i, n_to):
+                                    if not np.isnan(y[sent_i]):
+                                        replace_with = y[sent_i]
+                                        break
+                                if replace_with is not None:
+                                    y[first:sent_i] = replace_with
+
+
+                            else:
+                                x = np.delete(x, i)
+                                y = np.delete(y, i)
+                                first = i
+                                deleted_n += 1
+                        else:
+                            substitute_pos = i
+                    else:
+                        start_from = i + 1
+
+                elif not np.isnan(y[i]):
+
+                    time_to_left = x[substitute_pos] - x[substitute_pos - 1]
+                    time_to_right = x[i] - x[substitute_pos]
+
+                    w_left = time_to_left / (time_to_left + time_to_right)
+                    w_right = time_to_right / (time_to_left + time_to_right)
+
+                    y[substitute_pos] = w_left * y[substitute_pos - 1] + w_right * y[i]
+
+                    start_from = substitute_pos + 1
+                    substitute_pos = None
+                    break
+
+            if substitute_pos:
+                if not replace_at_borders:
+                    x = x[:substitute_pos]
+                    y = y[:substitute_pos]
+                else:
+                    y[substitute_pos:] = y[substitute_pos - 1]
+                break
+    return x, y
+
+
+def _missing_n(x):
+    return np.isnan(x).sum() / len(x)

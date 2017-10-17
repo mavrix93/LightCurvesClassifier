@@ -11,3 +11,6 @@ def test():
 
     queries = [{"field": "LMC_SC3", "starid": i} for i in range(1, 10)]
     searcher.queryStars(queries)
+
+    assert len(searcher.stars) == len(queries)
+
