@@ -3,3 +3,4 @@
 .cache
 __
 lcc.egg-info
+dist
