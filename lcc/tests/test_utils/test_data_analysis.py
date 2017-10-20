@@ -52,6 +52,11 @@ def test_to_ekvi_PAA1():
         assert np.nan not in y_ekv3
         assert (y_ekv4 == y).all()
 
+        thr = 0.1
+        assert abs(y_ekv1.mean() - y.mean()) / (y_ekv1.mean() + y.mean()) < thr
+        assert abs(y_ekv2.mean() - y.mean()) / (y_ekv2.mean() + y.mean()) < thr
+        assert abs(y_ekv3.mean() - y.mean()) / (y_ekv3.mean() + y.mean()) < thr
+
 
 def test_compute_bins():
     x1 = [1, 2, 3, 8, 9, 10]

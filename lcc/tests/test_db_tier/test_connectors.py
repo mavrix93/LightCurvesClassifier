@@ -57,7 +57,7 @@ def test_CorotBright():
     stars = client.getStars(max_bins=100)
     assert len(stars) == RESULTS_NUM
     assert isinstance(stars[0], Star)
-    check_lc(stars, 2)
+    check_lc(stars, 4)
 
 
 def test_OgleII():
@@ -69,8 +69,7 @@ def test_OgleII():
     assert len(stars) == 3
     assert isinstance(stars[0], Star)
 
-    warnings.warn("They should contain light curves!")
-    check_lc(stars, 0)
+    check_lc(stars, 3)
 
 
 def test_OgleIII():

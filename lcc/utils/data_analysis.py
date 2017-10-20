@@ -51,7 +51,8 @@ def to_PAA(x, bins):
     return np.array(approximation), indices
 
 
-def to_ekvi_PAA(x, y, bins=None, days_per_bin=None, max_bins=None, remove_nans=True):
+def to_ekvi_PAA(x, y, bins=None, days_per_bin=None, max_bins=None,
+                fix_nans=True, mean_time=True):
     """
     This method perform PAA (see above) on y data set, but it will consider
     different time steps between values (in x data set) and return corrected
@@ -112,19 +113,22 @@ def to_ekvi_PAA(x, y, bins=None, days_per_bin=None, max_bins=None, remove_nans=T
     half_step = (xmax - xmin) / bins / 2.
     x_aprox = []
     y_aprox = []
-    borders = np.linspace(xmin - half_step, xmax - half_step, bins).tolist() + [np.inf]
+    borders = np.linspace(xmin - half_step, xmax + half_step, bins + 1).tolist()
     for i in range(len(borders) - 1):
         indx = (x >= borders[i]) & (x < borders[i + 1])
         if indx.any():
-            x_aprox.append(x[indx].mean())
+            if mean_time:
+                x_aprox.append(x[indx].mean())
+            else:
+                x_aprox.append((borders[i + 1] + borders[i]) / 2)
             y_aprox.append(y[indx].mean())
         else:
-            x_aprox.append((borders[i + 1] / borders[i]) / 2)
+            x_aprox.append((borders[i + 1] + borders[i]) / 2)
             y_aprox.append(np.nan)
 
     x, y = np.array(x_aprox), np.array(y_aprox)
     # assert not np.isnan(y_aprox).any()
-    if remove_nans:
+    if fix_nans:
         x, y = fix_missing(x, y)
 
     assert len(x_aprox) == bins
@@ -280,7 +284,7 @@ def histogram(xx, yy, bins_num=None, centred=True, normed=True):
 
     bef = len(x)
     x = x[~np.isnan(x)]
-    logging.info("Deleted nans for hist: {}/{}".format(bef - len(x), bef))
+    # logging.info("Deleted nans for hist: {}/{}".format(bef - len(x), bef))
 
     bins = np.linspace(x.min(), x.max(), bins_num)
 
