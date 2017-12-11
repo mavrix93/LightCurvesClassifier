@@ -1,18 +1,11 @@
-import os
-import sys
-
+import io
+import requests
 from astropy.coordinates.sky_coordinate import SkyCoord
+from astropy.io.votable import parse
+import pandas as pd
 
-try:
-    from gavo import votable
-    from gavo.votable.tapquery import RemoteError, WrongStatus, NetworkError
-except ImportError:
-    sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
-    from gavo import votable
-    from gavo.votable.tapquery import RemoteError, WrongStatus, NetworkError
-
-from .base_query import LightCurvesDb
 from lcc.entities.exceptions import QueryInputError, NoInternetConnection
+from .base_query import LightCurvesDb
 
 
 class TapClient(LightCurvesDb):
@@ -21,7 +14,7 @@ class TapClient(LightCurvesDb):
 
     Attributes
     ----------
-    COO_UNIT_CONV : int, float
+    COO_UNIT_CONV : int, floats
         Conversion rate of coordinates from degrees
 
     QUOTING : list, tuple
@@ -79,25 +72,23 @@ class TapClient(LightCurvesDb):
         query = self._get_select_text() + self._get_from_text() + \
             self._get_where_text()
 
+        query_url = '%s/sync' % self.URL
+        params = {"REQUEST": "doQuery",
+                  "LANG": "ADQL",
+                  "QUERY": query}
         # Run query
-        try:
-            job = votable.ADQLTAPJob(self.URL, query, timeout=1)
-            job.run()
-        except RemoteError:
-            raise QueryInputError(
-                "Wrong TAP query name column/table\n%s" % query)
-        except WrongStatus:
-            raise QueryInputError("Wrong TAP query url")
-        except NetworkError:
-            if self.COUNTER_CON < self.REPEAT_CON:
-                self.postQuery(tap_params)
+        res = requests.post(query_url, params=params)
+        f = io.BytesIO(res.content)
+        tab = parse(f)
+        df = tab.get_first_table().to_table().to_pandas()
+
+        for col in df.columns:
+            if df[col].dtype == "object":
+                df[col] = df[col].map(lambda x: x.decode() if isinstance(x, bytes) else x)
             else:
-                raise NoInternetConnection()
+                df[col] = pd.to_numeric(df[col], downcast="signed")
 
-        retrieve_data = votable.load(job.openResult())[0]
-
-        job.delete()
-        return retrieve_data
+        return df
 
     def _get_select_text(self):
         """Get SELECT part for query"""

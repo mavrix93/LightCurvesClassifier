@@ -1,5 +1,3 @@
-from __future__ import division
-
 import warnings
 from warnings import warn
 
@@ -9,7 +7,7 @@ from astropy.coordinates.sky_coordinate import SkyCoord
 from lcc.entities.light_curve import LightCurve
 
 
-class Star(object):
+class Star():
     """
     Star is base object in astronomy. This class is responsible for keeping
     basic information about stellar objects. It's possible to create empty
@@ -114,7 +112,7 @@ class Star(object):
             return False
 
         elif self.ident:
-            for db_key in self.ident.keys():
+            for db_key in list(self.ident.keys()):
                 if db_key in other.ident:
                     if self.ident[db_key] == other.ident[db_key]:
                         return True
@@ -176,7 +174,7 @@ class Star(object):
         self._name = name
 
     def getInRange(self, other, eps):
-        '''
+        """
         This method decides whether other star is in eps range of this star
         according to coordinates
 
@@ -191,7 +189,7 @@ class Star(object):
         --------
         bool
             If in range
-        '''
+        """
         if not isinstance(eps, u.quantity.Quantity):
             eps = eps * u.deg
 
@@ -202,7 +200,7 @@ class Star(object):
         return self.getDistance(other) < eps
 
     def getDistance(self, other):
-        '''
+        """
         Compute distance between this and other star in degrees
 
         Parameters
@@ -214,7 +212,7 @@ class Star(object):
         --------
         astropy.coordinates.angles.Angle
             Distance of stars in degrees
-        '''
+        """
         return self.coo.separation(other.coo)
 
     def getIdentName(self, db_key=None):
@@ -232,9 +230,9 @@ class Star(object):
         """
 
         if db_key is None:
-            if len(self.ident.keys()) == 0:
+            if len(list(self.ident.keys())) == 0:
                 return "Unknown"
-            db_key = self.ident.keys()[0]
+            db_key = list(self.ident.keys())[0]
 
         if "name" in self.ident[db_key]:
             return self.ident[db_key]["name"]
@@ -243,19 +241,21 @@ class Star(object):
             star_name += "_%s_%s" % (key, self.ident[db_key][key])
         return star_name
 
-    def putLightCurve(self, lc, meta={}):
-        '''
+    def putLightCurve(self, lc, meta=None):
+        """
         Add light curve to the star
 
         Parameters
         ----------
         lc : list, numpy.ndarray
             Light curve
-
+        meta: dict
+            Meta parameters of the light curve
         Returns
         -------
             None
-        '''
+        """
+        meta = meta or {}
         if not isinstance(lc, numpy.ndarray) and not lc:
             warn("Invalid light curve: %s\nLight curve not created to star %s" % (
                 lc, self.name))

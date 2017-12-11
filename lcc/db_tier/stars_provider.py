@@ -35,7 +35,7 @@ class StarsProvider(object):
 
         if obtain_method not in cls.STARS_PROVIDERS:
             raise AttributeError(
-                "Unresolved stars provider\nAvaible stars providers: %s" % cls.STARS_PROVIDERS.keys())
+                "Unresolved stars provider\nAvaible stars providers: %s" % list(cls.STARS_PROVIDERS.keys()))
 
         provider = cls.STARS_PROVIDERS[obtain_method]
 

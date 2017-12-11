@@ -1,4 +1,3 @@
-import imp
 import importlib
 import inspect
 import os
@@ -18,11 +17,6 @@ class PackageReader(object):
     -----------
     MODULE_EXTENSION : iterable
         Accepted extensions of module files.
-
-    NAMES : dict
-        Keys are identifiers for path to the package where searched classes
-        are located and base filter which all package classes needs to inherit
-        in order to be accepted.
 
     EXCLUDE : iterable
         File names (first letters of them) which will be excluded.

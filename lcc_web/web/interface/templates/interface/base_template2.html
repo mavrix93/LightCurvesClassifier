@@ -1,0 +1,95 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Light Curves Classifier</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+    <meta charset="utf-8">
+    <link href="https://fonts.googleapis.com/css?family=Fjalla+One" rel="stylesheet">
+    <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+    
+    <script type="text/javascript" src="{% static 'js/bootstrap-filestyle.min.js' %}"> </script>
+    <script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}" charset="utf-8"></script>    
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js" charset="utf-8"></script>
+    
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    
+    <script src="{% static 'js/form_select_stars_copy.js' %}"></script>
+    
+    <script>
+    $(document).ready(function() 
+    {
+    $('#loader').hide();
+
+    $('form').submit(function() 
+    {
+        $('#loader').show();
+    }) 
+    })
+</script>
+    <script>
+    function unpackElements(show_id, hide_id, write_to) {
+        var in_txt = "";
+        var x = document.getElementsByClassName(show_id)[0].options;
+        for (i = 0; i < x.length; i++) { 
+            var divOne = document.getElementById(x[i].value);
+            divOne.style.display = "inline";
+            in_txt += x[i].value+";";
+            
+        }
+        document.getElementById(write_to).value = in_txt;
+        
+        var y = document.getElementsByClassName(hide_id)[0].options;
+        for (i = 0; i < y.length; i++) { 
+            var divOne = document.getElementById(y[i].value);
+            divOne.style.display = "none"; 
+        }
+        
+    }    
+    </script>
+    
+    <script>
+    function selectAll(field){
+        for (var j = 0; j < field.length; j++)
+        {
+            var selectBox = document.getElementsByClassName(field)[0].options;   
+            for (var i = 0; i < selectBox.length; i++) 
+            { 
+                 selectBox[i].selected = true; 
+            } 
+        }
+    }
+    </script>
+    
+
+</head>
+<body>
+    <div id="heading">
+            <table class="header0" align="center">
+                <tr class="container_header">
+                    <th><a id="logo" href="{% url 'home' %}" title="Home">
+                        <img class="logo-icon" alt="Logo webu" src={% static 'img/logo.png' %}>
+                        </a>
+                    </th>
+                    <th><span id="nadpis">Light Curves Classifier - Web Interface</span></th> 
+                </tr>
+            </table>
+    </div>
+    <div class="menu">
+        <ul class="navigation">
+            <li><a class="active" href="{% url 'show' %}">Show stars</a></li>
+            <li><a class="#" href="{% url 'make_filter' %}">Make filter</a></li>
+            <li><a href="{% url 'unsup' %}">Unsupervised</a></li>
+            <li><a href="{% url 'search' %}">Systematic filtering</a></li>
+            <li><a href="{% url 'all_filters' %}">Jobs: Filters</a></li>
+            <li><a href="{% url 'all_results' %}">Jobs: Queries</a></li>
+        </ul>
+        </div>            
+    </div>
+    
+    {% block input_form %}
+    {% endblock %}
+</body>
+</html>

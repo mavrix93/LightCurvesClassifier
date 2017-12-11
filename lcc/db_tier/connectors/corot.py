@@ -1,12 +1,12 @@
-from __future__ import division
 
-import cStringIO
+
+import io
 import collections
 import os
 import warnings
 
 import numpy as np
-import pyfits
+from astropy.io import fits
 import requests
 
 from lcc.db_tier.base_query import LightCurvesDb
@@ -35,7 +35,6 @@ class CorotBright(VizierTapBase, LightCurvesDb):
     LC_URL = "http://vizier.u-strasbg.fr/viz-bin/nph-Cat?-plus=-%2b&B/corot/files/"
     TABLE = "B/corot/Bright_star"
 
-    NAME = "{Star}"
     LC_FILE = "FileName"
 
     LC_META = {"xlabel": "Terrestrial time",
@@ -79,7 +78,7 @@ class CorotBright(VizierTapBase, LightCurvesDb):
         database can take few minutes...""")
         response = requests.get(os.path.join(self.LC_URL, file_name))
         lcs = []
-        with pyfits.open(cStringIO.StringIO(response.content)) as f:
+        with fits.open(io.BytesIO(response.content)) as f:
             for extension in f[1:EXT_NUM]:
                 raw_lc = self._createFromExtension(extension, max_bins)
                 if raw_lc:
@@ -115,6 +114,9 @@ class CorotBright(VizierTapBase, LightCurvesDb):
             return time, mag, err
         return red_time, red_mag, red_err
 
+    def get_name(self, star_info):
+        return star_info.get("Star", "CoRoT")
+
 
 class CorotFaint(CorotBright):
     """
@@ -130,7 +132,6 @@ class CorotFaint(CorotBright):
 
     TABLE = "B/corot/Faint_star"
     IDENT_MAP = {"CorotFaint": "CoRoT"}
-    NAME = "CoRoT"
 
     MORE_MAP = collections.OrderedDict((("SpT", "spectral_type"),
                                         ("Vmag", "v_mag"),

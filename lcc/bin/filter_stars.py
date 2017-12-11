@@ -163,28 +163,26 @@ def main(project_settings, argv=None):
         opts, args = parser.parse_args(argv)
 
         if not len(argv):
-            print program_info, "\n"
-            print json.dumps(StarsProvider().STARS_PROVIDERS.keys())
-            print "Run with '-h' in order to show params help\n"
+            print(program_info, "\n")
+            print("Run with '-h' in order to show params help\n")
             return False
 
         if opts.db not in StarsProvider().STARS_PROVIDERS:
-            print "Error: " + "Unresolved database %s \n" % opts.db
-            print json.dumps(StarsProvider().STARS_PROVIDERS.keys())
+            print("Error: " + "Unresolved database %s \n" % opts.db)
             return False
 
         # -------    Core    ------
 
         header = "#" + " " * 40 + \
             "Light Curves Classifier - Filter stars" + " " * 30 + "#"
-        print "\n\n\t" + "#" * len(header)
-        print "\t#" + " " * (len(header) - 2) + "#"
-        print "\t" + header
-        print "\t#" + " " * (len(header) - 2) + "#"
+        print("\n\n\t" + "#" * len(header))
+        print("\t#" + " " * (len(header) - 2) + "#")
+        print("\t" + header)
+        print("\t#" + " " * (len(header) - 2) + "#")
 
         UNFOUND_LIM = 2
 
-        print "Loading query..."
+        print("Loading query...")
         try:
             resolver = StatusResolver(
                 status_file_path=os.path.join(project_settings.QUERIES, opts.query))
@@ -192,10 +190,10 @@ def main(project_settings, argv=None):
         except IOError:
             raise IOError("Query file was not found")
         except Exception as e:
-            print "Err:", e
+            print("Err:", e)
             raise QueryInputError("There is an issue in query file")
 
-        print "Loading filters"
+        print("Loading filters")
         star_filters = [FiltersSerializer(
             filt_name, project_settings.FILTERS).loadFilter() for filt_name in opts.filt]
 
@@ -211,21 +209,19 @@ def main(project_settings, argv=None):
 
         prepare_run(project_settings.RESULTS, opts.run)
 
-        print _sum_txt(opts.db, len(resolver.status_queries), filt_txt)
+        print(_sum_txt(opts.db, len(resolver.status_queries), filt_txt))
 
         searcher = StarsSearcher(star_filters,
                                  save_path=os.path.join(
                                      project_settings.RESULTS, opts.run, "lcs"),
-                                 save_lim=1,
                                  stat_file_path=os.path.join(
                                      project_settings.RESULTS, opts.run, "query_status.txt"),
-                                 obth_method=opts.db,
-                                 unfound_lim=UNFOUND_LIM,
+                                 db_connector=opts.db,
                                  save_coords=save_coords)
         searcher.queryStars(queries)
 
-    except Exception, e:
-        print e, "\n\n"
+    except Exception as e:
+        print(e, "\n\n")
         indent = len(program_name) * " "
         sys.stderr.write(program_name + ": " + repr(e) + "\n")
         sys.stderr.write(indent + "  for help use --help")

@@ -1,0 +1,119 @@
+{% extends 'interface/base_template.html' %}
+{% load static %}
+
+{% block input_form %}
+
+
+
+<h2 style="color:#FF0000;">{{ warning }}</h2>
+
+<div id="loader" style="position: fixed; top:0; left:0; width:100%; height: 100%; background: url('{% static 'img/loader.gif' %}') center center #efefef"></div>
+
+<form action='' onclick="" method='post' enctype="multipart/form-data">{% csrf_token %}
+    
+    <div id="selector1">  
+    <h3 class="selector1_header">Available descriptors</h3>
+        <select name="deselected_descr[]" id="deselected_descr" multiple="multiple" class="select1">
+            {% for descriptor in descriptors %}
+                <option value="{{ descriptor }}">{{ descriptor }}</option> 
+            {% endfor %}
+                
+                
+          </select>  
+          <a href="#/" class="button" id="add" >Add &gt;&gt;</a>
+    </div>  
+    <div id="selector2"> 
+    <h3 class="selector2_header">Selected items</h3> 
+        <select name="selected_descr[]" id="selected_descr" multiple="multiple" class="select2"></select>  
+        
+        <a href="#/" class="button button-reversed" id="remove">&lt;&lt; Remove</a> 
+    </div> 
+    
+        
+   
+    
+    <div id="selector3">  
+    <h3 class="selector3_header">Available deciders</h3>
+          <select multiple class="select7">  
+                {% for decider in deciders %}
+                <option value="{{ decider }}">{{ decider }}</option> 
+                {% endfor %}
+          </select>  
+          <a href="#/" class="button" id="add2">add &gt;&gt;</a>  
+    </div>  
+    <div id="selector4"> 
+    <h3 class="selector4_header">Selected items</h3> 
+        <select multiple class="select8">
+            
+        </select>  
+        <a href="#/" class="button button-reversed" id="remove2">&lt;&lt; remove</a> 
+    </div> 
+    
+    <hr style="margin-top: 20px; display: inline-block;">
+    
+    
+    <div class="desc_inputs1">
+        {% for field in descriptors_fields %}
+            <div class="desc_info" id="{{ field.0 }}" style="display: none;">
+            {% if field.1 %}
+               <h2 id="{{ field.0 }}_head" class="desc_header"> {{ field.0 }}</h2>
+            {% endif %}
+            {% for desc in field.1 %}   
+                <div>              
+                    <label class="desc_lab" align="left">{{ desc.0 }}</label>
+                    {% if desc.0 != "comp_stars" %}
+                        <input  align="right" type="text" name="descriptor:{{ field.0 }}:{{ desc.0 }}" rows="2" cols="35" value="{{ desc.1 }}">
+                    {% else %}
+                        <input  align="right" type='file' class="filestyle" data-classIcon="icon-plus" data-input="false" data-classButton="btn btn-primary" multiple name="templ_file:{{ field.0 }}:{{ desc.0 }}" data-buttonText='Load template objects' />              
+                    {% endif %}
+                </div>
+            {% endfor %}
+            </div>
+        {% endfor %}
+        </div>
+        
+    
+    <div class="desc_inputs2" style="width:45%;display:inline-block;">
+        {% for field in deciders_fields %}
+            <div id="{{ field.0 }}" style="display: none;">
+            {% if field.1 %}
+               <h2 id="{{ field.0 }}_head" class="desc_header"> {{ field.0 }}</h2>
+            {% endif %}
+            {% for desc in field.1 %}  
+                <div>                     
+                    <label class="desc_lab" align="left">{{ desc.0 }}</label>
+                    <input type="text" name="decider:{{ field.0 }}:{{ desc.0 }}" value="{{ desc.1 }}">   
+                </div>           
+            {% endfor %}
+            </div>
+        {% endfor %}
+        </div>
+    
+    <input id='deciders_l' type='text' style="display: none"; name='deciders_l' />
+    <input id='descriptors_l' type='text' style="display: none"; name='descriptors_l' />
+
+
+    <div id="estimator_params" style="display: block;float: left;clear: left;" >
+        <h1 align="left">Parameters for the estimator</h1>
+        <div>
+            <label class="split_ratio_label" align="left">Training-testing sample split ratio (0.0-1.0)</label>
+            <input align="left" type="text" name="split_ratio" value="0.7">
+        </div>
+
+    </div>
+    
+
+    <div id="buttons">   
+        <h1 align="left">Load the training sample (fits or dat files)</h1>
+        <p>You don't have to select any files if you want to use test sample</p>
+        <input type='file' class="filestyle" data-classIcon="icon-plus" data-input="false" data-classButton="btn btn-primary" multiple name='search_file' data-buttonText='Searched objects' />
+        <input type='file' class="filestyle" data-classIcon="icon-plus" data-input="false" data-classButton="btn btn-primary" multiple name='cont_file' data-buttonText="Contamination objects" />
+        <input onclick="scroll(0,0);" style="background-color:#a3a1a1;font-weight: 900;height:40px;color:#000000;" type='submit' class="filestyle" data-classIcon="icon-plus" data-classButton="btn btn-primary" name='sub' value='Submit' />
+    </div>
+
+
+    
+</form>
+
+{% include "interface/to_inter.html" %}
+{% endblock %}

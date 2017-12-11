@@ -1,4 +1,4 @@
-from __future__ import division
+
 
 from lcc.utils.data_analysis import to_PAA, normalize
 import numpy as np
@@ -160,7 +160,7 @@ class SAX(object):
         -------
             None
         """
-        number_rep = range(0, int(self.alphabet_size))
+        number_rep = list(range(0, int(self.alphabet_size)))
         letters = [chr(x + self.A_OFFSET) for x in number_rep]
         self.compare_dict = {}
         for i in range(0, len(letters)):

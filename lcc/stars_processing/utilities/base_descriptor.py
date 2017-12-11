@@ -1,10 +1,7 @@
 import abc
 
-from lcc.utils.commons import returns, accepts
 
-
-class BaseDescriptor(object):
-    __metaclass__ = abc.ABCMeta
+class BaseDescriptor(abc.ABC):
     """
     Base class for all filters. It is something like interface (check whether
     subclasses have certain methods
@@ -28,7 +25,6 @@ class BaseDescriptor(object):
             Features of the processed star
         """
         raise NotImplementedError
-
 
     def getSpaceCoords(self, stars):
         """

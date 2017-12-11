@@ -32,6 +32,9 @@ def saveStars(stars, path=".", clobber=True):
     list
         List of names of star files
     """
+    if not os.path.exists(path):
+        os.makedirs(path)
+
     N = 7
     file_names = []
     for star in stars:
@@ -73,7 +76,7 @@ def get_stars_dict(stars):
 # TODO: Need to be upgraded
 def plotStarsPicture(stars, option="show", hist_bins=10, vario_bins=10,
                      center=True, save_loc=None, num_plots=None, abbe_bins=20):
-    '''
+    """
     This function plot three graphs for all stars: Light curve, histogram
     and variogram. Additionally Abbe value will be displayed.
 
@@ -102,7 +105,7 @@ def plotStarsPicture(stars, option="show", hist_bins=10, vario_bins=10,
 
     abbe_bins : int
         Dimension of reduced light curve for calculating Abbe value
-    '''
+    """
 
     OPTIONS = ["show", "save"]
     if not (option in OPTIONS):

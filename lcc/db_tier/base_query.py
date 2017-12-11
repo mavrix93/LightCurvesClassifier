@@ -1,24 +1,19 @@
 import abc
-import logging
-import sys
-import time
 import warnings
 
 import astropy.units as u
 import numpy as np
-from pathos import multiprocessing
 
 from lcc.entities.exceptions import QueryInputError
 
 
-class StarsCatalogue(object):
-    __metaclass__ = abc.ABCMeta
+class StarsCatalogue(abc.ABC):
     """Common class for all catalogs containing information about stars"""
 
     def getStars(self, load_lc=True):
         """
         Query `Star` objects
-        
+
         Parameters
         ----------
         load_lc : bool
@@ -29,41 +24,15 @@ class StarsCatalogue(object):
         list
             List of `Star` objects
         """
-        n = len(self.queries)
-        if hasattr(self, "multiproc") and self.multiproc:
-            warnings.warn("Multiprocessing doesn't work in the current version")
-        # if hasattr(self, "multiproc") and self.multiproc:
-        if False:
-            if self.multiproc is True:
-                n_cpu = multiprocessing.cpu_count()
-            else:
-                n_cpu = self.multiproc
-            logging.info("Using {} cpus".format(n_cpu))
-                
-            pool = multiprocessing.Pool(n_cpu)
-
-            result = pool.map_async(self.getStar, self.queries, load_lc)
-            pool.close()  # No more work
-            while True:
-                if result.ready():
-                    break
-                sys.stderr.write('\rQueries done: {0} / {1}'.format(n - result._number_left,  n))
-
-                time.sleep(0.6)
-            result = result.get()
-            # pool = multiprocessing.Pool(n_cpu)
-            # result = pool.map(self.getStar, self.queries, load_lc)
-        else:
-            result = []
-            for q in self.queries:
-                result.append(self.getStar(q, load_lc))
-
+        # with futures.ProcessPoolExecutor() as executor:
+        #     stars_gen = executor.map(self.getStar, self.queries)
+        #     stars = []
+        #     for st in stars_gen:
+        #         stars += st
+        #     return stars
         stars = []
-        for oneq_stars in result:
-            stars += oneq_stars
-
-        # sys.stderr.write('\rAll {0} stars have been downloaded from {1} query'.format(len(stars), n))
-        
+        for query in self.queries:
+            stars += self.getStar(query)
         return stars
 
     def coneSearch(self, coo, stars, delta_deg, nearest=False):
@@ -123,7 +92,6 @@ class StarsCatalogue(object):
 
 
 class LightCurvesDb(StarsCatalogue):
-    __metaclass__ = abc.ABCMeta
     """This is common class for every database containing light curves"""
 
     def getStarsWithCurves(self, *args, **kwargs):

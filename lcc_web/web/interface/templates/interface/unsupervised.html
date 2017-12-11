@@ -1,0 +1,185 @@
+{% extends 'interface/base_template.html' %}
+{% load static %}
+
+{% block input_form %}
+<script>
+{% include "visual/plotLC_selected.js" %}
+</script>
+
+
+
+
+<script>
+function rearrange_vert(){
+    {% if probab_data|length == 3 %}
+        var graph1 = "plotUnsup";
+    {% elif probab_data|length == 2 %}
+        var graph1 = "plot2dUnsup";
+    {% endif %}
+
+    document.getElementById(graph1).style["width"] = "100%";
+    document.getElementById(graph1).width = "100%";
+    document.getElementById(graph1).style["display"] = "inline";
+    document.getElementById(graph1).align = "center";
+    document.getElementById("lc_plot").style["width"] = "100%";  
+    document.getElementById("lc_plot").style["display"] = "inline";
+    document.getElementById("lc_plot").align = "center";
+}
+
+function rearrange_horiz(){
+    {% if probab_data|length == 3 %}
+        var graph1 = "plotUnsup";
+    {% elif probab_data|length == 2 %}
+        var graph1 = "plot2dUnsup";
+    {% endif %}
+
+    document.getElementById(graph1).width = "57%";
+    document.getElementById(graph1).style["width"] = "57%";
+    document.getElementById("lc_plot").style["width"] = "40%";
+    document.getElementById(graph1).style["display"]= "inline-block";
+    document.getElementById("lc_plot").style["display"] = "inline-block";
+    
+    document.getElementById(graph1).align = "left";
+    document.getElementById("lc_plot").align = "left";
+}
+</script>
+
+<div id="loader" style="position: fixed; top:0; left:0; width:100%; height: 100%; background: url('{% static 'img/loader.gif' %}') center center #efefef"></div>
+
+{% if descriptors %}    
+    <form action='#' onclick="" method='post' enctype="multipart/form-data">{% csrf_token %}
+        
+        <div id="selector1">  
+        <h3 class="selector1_header">Available descriptors</h3>
+            <select name="deselected_descr[]" id="deselected_descr" multiple="multiple" class="select1">
+                {% for descriptor in descriptors %}
+                    <option value="{{ descriptor }}">{{ descriptor }}</option> 
+                {% endfor %}
+                    
+                    
+              </select>  
+              <a href="#/" class="button" id="add" >Add &gt;&gt;</a>  
+        </div>  
+        <div id="selector2"> 
+        <h3 class="selector2_header">Selected items</h3> 
+            <select name="selected_descr[]" id="selected_descr" multiple="multiple" class="select2"></select>  
+            
+            <a href="#/" class="button button-reversed" id="remove">&lt;&lt; Remove</a> 
+        </div> 
+        
+            
+        
+        <div id="selector3">  
+        <h3 class="selector3_header">Available deciders</h3>
+              <select multiple class="select7">  
+                    {% for decider in deciders %}
+                    <option value="{{ decider }}">{{ decider }}</option> 
+                    {% endfor %}
+              </select>  
+              <a href="#/" class="button" id="add2">add &gt;&gt;</a>  
+        </div>  
+        <div id="selector4"> 
+        <h3 class="selector4_header">Selected items</h3> 
+            <select multiple class="select8">
+                
+            </select>  
+            <a href="#/" class="button button-reversed" id="remove2">&lt;&lt; remove</a> 
+        </div> 
+        
+        
+        
+        <div class="desc_inputs1">
+            {% for field in descriptors_fields %}
+                <div id="{{ field.0 }}" style="display: none;">
+                {% if field.1 %}
+                   <h2 id="{{ field.0 }}_head" class="desc_header"> {{ field.0 }}</h2>
+                {% endif %}
+                {% for desc in field.1 %}                       
+                   <label class="desc_lab" align="left">{{ desc.0 }}</label>
+                    {% if desc.0 != "comp_stars" %}
+                        <input type="text" name="descriptor:{{ field.0 }}:{{ desc.0 }}" rows="2" cols="35" value="{{ desc.1 }}">
+                    {% else %}
+                        <input align="middle" type='file' class="filestyle" data-classIcon="icon-plus" data-input="false" data-classButton="btn btn-primary" multiple name="templ_file:{{ field.0 }}:{{ desc.0 }}" data-buttonText='Load template objects' />              
+                    {% endif %}
+                {% endfor %}
+                </div>
+            {% endfor %}
+            </div>
+        
+        
+        
+        <div class="desc_inputs2">
+            {% for field in deciders_fields %}
+                <div id="{{ field.0 }}" style="display: none;">
+                {% if field.1 %}
+                   <h2 id="{{ field.0 }}_head" class="desc_header"> {{ field.0 }}</h2>
+                {% endif %}
+                {% for desc in field.1 %}                       
+                    <label class="desc_lab" align="left">{{ desc.0 }}</label>
+                    <input type="text" name="decider:{{ field.0 }}:{{ desc.0 }}" value="{{ desc.1 }}">              
+                {% endfor %}
+                </div>
+            {% endfor %}
+            </div>
+        
+        <input id='deciders_l' type='text' style="display: none"; name='deciders_l' />
+        <input id='descriptors_l' type='text' style="display: none"; name='descriptors_l' />
+        
+    
+        <div id="buttons">   
+            <h1 align="left">Load the sample (fits/dat)</h1>
+            <p>You don't have to select any files if you want to use test sample</p>
+            <input type='file' class="filestyle" data-classIcon="icon-plus" data-input="false" data-classButton="btn btn-primary" multiple name='sample_files' data-buttonText='The sample' />
+            
+            <input onclick="scroll(0,0);" style="background-color:#a3a1a1;font-weight: 900;height:40px;color:#000000;" type='submit' class="filestyle" data-classIcon="icon-plus" data-classButton="btn btn-primary" name='sub' value='Submit' />
+        </div>
+        
+    </form>
+{% else %}
+
+
+    <a href="#/" id="realign1" onclick='rearrange_vert()' class="button">Graphs vertically</a>
+    <a href="#/" id="realign2" onclick='rearrange_horiz()' class="button button-reversed">Graphs horizontally</a>
+    <section class="scontainer">
+
+        {% if probab_data|length == 3 %}
+            <div allign="left" id="plotUnsup" style="width:57%;display:inline-block;">
+                <script>
+                {% include "visual/plotUnsupSpace.js" %}
+                </script>
+            </div>
+        {% elif probab_data|length == 2 %}
+            <div allign="left" id="plot2dUnsup" width="57%" style="display:inline-block;">
+                <script>
+                {% include "visual/plotUnsup2D.js" %}
+                </script>
+            </div>
+        {% endif %}
+
+        <div align="right" id="lc_plot" class="two" width="40%" style="width:57%;display:inline-block;"></div>
+    </section>
+
+    {% if space_coords|length > 2 %}
+    <script>
+        {% include "visual/plot3D_scatter.js" %}
+    </script>
+    <h3>Available axis:</h3>
+    <p>
+        {% for ax in all_axis %}
+            {{forloop.counter}} - {{ ax }}<br>
+        {% endfor %}
+        <br>
+        Specify plot axis by their numbers separated by ':' . In case of
+        two numbers 2D graph will be plotted in case of three numbers 3D
+        graph will be plotted.
+    </p>
+    <input name="plot_axis" type="text" />
+    <button onclick="plot3D_scat()">Plot</button>
+    <div id="plot3d_scat" align="center" style="width:100%;height:100%"></div>
+
+    {% endif %}
+
+{% endif %}
+
+{% include "interface/to_inter.html" %}
+{% endblock %}

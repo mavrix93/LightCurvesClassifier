@@ -36,7 +36,7 @@ def parse_query_ranges(raw_params, split_by=":", enum_by=";"):
             except:
                 raise ValueError("Ranges of type from:to have to be integers")
 
-            this_combs = range(*par_ranges)
+            this_combs = list(range(*par_ranges))
 
         elif len(par_ranges) == 3:
             try:
@@ -77,7 +77,7 @@ def parse_tun_query(raw_params):
 
 def _parse_tun_query(one_param):
     this_comb = {}
-    for key, value in one_param.iteritems():
+    for key, value in one_param.items():
         x = key.split(":")
         if len(x) != 2:
             raise QueryInputError(

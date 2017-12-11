@@ -92,8 +92,8 @@ def main(project_settings, argv=None):
         opts, args = parser.parse_args(argv)
 
         if not len(argv):
-            print program_info, "\n"
-            print "Run with '-h' in order to show params help\n"
+            print(program_info, "\n")
+            print("Run with '-h' in order to show params help\n")
             return False
 
         ranges = opts.range
@@ -129,7 +129,7 @@ def main(project_settings, argv=None):
                     from_n = parts[0]
                     to_n = parts[1]
                     try:
-                        x.append(range(int(from_n), int(to_n), int(step)))
+                        x.append(list(range(int(from_n), int(to_n), int(step))))
                     except:
                         x.append(
                             np.arange(float(from_n), float(to_n), float(step)))
@@ -151,9 +151,9 @@ def main(project_settings, argv=None):
 
         StatusResolver.save_query(query, file_name, path, opts.delim)
 
-        print "\nDone.\nFile %s was saved into %s" % (file_name, path)
+        print("\nDone.\nFile %s was saved into %s" % (file_name, path))
 
-    except Exception, e:
+    except Exception as e:
         indent = len(program_name) * " "
         sys.stderr.write(program_name + ": " + repr(e) + "\n")
         sys.stderr.write(indent + "  for help use --help")

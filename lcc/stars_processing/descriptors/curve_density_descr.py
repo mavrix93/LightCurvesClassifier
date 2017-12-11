@@ -1,4 +1,4 @@
-from __future__ import division
+
 
 from lcc.utils.data_analysis import to_ekvi_PAA
 from lcc.stars_processing.utilities.base_descriptor import BaseDescriptor

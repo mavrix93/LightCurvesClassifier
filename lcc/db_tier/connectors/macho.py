@@ -20,7 +20,6 @@ class Macho(VizierTapBase, LightCurvesDb):
     TABLE = "II/247/machovar"
     LC_URL = "http://cdsarc.u-strasbg.fr/viz-bin/nph-Plot/w/Vgraph/txt?II%2f247%2f.%2f{macho_name}&F=b%2br&P={period}&-x&0&1&-y&-&-&-&--bitmap-size&600x400"
 
-    NAME = "{Field}.{Tile}.{Seqn}"
     LC_FILE = ""
 
     LC_META = {"xlabel": "Time",
@@ -35,3 +34,8 @@ class Macho(VizierTapBase, LightCurvesDb):
                                         ("bPer", "period_b")))
 
     QUERY_OPTION = ["ra", "dec", "delta", "nearest", "Field", "Tile", "Seqn"]
+
+    def get_name(self, star_info):
+        return "{:.0f}.{:.0f}.{:.0f}".format(star_info["Field"],
+                                             star_info["Tile"],
+                                             star_info["Seqn"])

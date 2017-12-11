@@ -1,6 +1,8 @@
 import glob
 import os
-import pyfits
+
+import numpy as np
+from astropy.io import fits
 from tqdm import tqdm
 
 from lcc.db_tier.base_query import LightCurvesDb
@@ -8,8 +10,6 @@ from lcc.entities.exceptions import InvalidFilesPath, InvalidFile
 from lcc.entities.light_curve import LightCurve
 from lcc.entities.star import Star
 from lcc.utils.output_process_modules import loadFromFile
-from lcc.utils.helpers import progressbar
-import numpy as np
 
 
 # TODO: This class need to be upgraded
@@ -19,7 +19,7 @@ class FileManager(LightCurvesDb):
 
     Attributes
     -----------
-    path : str
+    path : list, iterable
         Path key of folder of light curves .
 
     star_class : str
@@ -89,8 +89,9 @@ class FileManager(LightCurvesDb):
         if not path:
             raise IOError("Path %s was not found" % path)
 
-        if not hasattr(path, "__iter__"):
+        if isinstance(path, str):
             path = [path]
+
         self.path = path
         self.star_class = obtain_params.get(
             "star_class", self.DEFAULT_STARCLASS)
@@ -124,47 +125,42 @@ class FileManager(LightCurvesDb):
         else:
             stars = []
             for path in self.path:
-                self.path = path
-
-                stars += self._load_stars_from_folder()
+                stars += self._load_stars_from_folder(path)
 
         return stars
 
-    def _load_stars_from_folder(self):
+    def _load_stars_from_folder(self, path):
         """Load all files with a certain suffix as light curves"""
 
-        # Check whether the path ends with "/" sign, if not add
-        if not (self.path.endswith("/")):
-            self.path = self.path + "/"
+        if not path.endswith("/"):
+            path += "/"
 
         # Get all light curve files (all files which end with certain suffix
         if not self.suffix:
-            starsList = []
+            stars_list = []
             for suffix in self.SUFFIXES:
-                starsList += glob.glob("%s*%s" % (self.path, suffix))
+                stars_list += glob.glob("{}*{}".format(path, suffix))
         else:
-            starsList = glob.glob("%s*%s" % (self.path, self.suffix))
-        numberOfFiles = len(starsList)
-        if (numberOfFiles == 0):
+            stars_list = glob.glob("{}*{}".format(path, self.suffix))
+
+        found_files = len(stars_list)
+        if found_files == 0:
             if self.suffix:
                 raise InvalidFilesPath(
-                    "There are no stars in %s with %s suffix" % (self.path, self.suffix))
+                    "There are no stars in %s with %s suffix" % (path, self.suffix))
             else:
                 raise InvalidFilesPath(
-                    "There are no stars in %s with any of supported suffix: %s" % (self.path, self.SUFFIXES))
+                    "There are no stars in %s with any of supported suffix: %s" % (path, self.SUFFIXES))
 
-        if (numberOfFiles < self.files_limit):
-            self.files_limit = None
-        else:
-            numberOfFiles = self.files_limit
+        files_limit = self.files_limit or found_files
 
         if self.suffix in self.FITS_SUFFIX:
-            return self._loadFromFITS(starsList, numberOfFiles)
+            return self._loadFromFITS(stars_list, files_limit)
 
         stars = self._loadDatFiles(
-            [s for s in starsList if s.endswith("dat")], numberOfFiles)
+            [s for s in stars_list if s.endswith("dat")], files_limit)
         stars += self._loadFromFITS(
-            [s for s in starsList if s.endswith("fits")], numberOfFiles)
+            [s for s in stars_list if s.endswith("fits")], files_limit)
         return stars
 
     def _loadDatFiles(self, star_paths, numberOfFiles):
@@ -217,7 +213,7 @@ class FileManager(LightCurvesDb):
             dat = np.loadtxt(file_name, usecols=(
                 cls.TIME_COL, cls.MAG_COL, cls.ERR_COL), skiprows=2)
 
-        except IOError, Argument:
+        except IOError as Argument:
             raise InvalidFilesPath(
                 "\nCannot open light curve file\n %s" % Argument)
 
@@ -241,9 +237,9 @@ class FileManager(LightCurvesDb):
 
         stars = loadFromFile(os.path.join(self.path, self.object_file_name))
 
-        if (len(stars) == 0):
+        if len(stars) == 0:
             raise InvalidFile("There are no stars in object file")
-        if (stars[0].__class__.__name__ != "Star"):
+        if stars[0].__class__.__name__ != "Star":
             raise InvalidFile("It is not list of stars")
 
         return stars
@@ -264,12 +260,12 @@ class FileManager(LightCurvesDb):
         stars = []
         for path in tqdm(star_paths, desc="Loading FITS files:"):
             try:
-                fits = pyfits.open(os.path.join(self.path, path))
+                fits_file = fits.open(os.path.join(path))
 
-            except:
-                raise InvalidFile("Invalid fits file or path: %s" % self.path)
+            except Exception as e:
+                raise InvalidFile("Invalid fits file or path: {}\n{}".format(self.path, e))
 
-            stars.append(self._createStarFromFITS(fits))
+            stars.append(self._createStarFromFITS(fits_file))
 
         return stars
 
@@ -291,7 +287,7 @@ class FileManager(LightCurvesDb):
 
         ident = {}
         more = {}
-        for db_name_key in prim_hdu.keys():
+        for db_name_key in list(prim_hdu.keys()):
             if db_name_key.endswith(DB_NAME_END):
                 db_name = db_name_key[:-len(DB_NAME_END)]
 
@@ -320,7 +316,6 @@ class FileManager(LightCurvesDb):
 
     @classmethod
     def _createLcFromFits(self, fits):
-
         time = []
         mag = []
         err = []
@@ -354,7 +349,7 @@ class FileManager(LightCurvesDb):
 
     @classmethod
     def writeToFITS(self, file_name, star, clobber=True):
-        prim_hdu = pyfits.PrimaryHDU()
+        prim_hdu = fits.PrimaryHDU()
 
         prim_hdu.header["IDENT"] = star.name
 
@@ -368,36 +363,36 @@ class FileManager(LightCurvesDb):
         except AttributeError:
             pass
 
-        for db, ident in star.ident.iteritems():
+        for db, ident in star.ident.items():
             prim_hdu.header["HIERARCH " + db + "_name"] = ident["name"]
 
             identifiers = ident.get("db_ident")
             if not identifiers:
                 identifiers = {}
 
-            for key, value in identifiers.iteritems():
+            for key, value in identifiers.items():
                 prim_hdu.header["HIERARCH " + db + "_id_" + key] = value
 
-        for it, value in star.more.iteritems():
+        for it, value in star.more.items():
             if len(it) > 8:
                 it = "HIERARCH " + it
             prim_hdu.header[it] = value
 
-        hdu_list = pyfits.HDUList(prim_hdu)
+        hdu_list = fits.HDUList(prim_hdu)
 
         for lc in star.light_curves:
-            col1 = pyfits.Column(name=lc.meta.get("xlabel", "hjd"),
+            col1 = fits.Column(name=lc.meta.get("xlabel", "hjd"),
                                  unit=lc.meta.get("xlabel_unit", "days"),
                                  format='E', array=lc.time)
-            col2 = pyfits.Column(name=(lc.meta.get("ylabel", "magnitude")),
+            col2 = fits.Column(name=(lc.meta.get("ylabel", "magnitude")),
                                  unit=lc.meta.get("ylabel_unit", "mag"),
                                  format='E', array=lc.mag)
-            col3 = pyfits.Column(name="error",
+            col3 = fits.Column(name="error",
                                  unit=lc.meta.get("ylabel_unit", "mag"),
                                  format='E', array=lc.err)
 
-            # lc_hdu = pyfits.BinTableHDU.from_columns( cols )
-            lc_hdu = pyfits.new_table(pyfits.ColDefs([col1, col2, col3]))
+            lc_hdu = fits.BinTableHDU.from_columns([col1, col2, col3])
+            # lc_hdu = fits.new_table(fits.ColDefs([col1, col2, col3]))
 
             lc_hdu.header["FILTER"] = lc.meta.get("color", "")
             lc_hdu.header[
@@ -406,4 +401,4 @@ class FileManager(LightCurvesDb):
             hdu_list.append(lc_hdu)
 
         hdu_list.writeto(
-            file_name, clobber=clobber)
+            file_name, overwrite=clobber)

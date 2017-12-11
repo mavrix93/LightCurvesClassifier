@@ -1,0 +1,153 @@
+{% extends 'interface/base_template.html' %}
+
+
+
+{% block input_form %}
+
+
+
+<table align="middle" width="80%" border="1">
+<tr>
+    <th>Job id</th>
+    <td>{{ job_id }}</td>
+</tr>
+<tr>
+    <th>Status info</th>
+    <td>{{ status_info }}</td>
+</tr>
+<tr>
+    <th>Error message</th>
+    <td>{{ err_msg }}</td>
+</tr>
+<tr>
+    <th>Desriptors</th>
+    <td>{{ descriptors }}</td>
+</tr>
+<tr>
+    <th>Deciders</th>
+    <td>{{ deciders }}</td>
+</tr>
+<tr>
+    <th>Started</th>
+    <td>{{ start }}</td>
+</tr>
+<tr>
+    <th>Finished</th>
+    <td>{{ finish }}</td>
+</tr>
+<tr>
+    <th>Parameters to try</th>
+    <td>{{ tuned_params_num }}</td>
+</tr>
+<tr>
+    <th>Train sample stars - searched</th>
+    <td>{{ searched_stars }}</td>
+</tr>
+<tr>
+    <th>Train sample stars - others</th>
+    <td>{{ contamination_stars }}</td>
+</tr>
+</table>
+
+{% if rows %}
+    <br>
+    <a class="button" href="{% url 'download' file_name=filt_path %}">Download the filter</a>
+    <a class="button" href="{% url 'download' file_name="estim"|add:filt_path %}">Download estimator</a>
+    <br><br>
+{%  endif %}
+
+
+<table align="middle" width="80%" border="1" >
+{% for row in rows %}
+    {% if forloop.counter == 1 %}
+        <tr onclick="show_filter({{ job_id }}, {{ forloop.counter|add:"-2" }})">
+        {% for column in row %}
+            <th>{{ column }}</th>
+        {% endfor %}
+        </tr>
+    {% elif forloop.counter == best_id|add:"2" %}    
+        <tr onclick="show_filter({{ job_id }}, {{ forloop.counter|add:"-2" }})" bgcolor="#dd8e06">
+        {% for column in row %}
+            <td>{{ column }}</td>
+        {% endfor %}
+        </tr>
+
+    {% elif forloop.counter == filt_id|add:"2" %}
+        <tr bgcolor="02388e">
+        {% for column in row %}
+            <td>{{ column }}</td>
+        {% endfor %}
+        </tr>
+
+    {% else %}
+        <tr onclick="show_filter({{ job_id }}, {{ forloop.counter|add:"-2" }})"  bgcolor="#d4d5f9">
+        {% for column in row %}
+            <td>{{ column }}</td>
+        {% endfor %}
+        </tr>
+    {% endif %}
+  {% endfor %}
+</table>
+
+
+<script>
+    {% include "visual/plotLC_selected.js" %}
+</script>
+    
+    <section class="scontainer">
+    <p><small>Info: Max 100 (random) stars from each group is plotted</small></p>
+    {% if coo_data and coo_data.0|length == 2 %}
+        {% if lcs.0 %}
+        <div display:inline-block; allign="left" id="plot3d_surface" style="width:65%;height:100%;display:inline-block;">
+        {% else %}
+        <div id="plot3d_surface" style="width:100%;height:100%">
+        {% endif %}
+            <script>
+            {% include "visual/plot3D_surface.js" %}
+            </script>
+        
+        </div>
+    {% elif coo_data and coo_data.0|length == 1 %}
+        <div display:inline-block; align="left" id="plot2d" style="width:65%;height:100%;display:inline-block;">
+            <script>
+            {% include "visual/plot2D.js" %}
+            </script>
+        </div>
+
+        
+    {% endif %}
+    <div align="right" id="lc_plot" class="two" style="width:33%;height:100%;display:inline-block;"></div>
+
+    {% if space_coords  %}
+        <script>
+            {% include "visual/plot3D_scatter_superv.js" %}
+        </script>
+        <h3>Available axis:</h3>
+        <p>
+            {% for ax in all_axis %}
+                {{forloop.counter}} - {{ ax }}<br>
+            {% endfor %}
+            <br>
+            Specify plot axis by their numbers separated by ':' . In case of
+            two numbers 2D graph will be plotted in case of three numbers 3D
+            graph will be plotted.
+        </p>
+        <input name="plot_axis" type="text" />
+        <button onclick="plot3D_scat()">Plot</button>
+        <div id="plot3d_scat" align="center" style="width:100%;height:100%"></div>
+    {%  endif %}
+
+
+    
+
+    </section>
+    
+
+<div align="middle" id="plotROC" style="width:100%;height:100%"></div>
+<script>
+{% include "visual/plotROC.js" %}
+</script>
+
+
+    
+{% endblock %}

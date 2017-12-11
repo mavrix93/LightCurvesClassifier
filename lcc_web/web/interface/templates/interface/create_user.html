@@ -1,0 +1,21 @@
+{% extends 'interface/base_template.html' %}
+{% load static %}
+
+{% block input_form %}
+
+
+<h1 align="middle">Registration</h1>
+
+<form action='/lcc/new_user/' method='post'>
+    {% csrf_token %}
+    <p><label>User name:</label> {{ form.username }}</p>
+
+    <p><label>Password:</label> {{ form.password1 }}</p>
+    <p><label>Password again:</label> {{ form.password2 }}</p>
+    <p><label></label><input type="submit" value="Submit" /></p>
+</form>
+
+
+
+
+{% endblock %}

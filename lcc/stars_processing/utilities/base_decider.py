@@ -1,15 +1,16 @@
-from __future__ import division
+
 
 import abc
 import collections
 import warnings
 
-from lcc.utils.data_analysis import computePrecision
-from lcc.utils.helpers import check_depth
 import numpy as np
 
+from lcc.utils.data_analysis import computePrecision
+from lcc.utils.helpers import check_depth
 
-class BaseDecider(object):
+
+class BaseDecider(abc.ABC):
     """
     A decider class works with "coordinates" (specification) of objects. It can
     learn identify inspected group of objects according to "coordinates" of 
@@ -28,8 +29,6 @@ class BaseDecider(object):
 
     threshold = 0.8
     """
-
-    __metaclass__ = abc.ABCMeta
 
     def learn(self, right_coords, wrong_coords):
         """

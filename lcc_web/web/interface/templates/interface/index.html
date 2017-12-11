@@ -1,0 +1,88 @@
+{% extends 'interface/base_template.html' %}
+{% load static %}
+
+{% block input_form %}
+
+<i><small>Info: {{ info }}<br>
+You can do unsupervised clustering or see your stars data without login, <br>
+    but for other tools you need login (User -> Sign in/out),<br>
+    because tasks are executed in jobs and are private (only owner can see them)
+</small></i>
+
+<i><small>NOTE: This project is still in the development.<br>
+Please be noted that it can contains bugs. In this case do not hesitate to report it to the author.
+</small></i>
+<h1 align="middle">Introduction</h1>
+
+<p>Welcome on the Web Interface for Light Curves Classifier - package for classification astronomical objects by using <br>
+ Machine Learning methods and downloading stars from huge astronomical  <br>
+surveys by using predefined connectors.
+Light Curves Classifier is Python package <br>
+which can be used directly, by command line interface or by this web interface. <br>
+It can be found on <a style="text-decoration:none; color:#0146b5;" href="https://github.com/mavrix93/LightCurvesClassifier">Github</a> or installed
+by "pip install lcc". <br> <br>
+In order to train classifiers and searching in databases you have to sigin (free and fast), because all these tasks create <br>
+a job which is visible just for you without need of waiting on the result (so far all jobs are stored, but in the future some "very old" jobs <br>
+will be deleted. Anyway all results can be downloaded. <br>
+Also it allows you to create own modules (descriptors, classifiers and even connectors) which can be then used in the Web Interface. <br>
+However there are "Unsupervised clustering" and "Showing light curves" section available eve without login.
+</p>
+
+<h2>Workflow</h2>
+
+<br><br>
+<div>
+<image src="{% static 'img/diagram.png' %}" alt="Workflow diagram" style="width:60%;height:20%;"></image>
+</div>
+<br><br>
+
+<h3>Descriptors</h3>
+
+Objects/tools which obtain features for an inspected object from the given data <br>
+Example descriptors:
+    
+<br><br>
+
+<br>
+<h4>Curves Shape Descriptor</h4>
+<p>Light curves are transformed into words by SAX and compared to the template light curves.<br>
+ The dissimilarity  of these two light curves is assigned as the feature to the inspected star.</p> 
+<br>
+<table><tr><td><img src="{% static 'img/comp_lc_qso.png' %}"></td><td><img src="{% static 'img/comp_lc_bestar.png' %}"></td></tr></table>
+<br>
+<br>
+<h4>Histogram Shape Descriptor</h4>
+<p>Histograms of light curves are shifted to have mean magnitude 0 and transformed to have standart deviation 1. <br>
+Then it is transformed into words by SAX and compared to the template histograms.<br>
+ The dissimilarity  of these two light curves is assigned as the feature to the inspected star.</p> 
+<br>
+<table><tr><td><img src="{% static 'img/comp_hist_qso.png' %}"></td><td><img src="{% static 'img/comp_hist_bestar.png' %}"></td></tr></table>
+<br>
+<br>
+<h4>Variogram Shape Descriptor</h4>
+<p>Time series which represent variation of brightness in different time lags. <br>
+It is also transformed into SAX and compared with template variogram.
+
+</p>
+<br>
+<table><tr><td><img src="{% static 'img/comp_vario_qso.png' %}"></td><td><img src="{% static 'img/comp_vario_bestar.png' %}"></td></tr></table>
+
+<h3>Deciders</h3>
+
+Supervised and unsupervised Machine-Learning methods
+
+<br><br>
+
+    <h2>Acknowledgements</h2>
+This research was supported by grant COST LD-15113 of the
+Ministry of Education Youth and Sports of the Czech Republic.
+The CSS survey is funded by the National Aeronautics and
+Space Administration under Grant No. NNG05GF22G issued
+through the Science Mission Directorate Near-Earth Objects
+Observations Program. The CRTS survey is supported by the
+U.S. National Science Foundation under grants AST-0909182
+and AST-1313422.
+
+
+
+{% endblock %}

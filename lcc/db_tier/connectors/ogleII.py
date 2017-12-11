@@ -1,9 +1,8 @@
 import re
-import urllib
-import urllib2
 import warnings
 
 import numpy as np
+import requests
 from astropy.coordinates.sky_coordinate import SkyCoord
 from bs4 import BeautifulSoup
 
@@ -102,7 +101,7 @@ class OgleII(LightCurvesDb):
         return stars
 
     def postQuery(self, query, load_lc):
-        PAGE_LEN = 1e10
+        PAGE_LEN = int(1e10)
         valmin_ra, valmax_ra, valmin_dec, valmax_dec = self._getRanges(query.get("ra"),
                                                                        query.get(
                                                                            "dec"),
@@ -136,7 +135,6 @@ class OgleII(LightCurvesDb):
             "disp_pgood": "off",
             "disp_bmean": "on",
             "disp_vmean": "on",
-            "disp_imean": "on",
             "disp_imed": "off",
             "disp_bsig": "off",
             "disp_vsig": "off",
@@ -149,15 +147,13 @@ class OgleII(LightCurvesDb):
             "pagelen": PAGE_LEN,
         }
         # Delete unneeded parameters
-        to_del = []
-        for key, value in params.iteritems():
-            if not value or value == "off":
-                to_del.append(key)
+        cparams = dict()
+        for key, value in params.items():
+            if value and value != "off":
+                cparams[key] = value
         # Url for query
         url = "%s/query.php?qtype=%s&first=1" % (self.ROOT, query.get("db"))
-        [params.pop(x, None) for x in to_del]
-        result = urllib2.urlopen(
-            url, urllib.urlencode(params), timeout=100)
+        result = requests.post(url, cparams)
         return self._parseResult(result, lc=load_lc)
 
     def _parseQueries(self, queries):
@@ -206,14 +202,15 @@ class OgleII(LightCurvesDb):
         START_TABLE = "<p><table"
         END_TABLE = "</table>"
 
-        if result.code != 200:
+        if result.status_code != 200:
             warnings.warn("Website has not returned 200 status")
             return []
 
         lc_tmp = None
         raw_table = ""
         skip = True
-        for line in result.readlines():
+        for line in result.iter_lines():
+            line = line.decode()
             if skip:
                 if line.strip().startswith(START_TABLE):
                     raw_table += line[len("<p>"):]
@@ -289,7 +286,7 @@ class OgleII(LightCurvesDb):
     def _parseHeader(self, header):
         cols_map = {}
         for i, col in enumerate(header):
-            if col in self.COL_MAP.keys():
+            if col in list(self.COL_MAP.keys()):
                 cols_map[self.COL_MAP[col]] = i
         return cols_map
 
@@ -303,24 +300,23 @@ class OgleII(LightCurvesDb):
         }
 
         _url = "%s/getobj.php" % self.ROOT
-        urllib2.urlopen(_url, urllib.urlencode(params))
+        requests.post(_url, params)
 
         url = "%s/data/%s/%s_i_%s.dat" % (self.ROOT,
                                           lc_tmp, field.lower(), starid)
         try:
-            result = urllib2.urlopen(url)
+            result = requests.get(url)
 
-            if result.code == 200:
+            if result.status_code == 200:
                 star_curve = []
-                for line in result.readlines():
+                # TODO: Can be loaded with pandas
+                for line in result.iter_lines():
+                    line = line.decode()
                     parts = line.strip().split(" ")
                     star_curve.append(
                         [round(float(parts[0]), 4), round(float(parts[1]), 3), round(float(parts[2]), 3)])
                 return star_curve
 
-        except urllib2.HTTPError as err:
-            if err.code == 404:
-                warnings.warn("Could't find lc")
-                return None
-            else:
-                raise
+        # TODO
+        except:
+            raise

@@ -1,4 +1,5 @@
 import requests
+import pandas as pd
 
 from lcc.db_tier.TAP_query import TapClient
 from lcc.entities.exceptions import QueryInputError
@@ -30,9 +31,6 @@ class VizierTapBase(TapClient):
     DEC : str
         Name of declination column. It should be in degrees, anyway it is
         necessary to convert them
-
-    NAME : preformated str
-        Preformated string with dictionary keys.
 
         EXAMPLE
         --------
@@ -82,9 +80,6 @@ class VizierTapBase(TapClient):
         --------
             IDENT_MAP = {"Macho" :  ("Field", "Tile", "Seqn") }
 
-            This allows NAME attribute to access these keys (see above)
-            and construct unique identifier for the star.
-
         For one item dictionaries can be used simple dictionary, because
         there is no need to keep order of items.
 
@@ -123,6 +118,7 @@ class VizierTapBase(TapClient):
     DEC = "DEJ2000"
 
     LC_FILE = None
+    LC_META = dict()
 
     TIME_COL = 0
     MAG_COL = 1
@@ -171,7 +167,7 @@ class VizierTapBase(TapClient):
             List of stars with their light curves
         """
 
-        select = set([self.RA, self.DEC, self.LC_FILE] + self.MORE_MAP.keys())
+        select = set([self.RA, self.DEC, self.LC_FILE] + list(self.MORE_MAP.keys()))
 
         for val in self.IDENT_MAP.values():
             if isinstance(val, (tuple, list, set)):
@@ -183,7 +179,7 @@ class VizierTapBase(TapClient):
         select = [s for s in select if s]
         select = list(select)
 
-        raw_stars = []
+        raw_stars = pd.DataFrame()
         for _que in self.queries:
             que = _que.copy()
             if "ra" in que and "dec" in que:
@@ -195,7 +191,7 @@ class VizierTapBase(TapClient):
                         que[self.RA], que[self.DEC], delta)
 
             conditions = []
-            for key, value in que.iteritems():
+            for key, value in que.items():
                 if isinstance(value, (list, tuple)):
                     if len(value) == 2:
                         conditions.append((key, value[0], value[1]))
@@ -210,22 +206,18 @@ class VizierTapBase(TapClient):
                          "conditions": conditions,
                          "URL": self.TAP_URL}
             res = self.postQuery(query_inp)
-            if res:
-                raw_stars += res
+            if not res.empty:
+                raw_stars = pd.concat([raw_stars, res])
 
-        return self._createStar(raw_stars, select, load_lc, **kwargs)
+        return self._createStar(raw_stars, load_lc, **kwargs)
 
-    def _createStar(self, data, keys, lc_opt, **kwargs):
+    def _createStar(self, df, lc_opt, **kwargs):
         """
         Create Star objects from query result
 
         Parameters
         ----------
-        data : list
-            Result from query
-
-        keys : list
-            Name of columns of data
+        df :
 
         lc_opt : bool
             Obtain light curves if True
@@ -236,16 +228,18 @@ class VizierTapBase(TapClient):
             List of Star objects
         """
         stars = []
-        for raw_star in data:
+        for _, _raw_star in df.iterrows():
+            raw_star_dict = _raw_star.to_dict()
+
             ident = {}
-            for key, value in self.IDENT_MAP.iteritems():
+            for key, value in self.IDENT_MAP.items():
                 db_ident = {}
                 if isinstance(value, (list, tuple)):
                     for ide in value:
-                        db_ident[ide] = raw_star[keys.index(ide)]
-                    name = self.NAME.format(**db_ident)
+                        db_ident[ide] = raw_star_dict.get(ide)
+                    name = self.get_name(db_ident)
                 else:
-                    name = raw_star[keys.index(value)]
+                    name = raw_star_dict.get(value)
 
                 if not db_ident:
                     db_ident = None
@@ -253,12 +247,11 @@ class VizierTapBase(TapClient):
                 ident[key] = {"name": name, "db_ident": db_ident}
 
             more = {}
-            for key, value in self.MORE_MAP.iteritems():
-                more_item = raw_star[keys.index(key)]
+            for key, value in self.MORE_MAP.items():
+                more_item = raw_star_dict.get(key)
                 more[value] = more_item
-            raw_star_dict = dict(zip(keys, raw_star))
 
-            star = Star(name=self.NAME.format(**raw_star_dict),
+            star = Star(name=self.get_name(raw_star_dict),
                         coo=(raw_star_dict[self.RA],
                              raw_star_dict[self.DEC]),
                         ident=ident,
@@ -304,12 +297,13 @@ class VizierTapBase(TapClient):
 
         url = self.LC_URL.format(macho_name=star.name, period=period)
 
+        meta = None
         response = requests.get(url)
         time = []
         mag = []
         err = []
         lcs = []
-        for line in response.iter_lines():
+        for line in response.iter_lines(decode_unicode='utf-8'):
             line = line.strip()
 
             if not line.startswith((" ", "#")):
@@ -329,5 +323,4 @@ class VizierTapBase(TapClient):
                     meta = self.LC_META.copy()
                     meta["color"] = "R"
         lcs.append(LightCurve([time, mag, err], meta))
-
         return lcs

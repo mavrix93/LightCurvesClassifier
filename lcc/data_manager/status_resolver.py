@@ -125,7 +125,7 @@ class StatusResolver(object):
             None
         '''
 
-        header = query[0].keys()
+        header = list(query[0].keys())
         path = os.path.join(PATH, fi_name)
 
         if not DELIM:
@@ -269,7 +269,7 @@ class StatusResolver(object):
         for query in queries:
             if type(query) is not np.ndarray and type(query) is not list:
                 query = [query]
-            queries_list.append(dict(zip(header, query)))
+            queries_list.append(dict(list(zip(header, query))))
         return queries_list
 
     def _readInStr(self, words):

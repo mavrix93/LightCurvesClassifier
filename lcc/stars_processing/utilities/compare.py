@@ -1,13 +1,13 @@
 import abc
-
 import logging
+
 import numpy as np
 
 from lcc.entities.exceptions import QueryInputError
 from lcc.utils.helpers import convert_input_value
 
 
-class ComparativeBase():
+class ComparativeBase(abc.ABC):
     """
     This class is responsible for comparing light curves of inspected stars
     with the template stars
@@ -17,7 +17,6 @@ class ComparativeBase():
     compar_stars : list, iterable
         List of Star objects which represent searched group of star objects
     """
-    __metaclass__ = abc.ABCMeta
 
     def compareTwoStars(self, *args, **kwargs):
         raise NotImplemented()
@@ -51,11 +50,10 @@ class ComparativeBase():
         list
             Difference in symbolic space of the investigated star from the template
         """
-        try:
-            meth = self.method
-        except AttributeError:
+        if hasattr(self, "meth"):
+            meth = self.meth
+        else:
             meth = "average"
-
 
         coords = [x for x in self._filtOneStar(star, search_opt="all") if x is not None]
         logging.debug("Coords: %s" % coords)
@@ -72,16 +70,17 @@ class ComparativeBase():
             if isinstance(n, float):
                 n = int(len(coords)*n)
 
+            if isinstance(n, str):
+                n = 1
+
             if not meth:
                 raise QueryInputError("""Unresolved coordinates calculation method. String 'best' has to
                 be followed by integer or float number""")
 
-            return np.mean(np.argsort(coords)[:n])
+            return np.mean(np.sort(coords)[:n])
 
         else:
             raise QueryInputError("Unresolved coordinates calculation method")
-
-
 
     def _filtOneStar(self, star, *args, **kwargs):
         """

@@ -2,7 +2,7 @@
 There are functions for processing data series
 """
 
-from __future__ import division
+
 
 import logging
 import math
@@ -80,7 +80,10 @@ def to_ekvi_PAA(x, y, bins=None, days_per_bin=None, max_bins=None,
     list
         Reduced `y` data
     """
-    if bins > 0 and bins <= 1:
+    if not bins:
+        bins = 1
+
+    if 0 < bins <= 1:
         bins = int(len(x) * bins)
 
     if isinstance(x, list):
@@ -327,23 +330,16 @@ def compute_bins(x_time, days_per_bin, set_min=5):
 
     set_min
     """
-
-    BORDER_AREA = 5
-
     if isinstance(x_time, list):
         x_time = np.array(x_time)
 
-    n = len(x_time)
-    if n < BORDER_AREA * 5:
-        BORDER_AREA = 1
-
-    time_range = x_time[-BORDER_AREA:].mean() - x_time[:BORDER_AREA].mean()
+    time_range = x_time.max() - x_time.min()
     num_bins = int(round(time_range / float(days_per_bin)))
 
     if set_min and num_bins < set_min:
         warnings.warn(
             "Too low number of bins for given ratio. Setting bin number to minimal default value.")
-        num_bins = 5
+        num_bins = set_min
 
     return num_bins
 

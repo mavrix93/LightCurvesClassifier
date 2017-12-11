@@ -1,4 +1,4 @@
-from __future__ import division
+
 
 import warnings
 
@@ -190,7 +190,7 @@ class StarsFilter(object):
 
         desc_labels = []
         for desc in self.descriptors:
-            if hasattr(desc.LABEL, "__iter__"):
+            if not isinstance(desc.LABEL, str) and hasattr(desc.LABEL, "__iter__"):
                 desc_labels += desc.LABEL
             else:
                 desc_labels.append(desc.LABEL)
@@ -258,7 +258,34 @@ class StarsFilter(object):
         for decider in self.deciders:
             decisions.append(decider.evaluate(stars_coords_df.values))
 
-        return pd.DataFrame(np.transpose(decisions), index=stars_coords_df.index, columns=[dec.__class__.__name__ for dec in self.deciders])
+        return pd.DataFrame(np.transpose(decisions), index=stars_coords_df.index,
+                            columns=[dec.__class__.__name__ for dec in self.deciders])
+
+    def getAllPredictions(self, stars, with_features=False, check_passing=False):
+        """
+        Get probability of membership calculated from all deciders
+        """
+        stars_coords_df = self.getSpaceCoordinates(stars)
+
+        decisions = []
+        if stars:
+            for decider in self.deciders:
+                decisions.append(decider.evaluate(stars_coords_df.values))
+            decisions = np.transpose(decisions)
+
+        df = pd.DataFrame(decisions, index=stars_coords_df.index,
+                          columns=[d.__class__.__name__ for d in self.deciders])
+
+        if with_features:
+            df = pd.merge(stars_coords_df, df, left_index=True, right_index=True)
+
+        if check_passing:
+            for decider in self.deciders:
+                df["passed_{}".format(decider.__class__.__name__)] = df[decider.__class__.__name__] > decider.threshold
+
+            df["passed"] = df[[c for c in df.columns if c.startswith("passed_")]].all(axis=1)
+
+        return df
 
     @check_attribute("learned", True, "raise")
     def evaluateCoordinates(self, stars_coords, meth="mean"):
@@ -281,7 +308,7 @@ class StarsFilter(object):
         Returns
         -------
         list
-            Probabilities of membership according to selected the method
+            Probabilities of membership according to selected method
         """
         decisions = []
         for decider in self.deciders:
@@ -352,7 +379,7 @@ class StarsFilter(object):
         space_coordinate = []
         for descriptor in self.descriptors:
             coo = descriptor.getSpaceCoords(stars)
-            if not hasattr(coo[0], "__iter__"):
+            if coo and not hasattr(coo[0], "__iter__"):
                 coo = [[c] for c in coo]
 
             if not space_coordinate:
