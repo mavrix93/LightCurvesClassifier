@@ -29,6 +29,7 @@ class PackageReader(object):
     """
 
     MODULE_EXTENSIONS = ('.py',)
+    PACKAGE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), os.pardir, os.pardir)
     EXCLUDE = tuple()
     NAMES = {"descriptors": (["lcc/stars_processing/descriptors"], BaseDescriptor),
              "connectors": (["lcc/db_tier/connectors"], StarsCatalogue),
@@ -117,7 +118,7 @@ class PackageReader(object):
         set
             Set of module names in the package
         """
-        _, pathname, _ = imp.find_module(package_name)
+        pathname = os.path.join(cls.PACKAGE_PATH, package_name)
 
         # Use a set because some may be both source and compiled.
         return set([os.path.splitext(module)[0]
@@ -169,3 +170,7 @@ class PackageReader(object):
 
         sys.path.insert(0, upper_folder)
         group[0].append(folder_name)
+
+    @classmethod
+    def getSamplePath(cls, sample_name="qso"):
+        return os.path.join(cls.PACKAGE_PATH, "sample", sample_name)

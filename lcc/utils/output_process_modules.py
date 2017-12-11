@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 import os
 import pickle
 
@@ -33,7 +35,7 @@ def saveIntoFile(obj, path=".", file_name="saved_object.pickle",
     try:
         with open(path_with_name, "wb") as output:
             pickle.dump(obj, output, pickle.HIGHEST_PROTOCOL)
-        print "Object has been saved into %s/%s" % (path, file_name)
+        print("Object has been saved into %s/%s" % (path, file_name))
     except IOError:
         raise InvalidFilesPath("Path: %s\tfile name: %s" % (path, file_name))
 

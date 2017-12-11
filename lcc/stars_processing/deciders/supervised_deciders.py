@@ -143,9 +143,7 @@ class GradBoostDec(SupervisedBase):
                          "presort": presort}
         SupervisedBase.__init__(self, clf=GradientBoostingClassifier(**classi_params), threshold=threshold)
         
-        
-        
-        
+
 class RandomForestDec(SupervisedBase):
     """
     Sklearn implementation of RandomForestClassifier
@@ -171,11 +169,7 @@ class RandomForestDec(SupervisedBase):
                          "bootstrap": bootstrap, "oob_score": oob_score, "n_jobs": n_jobs,
                          "random_state": random_state, "class_weight": class_weight}
         SupervisedBase.__init__(self, clf=RandomForestClassifier(**classi_params), threshold=threshold)
-        
-        
-        
-        
-        
+
         
 class AdaBoostDec(SupervisedBase):
     """
@@ -196,8 +190,6 @@ class AdaBoostDec(SupervisedBase):
         classi_params = {"base_estimator": base_estimator, "n_estimators": n_estimators,
                          "learning_rate": learning_rate,"algorithm": algorithm, "random_state": random_state}
         SupervisedBase.__init__(self, clf=AdaBoostClassifier(**classi_params), threshold=threshold)
-        
-
 
 
 class ExtraTreesDec(SupervisedBase):
@@ -226,5 +218,4 @@ class ExtraTreesDec(SupervisedBase):
                          "random_state": random_state, "class_weight": class_weight}
 
         SupervisedBase.__init__(self, clf=ExtraTreesClassifier(**classi_params), threshold=threshold)
-        
-        
+

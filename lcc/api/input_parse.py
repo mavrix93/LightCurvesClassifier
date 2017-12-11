@@ -100,7 +100,6 @@ def _parse_tun_query(one_param):
                 try:
                     value = ast.literal_eval(value.strip()[1:-1])
                 except Exception as e:
-                    print value
                     warnings.warn(str(e))
                     try:
                         value = value.strip()[1:-1]

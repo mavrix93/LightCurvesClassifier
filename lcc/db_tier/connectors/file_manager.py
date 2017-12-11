@@ -1,6 +1,7 @@
 import glob
 import os
 import pyfits
+from tqdm import tqdm
 
 from lcc.db_tier.base_query import LightCurvesDb
 from lcc.entities.exceptions import InvalidFilesPath, InvalidFile
@@ -172,7 +173,7 @@ class FileManager(LightCurvesDb):
         stars = []
         counter = 1
         # Load every light curve and put it into star object
-        for singleFile in progressbar(star_paths[:numberOfFiles], "Loading dat files:"):
+        for singleFile in tqdm(star_paths[:numberOfFiles], desc="Loading dat files:"):
             if self.files_to_load and os.path.basename(singleFile) not in self.files_to_load:
                 break
 
@@ -259,8 +260,10 @@ class FileManager(LightCurvesDb):
     def _loadFromFITS(self, star_paths, files_lim=None):
         if not star_paths:
             return []
+        if files_lim and isinstance(files_lim, int):
+            star_paths = star_paths[:files_lim]
         stars = []
-        for path in progressbar(star_paths, "Loading FITS files:"):
+        for path in tqdm(star_paths, desc="Loading FITS files:"):
             try:
                 fits = pyfits.open(os.path.join(self.path, path))
 

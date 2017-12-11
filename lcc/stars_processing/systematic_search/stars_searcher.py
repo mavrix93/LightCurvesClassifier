@@ -209,15 +209,12 @@ class StarsSearcher:
             result = pool.map_async(self.queryStar, queries)
             pool.close()  # No more work
             n = len(queries)
-            print queries
             while True:
-                print type(result._number_left)
                 if result.ready():
                     break
                 sys.stderr.write('\rProcessed stars: {0} / {1}'.format(n - result._number_left,  n))
 
                 time.sleep(0.6)
-            print "ss"
             result = result.get()
             logging.info('\rAll {0} stars have been processed'.format(n))
             result = pool.map(self.queryStar, queries)
