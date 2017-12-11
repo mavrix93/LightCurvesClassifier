@@ -1,4 +1,5 @@
 import abc
+import logging
 import sys
 import time
 import warnings
@@ -30,12 +31,14 @@ class StarsCatalogue(object):
         """
         n = len(self.queries)
         if hasattr(self, "multiproc") and self.multiproc:
-
+            warnings.warn("Multiprocessing doesn't work in the current version")
+        # if hasattr(self, "multiproc") and self.multiproc:
+        if False:
             if self.multiproc is True:
                 n_cpu = multiprocessing.cpu_count()
             else:
                 n_cpu = self.multiproc
-            print "Using {} cpus".format(n_cpu)
+            logging.info("Using {} cpus".format(n_cpu))
                 
             pool = multiprocessing.Pool(n_cpu)
 
@@ -59,7 +62,7 @@ class StarsCatalogue(object):
         for oneq_stars in result:
             stars += oneq_stars
 
-        sys.stderr.write('\rAll {0} stars have been downloaded from {1} query'.format(len(stars), n))
+        # sys.stderr.write('\rAll {0} stars have been downloaded from {1} query'.format(len(stars), n))
         
         return stars
 

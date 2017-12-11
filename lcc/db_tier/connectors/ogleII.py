@@ -60,7 +60,7 @@ class OgleII(LightCurvesDb):
 
     QUERY_OPTIONS = ["ra", "dec", "delta", "nearest", "field", "field_num", "starid", "target"]
 
-    def __init__(self, queries, multiproc=True):
+    def __init__(self, queries, multiproc=False):
         """
         Parameters
         ----------
@@ -310,7 +310,7 @@ class OgleII(LightCurvesDb):
         try:
             result = urllib2.urlopen(url)
 
-            if (result.code == 200):
+            if result.code == 200:
                 star_curve = []
                 for line in result.readlines():
                     parts = line.strip().split(" ")

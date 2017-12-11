@@ -217,7 +217,7 @@ class StarsSearcher:
                 time.sleep(0.6)
             result = result.get()
             logging.info('\rAll {0} stars have been processed'.format(n))
-            result = pool.map(self.queryStar, queries)
+
         else:
             result = [self.queryStar(q) for q in queries]
 

@@ -210,7 +210,6 @@ class FileManager(LightCurvesDb):
             List of tuples of (time, mag, err)
         """
 
-
         try:
             dat = np.loadtxt(file_name, usecols=(
                 cls.TIME_COL, cls.MAG_COL, cls.ERR_COL), skiprows=0)
