@@ -68,23 +68,23 @@ Example descriptors:
 Light curves are transformed into words by SAX and compared to the template light curves.
 The dissimilarity  of these two light curves is assigned as the feature to the inspected star.
 
-![good_lc](https://cloud.githubusercontent.com/assets/17453516/23814524/263093ac-05e4-11e7-970f-cd4bdd1aed57.png)
-![bad_lc](https://cloud.githubusercontent.com/assets/17453516/23814526/26334e44-05e4-11e7-9279-177af06110e1.png)
+![good_lc](https://github.com/mavrix93/LightCurvesClassifier/blob/master/lcc_web/web/interface/static/img/comp_lc_qso.png "Quasar compared to another quasar")
+![bad_lc](https://github.com/mavrix93/LightCurvesClassifier/blob/master/lcc_web/web/interface/static/img/comp_lc_bestar.png "Quasar compared to a Be star")
 
 ##### Histogram Shape Descriptor
 Histograms of light curves are shifted to have mean magnitude 0 and transformed to have standart deviation 1. 
 Then it is transformed into words by SAX and compared to the template histograms.
  The dissimilarity  of these two light curves is assigned as the feature to the inspected star.
 
-![good_hist](https://cloud.githubusercontent.com/assets/17453516/23814527/26374cb0-05e4-11e7-8a46-5c16b4caac12.png)
-![bad_hist](https://cloud.githubusercontent.com/assets/17453516/23814525/263340d4-05e4-11e7-9dd7-9445b57ca72a.png)
+![good_hist](https://github.com/mavrix93/LightCurvesClassifier/blob/master/lcc_web/web/interface/static/img/comp_hist_qso.png "Quasar compared to another quasar")
+![bad_hist](https://github.com/mavrix93/LightCurvesClassifier/blob/master/lcc_web/web/interface/static/img/comp_hist_bestar.png "Quasar compared to a Be star")
 
 ##### Variogram Shape Descriptor
 Time serie which represents variation of brightness in different time lags. 
 It is also transformed into SAX and compared with template variogram.
 
-![good_vario](https://cloud.githubusercontent.com/assets/17453516/23814528/263ae7ee-05e4-11e7-90c3-0f141261f9e5.png)
-![bad_vario](https://cloud.githubusercontent.com/assets/17453516/23814529/263c9c38-05e4-11e7-9f17-2b1d8e9d89e2.png)
+![good_vario](https://github.com/mavrix93/LightCurvesClassifier/blob/master/lcc_web/web/interface/static/img/comp_vario_qso.png "Quasar compared to another quasar")
+![bad_vario](https://github.com/mavrix93/LightCurvesClassifier/blob/master/lcc_web/web/interface/static/img/comp_vario_bestar.png "Quasar compared to a Be star")
 
 
 ### Classifying
