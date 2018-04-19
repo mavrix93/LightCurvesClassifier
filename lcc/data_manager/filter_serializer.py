@@ -54,6 +54,8 @@ class FiltersSerializer(object):
         -------
             None
         """
+        if not os.path.exists(self.path):
+            os.makedirs(self.path)
         saveIntoFile(star_filter, self.path, self.file_name)
 
     def _loadFromPickle(self):

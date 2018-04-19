@@ -9,3 +9,5 @@ data
 .coverage
 migrations
 .DS_Store
+.ipynb_checkpoints
+build

@@ -1,12 +1,14 @@
-#!/usr/bin/env python
+#!/usr/local/bin/python3
 # encoding: utf-8
 
 
 import json
-from optparse import OptionParser
 import os
 import sys
 import warnings
+from optparse import OptionParser
+
+import numpy as np
 
 from lcc.api.input_parse import parse_tun_query
 from lcc.api.stars_handling import getStars
@@ -17,10 +19,9 @@ from lcc.data_manager.prepare_package import tree
 from lcc.data_manager.status_resolver import StatusResolver
 from lcc.entities.exceptions import QueryInputError
 from lcc.stars_processing.tools.params_estim import ParamsEstimator
+from lcc.stars_processing.tools.visualization import plotHist
 from lcc.stars_processing.tools.visualization import plotProbabSpace
 from lcc.stars_processing.utilities.compare import ComparativeBase
-import numpy as np
-from lcc.stars_processing.tools.visualization import plotHist
 
 __all__ = []
 __version__ = 0.3
@@ -31,7 +32,7 @@ debug = True
 
 
 def main(project_settings, argv=None):
-    '''Command line options.'''
+    """Command line options."""
 
     program_info = """ABOUT
     The program searches for the most optional parameters for given filters
@@ -324,7 +325,6 @@ def main(project_settings, argv=None):
         filter_path = os.path.join(project_settings.FILTERS, filt_name)
 
         d = tree()
-        d[filt_name]
 
         rec(d, project_settings.FILTERS)
 
@@ -361,7 +361,7 @@ def main(project_settings, argv=None):
                         file_name="ProbabSpace.png",
                         title="".join([d.__name__ for d in deciders]),
                         searched_coords=star_filter.searched_coords,
-                        contaminatiom_coords=star_filter.others_coords)
+                        contamination_coords=star_filter.others_coords)
         desc_labels = []
         for desc in star_filter.descriptors:
             if hasattr(desc.LABEL, "__iter__"):
@@ -392,6 +392,7 @@ def main(project_settings, argv=None):
 
 def _getPrecision(*args, **kwargs):
     return kwargs["precision"]
+
 
 if __name__ == "__main__":
     warnings.filterwarnings("ignore", category=DeprecationWarning)

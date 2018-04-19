@@ -1,3 +1,4 @@
+import logging
 import sys
 import os
 
@@ -15,20 +16,16 @@ def main():
     elif len(options) == 1:
         path = cur_loc
         proj_name = options[0]
-    else:
-        path = os.path.join(cur_loc, options[1])
+
+    elif len(options) == 2:
+        path = options[1] if options[1].startswith("/") else os.path.join(cur_loc, options[1])
         proj_name = options[0]
+    else:
+        raise ValueError("Invalid number of parameters")
 
     d = tree()
 
-    d[proj_name]["tun_params"]
-    d[proj_name]["queries"]
-    d[proj_name]["inp_lcs"]
-    d[proj_name]["filters"]
-
-    d[proj_name]["query_results"]
-
-    rec(d, path)
+    rec(d, os.path.join(path, proj_name))
 
     # Create settings file
     lines = ["import os",
@@ -44,6 +41,7 @@ def main():
              "\n",
              "# Output locations"]
 
+    logging.info("Creating project {} in the {}".format(proj_name, path))
     with open(os.path.join(path, proj_name, "project_settings.py"), "w") as f:
         for line in lines:
             f.write(line + "\n")

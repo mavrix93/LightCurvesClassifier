@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 import sys
 import os
 
@@ -10,9 +10,11 @@ if len(sys.argv) > 1:
         from lcc.bin.create_project import main
         main()
     else:
-        import imp
+        import importlib.util
     try:
-        project_settings = imp.load_source('module.name', os.path.join(os.getcwd(), 'project_settings.py'))
+        spec = importlib.util.spec_from_file_location("module.name", os.path.join(os.getcwd(), 'project_settings.py'))
+        project_settings = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(project_settings)
     except IOError:
         raise IOError("There are not 'project_settings.py' in the currect directory. Create project first by 'lcc create_project'")
 

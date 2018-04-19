@@ -1,6 +1,8 @@
 import os
 import random
 
+from tqdm import tqdm
+
 from lcc.data_manager.status_resolver import StatusResolver
 from lcc.db_tier.stars_provider import StarsProvider
 from lcc.entities.exceptions import QueryInputError
@@ -26,7 +28,7 @@ def getStars(queries, lcs_fold, query_path=None, progb_txt="Querying stars: "):
     ORDINARY_QUERY_KEY = "QUERY:"
 
     stars = []
-    for query in progressbar(queries, progb_txt):
+    for query in tqdm(queries, desc=progb_txt):
         query = query.strip()
 
         if query.startswith(ORDINARY_QUERY_KEY):

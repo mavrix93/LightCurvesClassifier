@@ -2,7 +2,8 @@
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.806951.svg)](https://doi.org/10.5281/zenodo.806951)
 
 ![Travis](https://img.shields.io/badge/python-3.6-green.svg)
-![Travis](https://img.shields.io/badge/coverage-52%25-yellow.svg)
+![Travis](https://img.shields.io/badge/coverage-65%25-yellow.svg)
+![Travis](https://img.shields.io/badge/tests_passing-31/31-green.svg)
 ![Travis](https://img.shields.io/badge/status-development-orange.svg)
 
 
@@ -24,7 +25,7 @@ New filters, database connectors or classifiers can be easily implemented thanks
 + Using the package
 + Using [Web Interface](http://vocloud-dev.asu.cas.cz/lcc/)
 + Running the web interface locally via docker image
-+ Via command line API (deprecated)
++ Via command line API 
 
 The easiest way how to start is to use Web Interface. There are also section "Guide" with instructions how to use the site. However for more sophisticated tasks is using the package directly as Python package. The package has been designed to be developed easily, so there no limitations.
 
@@ -33,12 +34,21 @@ The easiest way how to start is to use Web Interface. There are also section "Gu
 ## Release notes
 Please note that the package is still in development..
 
+19.04.2018: MR `cli_fix`:
+    - CLI is now working
+    - CLI tests
+
 16.04.2018: MR `python3_comp`:
     - Package refactored to Python 3.6
-    - CLI is now deprecated
+    - CLI need to be still refactored
     - Merged with project for web interface
-    
-## Docker
+
+## Instalation
+
+### Pypi
+
+`pip isntall lcc`
+### Docker
 
 Docker image with running web interface can be launched by:
 
@@ -46,7 +56,8 @@ Docker image with running web interface can be launched by:
 
 Then you can find the website on `http://localhost/lcc`. It will create default user `admin` with password `nimda`.
 
-Dockerfile is part of the git repo, so the image be rebuilded if needed.
+Dockerfile is part of the git repo, so the image be rebuilded if needed. Also it is possible to use docker container as
+environment for `lcc` - `docker run -it mavrix93/lcc_web python`.
 
 ## Philosophy of the program
 
@@ -433,7 +444,6 @@ passed_stars = searcher.passed_stars
 
 
 # Command line 
-!!! CLI was not refactored after last MR and will be deprecated !!!
 
 ### Creating the project
 
@@ -486,7 +496,7 @@ Example
 lcc prepare_query -o tune_lc_shape.txt -p CurvesShapeDescr:alphabet_size -r 5:19:3 -p CurvesShapeDescr:days_per_bin -r 30:120:40 -p QDADec:threshold -r 0.1:0.99:0.08
 ```
 
-Thi genarates *tune_lc_shape.txt* file in *tun_params* directory which looks like that:
+Thi generates *tune_lc_shape.txt* file in *tun_params* directory which looks like that:
 
 ```
 #QDADec:threshold;CurvesShapeDescr:alphabet_size;CurvesShapeDescr:days_per_bin
@@ -588,6 +598,6 @@ lcc make_filter -i tuning_abbe.txt -f AbbeValueDesc -s quasars -c stars -d Gauss
 
 
 ```
-lcc filter_stars.py -d OgleII -i query_ogle.txt -f AbbeValue_quasar/AbbeValue_quasar.filter -r FoundQuasars
+lcc filter_stars.py -d OgleII -q query_ogle.txt -f AbbeValue_quasar/AbbeValue_quasar.filter -r FoundQuasars
 ```
 

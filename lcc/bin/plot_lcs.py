@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/local/bin/python3
 # encoding: utf-8
 from optparse import OptionParser
 import os

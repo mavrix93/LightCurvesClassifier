@@ -34,7 +34,7 @@ class VariogramShapeDescr(SymbolicRepresentation, ComparativeBase, BaseDescripto
                     for example best10 takes 10 best matches, best0.5 takes 50 % best matches of the total
     """
 
-    LABEL = "Dissimilarity of the light curve's variogram from the template"
+    LABEL = ["Dissimilarity of the light curve's variogram from the template"]
 
     def __init__(self, comp_stars, bins, alphabet_size, slide=False, meth="average"):
         """

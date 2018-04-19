@@ -1,66 +1,0 @@
-SIMPLE  =                    T / conforms to FITS standard                      BITPIX  =                    8 / array data type                                NAXIS   =                    0 / number of array dimensions                     EXTEND  =                    T                                                  IDENT   = 'LMC_SC11_314034'                                                     RA      =    77.48066999999999                                                  RA_UN   = 'deg     '                                                            DEC     =            -69.07061                                                  DEC_UN  = 'deg     '                                                            CLASS   = ''                                                                    HIERARCH OgleII_name = 'LMC_SC11_314034'                                        HIERARCH OgleII_id_field = 'LMC_SC11'                                           HIERARCH OgleII_id_starid = 314034                                              B_MAG   =               15.599                                                  I_MAG   =               15.413                                                  V_MAG   =               15.547                                                  END                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             XTENSION= 'BINTABLE'           / binary table extension                         BITPIX  =                    8 / array data type                                NAXIS   =                    2 / number of array dimensions                     NAXIS1  =                   12 / length of dimension 1                          NAXIS2  =                  287 / length of dimension 2                          PCOUNT  =                    0 / number of group parameters                     GCOUNT  =                    1 / number of groups                               TFIELDS =                    3 / number of table fields                         TTYPE1  = 'hjd     '                                                            TFORM1  = 'E       '                                                            TUNIT1  = 'days    '                                                            TTYPE2  = 'magnitude'                                                           TFORM2  = 'E       '                                                            TUNIT2  = 'mag     '                                                            TTYPE3  = 'error   '                                                            TFORM3  = 'E       '                                                            TUNIT3  = 'mag     '                                                            FILTER  = 'V       '                                                            HIERARCH DB_ORIGIN = 'OgleII  '                                                 END                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             J”›Aw¥ã;ƒoJ”£Aw¥ã;ƒoJ”§Aw©ü;£×
-J”ÏAwó¶;£×
-J”ÛAx“;£×
-J”ãAx¬;ƒoJ”çAx9X;ƒoJ”ëAx;ƒoJ”ïAxA‰;ƒoJ”óAxE¢;£×
-J”ûAx5?;ƒoJ”ÿAxQì;£×
-J•Ax=q;£×
-J•AxIº;£×
-J•Axj;£×
-J•AxIº;ƒoJ•#AxvÉ;ƒoJ•+Axj;ƒoJ•GAxbN;£×
-J•WAx$Ý;ƒoJ•cAx=q;ƒoJ•oAxn˜;ƒoJ•wAxbN;ƒoJ•Ax“;ƒoJ•“Ax5?;ƒoJ•›Ax‡+;ƒoJ•¯Axn˜;ƒoJ•»AxE¢;ƒoJ•×Ax-;£×
-J–Aw×
-;ƒoJ–AwãT;ƒoJ–#AwãT;ƒoJ–+Aw;ƒoJ–/Aw‡;ƒoJ–3Awhs;ƒoJ–7Aw…;ƒoJ–:Aw&é;ƒoJ–>AwãT;ƒoJ–CAw\);ƒoJ–GAwxÕ;ƒoJ–GAw;ƒoJ–KAwûç;ƒoJ–OAw|î;ƒoJ–SAw‰7;ƒoJ–WAwÛ#;ƒoJ–[Aw•;£×
-J–_Aw|î;ƒoJ–cAw²;ƒoJ–kAwdZ;ƒoJ–rAwp¤;ƒoJ–wAw7L;ƒoJ–‹AvùÛ;ƒoJ–›AvÄœ;£×
-J–ŸAv¸R;£×
-J–£Av‡+;£×
-J–§AvÄœ;ƒoJ–«Aw;£×
-J–¯Av¸R;ƒoJ–²Av¬;ƒoJ–³Av´9;ƒoJ–ÎAvÐå;ƒoJ–ëAv‡+;D›¦J–òAv\;D›¦J–óAvzá;D›¦J–ûAvŸ¾;ƒoJ—Av§ð;ƒoJ—Av¬;Ä›¦J—AvÄœ;ƒoJ—+AvÐå;£×
-J—2Av“u;ƒoJ—>Av´9;ƒoJ—JAv°!;D›¦J—šAwX;£×
-J—ªAw²-;ƒoJ—ÂAw\);Ä›¦J—ÖAwKÇ;ƒoJ˜AwX;ƒoJ™ˆAvñª;ƒoJšAv°!;ƒoJšAw33;ƒoJš#Aw%;ƒoJš'Aw/;ƒoJš/Aw;ƒoJš3Aví‘;ƒoJš;AvÐå;ƒoJšGAwo;ƒoJšKAvýô;ƒoJšOAvÌÍ;ƒoJšSAvõÃ;ƒoJšWAvÄœ;ƒoJš{Aví‘;D›¦JšAv¸R;ƒoJš—AvÌÍ;ƒoJš§Av§ð;ƒoJš³Av‹D;D›¦JšÛAv¬;ƒoJšçAvvÉ;ƒoJšïAv§ð;ƒoJšóAvƒ;ƒoJšûAv°!;ƒoJ›Avj;D›¦J›?Av5?;ƒoJ›GAv‹D;ƒoJ›OAv¼j;£×
-J›WAv´9;ƒoJ›_Avff;£×
-J›_Avj;ƒoJ›gAv1';D›¦J›oAvzá;ƒoJ›wAvA‰;ƒoJ›Avj;ƒoJ›ƒAv9X;ƒoJ›Av$Ý;D›¦J››Av-;ƒoJ›«Avn˜;ƒoJ›·Av1';ƒoJ›¿AvIº;ƒoJ›ÇAv§ð;ƒoJ›ÏAv‹D;ƒoJ›×AvMÓ;ƒoJ›ßAvn˜;ƒoJ›ãAvQì;ƒoJ›ëAvn˜;ƒoJ›óAv\;ƒoJœAv=q;ƒoJœAvzá;ƒoJœAv9X;£×
-Jœ/Av9X;ƒoJœ;Av1';ƒoJœ>AvMÓ;ƒoJœCAvE¢;ƒoJœGAvIº;ƒoJœOAvIº;ƒoJœVAv Å;ƒoJœ_Av-;ƒoJœbAvMÓ;£×
-JœjAv-;ƒoJœnAv-;ƒoJœƒAv=q;ƒoJœŽAv¬;ƒoJœ–Avr°;Ä›¦Jœ¦Av-;ƒoJœ«Av1';ƒoJœ®AvE¢;ƒoJœ¶Av$Ý;ƒoJœ¿Av(ö;ƒoJœÃAv-;ƒoJœÎAvn˜;ƒoJœÚAv9X;£×
-JœÞAv1;£×
-JœêAvJ;ƒoJœòAv=q;ƒoJ
-Av Å;£×
-JAv$Ý;£×
-J.Av^5;£×
-J:AvQì;£×
-JFAvj;£×
-JjAv Å;£×
-J‚AvJ;ƒoJ’Av=q;£×
-J¦Av^5;£×
-J²Av5?;ƒoJÎAvff;£×
-JÚAv9X;£×
-JâAv-;£×
-JžAv{;£×
-JŸŸAuûç;ƒoJŸ§Av“;£×
-JŸ°Av¬;ƒoJŸ¸AvV;£×
-JŸÇAv5?;ƒoJŸÏAvQì;£×
-JŸßAv5?;£×
-JŸãAv-;ƒoJŸ÷AvV;£×
-JŸÿAvMÓ;Ä›¦J Av Å;£×
-J Av“;ƒoJ Av Å;ƒoJ ?Av;ƒoJ OAv;ƒoJ [Av5?;ƒoJ gAuó¶;ƒoJ sAvb;ƒoJ Av$Ý;ƒoJ Auûç;ƒoJ —Auïž;ƒoJ ŸAv;ƒoJ «Av;ƒoJ ³Av Å;ƒoJ ¿Auïž;£×
-J ÇAv;ƒoJ ÏAv;£×
-J ÓAv(ö;ƒoJ ×Av(ö;ƒoJ ÛAv5?;ƒoJ ßAvA‰;ƒoJ ãAv;ƒoJ ëAv“;ƒoJ óAv{;ƒoJ ûAv;ƒoJ¡Auûç;ƒoJ¡Avb;ƒoJ¡Av$Ý;£×
-J¡Auûç;ƒoJ¡Avb;ƒoJ¡#Auë…;ƒoJ¡'Auó¶;ƒoJ¡/Av;ƒoJ¡KAv1;ƒoJ¡WAuÒò;ƒoJ¡[Auûç;ƒoJ¡cAv  ;ƒoJ¡kAvb;£×
-J¡oAuçm;ƒoJ¡sAuº^;ƒoJ¡Auº^;ƒoJ¡ƒAu®;ƒoJ¡‡AuÎÙ;ƒoJ¡‹AuãT;ƒoJ¡Av1;ƒoJ¡“Auïž;ƒoJ¡£Auß;;£×
-J¡²Au•;ƒoJ¡ÃAuë…;£×
-J¡ÏAu¶F;ƒoJ¡ßAu×
-;ƒoJ¡ëAuÆ¨;ƒoJ¡óAu®;ƒoJ¡ûAu¶F;ƒoJ¢AuÂ;ƒoJ¢Au®;ƒoJ¢Au©ü;£×
-J¢.Auçm;ƒoJ¢?Au²;ƒoJ¢CAuÎÙ;£×
-J¢GAu®;ƒoJ¢RAu©ü;ƒoJ¢ZAuÛ#;ƒoJ¢fAuçm;ƒoJ¢jAuë…;ƒoJ¢nAuïž;ƒoJ¢vAuë…;ƒoJ¢{Auûç;ƒoJ¢‚AuÎÙ;ƒoJ¢‹Au¾w;ƒoJ¢ŽAuß;;ƒoJ¢–Au×
-;ƒoJ¢ŸAu©ü;ƒoJ¢§AuÊÁ;ƒoJ¢®Av  ;ƒoJ¢²AuÎÙ;ƒoJ¢ºAuÒò;£×
-J¢¾AuÂ;ƒoJ¢ÇAu²;ƒoJ¢ÎAuãT;£×
-J¢îAuë…;£×
-J¢öAu÷Ï;Ä›¦J£Au¾w;ƒoJ£Au¥ã;ƒoJ£&Au÷Ï;£×
-J£.Au¶F;ƒoJ£:AuÂ;ƒoJ£BAu¶F;ƒoJ£VAuº^;£×
-J£bAu²-;£×
-J£žAu®;£×
-J£¾Au²-;ƒoJ¤ÜAu²;£×
-J¤ãAuÂ;ƒoJ¤øAuÊÁ;£×
-J¥Au²;ƒoJ¥3AuÊÁ;ƒoJ¥sAu²-;ƒoJ¥AuÎÙ;ƒoJ¥ŸAu×
-;ƒoJ¥»Au¶F;ƒoJ¦Au¶F;ƒoJ¦+Au×
-;ƒoJ¦;Au…;ƒoJ¦KAuº^;ƒoJ¦SAu®;ƒoJ¦_Auº^;ƒoJ¦kAu¥ã;ƒoJ¦sAu²;ƒoJ¦{Av1;£×
-J¦‹Au¥ã;ƒo                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
