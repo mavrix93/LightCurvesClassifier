@@ -1,0 +1,40 @@
+{% for click_obj_id, popup_txt_id, popup_cont in to_inter %}
+<!-- Trigger/Open The Modal -->
+<!-- <button id="myBtn">Open Modal</button> -->
+
+<!-- The Modal -->
+<div id="{{ popup_txt_id }}" class="modal">
+
+  <!-- Modal content -->
+  <div class="modal-content">
+    <div align="left" class="modal-header">
+      <span  class="close" id="{{ popup_txt_id }}_close">&times;</span>
+      <h2>{{ popup_txt_id|slice:"0:-6" }}</h2>
+    </div>
+    <div align="left" class="modal-body">
+      <p>{{ popup_cont|safe }}</p>
+    </div>
+    <div class="modal-footer">
+      <h3>Modal Footer</h3>
+    </div>
+  </div>
+</div>
+{% endfor %}
+
+<script>
+{% for click_obj_id, popup_txt_id, popup_cont in to_inter %}    
+    
+    
+    // When the user clicks the button, open the modal 
+    document.getElementById("{{ click_obj_id }}").onclick = function() {
+        document.getElementById('{{ popup_txt_id }}').style.display = "block";
+    }
+    
+    // When the user clicks on <span> (x), close the modal
+    document.getElementById("{{ popup_txt_id }}_close").onclick = function() {
+        document.getElementById('{{ popup_txt_id }}').style.display = "none";
+    }
+    
+    
+{% endfor %}
+</script>

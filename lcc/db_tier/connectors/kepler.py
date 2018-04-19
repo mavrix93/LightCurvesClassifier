@@ -1,4 +1,4 @@
-from __future__ import division
+
 
 
 from astropy.coordinates.sky_coordinate import SkyCoord
@@ -132,7 +132,7 @@ class Kepler(LightCurvesDb):
 
             else:
                 query = {}
-                for key, value in que.iteritems():
+                for key, value in que.items():
                     if hasattr(value, "__iter__"):
                         query[key] = "%s..%s" % (value[0], value[1])
                     else:
@@ -152,12 +152,12 @@ class Kepler(LightCurvesDb):
         more = {}
         ident = {}
         data_dict = _star.__dict__
-        for key, value in data_dict.iteritems():
+        for key, value in data_dict.items():
 
-            if key in self.STAR_MORE_MAP.keys():
+            if key in list(self.STAR_MORE_MAP.keys()):
                 more[self.STAR_MORE_MAP[key]] = value
 
-            elif key in self.IDENTIFIER.keys():
+            elif key in list(self.IDENTIFIER.keys()):
                 ident[self.IDENTIFIER[key]] = {}
                 ident[self.IDENTIFIER[key]]["identifier"] = value
                 ident[self.IDENTIFIER[key]]["name"] = "kic_" + value

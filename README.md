@@ -1,6 +1,12 @@
 # Light Curves Classifier
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.806951.svg)](https://doi.org/10.5281/zenodo.806951)
 
+![Travis](https://img.shields.io/badge/python-3.6-green.svg)
+![Travis](https://img.shields.io/badge/coverage-52%25-yellow.svg)
+![Travis](https://img.shields.io/badge/status-development-orange.svg)
+
+
+
 ## Introduction
 The Light Curve Classifier is a Python package for classifying astronomical objects. It is
 accomplished mainly by their light curves (time serie), but there are no limits to achieve that
@@ -15,11 +21,32 @@ by any other attribute of stars. The package can used for several tasks:
 
 New filters, database connectors or classifiers can be easily implemented thanks to class interfaces (see "Implementing new classes" section). However there are many of them already included. Package can be used in two ways:
 
-+ Using the package programmatically
++ Using the package
 + Using [Web Interface](http://vocloud-dev.asu.cas.cz/lcc/)
-+ Via command line API
++ Running the web interface locally via docker image
++ Via command line API (deprecated)
 
-The easist way how to start is to use Web Interface. There are also section "Guide" with instructions how to use the site. However for more sophisticated tasks is using the package directly as Python package. The package has been designed to be developed easily, so there no limitations.
+The easiest way how to start is to use Web Interface. There are also section "Guide" with instructions how to use the site. However for more sophisticated tasks is using the package directly as Python package. The package has been designed to be developed easily, so there no limitations.
+
+
+
+## Release notes
+Please note that the package is still in development..
+
+16.04.2018: MR `python3_comp`:
+    - Package refactored to Python 3.6
+    - CLI is now deprecated
+    - Merged with project for web interface
+    
+## Docker
+
+Docker image with running web interface can be launched by:
+
+`docker run -d -p 80:80 mavrix93/lcc_web`
+
+Then you can find the website on `http://localhost/lcc`. It will create default user `admin` with password `nimda`.
+
+Dockerfile is part of the git repo, so the image be rebuilded if needed.
 
 ## Philosophy of the program
 
@@ -66,7 +93,11 @@ Data of "stars of interest" and some other contamination data can be used as tra
 
 ### Searching
 
-There are many connectors to astronomical databases such as: OgleII, Kepler, Asas, Corot and Macho. All one need to do is specify the queries for the selected database.
+There are many connectors to astronomical databases such as: OgleII, Kepler, Asas, Corot and Macho.
+All one need to do is specify the queries for the selected database.
+
+For systematic searches can be used `StarsSearcherRedis` which uses redis queue (`rq`) or `StarsSearcher` for
+sequential executing.
 
 
 ## Installation
@@ -74,17 +105,6 @@ There are many connectors to astronomical databases such as: OgleII, Kepler, Asa
 The package can be easily installed via pip:
 
 pip install lcc
-	
-There is one extra step if you want to use the command line UI:
-
-*Copy lcc/api/lcc into a location of executables or add it to the python path 
-
-#### For linux users:
-------
-```
-echo "export PYTHONPATH=$PYTHONPATH:/to/the/location/of/the/package/api" >> ~/.bashrc
-```
-
 
 # Package
 ## Fundamental objects
@@ -126,7 +146,11 @@ The basic object for processing data is "Star" object (lcc.entities.star.Star). 
     light_curves : list
         Light curve objects of the star
         
-"Star" objects is the standart input/output of all methods working with star-like data. This unification allows compatible of the whole package with any kind of data (it even don't have to be stars data). They be loaded from dat or fits files (first extension contains metadata and second binary extension contains light curve). Also they can be downloaded by using database connectors or created manually. 
+"Star" objects is the standard input/output of all methods working with
+star-like data. This unification allows compatible of the whole package with any kind
+of data (it even don't have to be stars data). They be loaded from dat or fits
+files (first extension contains metadata and second binary extension contains light curve).
+Also they can be downloaded by using database connectors or created manually. 
 
 ### Creating a Star object manually and exporting to FITS
 
@@ -409,7 +433,7 @@ passed_stars = searcher.passed_stars
 
 
 # Command line 
-
+!!! CLI was not refactored after last MR and will be deprecated !!!
 
 ### Creating the project
 

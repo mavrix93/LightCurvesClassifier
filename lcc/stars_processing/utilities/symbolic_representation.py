@@ -6,12 +6,11 @@ import numpy as np
 from lcc.stars_processing.utilities.sax import SAX
 
 
-class SymbolicRepresentation(object):
+class SymbolicRepresentation(abc.ABC):
     """
     This common class for all descriptors based on symbolic representation
     of data.
     """
-    __metaclass__ = abc.ABCMeta
 
     def compareTwoStars(self, star, comp_star):
         """
@@ -73,7 +72,7 @@ class SymbolicRepresentation(object):
 
         shift = 0
         # Case of shorter filter word then star word
-        if (len(filter_word) < len(inspected_word)):
+        if len(filter_word) < len(inspected_word):
             word_a = filter_word
             word_b = inspected_word
         else:
@@ -82,17 +81,14 @@ class SymbolicRepresentation(object):
 
         a_word_size = len(word_a)
         b_word_size = len(word_b)
-        # Shift shorter word thru longer word and look for match
-        best_score = 99
-        while (a_word_size + shift <= b_word_size):
+        # Shift shorter word through longer word and look for match
+        best_score = 1e9
+        while a_word_size + shift <= b_word_size:
             word = word_b[shift:shift + a_word_size]
             score = self.sax.compare_strings(word, word_a)
-
-            if (score < best_score):
+            if score < best_score:
                 best_score = score
             shift += 1
-
             if not self.slide:
                 break
-
         return best_score

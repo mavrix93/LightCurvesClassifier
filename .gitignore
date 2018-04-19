@@ -4,3 +4,8 @@
 __
 lcc.egg-info
 dist
+*bak
+data
+.coverage
+migrations
+.DS_Store

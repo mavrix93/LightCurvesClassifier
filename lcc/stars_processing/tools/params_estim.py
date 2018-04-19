@@ -313,8 +313,8 @@ class ParamsEstimator(object):
 
     def _mergeTwoDict(self, stat, tun):
         unpacked_tun = []
-        for prefix, inner_dict in tun.iteritems():
-            for key, value in inner_dict.iteritems():
+        for prefix, inner_dict in tun.items():
+            for key, value in inner_dict.items():
                 if hasattr(value, "__iter__"):
                     # if len(value) > 0 and not isinstance(value[0], types.InstanceType):
                     #    unpacked_tun.append((key,value))

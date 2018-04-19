@@ -1,0 +1,265 @@
+Internal Server Error: /lcc/make_filter
+Traceback (most recent call last):
+  File "/Users/martinvo/anaconda/anaconda3/envs/lcc_env/lib/python3.6/site-packages/django/core/handlers/exception.py", line 41, in inner
+    response = get_response(request)
+  File "/Users/martinvo/anaconda/anaconda3/envs/lcc_env/lib/python3.6/site-packages/django/core/handlers/base.py", line 187, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "/Users/martinvo/anaconda/anaconda3/envs/lcc_env/lib/python3.6/site-packages/django/core/handlers/base.py", line 185, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/martinvo/anaconda/anaconda3/envs/lcc_env/lib/python3.6/site-packages/django/contrib/auth/decorators.py", line 23, in _wrapped_view
+    return view_func(request, *args, **kwargs)
+  File "/Users/martinvo/workspace/private2/LightCurvesClassifier/lcc_web/web/interface/lcc_views/filtering.py", line 43, in upload_form
+    return post_form(request)
+  File "/Users/martinvo/anaconda/anaconda3/envs/lcc_env/lib/python3.6/site-packages/django/contrib/auth/decorators.py", line 23, in _wrapped_view
+    return view_func(request, *args, **kwargs)
+  File "/Users/martinvo/workspace/private2/LightCurvesClassifier/lcc_web/web/interface/lcc_views/filtering.py", line 156, in post_form
+    static_params, job, split_ratio, str(request.user.id))).start()
+  File "/Users/martinvo/anaconda/anaconda3/envs/lcc_env/lib/python3.6/threading.py", line 780, in __init__
+    assert group is None, "group argument must be None for now"
+AssertionError: group argument must be None for now
+"POST /lcc/make_filter HTTP/1.1" 500 121480
+Internal Server Error: /lcc/
+Traceback (most recent call last):
+  File "/Users/martinvo/anaconda/anaconda3/envs/lcc_env/lib/python3.6/site-packages/django/contrib/sessions/backends/base.py", line 202, in _get_session
+    return self._session_cache
+AttributeError: 'SessionStore' object has no attribute '_session_cache'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/martinvo/anaconda/anaconda3/envs/lcc_env/lib/python3.6/site-packages/django/db/backends/utils.py", line 65, in execute
+    return self.cursor.execute(sql, params)
+  File "/Users/martinvo/anaconda/anaconda3/envs/lcc_env/lib/python3.6/site-packages/django/db/backends/sqlite3/base.py", line 328, in execute
+    return Database.Cursor.execute(self, query, params)
+sqlite3.OperationalError: no such table: django_session
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/martinvo/anaconda/anaconda3/envs/lcc_env/lib/python3.6/site-packages/django/core/handlers/exception.py", line 41, in inner
+    response = get_response(request)
+  File "/Users/martinvo/anaconda/anaconda3/envs/lcc_env/lib/python3.6/site-packages/django/core/handlers/base.py", line 187, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "/Users/martinvo/anaconda/anaconda3/envs/lcc_env/lib/python3.6/site-packages/django/core/handlers/base.py", line 185, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/martinvo/workspace/private2/LightCurvesClassifier/lcc_web/web/interface/views.py", line 206, in home
+    user_name = request.user.username
+  File "/Users/martinvo/anaconda/anaconda3/envs/lcc_env/lib/python3.6/site-packages/django/utils/functional.py", line 238, in inner
+    self._setup()
+  File "/Users/martinvo/anaconda/anaconda3/envs/lcc_env/lib/python3.6/site-packages/django/utils/functional.py", line 385, in _setup
+    self._wrapped = self._setupfunc()
+  File "/Users/martinvo/anaconda/anaconda3/envs/lcc_env/lib/python3.6/site-packages/django/contrib/auth/middleware.py", line 24, in <lambda>
+    request.user = SimpleLazyObject(lambda: get_user(request))
+  File "/Users/martinvo/anaconda/anaconda3/envs/lcc_env/lib/python3.6/site-packages/django/contrib/auth/middleware.py", line 12, in get_user
+    request._cached_user = auth.get_user(request)
+  File "/Users/martinvo/anaconda/anaconda3/envs/lcc_env/lib/python3.6/site-packages/django/contrib/auth/__init__.py", line 206, in get_user
+    user_id = _get_user_session_key(request)
+  File "/Users/martinvo/anaconda/anaconda3/envs/lcc_env/lib/python3.6/site-packages/django/contrib/auth/__init__.py", line 61, in _get_user_session_key
+    return get_user_model()._meta.pk.to_python(request.session[SESSION_KEY])
+  File "/Users/martinvo/anaconda/anaconda3/envs/lcc_env/lib/python3.6/site-packages/django/contrib/sessions/backends/base.py", line 57, in __getitem__
+    return self._session[key]
+  File "/Users/martinvo/anaconda/anaconda3/envs/lcc_env/lib/python3.6/site-packages/django/contrib/sessions/backends/base.py", line 207, in _get_session
+    self._session_cache = self.load()
+  File "/Users/martinvo/anaconda/anaconda3/envs/lcc_env/lib/python3.6/site-packages/django/contrib/sessions/backends/db.py", line 35, in load
+    expire_date__gt=timezone.now()
+  File "/Users/martinvo/anaconda/anaconda3/envs/lcc_env/lib/python3.6/site-packages/django/db/models/manager.py", line 85, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "/Users/martinvo/anaconda/anaconda3/envs/lcc_env/lib/python3.6/site-packages/django/db/models/query.py", line 374, in get
+    num = len(clone)
+  File "/Users/martinvo/anaconda/anaconda3/envs/lcc_env/lib/python3.6/site-packages/django/db/models/query.py", line 232, in __len__
+    self._fetch_all()
+  File "/Users/martinvo/anaconda/anaconda3/envs/lcc_env/lib/python3.6/site-packages/django/db/models/query.py", line 1103, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+  File "/Users/martinvo/anaconda/anaconda3/envs/lcc_env/lib/python3.6/site-packages/django/db/models/query.py", line 53, in __iter__
+    results = compiler.execute_sql(chunked_fetch=self.chunked_fetch)
+  File "/Users/martinvo/anaconda/anaconda3/envs/lcc_env/lib/python3.6/site-packages/django/db/models/sql/compiler.py", line 886, in execute_sql
+    raise original_exception
+  File "/Users/martinvo/anaconda/anaconda3/envs/lcc_env/lib/python3.6/site-packages/django/db/models/sql/compiler.py", line 876, in execute_sql
+    cursor.execute(sql, params)
+  File "/Users/martinvo/anaconda/anaconda3/envs/lcc_env/lib/python3.6/site-packages/django/db/backends/utils.py", line 80, in execute
+    return super(CursorDebugWrapper, self).execute(sql, params)
+  File "/Users/martinvo/anaconda/anaconda3/envs/lcc_env/lib/python3.6/site-packages/django/db/backends/utils.py", line 65, in execute
+    return self.cursor.execute(sql, params)
+  File "/Users/martinvo/anaconda/anaconda3/envs/lcc_env/lib/python3.6/site-packages/django/db/utils.py", line 94, in __exit__
+    six.reraise(dj_exc_type, dj_exc_value, traceback)
+  File "/Users/martinvo/anaconda/anaconda3/envs/lcc_env/lib/python3.6/site-packages/django/utils/six.py", line 685, in reraise
+    raise value.with_traceback(tb)
+  File "/Users/martinvo/anaconda/anaconda3/envs/lcc_env/lib/python3.6/site-packages/django/db/backends/utils.py", line 65, in execute
+    return self.cursor.execute(sql, params)
+  File "/Users/martinvo/anaconda/anaconda3/envs/lcc_env/lib/python3.6/site-packages/django/db/backends/sqlite3/base.py", line 328, in execute
+    return Database.Cursor.execute(self, query, params)
+django.db.utils.OperationalError: no such table: django_session
+"GET /lcc/ HTTP/1.1" 500 172560
+Internal Server Error: /lcc/result/1
+Traceback (most recent call last):
+  File "/Users/martinvo/anaconda/anaconda3/envs/lcc_env/lib/python3.6/site-packages/django/core/handlers/exception.py", line 41, in inner
+    response = get_response(request)
+  File "/Users/martinvo/anaconda/anaconda3/envs/lcc_env/lib/python3.6/site-packages/django/core/handlers/base.py", line 187, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "/Users/martinvo/anaconda/anaconda3/envs/lcc_env/lib/python3.6/site-packages/django/core/handlers/base.py", line 185, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/martinvo/anaconda/anaconda3/envs/lcc_env/lib/python3.6/site-packages/django/contrib/auth/decorators.py", line 23, in _wrapped_view
+    return view_func(request, *args, **kwargs)
+  File "/Users/martinvo/workspace/private2/LightCurvesClassifier/lcc_web/web/interface/lcc_views/searching.py", line 206, in show
+    os.path.join(job_path, db_name, "query_status.txt"))
+  File "/Users/martinvo/anaconda/anaconda3/envs/lcc_env/lib/python3.6/site-packages/pandas/io/parsers.py", line 709, in parser_f
+    return _read(filepath_or_buffer, kwds)
+  File "/Users/martinvo/anaconda/anaconda3/envs/lcc_env/lib/python3.6/site-packages/pandas/io/parsers.py", line 449, in _read
+    parser = TextFileReader(filepath_or_buffer, **kwds)
+  File "/Users/martinvo/anaconda/anaconda3/envs/lcc_env/lib/python3.6/site-packages/pandas/io/parsers.py", line 818, in __init__
+    self._make_engine(self.engine)
+  File "/Users/martinvo/anaconda/anaconda3/envs/lcc_env/lib/python3.6/site-packages/pandas/io/parsers.py", line 1049, in _make_engine
+    self._engine = CParserWrapper(self.f, **self.options)
+  File "/Users/martinvo/anaconda/anaconda3/envs/lcc_env/lib/python3.6/site-packages/pandas/io/parsers.py", line 1695, in __init__
+    self._reader = parsers.TextReader(src, **kwds)
+  File "pandas/_libs/parsers.pyx", line 402, in pandas._libs.parsers.TextReader.__cinit__
+  File "pandas/_libs/parsers.pyx", line 718, in pandas._libs.parsers.TextReader._setup_parser_source
+FileNotFoundError: File b'/Users/martinvo/workspace/private2/LightCurvesClassifier/lcc_web/data/1/query_results/1/OgleII/query_status.txt' does not exist
+"GET /lcc/result/1 HTTP/1.1" 500 116027
+Internal Server Error: /lcc/result/1
+Traceback (most recent call last):
+  File "/Users/martinvo/anaconda/anaconda3/envs/lcc_env/lib/python3.6/site-packages/pandas/core/indexes/base.py", line 2525, in get_loc
+    return self._engine.get_loc(key)
+  File "pandas/_libs/index.pyx", line 117, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas/_libs/index.pyx", line 139, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas/_libs/hashtable_class_helper.pxi", line 1265, in pandas._libs.hashtable.PyObjectHashTable.get_item
+  File "pandas/_libs/hashtable_class_helper.pxi", line 1273, in pandas._libs.hashtable.PyObjectHashTable.get_item
+KeyError: 'star_name'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/martinvo/anaconda/anaconda3/envs/lcc_env/lib/python3.6/site-packages/django/core/handlers/exception.py", line 41, in inner
+    response = get_response(request)
+  File "/Users/martinvo/anaconda/anaconda3/envs/lcc_env/lib/python3.6/site-packages/django/core/handlers/base.py", line 187, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "/Users/martinvo/anaconda/anaconda3/envs/lcc_env/lib/python3.6/site-packages/django/core/handlers/base.py", line 185, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/martinvo/anaconda/anaconda3/envs/lcc_env/lib/python3.6/site-packages/django/contrib/auth/decorators.py", line 23, in _wrapped_view
+    return view_func(request, *args, **kwargs)
+  File "/Users/martinvo/workspace/private2/LightCurvesClassifier/lcc_web/web/interface/lcc_views/searching.py", line 191, in show
+    df = searcher.getStatus()
+  File "/Users/martinvo/workspace/private2/LightCurvesClassifier/lcc/stars_processing/systematic_search/stars_searcher.py", line 309, in getStatus
+    return pd.DataFrame(data).set_index("star_name")
+  File "/Users/martinvo/anaconda/anaconda3/envs/lcc_env/lib/python3.6/site-packages/pandas/core/frame.py", line 3146, in set_index
+    level = frame[col]._values
+  File "/Users/martinvo/anaconda/anaconda3/envs/lcc_env/lib/python3.6/site-packages/pandas/core/frame.py", line 2139, in __getitem__
+    return self._getitem_column(key)
+  File "/Users/martinvo/anaconda/anaconda3/envs/lcc_env/lib/python3.6/site-packages/pandas/core/frame.py", line 2146, in _getitem_column
+    return self._get_item_cache(key)
+  File "/Users/martinvo/anaconda/anaconda3/envs/lcc_env/lib/python3.6/site-packages/pandas/core/generic.py", line 1842, in _get_item_cache
+    values = self._data.get(item)
+  File "/Users/martinvo/anaconda/anaconda3/envs/lcc_env/lib/python3.6/site-packages/pandas/core/internals.py", line 3843, in get
+    loc = self.items.get_loc(item)
+  File "/Users/martinvo/anaconda/anaconda3/envs/lcc_env/lib/python3.6/site-packages/pandas/core/indexes/base.py", line 2527, in get_loc
+    return self._engine.get_loc(self._maybe_cast_indexer(key))
+  File "pandas/_libs/index.pyx", line 117, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas/_libs/index.pyx", line 139, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas/_libs/hashtable_class_helper.pxi", line 1265, in pandas._libs.hashtable.PyObjectHashTable.get_item
+  File "pandas/_libs/hashtable_class_helper.pxi", line 1273, in pandas._libs.hashtable.PyObjectHashTable.get_item
+KeyError: 'star_name'
+"GET /lcc/result/1 HTTP/1.1" 500 111463
+Internal Server Error: /lcc/result/1
+Traceback (most recent call last):
+  File "/Users/martinvo/anaconda/anaconda3/envs/lcc_env/lib/python3.6/site-packages/pandas/core/indexes/base.py", line 2525, in get_loc
+    return self._engine.get_loc(key)
+  File "pandas/_libs/index.pyx", line 117, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas/_libs/index.pyx", line 139, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas/_libs/hashtable_class_helper.pxi", line 1265, in pandas._libs.hashtable.PyObjectHashTable.get_item
+  File "pandas/_libs/hashtable_class_helper.pxi", line 1273, in pandas._libs.hashtable.PyObjectHashTable.get_item
+KeyError: 'star_name'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/martinvo/anaconda/anaconda3/envs/lcc_env/lib/python3.6/site-packages/django/core/handlers/exception.py", line 41, in inner
+    response = get_response(request)
+  File "/Users/martinvo/anaconda/anaconda3/envs/lcc_env/lib/python3.6/site-packages/django/core/handlers/base.py", line 187, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "/Users/martinvo/anaconda/anaconda3/envs/lcc_env/lib/python3.6/site-packages/django/core/handlers/base.py", line 185, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/martinvo/anaconda/anaconda3/envs/lcc_env/lib/python3.6/site-packages/django/contrib/auth/decorators.py", line 23, in _wrapped_view
+    return view_func(request, *args, **kwargs)
+  File "/Users/martinvo/workspace/private2/LightCurvesClassifier/lcc_web/web/interface/lcc_views/searching.py", line 191, in show
+    df = searcher.getStatus()
+  File "/Users/martinvo/workspace/private2/LightCurvesClassifier/lcc/stars_processing/systematic_search/stars_searcher.py", line 309, in getStatus
+  File "/Users/martinvo/anaconda/anaconda3/envs/lcc_env/lib/python3.6/site-packages/pandas/core/frame.py", line 3146, in set_index
+    level = frame[col]._values
+  File "/Users/martinvo/anaconda/anaconda3/envs/lcc_env/lib/python3.6/site-packages/pandas/core/frame.py", line 2139, in __getitem__
+    return self._getitem_column(key)
+  File "/Users/martinvo/anaconda/anaconda3/envs/lcc_env/lib/python3.6/site-packages/pandas/core/frame.py", line 2146, in _getitem_column
+    return self._get_item_cache(key)
+  File "/Users/martinvo/anaconda/anaconda3/envs/lcc_env/lib/python3.6/site-packages/pandas/core/generic.py", line 1842, in _get_item_cache
+    values = self._data.get(item)
+  File "/Users/martinvo/anaconda/anaconda3/envs/lcc_env/lib/python3.6/site-packages/pandas/core/internals.py", line 3843, in get
+    loc = self.items.get_loc(item)
+  File "/Users/martinvo/anaconda/anaconda3/envs/lcc_env/lib/python3.6/site-packages/pandas/core/indexes/base.py", line 2527, in get_loc
+    return self._engine.get_loc(self._maybe_cast_indexer(key))
+  File "pandas/_libs/index.pyx", line 117, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas/_libs/index.pyx", line 139, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas/_libs/hashtable_class_helper.pxi", line 1265, in pandas._libs.hashtable.PyObjectHashTable.get_item
+  File "pandas/_libs/hashtable_class_helper.pxi", line 1273, in pandas._libs.hashtable.PyObjectHashTable.get_item
+KeyError: 'star_name'
+"GET /lcc/result/1 HTTP/1.1" 500 108911
+Internal Server Error: /lcc/result/1
+Traceback (most recent call last):
+  File "/Users/martinvo/anaconda/anaconda3/envs/lcc_env/lib/python3.6/site-packages/django/core/handlers/exception.py", line 41, in inner
+    response = get_response(request)
+  File "/Users/martinvo/anaconda/anaconda3/envs/lcc_env/lib/python3.6/site-packages/django/core/handlers/base.py", line 187, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "/Users/martinvo/anaconda/anaconda3/envs/lcc_env/lib/python3.6/site-packages/django/core/handlers/base.py", line 185, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/martinvo/anaconda/anaconda3/envs/lcc_env/lib/python3.6/site-packages/django/contrib/auth/decorators.py", line 23, in _wrapped_view
+    return view_func(request, *args, **kwargs)
+  File "/Users/martinvo/workspace/private2/LightCurvesClassifier/lcc_web/web/interface/lcc_views/searching.py", line 201, in show
+    if df.columns[0].startswith("#"):
+  File "/Users/martinvo/anaconda/anaconda3/envs/lcc_env/lib/python3.6/site-packages/pandas/core/indexes/base.py", line 1743, in __getitem__
+    return getitem(key)
+IndexError: index 0 is out of bounds for axis 0 with size 0
+"GET /lcc/result/1 HTTP/1.1" 500 82717
+Internal Server Error: /lcc/result/2
+Traceback (most recent call last):
+  File "/Users/martinvo/anaconda/anaconda3/envs/lcc_env/lib/python3.6/site-packages/django/core/handlers/exception.py", line 41, in inner
+    response = get_response(request)
+  File "/Users/martinvo/anaconda/anaconda3/envs/lcc_env/lib/python3.6/site-packages/django/core/handlers/base.py", line 187, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "/Users/martinvo/anaconda/anaconda3/envs/lcc_env/lib/python3.6/site-packages/django/core/handlers/base.py", line 185, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/martinvo/anaconda/anaconda3/envs/lcc_env/lib/python3.6/site-packages/django/contrib/auth/decorators.py", line 23, in _wrapped_view
+    return view_func(request, *args, **kwargs)
+  File "/Users/martinvo/workspace/private2/LightCurvesClassifier/lcc_web/web/interface/lcc_views/searching.py", line 201, in show
+    if df.columns[0].startswith("#"):
+  File "/Users/martinvo/anaconda/anaconda3/envs/lcc_env/lib/python3.6/site-packages/pandas/core/indexes/base.py", line 1743, in __getitem__
+    return getitem(key)
+IndexError: index 0 is out of bounds for axis 0 with size 0
+"GET /lcc/result/2 HTTP/1.1" 500 82852
+Internal Server Error: /lcc/result/2
+Traceback (most recent call last):
+  File "/Users/martinvo/anaconda/anaconda3/envs/lcc_env/lib/python3.6/site-packages/django/core/handlers/exception.py", line 41, in inner
+    response = get_response(request)
+  File "/Users/martinvo/anaconda/anaconda3/envs/lcc_env/lib/python3.6/site-packages/django/core/handlers/base.py", line 187, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "/Users/martinvo/anaconda/anaconda3/envs/lcc_env/lib/python3.6/site-packages/django/core/handlers/base.py", line 185, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/martinvo/anaconda/anaconda3/envs/lcc_env/lib/python3.6/site-packages/django/contrib/auth/decorators.py", line 23, in _wrapped_view
+    return view_func(request, *args, **kwargs)
+  File "/Users/martinvo/workspace/private2/LightCurvesClassifier/lcc_web/web/interface/lcc_views/searching.py", line 201, in show
+    if df.columns[0].startswith("#"):
+  File "/Users/martinvo/anaconda/anaconda3/envs/lcc_env/lib/python3.6/site-packages/pandas/core/indexes/base.py", line 1743, in __getitem__
+    return getitem(key)
+IndexError: index 0 is out of bounds for axis 0 with size 0
+"GET /lcc/result/2 HTTP/1.1" 500 82852
+Internal Server Error: /lcc/result/12
+Traceback (most recent call last):
+  File "/Users/martinvo/anaconda/anaconda3/envs/lcc_env/lib/python3.6/site-packages/django/core/handlers/exception.py", line 41, in inner
+    response = get_response(request)
+  File "/Users/martinvo/anaconda/anaconda3/envs/lcc_env/lib/python3.6/site-packages/django/core/handlers/base.py", line 187, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "/Users/martinvo/anaconda/anaconda3/envs/lcc_env/lib/python3.6/site-packages/django/core/handlers/base.py", line 185, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/martinvo/anaconda/anaconda3/envs/lcc_env/lib/python3.6/site-packages/django/contrib/auth/decorators.py", line 23, in _wrapped_view
+    return view_func(request, *args, **kwargs)
+  File "/Users/martinvo/workspace/private2/LightCurvesClassifier/lcc_web/web/interface/lcc_views/searching.py", line 219, in show
+    print("status_df", df)
+UnboundLocalError: local variable 'df' referenced before assignment
+"GET /lcc/result/12 HTTP/1.1" 500 78490

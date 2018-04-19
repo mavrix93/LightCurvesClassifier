@@ -1,0 +1,45 @@
+<script>
+    $(document).ready(function() 
+    {
+    $('#loader').hide();
+
+    $('form').submit(function() 
+    {
+        $('#loader').show();
+    }) 
+    })
+    </script>
+    <script>
+    function unpackElements(show_id, hide_id, write_to) {
+        var in_txt = "";
+        var x = document.getElementsByClassName(show_id)[0].options;
+        for (i = 0; i < x.length; i++) { 
+            var divOne = document.getElementById(x[i].value);
+            divOne.style.display = "inline";
+            in_txt += x[i].value+";";
+            
+        }
+        document.getElementById(write_to).value = in_txt;
+        
+        var y = document.getElementsByClassName(hide_id)[0].options;
+        for (i = 0; i < y.length; i++) { 
+            var divOne = document.getElementById(y[i].value);
+            divOne.style.display = "none"; 
+        }
+        
+    }    
+    </script>
+    
+    <script>
+    function selectAll(field){
+        for (var j = 0; j < field.length; j++)
+        {
+            var selectBox = document.getElementsByClassName(field)[0].options;   
+            for (var i = 0; i < selectBox.length; i++) 
+            { 
+                 selectBox[i].selected = true; 
+            } 
+        }
+    }
+    </script>
+    

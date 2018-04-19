@@ -1,0 +1,76 @@
+{% extends 'interface/base_template.html' %}
+{% load static %}
+
+{% block input_form %}
+
+    <script>
+    function open_on_click(cont, path, i) {
+       document.getElementById("module_cont").innerHTML = cont[i];
+       document.getElementById("module_cont").rows = cont[i].split("\n").length;
+       document.getElementById("module_cont").style.display = "block";
+       document.getElementById("save_but").style.display = "block";
+       document.getElementById("save_but").style.display = "block";
+       document.getElementById("delete_but").style.display = "block";
+       document.getElementById("mod_path").value = path
+        document.getElementById("file_name").innerHTML = path.split("/")[path.split("/").length-1];
+
+    }
+    </script>
+
+    <script>
+    function new_module(path) {
+        var name = window.prompt("Name of the file? (without .py suffix)");
+        document.getElementById("save_but").style.display = "block";
+        document.getElementById("module_cont").style.display = "block";
+        document.getElementById("mod_path").value = path+"/"+name+".py"
+        document.getElementById("file_name").innerHTML = name+".py";
+        document.getElementById("module_cont").innerHTML = "";
+    }
+
+    </script>
+
+    {{ page_info }}
+
+   <p>On this page you can add or manage own modules. You can add new descriptors,
+                deciders or connectors.</p>
+    <form id="save_form" align="middle" action='#' onclick="" method='post' enctype="multipart/form-data">{% csrf_token %}
+        <input style="display:none" type="text" name="mod_path"  id="mod_path" value="">
+        <h3 allign="middle" id="file_name"></h3>
+        <textarea  align="middle" id="module_cont" name="module_cont" rows="0" cols="50" style="display:none"></textarea>
+        <p>
+        <input id='save_but'  style="background-color:#a3a1a1;font-weight: 900;height:40px;color:#000000;display:none;" type='submit' class="filestyle" data-classIcon="icon-plus" data-classButton="btn btn-primary" name='save_but' value='Save' />
+        <input id='delete_but'  style="background-color:#a3a1a1;font-weight: 900;height:40px;color:#000000;display:none;" type='submit' class="filestyle" data-classIcon="icon-plus" data-classButton="btn btn-primary" name='delete_but' value='Delete' />
+            </p>
+    </form>
+
+    <h2>Descriptors</h2>
+    <input id='new_desc' onclick="new_module('{{ descr_path }}')" type='button' name='new_decs' value='New descriptor' />
+
+        <ul>
+        {%  for desc in descriptors %}
+            <li onclick="open_on_click({{ descriptors_cont }}, '{{ descr_path }}/{{ desc }}', {{ forloop.counter0 }})">{{ desc }}</li>
+        {%  endfor %}
+        </ul>
+
+    <h2>Connectors</h2>
+    <input onclick="new_module('{{ con_path }}')" type='button' value='New connector' />
+        <ul>
+        {%  for con in connectors %}
+            <li onclick="open_on_click({{ cone_cont }}, '{{ con_path }}/{{ con }}', {{ forloop.counter0 }})">{{ con }}</li>
+        {%  endfor %}
+        </ul>
+
+    <h2>Deciders</h2>
+    <input onclick="new_module('{{ deci_path }}')" type='button' value='New decider' />
+        <ul>
+        {%  for deci in deciders %}
+            <li onclick="open_on_click({{ dec_cont }}, '{{ deci_path }}/{{ deci }}', {{ forloop.counter0 }})">{{ deci }}</li>
+        {%  endfor %}
+        </ul>
+
+
+
+
+
+
+{% endblock %}

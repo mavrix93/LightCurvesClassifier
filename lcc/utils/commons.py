@@ -55,8 +55,8 @@ def args_type(**decls):
     """
 
     def decorator(func):
-        code = func.func_code
-        fname = func.func_name
+        code = func.__code__
+        fname = func.__name__
         names = code.co_varnames[:code.co_argcount]
 
         @wraps(func)
@@ -69,7 +69,7 @@ def args_type(**decls):
                 kwargs = args[1]
                 dict_option = True
 
-            for argname, argtype in decls.iteritems():
+            for argname, argtype in decls.items():
                 try:
                     argval = args[names.index(argname)]
                 except (ValueError, IndexError):
@@ -107,7 +107,7 @@ def default_values(**decls):
                 kwargs = args[1]
                 dict_option = True
 
-            for argname, arg_default_value in decls.iteritems():
+            for argname, arg_default_value in decls.items():
                 if argname not in kwargs:
                     kwargs[argname] = arg_default_value
 
@@ -233,7 +233,7 @@ def accepts(*accepted_arg_types):
                 function_args = function_args[1:]
 
             elif len(accepted_arg_types) is not len(function_args):
-                print accepted_arg_types, "fd",function_args
+                print(accepted_arg_types, "fd",function_args)
                 raise InvalidArgumentNumberError(
                     "Function: {0}. Expected {1}, but got {2} ".format(validate_function.__name__,
                                                                        len(accepted_arg_types),

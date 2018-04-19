@@ -7,11 +7,10 @@ from lcc.utils.helpers import check_depth
 from matplotlib import pyplot as plt
 
 
-
 def plotProbabSpace(star_filter, plot_ranges=None, opt="show",
                     path=".", file_name="params_space.png", N=400,
                     title="Params space", x_lab="", y_lab="",
-                    searched_coords=[], contamination_coords=[], OVERLAY=0.6):
+                    searched_coords=None, contamination_coords=None, OVERLAY=0.6):
     """
     Plot params space
 
@@ -42,6 +41,9 @@ def plotProbabSpace(star_filter, plot_ranges=None, opt="show",
     -------
         None
     """
+    contamination_coords = contamination_coords or []
+    searched_coords = searched_coords or []
+
     if (not searched_coords and not contamination_coords and
             hasattr(star_filter, "searched_coords") and hasattr(star_filter, "others_coords")):
         searched_coords = star_filter.searched_coords.values

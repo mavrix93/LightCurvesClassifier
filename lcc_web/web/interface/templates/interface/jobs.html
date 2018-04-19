@@ -1,0 +1,42 @@
+{% extends 'interface/base_template.html' %}
+
+{% block input_form %}
+
+<script>
+function delete_job( job_id, job_type) {
+    var txt;
+    var r = confirm("Do you really want to delete job: "+job_id);
+    if (r == true) {
+        txt = "You pressed OK!";
+    } else {
+        txt = "You pressed Cancel!";
+    }
+    window.location.href = {{ delete_prefix | safe }}+job_type+"/"+job_id;
+    
+}
+</script>
+
+
+<table align="middle" width="80%" >
+{% for column in header %}
+    <th style="text-align: center;">{{ column }}</th>
+{% endfor %}
+{% for row_job in table %}
+        <tr>
+        {% for column in row_job.0 %}
+            <td>{{ column | safe}}</td>
+        {% endfor %}
+        {% if stars_filter %}
+            <td><a style="text-decoration:none; color:#0146b5;"  href="{% url 'stars_filter' job_id=row_job.1 %}">Show</a></th>
+            <td><a style="text-decoration:none; color:#0146b5;" onclick="delete_job({{ row_job.1 }}, 'stars_filter')" >Delete</a></th>
+        {% else %}
+            <td><a style="text-decoration:none; color:#0146b5;"  href="{% url 'result' job_id=row_job.1 %}">Show</a></th>
+            <td><a style="text-decoration:none; color:#0146b5;" onclick="delete_job({{ row_job.1 }}, 'result')" >Delete</a></th>
+        {% endif %}
+        
+            
+        </tr>
+{% endfor %}
+</table>
+
+{% endblock %}

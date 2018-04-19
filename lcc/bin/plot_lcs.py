@@ -63,8 +63,8 @@ def main(argv=None):
         opts, args = parser.parse_args(argv)
 
         if not len(argv):
-            print program_info, "\n"
-            print "Run with '-h' in order to show params help\n"
+            print(program_info, "\n")
+            print("Run with '-h' in order to show params help\n")
             return False
 
         if opts.path:
@@ -80,13 +80,13 @@ def main(argv=None):
         stars = StarsProvider().getProvider(obtain_method="FileManager",
                                             obtain_params={"path": "HERE:%s" % path}).getStarsWithCurves()
 
-        print "\n\nThere are %i stars in the folder which will be plotted into %s.\nThis will take a while..." % (len(stars), save_path)
+        print("\n\nThere are %i stars in the folder which will be plotted into %s.\nThis will take a while..." % (len(stars), save_path))
         create_folder(save_path)
         plotStarsPicture(stars, option="save", save_loc=save_path)
 
-        print "\n%s\nImages of light curves in %s were saved into %s" % ("=" * 20, path, save_path)
+        print("\n%s\nImages of light curves in %s were saved into %s" % ("=" * 20, path, save_path))
 
-    except Exception, e:
+    except Exception as e:
         indent = len(program_name) * " "
         sys.stderr.write(program_name + ": " + repr(e) + "\n")
         sys.stderr.write(indent + "  for help use --help")

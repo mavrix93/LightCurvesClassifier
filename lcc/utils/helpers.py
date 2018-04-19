@@ -1,5 +1,6 @@
 import itertools
 import os
+import random
 import sys
 import inspect
 
@@ -98,9 +99,9 @@ def sub_dict_in_dict(sub_dict, dict_list, remove_keys=[]):
     list
         List of dictionaries which contain condition in sub_dict
     """
-    assert len(sub_dict.keys()) == 1
+    assert len(list(sub_dict.keys())) == 1
 
-    key = sub_dict.keys()[0]
+    key = list(sub_dict.keys())[0]
     matched_dicts = []
     for one_dict in dict_list:
         d = one_dict.copy()
@@ -135,7 +136,7 @@ def verbose(txt, verbosity, verb_level=2):
         None
     """
     if verbosity <= verb_level:
-        print txt
+        print(txt)
 
 
 def progressbar(it, prefix="", size=60):
@@ -219,7 +220,7 @@ def get_combinations(keys, *lists):
 def getMeanDict(dict_list):
     if dict_list:
         new_d = []
-        keys = dict_list[0].keys()
+        keys = list(dict_list[0].keys())
         for key in keys:
             new_d.append((key, np.mean([x[key] for x in dict_list])))
         return collections.OrderedDict(new_d)
@@ -254,3 +255,13 @@ def convert_input_value(value):
         pass
 
     return value
+
+
+def random_string(bits=96):
+    assert bits % 8 == 0
+    required_length = bits / 8 * 2
+    s = hex(random.getrandbits(bits)).lstrip('0x').rstrip('L')
+    if len(s) < required_length:
+        return random_string(bits)
+    else:
+        return s

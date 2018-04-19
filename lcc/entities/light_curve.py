@@ -5,8 +5,9 @@ from lcc.utils.data_analysis import histogram, variogram, to_ekvi_PAA,\
 import matplotlib.pyplot as plt
 import numpy as np
 
+
 # TODO move descriptors method to descriptors
-class LightCurve(object):
+class LightCurve():
     """
     Attributes
     ----------
@@ -28,7 +29,7 @@ class LightCurve(object):
 
             invert_yaxis - True/False if y axis is inverted
     BAD_VALUES : iterable
-        List of banned values in light curve
+        List of banned values in the light curve
     """
 
     DEFAULT_META = {"xlabel": "HJD",
@@ -40,8 +41,8 @@ class LightCurve(object):
 
     BAD_VALUES = (np.NaN, np.nan, None, "", "-99", "-99.0")
 
-    def __init__(self, param, meta={}):
-        '''
+    def __init__(self, param, meta=None):
+        """
         Parameters
         -----------
         param : list, array, string
@@ -70,20 +71,20 @@ class LightCurve(object):
                 origin - db name
 
                 invert_yaxis - True/False if y axis is inverted
-        '''
+        """
 
         if isinstance(param, (list, tuple)):
             param = np.array(param)
 
         if isinstance(param, np.ndarray):
             # Transpose if there are list of tuples (time, mag,err)
-            if (len(param) > 3):
+            if len(param) > 3:
                 param = param.transpose()
 
             param[0] = np.array(param[0])
             param[1] = np.array(param[1])
 
-            if (len(param) == 2):
+            if len(param) == 2:
                 param = np.concatenate([param, [np.zeros(len(param[0]))]])
             else:
                 param[2] = np.array(param[2])
@@ -100,6 +101,8 @@ class LightCurve(object):
                                      (len(self.time), len(self.mag),  len(self.err)))
         # Set default meta values
         for key in self.DEFAULT_META:
+            if not meta:
+                meta = dict()
             if not meta.get(key):
                 meta[key] = self.DEFAULT_META[key]
 
@@ -115,20 +118,20 @@ class LightCurve(object):
         return txt
 
     def plotLC(self):
-        '''Plot light curve'''
+        """Plot light curve"""
         plt.errorbar(self.time, self.mag, self.err, fmt='o', ecolor='r')
         plt.show()
 
     def getMeanMag(self):
-        '''Get mean value of magnitudes'''
+        """Get mean value of magnitudes"""
         return np.mean(self.mag)
 
     def getStdMag(self):
-        '''Get standard deviation of magnitudes'''
+        """Get standard deviation of magnitudes"""
         return np.std(self.mag)
 
     def getHistogram(self, bins=10, centred=True, normed=True):
-        '''
+        """
         Distribution of magnitudes of light curve
 
         Parameters
@@ -147,11 +150,11 @@ class LightCurve(object):
         tuple/None
             Tuple of counts and bins (ranges) or None if
             there are no light curve
-        '''
+        """
         return histogram(self.time, self.mag, bins, centred, normed)
 
     def getVariogram(self, bins=10, days_per_bin=None, log_opt=True):
-        '''
+        """
         Variogram is function which shows variability of time series
         in different time lags
 
@@ -164,14 +167,14 @@ class LightCurve(object):
         --------
         tuple of two numpy arrays
             Time lags and magnitude slope for the certain lag
-        '''
+        """
         if days_per_bin and not bins:
             bins = compute_bins(self.time, days_per_bin)
 
         return variogram(self.time, self.mag, bins=bins, log_opt=log_opt)
 
     def getAbbe(self, bins=None):
-        '''
+        """
         Compute Abbe value of the light curve
 
         Parameters
@@ -183,7 +186,7 @@ class LightCurve(object):
         --------
         float
             Abbe value of the light curve
-        '''
+        """
         if bins:
             x = to_ekvi_PAA(self.time, self.mag, bins)[1]
         else:

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # encoding: utf-8
-from __future__ import division
+
 
 import json
 from optparse import OptionParser
@@ -250,11 +250,11 @@ def main(project_settings, argv=None):
         opts, args = parser.parse_args(argv)
 
         if not len(argv):
-            print program_info, "\n"
-            print "Available databases:\n\t%s\n" % json.dumps(PackageReader().getClassesDict("connectors").keys(), indent=4)
-            print "Available descriptors:\n\t%s\n" % json.dumps(PackageReader().getClassesDict("descriptors").keys(), indent=4)
-            print "Available deciders:\n\t%s\n" % json.dumps(PackageReader().getClassesDict("deciders").keys(), indent=4)
-            print "Run with '-h' in order to show params help\n"
+            print(program_info, "\n")
+            print("Available databases:\n\t%s\n" % json.dumps(list(PackageReader().getClassesDict("connectors").keys()), indent=4))
+            print("Available descriptors:\n\t%s\n" % json.dumps(list(PackageReader().getClassesDict("descriptors").keys()), indent=4))
+            print("Available deciders:\n\t%s\n" % json.dumps(list(PackageReader().getClassesDict("deciders").keys()), indent=4))
+            print("Run with '-h' in order to show params help\n")
             return False
 
         # -------    Core    ------
@@ -271,11 +271,11 @@ def main(project_settings, argv=None):
 
         header = "#" + " " * 40 + \
             "Light Curves Classifier - Make Filter" + " " * 30 + "#"
-        print "\n\n\t" + "#" * len(header)
-        print "\t#" + " " * (len(header) - 2) + "#"
-        print "\t" + header
-        print "\t#" + " " * (len(header) - 2) + "#"
-        print "\t" + "#" * len(header) + "\nSelected descriptors: " + ", ".join([d.__name__ for d in descriptors])
+        print("\n\n\t" + "#" * len(header))
+        print("\t#" + " " * (len(header) - 2) + "#")
+        print("\t" + header)
+        print("\t#" + " " * (len(header) - 2) + "#")
+        print("\t" + "#" * len(header) + "\nSelected descriptors: " + ", ".join([d.__name__ for d in descriptors]))
         inp = os.path.join(project_settings.TUN_PARAMS, opts.input)
 
         try:
@@ -298,13 +298,13 @@ def main(project_settings, argv=None):
                 "Unknown decider %s\nAvailable deciders: %s" % (opts.deciders, PackageReader().getClasses(
                     "deciders")))
 
-        print "Selected deciders: " + ", ".join([d.__name__ for d in deciders])
-        print "\nLoading stars..."
+        print("Selected deciders: " + ", ".join([d.__name__ for d in deciders]))
+        print("\nLoading stars...")
         searched = getStars(opts.searched, project_settings.INP_LCS,
                             query_path=project_settings.QUERIES, progb_txt="Querying searched stars: ")
         others = getStars(opts.cont, project_settings.INP_LCS,
                           query_path=project_settings.QUERIES, progb_txt="Querying contamination stars: ")
-        print "Sample of %i searched objects and %i of contamination objects was loaded" % (len(searched), len(others))
+        print("Sample of %i searched objects and %i of contamination objects was loaded" % (len(searched), len(others)))
 
         static_params = {}
         if opts.template:
@@ -350,7 +350,7 @@ def main(project_settings, argv=None):
                              static_params=static_params,
                              split_ratio=ratios[0] / sum(ratios[:2]))
 
-        print "\nTuning is about to start. There are %i combinations to try" % len(tuned_params)
+        print("\nTuning is about to start. There are %i combinations to try" % len(tuned_params))
 
         star_filter, _, _ = es.fit(_getPrecision, save_params=save_params)
 
@@ -379,9 +379,9 @@ def main(project_settings, argv=None):
         np.savetxt(os.path.join(project_settings.FILTERS, filt_name, "contam_coords.dat"),
                    star_filter.others_coords, "%.3f", header=header)
 
-        print "\nIt is done.\n\t" + "#" * len(header)
+        print("\nIt is done.\n\t" + "#" * len(header))
 
-    except Exception, e:
+    except Exception as e:
         if debug:
             raise
         indent = len(program_name) * " "

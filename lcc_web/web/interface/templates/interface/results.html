@@ -1,0 +1,31 @@
+{% extends 'interface/base_template.html' %}
+
+{% block input_form %}
+
+
+
+<h1 align="middle">Job: {{ job_id }}</h1>
+
+{% if act_num_queries != num_queries %}
+    <p>Progress: {{ act_num_queries }} remaining jobs ( Total queries: {{ num_queries }})</p>
+{% endif %}
+
+{% if zip_url %} 
+    <h3>It is done</h3>
+    <h4>Passed stars: {{ passed_n.0 }}</h4>
+    <h4>Not passed stars: {{ passed_n.1 }}</h4>
+    <a class="button" href="./../{{ zip_url }}">Download the result</a>
+{% endif %}
+
+<h2>Query info:</h2>
+<p><small>Info: Only top 50 results are displayed</small></p>
+
+{{ job_info_html|safe }}
+
+{{ status_table|safe }}
+
+
+
+
+{% endblock %}
+

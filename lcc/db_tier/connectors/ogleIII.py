@@ -1,8 +1,7 @@
+import requests
 from astropy.coordinates.sky_coordinate import SkyCoord
 from bs4 import BeautifulSoup
 import re
-import urllib
-import urllib2
 import warnings
 
 from lcc.db_tier.base_query import LightCurvesDb
@@ -169,14 +168,13 @@ class OgleIII(LightCurvesDb):
 
         # Delete unneeded parameters
         to_del = []
-        for key, value in params.iteritems():
+        for key, value in params.items():
             if not value or value == "off":
                 to_del.append(key)
         # Url for query
         url = "%s/%s" % (self.ROOT, self.SUFF)
         [params.pop(x, None) for x in to_del]
-        result = urllib2.urlopen(
-            url, urllib.urlencode(params), timeout=100)
+        result = requests.post(url, params)
         return self._parseResult(result, lc=lc)
 
     def _parseQueries(self, queries):
@@ -219,14 +217,15 @@ class OgleIII(LightCurvesDb):
         START_TABLE = "<p><table"
         END_TABLE = "</table>"
 
-        if result.code != 200:
+        if result.status_code != 200:
             warnings.warn("Website has not returned 200 status")
             return []
 
         lc_tmp = None
         raw_table = ""
         skip = True
-        for line in result.readlines():
+        for line in result.iter_lines():
+            line = line.decode()
             if skip:
                 if line.strip().startswith(START_TABLE):
                     raw_table += line[len("<p>"):]
@@ -267,7 +266,7 @@ class OgleIII(LightCurvesDb):
 
         cols_map = self._parseHeader(header)
         stars = []
-        for row in progressbar(rows, "Parsing stars"):
+        for row in rows:
             field = str(row[cols_map.get("field")])
             starid = str(row[cols_map.get("starid")])
             ra = float(row[cols_map.get("ra")])
@@ -284,8 +283,8 @@ class OgleIII(LightCurvesDb):
                                  "db_ident": {"field": field,
                                               "starid": starid}}}
 
-            for ide, val in identifiers.iteritems():
-                if val != u"\xa0":
+            for ide, val in identifiers.items():
+                if val != "\xa0":
                     ident[ide] = {"name": str(val)}
 
                     query_ide = self._parseDbNames(ide, val)
@@ -296,7 +295,7 @@ class OgleIII(LightCurvesDb):
             for col in self.MORE:
                 if cols_map.get(col) and cols_map.get(col):
                     val = row[cols_map.get(col)]
-                    if val != u"\xa0":
+                    if val != "\xa0":
                         try:
                             val = float(val)
                         except:
@@ -320,7 +319,7 @@ class OgleIII(LightCurvesDb):
     def _parseHeader(self, header):
         cols_map = {}
         for i, col in enumerate(header):
-            if col in self.COL_MAP.keys():
+            if col in list(self.COL_MAP.keys()):
                 cols_map[self.COL_MAP[col]] = i
         return cols_map
 
@@ -328,16 +327,16 @@ class OgleIII(LightCurvesDb):
         num = name.split("-")[-1][-2:]
 
         url = "%sdata/I/%s/%s.dat" % (self.ROOT, num, name)
-        result = urllib2.urlopen(url)
+        result = requests.get(url)
 
-        if (result.code == 200):
+        if result.status_code == 200:
             star_curve = []
-            for line in result.readlines():
+            for line in result.iter_lines():
+                line = line.decode()
                 parts = line.strip().split(" ")
                 star_curve.append(
                     [round(float(parts[0]), 4), round(float(parts[1]), 3), round(float(parts[2]), 3)])
             return star_curve
-
 
     def _parseDbNames(self, db, name):
         if db == "Macho":

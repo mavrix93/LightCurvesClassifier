@@ -1,0 +1,107 @@
+{% extends 'interface/base_template.html' %}
+
+{% block input_form %}
+
+
+ 
+<script>
+function plotSelected(id){
+    var data = [];
+    var lcs = {{ lcs }};
+    var labels = {{ labels|safe }};
+    var x_data = lcs[id][0];
+    var y_data = lcs[id][1];
+    
+    var this_data = {
+               x: x_data,
+               y: y_data,
+               mode: 'markers',
+               error_y: {
+                  type: 'data',
+                  array: lcs[id][2],
+                  visible: true,
+                  color: '#85144B'
+                            }};
+    data.push(this_data);
+                
+    
+      
+    var layout = {
+      title: labels[id],
+      autosize: true,
+      width: 800,
+      height: 600,
+      margin: {
+        l: 65,
+        r: 50,
+        b: 65,
+        t: 90,
+      },
+      xaxis: {
+        title: "Time"
+        },
+      yaxis: {
+        title: "Mag",
+        autorange: 'reversed'}
+    };
+    
+    Plotly.newPlot('lc_plot', data, layout);
+    }
+</script>
+
+
+<div align="middle" id="myplot" style="width:100%;height:100%"></div>
+<script>
+var myPlot = document.getElementById('myplot')
+
+var layout = {
+  legend: {
+    x: 1500,
+    y: 1000
+    },
+  autosize: true,  
+  width: 800,
+  height: 600,
+  margin: {
+    l: 65,
+    r: 50,
+    b: 65,
+    t: 90,
+  }
+};
+
+var traces = [[1,2,3,4,5],[4,5,6,7,8]];
+var x_data = traces[0];
+var y_data = traces[1];
+var t = {
+x: x_data, y: y_data,
+mode: 'markers',
+marker: {
+    size: 8,
+    text: ["a","b","c","d","e"],
+    symbol: 'circle',
+    line: {
+    color: 'rgb(204, 204, 204)',
+    width: 1},
+    opacity: 0.8},
+type: 'scatter2d'};
+var data = [t];
+    
+Plotly.newPlot('myplot', data, layout);
+
+myPlot.on('plotly_click', function(data){
+    for(var i=0; i < data.points.length; i++){
+    plotSelected(data.points[i].pointNumber);
+    alert(data.points[i].pointNumber);
+    }
+});
+
+
+
+
+</script>
+
+<div align="middle" id="lc_plot" style="width:100%;height:100%"></div>
+
+
+{% endblock %}

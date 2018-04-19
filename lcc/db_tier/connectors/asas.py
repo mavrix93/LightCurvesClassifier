@@ -28,7 +28,6 @@ class Asas(VizierTapBase, LightCurvesDb):
 
     RA = "_RA"  # Deg
     DEC = "_DE"  # Deg
-    NAME = "{ASAS}"
 
     LC_META = {"color": "V",
                "origin": "ASAS"}
@@ -66,3 +65,6 @@ class Asas(VizierTapBase, LightCurvesDb):
                     err.append(float(parts[self.ERR_COL]) / self.ERR_MAG_RATIO)
 
         return time, mag, err
+
+    def get_name(self, star_info):
+        return star_info.get("ASAS")

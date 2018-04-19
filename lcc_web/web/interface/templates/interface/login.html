@@ -1,0 +1,15 @@
+{% extends 'interface/base_template.html' %}
+
+{% block input_form %}
+<h1>Log in</h1>
+<form action="" method="post">
+    {% csrf_token %}
+    <p><label>User name:</label>{{ form.user_name }}</p>
+    <p><label>Password:</label>{{ form.password }}</p>
+    <input type="text" style="visibility: hidden;" id="goto_f" name="goto_f" value="{{ goto }}" />
+    <input type="submit" value="Submit" />
+</form>
+
+    <i><small>Don't have account? Signup for free: </small></i><a href="{% url 'create_user' %}">SignUp</a>
+
+{% endblock %}
