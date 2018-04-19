@@ -1,0 +1,4 @@
+#CurvesShapeDescr:alphabet_size;CurvesShapeDescr:days_per_bin;QDADec:threshold
+5;30;0.1
+5;30;0.18
+5;30;0.26

@@ -1,19 +1,16 @@
-#!/usr/bin/env python
+#!/usr/local/bin/python3
 # encoding: utf-8
-import json
-from optparse import OptionParser
 import os
 import sys
 import warnings
+from optparse import OptionParser
 
-from lcc.db_tier.stars_provider import StarsProvider
-from lcc.stars_processing.systematic_search.stars_searcher import StarsSearcher
-from lcc.data_manager.status_resolver import StatusResolver
-from lcc.entities.exceptions import QueryInputError
 from lcc.data_manager.filter_serializer import FiltersSerializer
 from lcc.data_manager.prepare_package import prepare_run
-
-
+from lcc.data_manager.status_resolver import StatusResolver
+from lcc.db_tier.stars_provider import StarsProvider
+from lcc.entities.exceptions import QueryInputError
+from lcc.stars_processing.systematic_search.stars_searcher import StarsSearcher
 
 __all__ = []
 __version__ = 0.3
@@ -180,8 +177,6 @@ def main(project_settings, argv=None):
         print("\t" + header)
         print("\t#" + " " * (len(header) - 2) + "#")
 
-        UNFOUND_LIM = 2
-
         print("Loading query...")
         try:
             resolver = StatusResolver(
@@ -221,6 +216,7 @@ def main(project_settings, argv=None):
         searcher.queryStars(queries)
 
     except Exception as e:
+        raise
         print(e, "\n\n")
         indent = len(program_name) * " "
         sys.stderr.write(program_name + ": " + repr(e) + "\n")
@@ -229,7 +225,7 @@ def main(project_settings, argv=None):
 
 
 def _sum_txt(db, num_queries, star_filters):
-    '''Get info text before querying'''
+    """Get info text before querying"""
 
     sumup_txt = '''
     \n\nDownloading from %s database is about to start..

@@ -41,11 +41,12 @@ def plotProbabSpace(star_filter, plot_ranges=None, opt="show",
     -------
         None
     """
-    contamination_coords = contamination_coords or []
-    searched_coords = searched_coords or []
+    contamination_coords = contamination_coords if contamination_coords is not None else []
+    searched_coords = searched_coords if searched_coords is not None else []
 
-    if (not searched_coords and not contamination_coords and
-            hasattr(star_filter, "searched_coords") and hasattr(star_filter, "others_coords")):
+    if not len(searched_coords) and not len(contamination_coords) and hasattr(star_filter,
+                                                                              "searched_coords") and hasattr(
+            star_filter, "others_coords"):
         searched_coords = star_filter.searched_coords.values
         contamination_coords = star_filter.others_coords.values
 
@@ -356,10 +357,10 @@ def plotHist(searched_coo, cont_coo, labels=[], bins=None, save_path=None,
         x_weights = np.ones_like(x_param) / len(x_param)
         y_weights = np.ones_like(y_param) / len(y_param)
 
-        plt.hist(x_param, bins=x_bins, weights=x_weights,
+        plt.hist(x_param, bins=int(x_bins), weights=x_weights,
                  histtype='bar', color="crimson",
                  label="Searched objects")
-        plt.hist(y_param, bins=y_bins, weights=y_weights,
+        plt.hist(y_param, bins=int(y_bins), weights=y_weights,
                  label="Others")
         plt.title("Distribution of the parameters coordinates")
 

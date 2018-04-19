@@ -37,7 +37,7 @@ class CurvesShapeDescr(SymbolicRepresentation, ComparativeBase, BaseDescriptor):
                     for example best10 takes 10 best matches, best0.5 takes 50 % best matches of the total
     """
 
-    LABEL = "Dissimilarity of the curve from the template"
+    LABEL = ["Dissimilarity of the curve from the template"]
     LC_NEEDED = True
     MAX_ITER = 500
 

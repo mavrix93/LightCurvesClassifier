@@ -38,7 +38,7 @@ class HistShapeDescr(SymbolicRepresentation, ComparativeBase, BaseDescriptor):
                     for example best10 takes 10 best matches, best0.5 takes 50 % best matches of the total
     """
 
-    LABEL = "Dissimilarity of the light curves histogram from the template"
+    LABEL = ["Dissimilarity of the light curves histogram from the template"]
 
     def __init__(self, comp_stars, bins, alphabet_size, slide=False, meth="average"):
         """

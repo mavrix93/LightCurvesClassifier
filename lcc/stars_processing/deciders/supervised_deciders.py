@@ -84,7 +84,7 @@ class TreeDec(SupervisedBase):
 
     def __init__(self, threshold=0.5, criterion="gini", splitter="best", max_depth=None, min_samples_split=2,
                  min_samples_leaf=1, min_weight_fraction_leaf=0.0, max_features=None, random_state=None,
-                 max_leaf_nodes=None, min_impurity_split=1e-07, class_weight=None, presort=False):
+                 max_leaf_nodes=None, class_weight=None, presort=False):
         """
         Parameters
         -----------
@@ -95,8 +95,7 @@ class TreeDec(SupervisedBase):
         classi_params = {"criterion": criterion, "splitter": splitter, "max_depth": max_depth,
                          "min_samples_split": min_samples_split, "min_samples_leaf": min_samples_leaf,
                          "min_weight_fraction_leaf": min_weight_fraction_leaf, "max_features": max_features,
-                         "random_state": random_state, "max_leaf_nodes": max_leaf_nodes,
-                         "min_impurity_split": min_impurity_split, "class_weight": class_weight, "presort": presort}
+                         "random_state": random_state, "max_leaf_nodes": max_leaf_nodes, "class_weight": class_weight, "presort": presort}
         self.threshold = threshold
         self.learner = tree.DecisionTreeClassifier(**classi_params)
 
@@ -126,7 +125,7 @@ class GradBoostDec(SupervisedBase):
 
     def __init__(self, threshold=0.5, loss="deviance", learning_rate=0.1, n_estimators=100, subsample=1.0,
                  criterion="friedman_mse", min_samples_split=2, min_samples_leaf=1, min_weight_fraction_leaf=0.0,
-                 max_depth=3, min_impurity_split=1e-07, init=None, random_state=None, max_features=None,
+                 max_depth=3,  init=None, random_state=None, max_features=None,
                  max_leaf_nodes=None, presort="auto"):
         """
         Parameters
@@ -138,7 +137,7 @@ class GradBoostDec(SupervisedBase):
         classi_params = {"loss": loss, "learning_rate": learning_rate, "n_estimators": n_estimators,
                          "subsample": subsample, "criterion": criterion, "min_samples_split": min_samples_split,
                          "min_samples_leaf": min_samples_leaf, "min_weight_fraction_leaf": min_weight_fraction_leaf,
-                         "max_depth": max_depth, "min_impurity_split": min_impurity_split, "init": init,
+                         "max_depth": max_depth, "init": init,
                          "random_state": random_state, "max_features": max_features,"max_leaf_nodes": max_leaf_nodes,
                          "presort": presort}
         SupervisedBase.__init__(self, clf=GradientBoostingClassifier(**classi_params), threshold=threshold)
@@ -153,7 +152,7 @@ class RandomForestDec(SupervisedBase):
 
     def __init__(self, threshold=0.5, n_estimators=10, criterion="gini", max_depth=None, min_samples_split=2,
                  min_samples_leaf=1, min_weight_fraction_leaf=0.0, max_features="auto", max_leaf_nodes=None,
-                 min_impurity_split=1e-07, bootstrap=True, oob_score=False, n_jobs=1, random_state=None,
+                bootstrap=True, oob_score=False, n_jobs=1, random_state=None,
                  class_weight=None):
         """
         Parameters
@@ -165,7 +164,7 @@ class RandomForestDec(SupervisedBase):
         classi_params = {"n_estimators": n_estimators, "criterion": criterion, "max_depth": max_depth,
                         "min_samples_split": min_samples_split, "min_samples_leaf": min_samples_leaf,
                         "min_weight_fraction_leaf": min_weight_fraction_leaf, "max_features": max_features,
-                        "max_leaf_nodes": max_leaf_nodes, "min_impurity_split": min_impurity_split,
+                        "max_leaf_nodes": max_leaf_nodes,
                          "bootstrap": bootstrap, "oob_score": oob_score, "n_jobs": n_jobs,
                          "random_state": random_state, "class_weight": class_weight}
         SupervisedBase.__init__(self, clf=RandomForestClassifier(**classi_params), threshold=threshold)
@@ -201,7 +200,7 @@ class ExtraTreesDec(SupervisedBase):
 
     def __init__(self, threshold=0.5, n_estimators=10, criterion="gini", max_depth=None, min_samples_split=2,
                  min_samples_leaf=1, min_weight_fraction_leaf=0.0, max_features="auto", max_leaf_nodes=None,
-                 min_impurity_split=1e-07, bootstrap=False, oob_score=False, n_jobs=1, random_state=None,
+                 bootstrap=False, oob_score=False, n_jobs=1, random_state=None,
                  class_weight=None):
         """
         Parameters
@@ -213,7 +212,7 @@ class ExtraTreesDec(SupervisedBase):
         classi_params = {"n_estimators": n_estimators, "criterion": criterion, "max_depth": max_depth,
                          "min_samples_split": min_samples_split, "min_samples_leaf": min_samples_leaf,
                          "min_weight_fraction_leaf": min_weight_fraction_leaf, "max_features": max_features,
-                         "max_leaf_nodes": max_leaf_nodes, "min_impurity_split": min_impurity_split,
+                         "max_leaf_nodes": max_leaf_nodes,
                          "bootstrap": bootstrap, "oob_score": oob_score, "n_jobs": n_jobs,
                          "random_state": random_state, "class_weight": class_weight}
 

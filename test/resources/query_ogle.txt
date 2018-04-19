@@ -1,0 +1,6 @@
+#starid;field_num;target
+1;1;lmc
+1;2;lmc
+1;3;lmc
+1;4;lmc
+1;5;lmc
