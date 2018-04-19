@@ -43,11 +43,11 @@ Please note that the package is still in development..
     - CLI need to be still refactored
     - Merged with project for web interface
 
-## Instalation
+## Installation
 
 ### Pypi
 
-`pip isntall lcc`
+`pip install lcc`
 ### Docker
 
 Docker image with running web interface can be launched by:
