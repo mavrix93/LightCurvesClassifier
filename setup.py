@@ -13,6 +13,7 @@ setup(
                     "kplr", "astroML", "astropy", "requests", "bs4", "pathos", "tqdm", "keras",
                     "redis", "rq"],
   keywords=['light curves', 'machine-learning', 'astronomy', 'data-mining'],
+  entry_points={'console_scripts': ['lcc=lcc.cli.lcc:main']},
   classifiers=[
     'Development Status :: 4 - Beta',
     'Programming Language :: Python :: 3',

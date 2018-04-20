@@ -1,0 +1,6 @@
+{
+  "test/intergation/test_searcher.py": true,
+  "test/stars_processing/test_deciders.py": true,
+  "test/stars_processing/test_params_estim.py": true,
+  "test/stars_processing/test_stars_filter.py": true
+}

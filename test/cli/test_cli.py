@@ -8,6 +8,18 @@ from lcc.bin.create_project import main as create_project
 from lcc.bin.prepare_query import main as prepare_query
 from lcc.bin.make_filter import main as make_filter
 from lcc.bin.filter_stars import main as filter_stars
+from lcc.cli.lcc import main as lcc_entry
+
+
+def test_create_project_lcc():
+    sys.argv = ["lcc", "create_project", "test_project_lcc2", "/tmp"]
+
+    if os.path.exists("/tmp/test_project_lcc2"):
+        shutil.rmtree("/tmp/test_project_lcc2")
+
+    lcc_entry()
+
+    assert os.path.exists("/tmp/test_project_lcc2/project_settings.py")
 
 
 def test_create_project():
@@ -52,6 +64,18 @@ def test_prepare_tuning():
     prepare_query(config)
 
     assert os.path.exists("/tmp/tune_lc_shape.txt")
+
+
+def test_prepare_query_lcc():
+    if os.path.exists("/tmp/query_ogle2.txt"):
+        os.remove("/tmp/query_ogle2.txt")
+
+    cmd = "lcc prepare_query -o query_ogle2.txt  -p starid -r 1:100 -p field_num -r 1:10 -p target -r lmc -f q"
+    sys.argv = cmd.split()
+
+    lcc_entry(path=os.path.join(os.path.dirname(os.path.abspath(__file__)), os.pardir, "resources"))
+
+    assert os.path.exists("/tmp/query_ogle2.txt")
 
 
 def test_prepare_query():
