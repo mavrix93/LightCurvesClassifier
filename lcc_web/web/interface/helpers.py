@@ -14,8 +14,8 @@ from astropy.io import fits
 from django.conf import settings
 from interface.models import StarsFilter
 
-from lcc.api.input_parse import parse_query_ranges
-from lcc.api.input_parse import parse_tun_query
+from lcc.cli.input_parse import parse_query_ranges
+from lcc.cli.input_parse import parse_tun_query
 from lcc.db_tier.connectors.file_manager import FileManager
 from lcc.entities.exceptions import QueryInputError
 from lcc.entities.star import Star

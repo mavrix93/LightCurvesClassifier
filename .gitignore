@@ -6,8 +6,9 @@ lcc.egg-info
 dist
 *bak
 data
-.coverage
+.coverage.*
 migrations
 .DS_Store
 .ipynb_checkpoints
 build
+.pytest*

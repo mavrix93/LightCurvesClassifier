@@ -48,6 +48,11 @@ Please note that the package is still in development..
 ### Pypi
 
 `pip install lcc`
+
+
+Also `lcc` entrypoint will be installed into PATH so CLI commands will be accessible from any path.
+See CLI part of the README bellow.
+ 
 ### Docker
 
 Docker image with running web interface can be launched by:
@@ -107,8 +112,13 @@ Data of "stars of interest" and some other contamination data can be used as tra
 There are many connectors to astronomical databases such as: OgleII, Kepler, Asas, Corot and Macho.
 All one need to do is specify the queries for the selected database.
 
-For systematic searches can be used `StarsSearcherRedis` which uses redis queue (`rq`) or `StarsSearcher` for
-sequential executing.
+For systematic searches can be used sequential `StarsSearcher` or `StarsSearcherRedis` which uses redis queue (`rq`) or `StarsSearcher` for
+sequential executing. For the redis option it is needed to run redis server and rq worker:
+
+```
+$ redis-server
+$ rq worker lcc
+```
 
 
 ## Installation

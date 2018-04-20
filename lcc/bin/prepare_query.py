@@ -1,5 +1,6 @@
 #!/usr/local/bin/python3
 # encoding: utf-8
+import logging
 from optparse import OptionParser
 import os
 import sys
@@ -73,6 +74,7 @@ def main(project_settings, argv=None):
     if argv is None:
         argv = sys.argv[1:]
     try:
+        logging.info("Creating query file with these params {}".format(argv))
         # setup option parser
         parser = OptionParser(version=program_version_string,
                               epilog=program_longdesc,
@@ -154,6 +156,7 @@ def main(project_settings, argv=None):
         print("\nDone.\nFile %s was saved into %s" % (file_name, path))
 
     except Exception as e:
+        raise
         indent = len(program_name) * " "
         sys.stderr.write(program_name + ": " + repr(e) + "\n")
         sys.stderr.write(indent + "  for help use --help")

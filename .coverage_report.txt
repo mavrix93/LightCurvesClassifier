@@ -1,15 +1,16 @@
 Name                                                            Stmts   Miss  Cover
 -----------------------------------------------------------------------------------
 lcc/__init__.py                                                     3      0   100%
-lcc/api/__init__.py                                                 0      0   100%
-lcc/api/input_parse.py                                             59     36    39%
-lcc/api/stars_handling.py                                          71     30    58%
 lcc/bin/__init__.py                                                 0      0   100%
 lcc/bin/create_project.py                                          27      6    78%
 lcc/bin/filter_stars.py                                            78     21    73%
 lcc/bin/make_filter.py                                            128     28    78%
 lcc/bin/plot_lcs.py                                                52     52     0%
-lcc/bin/prepare_query.py                                           83     14    83%
+lcc/bin/prepare_query.py                                           86     15    83%
+lcc/cli/__init__.py                                                 0      0   100%
+lcc/cli/input_parse.py                                             59     36    39%
+lcc/cli/lcc.py                                                     35      9    74%
+lcc/cli/stars_handling.py                                          71     30    58%
 lcc/data_manager/__init__.py                                        0      0   100%
 lcc/data_manager/filter_serializer.py                              15      0   100%
 lcc/data_manager/package_reader.py                                 66     22    67%
@@ -76,4 +77,4 @@ lcc/utils/helpers.py                                              129     87    
 lcc/utils/output_process_modules.py                                25     10    60%
 lcc/utils/stars.py                                                 79     59    25%
 -----------------------------------------------------------------------------------
-TOTAL                                                            3907   1355    65%
+TOTAL                                                            3945   1365    65%

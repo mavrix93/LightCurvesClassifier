@@ -10,8 +10,8 @@ from optparse import OptionParser
 
 import numpy as np
 
-from lcc.api.input_parse import parse_tun_query
-from lcc.api.stars_handling import getStars
+from lcc.cli.input_parse import parse_tun_query
+from lcc.cli.stars_handling import getStars
 from lcc.data_manager.filter_serializer import FiltersSerializer
 from lcc.data_manager.package_reader import PackageReader
 from lcc.data_manager.prepare_package import rec

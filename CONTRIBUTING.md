@@ -8,8 +8,9 @@ First of all thank you for considering to contribute! The project is quite big f
  - Function comments are welcomed and should follow [numpy style](http://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_numpy.html)
 
 ## Testing
-  - `pytest` is preferred
+  - `pytest` is preferred way to do it (run `pytest test`)
   - Current tests coverage can be definitely improved
+  - For coverage check use `py.test --cov=lcc test`
   
 ## Where to contribute
 
