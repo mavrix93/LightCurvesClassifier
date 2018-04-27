@@ -1,0 +1,38 @@
+lcc.cli package
+===============
+
+Submodules
+----------
+
+lcc.cli.input_parse module
+--------------------------
+
+.. automodule:: lcc.cli.input_parse
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+lcc.cli.lcc module
+------------------
+
+.. automodule:: lcc.cli.lcc
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+lcc.cli.stars_handling module
+-----------------------------
+
+.. automodule:: lcc.cli.stars_handling
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: lcc.cli
+    :members:
+    :undoc-members:
+    :show-inheritance:

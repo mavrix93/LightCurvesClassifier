@@ -12,3 +12,7 @@ migrations
 .ipynb_checkpoints
 build
 .pytest*
+_build
+_static
+_templates
+docs_source

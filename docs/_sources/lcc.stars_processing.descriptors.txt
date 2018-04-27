@@ -1,0 +1,110 @@
+lcc.stars_processing.descriptors package
+========================================
+
+Submodules
+----------
+
+lcc.stars_processing.descriptors.abbe_value_descr module
+--------------------------------------------------------
+
+.. automodule:: lcc.stars_processing.descriptors.abbe_value_descr
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+lcc.stars_processing.descriptors.color_index_descr module
+---------------------------------------------------------
+
+.. automodule:: lcc.stars_processing.descriptors.color_index_descr
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+lcc.stars_processing.descriptors.curve_density_descr module
+-----------------------------------------------------------
+
+.. automodule:: lcc.stars_processing.descriptors.curve_density_descr
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+lcc.stars_processing.descriptors.curve_descr module
+---------------------------------------------------
+
+.. automodule:: lcc.stars_processing.descriptors.curve_descr
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+lcc.stars_processing.descriptors.curves_shape_descr module
+----------------------------------------------------------
+
+.. automodule:: lcc.stars_processing.descriptors.curves_shape_descr
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+lcc.stars_processing.descriptors.hist_shape_descr module
+--------------------------------------------------------
+
+.. automodule:: lcc.stars_processing.descriptors.hist_shape_descr
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+lcc.stars_processing.descriptors.kurtosis_desc module
+-----------------------------------------------------
+
+.. automodule:: lcc.stars_processing.descriptors.kurtosis_desc
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+lcc.stars_processing.descriptors.position_descriptor module
+-----------------------------------------------------------
+
+.. automodule:: lcc.stars_processing.descriptors.position_descriptor
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+lcc.stars_processing.descriptors.property_desc module
+-----------------------------------------------------
+
+.. automodule:: lcc.stars_processing.descriptors.property_desc
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+lcc.stars_processing.descriptors.skewness_desc module
+-----------------------------------------------------
+
+.. automodule:: lcc.stars_processing.descriptors.skewness_desc
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+lcc.stars_processing.descriptors.variogram_shape_descr module
+-------------------------------------------------------------
+
+.. automodule:: lcc.stars_processing.descriptors.variogram_shape_descr
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+lcc.stars_processing.descriptors.variogram_slope_descr module
+-------------------------------------------------------------
+
+.. automodule:: lcc.stars_processing.descriptors.variogram_slope_descr
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: lcc.stars_processing.descriptors
+    :members:
+    :undoc-members:
+    :show-inheritance:

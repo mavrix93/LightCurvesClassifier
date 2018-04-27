@@ -2,11 +2,11 @@
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>lcc.stars_processing.utilities package &#8212; LightCurvesClassifier 1.0 documentation</title>
+    <title>lcc.stars_processing.utilities package &#8212; Light Curves Classifier 1.2.3 documentation</title>
     
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,11 +14,10 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '1.0',
+        VERSION:     '1.2.3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
+        HAS_SOURCE:  true
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
@@ -26,8 +25,7 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="lcc.tests package" href="lcc.tests.html" />
-    <link rel="prev" title="lcc.stars_processing.tools package" href="lcc.stars_processing.tools.html" />
+    <link rel="top" title="Light Curves Classifier 1.2.3 documentation" href="index.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
@@ -52,49 +50,40 @@
 <span id="lcc-stars-processing-utilities-base-decider-module"></span><h2>lcc.stars_processing.utilities.base_decider module<a class="headerlink" href="#module-lcc.stars_processing.utilities.base_decider" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="lcc.stars_processing.utilities.base_decider.BaseDecider">
-<em class="property">class </em><code class="descclassname">lcc.stars_processing.utilities.base_decider.</code><code class="descname">BaseDecider</code><a class="reference internal" href="_modules/lcc/stars_processing/utilities/base_decider.html#BaseDecider"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.utilities.base_decider.BaseDecider" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<em class="property">class </em><code class="descclassname">lcc.stars_processing.utilities.base_decider.</code><code class="descname">BaseDecider</code><a class="headerlink" href="#lcc.stars_processing.utilities.base_decider.BaseDecider" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">abc.ABC</span></code></p>
 <p>A decider class works with &#8220;coordinates&#8221; (specification) of objects. It can
-learn identify inspected group of objects according to &#8220;coordinates&#8221; of 
+learn identify inspected group of objects according to &#8220;coordinates&#8221; of
 searched objects and other objects.</p>
 <p>All decider classes have to inherit this abstract class. That means that they
 need to implement several methods: &#8220;learn&#8221; and &#8220;evaluate&#8221;. Also all of them
 have to have &#8220;threshold&#8221; attribute. To be explained read comments below.</p>
-<p class="rubric">Attributes</p>
-<table border="1" class="docutils">
-<colgroup>
-<col width="8%" />
-<col width="92%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td>threshold</td>
-<td>(float) Probability (1.0  means 100 %) level. All objects with probability of membership to the group higher then the threshold are considered as members.</td>
-</tr>
-<tr class="row-even"><td>threshold = 0.8</td>
-<td>&#160;</td>
-</tr>
-</tbody>
-</table>
-<p class="rubric">Methods</p>
+<dl class="attribute">
+<dt id="lcc.stars_processing.utilities.base_decider.BaseDecider.threshold">
+<code class="descname">threshold</code><a class="headerlink" href="#lcc.stars_processing.utilities.base_decider.BaseDecider.threshold" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>float</em> &#8211; Probability (1.0  means 100 %) level. All objects with probability of
+membership to the group higher then the threshold are considered
+as members.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">threshold = 0.8</code></dt>
+<dd></dd></dl>
+
 <dl class="method">
 <dt id="lcc.stars_processing.utilities.base_decider.BaseDecider.evaluate">
-<code class="descname">evaluate</code><span class="sig-paren">(</span><em>star_coords</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/utilities/base_decider.html#BaseDecider.evaluate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.utilities.base_decider.BaseDecider.evaluate" title="Permalink to this definition">¶</a></dt>
+<code class="descname">evaluate</code><span class="sig-paren">(</span><em>star_coords</em><span class="sig-paren">)</span><a class="headerlink" href="#lcc.stars_processing.utilities.base_decider.BaseDecider.evaluate" title="Permalink to this definition">¶</a></dt>
 <dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>star_coords</strong> : list</p>
-<blockquote>
-<div><p>Coordinates of inspected star got from sub-filters</p>
-</div></blockquote>
-</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>star_coords</strong> (<em>list</em>) &#8211; Coordinates of inspected star got from sub-filters</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">list of lists</p>
-<blockquote class="last">
-<div><p>Probability that inspected star belongs to the searched
-group of objects</p>
-</div></blockquote>
-</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Probability that inspected star belongs to the searched
+group of objects</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list of lists</td>
 </tr>
 </tbody>
 </table>
@@ -102,23 +91,17 @@ group of objects</p>
 
 <dl class="method">
 <dt id="lcc.stars_processing.utilities.base_decider.BaseDecider.evaluateList">
-<code class="descname">evaluateList</code><span class="sig-paren">(</span><em>stars_coords</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/utilities/base_decider.html#BaseDecider.evaluateList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.utilities.base_decider.BaseDecider.evaluateList" title="Permalink to this definition">¶</a></dt>
+<code class="descname">evaluateList</code><span class="sig-paren">(</span><em>stars_coords</em><span class="sig-paren">)</span><a class="headerlink" href="#lcc.stars_processing.utilities.base_decider.BaseDecider.evaluateList" title="Permalink to this definition">¶</a></dt>
 <dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>stars_coords</strong> : list</p>
-<blockquote>
-<div><p>Coordinates of inspected stars (e.g. obtained from sub-filters)</p>
-</div></blockquote>
-</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>stars_coords</strong> (<em>list</em>) &#8211; Coordinates of inspected stars (e.g. obtained from sub-filters)</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">list</p>
-<blockquote class="last">
-<div><p>Probabilities that inspected stars belongs to the searched
-group of objects</p>
-</div></blockquote>
-</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Probabilities that inspected stars belongs to the searched
+group of objects</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list</td>
 </tr>
 </tbody>
 </table>
@@ -126,22 +109,21 @@ group of objects</p>
 
 <dl class="method">
 <dt id="lcc.stars_processing.utilities.base_decider.BaseDecider.filter">
-<code class="descname">filter</code><span class="sig-paren">(</span><em>stars_coords</em>, <em>threshold=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/utilities/base_decider.html#BaseDecider.filter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.utilities.base_decider.BaseDecider.filter" title="Permalink to this definition">¶</a></dt>
+<code class="descname">filter</code><span class="sig-paren">(</span><em>stars_coords</em>, <em>threshold=None</em><span class="sig-paren">)</span><a class="headerlink" href="#lcc.stars_processing.utilities.base_decider.BaseDecider.filter" title="Permalink to this definition">¶</a></dt>
 <dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>stars_coords</strong> : list</p>
-<blockquote>
-<div><p>Coordinates of inspected stars</p>
-</div></blockquote>
-<p><strong>threshold</strong> : float</p>
-<blockquote>
-<div><p>Treshold value for filtering (number from 0 to 1)</p>
-</div></blockquote>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>stars_coords</strong> (<em>list</em>) &#8211; Coordinates of inspected stars</li>
+<li><strong>threshold</strong> (<em>float</em>) &#8211; Treshold value for filtering (number from 0 to 1)</li>
+</ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">List of True/False whether coordinates belong to the searched group of objects</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">List of True/False whether coordinates belong to the searched group of objects</p>
 </td>
 </tr>
 </tbody>
@@ -150,23 +132,17 @@ group of objects</p>
 
 <dl class="method">
 <dt id="lcc.stars_processing.utilities.base_decider.BaseDecider.getBestCoord">
-<code class="descname">getBestCoord</code><span class="sig-paren">(</span><em>stars_coords</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/utilities/base_decider.html#BaseDecider.getBestCoord"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.utilities.base_decider.BaseDecider.getBestCoord" title="Permalink to this definition">¶</a></dt>
+<code class="descname">getBestCoord</code><span class="sig-paren">(</span><em>stars_coords</em><span class="sig-paren">)</span><a class="headerlink" href="#lcc.stars_processing.utilities.base_decider.BaseDecider.getBestCoord" title="Permalink to this definition">¶</a></dt>
 <dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>stars_coords</strong> : list</p>
-<blockquote>
-<div><p>Coordinates of inspected stars got from sub-filters</p>
-</div></blockquote>
-</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>stars_coords</strong> (<em>list</em>) &#8211; Coordinates of inspected stars got from sub-filters</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">list</p>
-<blockquote class="last">
-<div><p>Coordinates with highest probability of membership to the
-searched group (one list of coordinates)</p>
-</div></blockquote>
-</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Coordinates with highest probability of membership to the
+searched group (one list of coordinates)</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list</td>
 </tr>
 </tbody>
 </table>
@@ -174,30 +150,28 @@ searched group (one list of coordinates)</p>
 
 <dl class="method">
 <dt id="lcc.stars_processing.utilities.base_decider.BaseDecider.getStatistic">
-<code class="descname">getStatistic</code><span class="sig-paren">(</span><em>right_coords</em>, <em>wrong_coords</em>, <em>threshold=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/utilities/base_decider.html#BaseDecider.getStatistic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.utilities.base_decider.BaseDecider.getStatistic" title="Permalink to this definition">¶</a></dt>
+<code class="descname">getStatistic</code><span class="sig-paren">(</span><em>right_coords</em>, <em>wrong_coords</em>, <em>threshold=None</em><span class="sig-paren">)</span><a class="headerlink" href="#lcc.stars_processing.utilities.base_decider.BaseDecider.getStatistic" title="Permalink to this definition">¶</a></dt>
 <dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>right_coords</strong> : list</p>
-<blockquote>
-<div><p>Parameter-space coordinates of searched objects</p>
-</div></blockquote>
-<p><strong>wrong_coords</strong> : list</p>
-<blockquote>
-<div><p>Parameter-space coordinates of other objects</p>
-</div></blockquote>
-<p><strong>threshold</strong> : float</p>
-<blockquote>
-<div><p>Treshold value for filtering (number from 0 to 1)</p>
-</div></blockquote>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>right_coords</strong> (<em>list</em>) &#8211; Parameter-space coordinates of searched objects</li>
+<li><strong>wrong_coords</strong> (<em>list</em>) &#8211; Parameter-space coordinates of other objects</li>
+<li><strong>threshold</strong> (<em>float</em>) &#8211; Treshold value for filtering (number from 0 to 1)</li>
+</ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>statistic information</strong> : dict</p>
-<blockquote class="last">
-<div><dl class="docutils">
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><p><strong>statistical information</strong> &#8211;</p>
+<dl class="docutils">
 <dt>precision (float)</dt>
 <dd><p class="first last">True positive / (true positive + false positive)</p>
+</dd>
+<dt>accuracy (float)</dt>
+<dd><p class="first last">(True positive + true negative) / (no of all samples)</p>
+</dd>
+<dt>f1_score (float)</dt>
+<dd><p class="first last">2 * true positive / (2 * true positive + false positive + false negative)</p>
 </dd>
 <dt>true_positive_rate (float)</dt>
 <dd><p class="first last">Proportion of positives that are correctly identified as such</p>
@@ -214,7 +188,10 @@ as negatives</p>
 as positives</p>
 </dd>
 </dl>
-</div></blockquote>
+</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">dict</p>
 </td>
 </tr>
 </tbody>
@@ -223,27 +200,23 @@ as positives</p>
 
 <dl class="method">
 <dt id="lcc.stars_processing.utilities.base_decider.BaseDecider.learn">
-<code class="descname">learn</code><span class="sig-paren">(</span><em>right_coords</em>, <em>wrong_coords</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/utilities/base_decider.html#BaseDecider.learn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.utilities.base_decider.BaseDecider.learn" title="Permalink to this definition">¶</a></dt>
+<code class="descname">learn</code><span class="sig-paren">(</span><em>right_coords</em>, <em>wrong_coords</em><span class="sig-paren">)</span><a class="headerlink" href="#lcc.stars_processing.utilities.base_decider.BaseDecider.learn" title="Permalink to this definition">¶</a></dt>
 <dd><p>After executing this method the decider object is capable to recognize
 objects according their &#8220;coordinates&#8221; via &#8220;filter&#8221; method.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>right_coords</strong> : list</p>
-<blockquote>
-<div><p>&#8220;Coordinates&#8221; of searched objects</p>
-</div></blockquote>
-<p><strong>wrong_coords</strong> : list</p>
-<blockquote>
-<div><p>&#8220;Coordinates&#8221; of other objects</p>
-</div></blockquote>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>right_coords</strong> (<em>list</em>) &#8211; &#8220;Coordinates&#8221; of searched objects</li>
+<li><strong>wrong_coords</strong> (<em>list</em>) &#8211; &#8220;Coordinates&#8221; of other objects</li>
+</ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">NoneType</p>
-<blockquote class="last">
-<div><p>None</p>
-</div></blockquote>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">None</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">NoneType</p>
 </td>
 </tr>
 </tbody>
@@ -257,34 +230,52 @@ objects according their &#8220;coordinates&#8221; via &#8220;filter&#8221; metho
 <span id="lcc-stars-processing-utilities-base-descriptor-module"></span><h2>lcc.stars_processing.utilities.base_descriptor module<a class="headerlink" href="#module-lcc.stars_processing.utilities.base_descriptor" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="lcc.stars_processing.utilities.base_descriptor.BaseDescriptor">
-<em class="property">class </em><code class="descclassname">lcc.stars_processing.utilities.base_descriptor.</code><code class="descname">BaseDescriptor</code><a class="reference internal" href="_modules/lcc/stars_processing/utilities/base_descriptor.html#BaseDescriptor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.utilities.base_descriptor.BaseDescriptor" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
-<p class="rubric">Methods</p>
+<em class="property">class </em><code class="descclassname">lcc.stars_processing.utilities.base_descriptor.</code><code class="descname">BaseDescriptor</code><a class="headerlink" href="#lcc.stars_processing.utilities.base_descriptor.BaseDescriptor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">abc.ABC</span></code></p>
+<p>Base class for all filters. It is something like interface (check whether
+subclasses have certain methods</p>
 <dl class="attribute">
 <dt id="lcc.stars_processing.utilities.base_descriptor.BaseDescriptor.LABEL">
 <code class="descname">LABEL</code><em class="property"> = ''</em><a class="headerlink" href="#lcc.stars_processing.utilities.base_descriptor.BaseDescriptor.LABEL" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
+<dl class="attribute">
+<dt id="lcc.stars_processing.utilities.base_descriptor.BaseDescriptor.NONE_VALUE">
+<code class="descname">NONE_VALUE</code><em class="property"> = None</em><a class="headerlink" href="#lcc.stars_processing.utilities.base_descriptor.BaseDescriptor.NONE_VALUE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="lcc.stars_processing.utilities.base_descriptor.BaseDescriptor.getFeatures">
+<code class="descname">getFeatures</code><span class="sig-paren">(</span><em>star</em><span class="sig-paren">)</span><a class="headerlink" href="#lcc.stars_processing.utilities.base_descriptor.BaseDescriptor.getFeatures" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get feature from star object</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>star</strong> (<em>lcc.entities.star.Star object</em>) &#8211; Star to process</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Features of the processed star</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list, iterable, int, float</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 <dl class="method">
 <dt id="lcc.stars_processing.utilities.base_descriptor.BaseDescriptor.getSpaceCoords">
-<code class="descname">getSpaceCoords</code><span class="sig-paren">(</span><em>*function_args</em>, <em>**function_args_dict</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/utilities/base_descriptor.html#BaseDescriptor.getSpaceCoords"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.utilities.base_descriptor.BaseDescriptor.getSpaceCoords" title="Permalink to this definition">¶</a></dt>
+<code class="descname">getSpaceCoords</code><span class="sig-paren">(</span><em>stars</em><span class="sig-paren">)</span><a class="headerlink" href="#lcc.stars_processing.utilities.base_descriptor.BaseDescriptor.getSpaceCoords" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get list of parameters coordinates according to descriptor
 implementation</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>stars</strong> : list of Star objects</p>
-<blockquote>
-<div><p>Stars with color magnitudes in their &#8216;more&#8217; attribute</p>
-</div></blockquote>
-</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>stars</strong> (<em>list of Star objects</em>) &#8211; Stars with color magnitudes in their &#8216;more&#8217; attribute</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">list</p>
-<blockquote class="last">
-<div><p>List of coordinates</p>
-</div></blockquote>
-</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">List of coordinates</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list</td>
 </tr>
 </tbody>
 </table>
@@ -294,7 +285,7 @@ implementation</p>
 
 <dl class="class">
 <dt id="lcc.stars_processing.utilities.base_descriptor.Learnable">
-<em class="property">class </em><code class="descclassname">lcc.stars_processing.utilities.base_descriptor.</code><code class="descname">Learnable</code><a class="reference internal" href="_modules/lcc/stars_processing/utilities/base_descriptor.html#Learnable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.utilities.base_descriptor.Learnable" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">lcc.stars_processing.utilities.base_descriptor.</code><code class="descname">Learnable</code><a class="headerlink" href="#lcc.stars_processing.utilities.base_descriptor.Learnable" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
 <p>Common class for all filters which are able to call &#8220;learn&#8221; by yourself.
 All these classes need to be able obtain their space coordinates via
@@ -304,22 +295,18 @@ which is list of string contains label for data.</p>
 <p>Also after learning the &#8216;learned&#8217; attribute is set to &#8216;True&#8217; if exists.</p>
 <p>Moreover plot is saved if class has  plot_save_path attribute
 is not None or &#8216;&#8217;</p>
-<p class="rubric">Methods</p>
 <dl class="method">
 <dt id="lcc.stars_processing.utilities.base_descriptor.Learnable.getSpaceCoords">
-<code class="descname">getSpaceCoords</code><span class="sig-paren">(</span><em>stars</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/utilities/base_descriptor.html#Learnable.getSpaceCoords"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.utilities.base_descriptor.Learnable.getSpaceCoords" title="Permalink to this definition">¶</a></dt>
+<code class="descname">getSpaceCoords</code><span class="sig-paren">(</span><em>stars</em><span class="sig-paren">)</span><a class="headerlink" href="#lcc.stars_processing.utilities.base_descriptor.Learnable.getSpaceCoords" title="Permalink to this definition">¶</a></dt>
 <dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>stars</strong> : list of Star objects</p>
-</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>stars</strong> (<em>list of Star objects</em>) &#8211; </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">list of lists</p>
-<blockquote class="last">
-<div><p>List of list of numbers (coordinates)</p>
-</div></blockquote>
-</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">List of list of numbers (coordinates)</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list of lists</td>
 </tr>
 </tbody>
 </table>
@@ -327,27 +314,23 @@ is not None or &#8216;&#8217;</p>
 
 <dl class="method">
 <dt id="lcc.stars_processing.utilities.base_descriptor.Learnable.learn">
-<code class="descname">learn</code><span class="sig-paren">(</span><em>searched_stars</em>, <em>contamination_stars</em>, <em>learn_num=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/utilities/base_descriptor.html#Learnable.learn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.utilities.base_descriptor.Learnable.learn" title="Permalink to this definition">¶</a></dt>
+<code class="descname">learn</code><span class="sig-paren">(</span><em>searched_stars</em>, <em>contamination_stars</em>, <em>learn_num=''</em><span class="sig-paren">)</span><a class="headerlink" href="#lcc.stars_processing.utilities.base_descriptor.Learnable.learn" title="Permalink to this definition">¶</a></dt>
 <dd><p>Teach filter to recognize searched stars</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>searched_stars</strong> : list of <cite>Star</cite> objects</p>
-<blockquote>
-<div><p>Searched stars to learn</p>
-</div></blockquote>
-<p><strong>contamination_stars</strong> : list of <cite>Star</cite> objects</p>
-<blockquote>
-<div><p>Contamination stars to learn</p>
-</div></blockquote>
-<p><strong>learn_num</strong> : str, int</p>
-<blockquote>
-<div><p>Optional identifier for the learning</p>
-</div></blockquote>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>searched_stars</strong> (list of <cite>Star</cite> objects) &#8211; Searched stars to learn</li>
+<li><strong>contamination_stars</strong> (list of <cite>Star</cite> objects) &#8211; Contamination stars to learn</li>
+<li><strong>learn_num</strong> (<em>str, int</em>) &#8211; Optional identifier for the learning</li>
+</ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">None</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">None</p>
 </td>
 </tr>
 </tbody>
@@ -361,47 +344,34 @@ is not None or &#8216;&#8217;</p>
 <span id="lcc-stars-processing-utilities-compare-module"></span><h2>lcc.stars_processing.utilities.compare module<a class="headerlink" href="#module-lcc.stars_processing.utilities.compare" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="lcc.stars_processing.utilities.compare.ComparativeBase">
-<em class="property">class </em><code class="descclassname">lcc.stars_processing.utilities.compare.</code><code class="descname">ComparativeBase</code><a class="reference internal" href="_modules/lcc/stars_processing/utilities/compare.html#ComparativeBase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.utilities.compare.ComparativeBase" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<em class="property">class </em><code class="descclassname">lcc.stars_processing.utilities.compare.</code><code class="descname">ComparativeBase</code><a class="headerlink" href="#lcc.stars_processing.utilities.compare.ComparativeBase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">abc.ABC</span></code></p>
 <p>This class is responsible for comparing light curves of inspected stars
 with the template stars</p>
-<p class="rubric">Attributes</p>
-<table border="1" class="docutils">
-<colgroup>
-<col width="13%" />
-<col width="88%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td>compar_stars</td>
-<td>(list, iterable) List of Star objects which represent searched group of star objects</td>
-</tr>
-</tbody>
-</table>
-<p class="rubric">Methods</p>
+<dl class="attribute">
+<dt id="lcc.stars_processing.utilities.compare.ComparativeBase.compar_stars">
+<code class="descname">compar_stars</code><a class="headerlink" href="#lcc.stars_processing.utilities.compare.ComparativeBase.compar_stars" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>list, iterable</em> &#8211; List of Star objects which represent searched group of star objects</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="lcc.stars_processing.utilities.compare.ComparativeBase.compareTwoStars">
-<code class="descname">compareTwoStars</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/utilities/compare.html#ComparativeBase.compareTwoStars"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.utilities.compare.ComparativeBase.compareTwoStars" title="Permalink to this definition">¶</a></dt>
+<code class="descname">compareTwoStars</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#lcc.stars_processing.utilities.compare.ComparativeBase.compareTwoStars" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="lcc.stars_processing.utilities.compare.ComparativeBase.getSpaceCoords">
-<code class="descname">getSpaceCoords</code><span class="sig-paren">(</span><em>stars</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/utilities/compare.html#ComparativeBase.getSpaceCoords"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.utilities.compare.ComparativeBase.getSpaceCoords" title="Permalink to this definition">¶</a></dt>
-<dd><p>Apply all filters and get their space coordinates</p>
+<dt id="lcc.stars_processing.utilities.compare.ComparativeBase.getFeatures">
+<code class="descname">getFeatures</code><span class="sig-paren">(</span><em>star</em><span class="sig-paren">)</span><a class="headerlink" href="#lcc.stars_processing.utilities.compare.ComparativeBase.getFeatures" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get difference in symbolic space of the investigated star from the template</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>stars</strong> : Star objects</p>
-<blockquote>
-<div><p>Stars to filtering</p>
-</div></blockquote>
-</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>star</strong> (<em>lcc.entities.star.Star object</em>) &#8211; Star to process</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">list</p>
-<blockquote class="last">
-<div><p>List of coordinates</p>
-</div></blockquote>
-</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Difference in symbolic space of the investigated star from the template</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list</td>
 </tr>
 </tbody>
 </table>
@@ -409,20 +379,17 @@ with the template stars</p>
 
 <dl class="method">
 <dt id="lcc.stars_processing.utilities.compare.ComparativeBase.loadCompStars">
-<code class="descname">loadCompStars</code><span class="sig-paren">(</span><em>comp_stars</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/utilities/compare.html#ComparativeBase.loadCompStars"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.utilities.compare.ComparativeBase.loadCompStars" title="Permalink to this definition">¶</a></dt>
+<code class="descname">loadCompStars</code><span class="sig-paren">(</span><em>comp_stars</em><span class="sig-paren">)</span><a class="headerlink" href="#lcc.stars_processing.utilities.compare.ComparativeBase.loadCompStars" title="Permalink to this definition">¶</a></dt>
 <dd><p>Load comparative stars for the template sample</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>comp_stars</strong> : list</p>
-<blockquote>
-<div><p>Stars for the template</p>
-</div></blockquote>
-</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>comp_stars</strong> (<em>list</em>) &#8211; Stars for the template</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">None</p>
-</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">None</td>
 </tr>
 </tbody>
 </table>
@@ -435,46 +402,49 @@ with the template stars</p>
 <span id="lcc-stars-processing-utilities-sax-module"></span><h2>lcc.stars_processing.utilities.sax module<a class="headerlink" href="#module-lcc.stars_processing.utilities.sax" title="Permalink to this headline">¶</a></h2>
 <dl class="exception">
 <dt id="lcc.stars_processing.utilities.sax.DictionarySizeIsNotSupported">
-<em class="property">exception </em><code class="descclassname">lcc.stars_processing.utilities.sax.</code><code class="descname">DictionarySizeIsNotSupported</code><a class="reference internal" href="_modules/lcc/stars_processing/utilities/sax.html#DictionarySizeIsNotSupported"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.utilities.sax.DictionarySizeIsNotSupported" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">exceptions.ValueError</span></code></p>
+<em class="property">exception </em><code class="descclassname">lcc.stars_processing.utilities.sax.</code><code class="descname">DictionarySizeIsNotSupported</code><a class="headerlink" href="#lcc.stars_processing.utilities.sax.DictionarySizeIsNotSupported" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">ValueError</span></code></p>
 </dd></dl>
 
 <dl class="exception">
 <dt id="lcc.stars_processing.utilities.sax.OverlapSpecifiedIsNotSmallerThanWindowSize">
-<em class="property">exception </em><code class="descclassname">lcc.stars_processing.utilities.sax.</code><code class="descname">OverlapSpecifiedIsNotSmallerThanWindowSize</code><a class="reference internal" href="_modules/lcc/stars_processing/utilities/sax.html#OverlapSpecifiedIsNotSmallerThanWindowSize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.utilities.sax.OverlapSpecifiedIsNotSmallerThanWindowSize" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">exceptions.ValueError</span></code></p>
+<em class="property">exception </em><code class="descclassname">lcc.stars_processing.utilities.sax.</code><code class="descname">OverlapSpecifiedIsNotSmallerThanWindowSize</code><a class="headerlink" href="#lcc.stars_processing.utilities.sax.OverlapSpecifiedIsNotSmallerThanWindowSize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">ValueError</span></code></p>
 </dd></dl>
 
 <dl class="class">
 <dt id="lcc.stars_processing.utilities.sax.SAX">
-<em class="property">class </em><code class="descclassname">lcc.stars_processing.utilities.sax.</code><code class="descname">SAX</code><span class="sig-paren">(</span><em>word_size=8</em>, <em>alphabet_size=10</em>, <em>scaling_factor=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/utilities/sax.html#SAX"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.utilities.sax.SAX" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">lcc.stars_processing.utilities.sax.</code><code class="descname">SAX</code><span class="sig-paren">(</span><em>word_size=8</em>, <em>alphabet_size=10</em>, <em>scaling_factor=1</em><span class="sig-paren">)</span><a class="headerlink" href="#lcc.stars_processing.utilities.sax.SAX" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
 <p>This class manages symbolic representation of data series via
 Symbolic Aggregate approXimation method.  It translates
 series of data to a words, which can then be compared with other
 such words in symbolic distance space.</p>
-<p class="rubric">Attributes</p>
-<table border="1" class="docutils">
-<colgroup>
-<col width="10%" />
-<col width="90%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td>word_size</td>
-<td>(int) Number of letters in transformed word</td>
-</tr>
-<tr class="row-even"><td>alphabet_size</td>
-<td>(int) Size of alphabet counted from A (3 means A, B, C)</td>
-</tr>
-<tr class="row-odd"><td>scaling_factor</td>
-<td>(int, float) Scaling factor can be used to scale result dissimilarity of two words created from light curves of different lengths</td>
-</tr>
-<tr class="row-even"><td>beta</td>
-<td>(list) Breakpoints for given alphabets size</td>
-</tr>
-</tbody>
-</table>
-<p class="rubric">Methods</p>
+<dl class="attribute">
+<dt id="lcc.stars_processing.utilities.sax.SAX.word_size">
+<code class="descname">word_size</code><a class="headerlink" href="#lcc.stars_processing.utilities.sax.SAX.word_size" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> &#8211; Number of letters in transformed word</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="lcc.stars_processing.utilities.sax.SAX.alphabet_size">
+<code class="descname">alphabet_size</code><a class="headerlink" href="#lcc.stars_processing.utilities.sax.SAX.alphabet_size" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> &#8211; Size of alphabet counted from A (3 means A, B, C)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="lcc.stars_processing.utilities.sax.SAX.scaling_factor">
+<code class="descname">scaling_factor</code><a class="headerlink" href="#lcc.stars_processing.utilities.sax.SAX.scaling_factor" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int, float</em> &#8211; Scaling factor can be used to scale result dissimilarity of
+two words created from light curves of different lengths</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="lcc.stars_processing.utilities.sax.SAX.beta">
+<code class="descname">beta</code><a class="headerlink" href="#lcc.stars_processing.utilities.sax.SAX.beta" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>list</em> &#8211; Breakpoints for given alphabets size</p>
+</dd></dl>
+
 <dl class="attribute">
 <dt id="lcc.stars_processing.utilities.sax.SAX.A_OFFSET">
 <code class="descname">A_OFFSET</code><em class="property"> = 97</em><a class="headerlink" href="#lcc.stars_processing.utilities.sax.SAX.A_OFFSET" title="Permalink to this definition">¶</a></dt>
@@ -492,22 +462,18 @@ such words in symbolic distance space.</p>
 
 <dl class="method">
 <dt id="lcc.stars_processing.utilities.sax.SAX.alphabetize">
-<code class="descname">alphabetize</code><span class="sig-paren">(</span><em>paaX</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/utilities/sax.html#SAX.alphabetize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.utilities.sax.SAX.alphabetize" title="Permalink to this definition">¶</a></dt>
+<code class="descname">alphabetize</code><span class="sig-paren">(</span><em>paaX</em><span class="sig-paren">)</span><a class="headerlink" href="#lcc.stars_processing.utilities.sax.SAX.alphabetize" title="Permalink to this definition">¶</a></dt>
 <dd><p>Converts the Piecewise Aggregate Approximation of x
 to a series of letters.</p>
-<dl class="docutils">
-<dt>paaX <span class="classifier-delimiter">:</span> <span class="classifier">list, iterable</span></dt>
-<dd>Data series (list of numbers)</dd>
-</dl>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">str</p>
-<blockquote class="last">
-<div><p>SAX word</p>
-</div></blockquote>
-</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>paaX</strong> (<em>list, iterable</em>) &#8211; Data series (list of numbers)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">SAX word</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">str</td>
 </tr>
 </tbody>
 </table>
@@ -515,14 +481,16 @@ to a series of letters.</p>
 
 <dl class="method">
 <dt id="lcc.stars_processing.utilities.sax.SAX.build_letter_compare_dict">
-<code class="descname">build_letter_compare_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/utilities/sax.html#SAX.build_letter_compare_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.utilities.sax.SAX.build_letter_compare_dict" title="Permalink to this definition">¶</a></dt>
+<code class="descname">build_letter_compare_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lcc.stars_processing.utilities.sax.SAX.build_letter_compare_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Builds up the lookup table to determine numeric distance
 between two letters given an alphabet size.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">None</td>
 </tr>
 </tbody>
 </table>
@@ -530,22 +498,22 @@ between two letters given an alphabet size.</p>
 
 <dl class="method">
 <dt id="lcc.stars_processing.utilities.sax.SAX.compare_letters">
-<code class="descname">compare_letters</code><span class="sig-paren">(</span><em>la</em>, <em>lb</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/utilities/sax.html#SAX.compare_letters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.utilities.sax.SAX.compare_letters" title="Permalink to this definition">¶</a></dt>
+<code class="descname">compare_letters</code><span class="sig-paren">(</span><em>la</em>, <em>lb</em><span class="sig-paren">)</span><a class="headerlink" href="#lcc.stars_processing.utilities.sax.SAX.compare_letters" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compare two letters based on letter distance return distance between</p>
-<dl class="docutils">
-<dt>la <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
-<dd>First letter</dd>
-<dt>lb <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
-<dd>Second letter</dd>
-</dl>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">float</p>
-<blockquote class="last">
-<div><p>Distance between two letters</p>
-</div></blockquote>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>la</strong> (<em>str</em>) &#8211; First letter</li>
+<li><strong>lb</strong> (<em>str</em>) &#8211; Second letter</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Distance between two letters</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
 </td>
 </tr>
 </tbody>
@@ -554,26 +522,22 @@ between two letters given an alphabet size.</p>
 
 <dl class="method">
 <dt id="lcc.stars_processing.utilities.sax.SAX.compare_strings">
-<code class="descname">compare_strings</code><span class="sig-paren">(</span><em>sA</em>, <em>sB</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/utilities/sax.html#SAX.compare_strings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.utilities.sax.SAX.compare_strings" title="Permalink to this definition">¶</a></dt>
+<code class="descname">compare_strings</code><span class="sig-paren">(</span><em>sA</em>, <em>sB</em><span class="sig-paren">)</span><a class="headerlink" href="#lcc.stars_processing.utilities.sax.SAX.compare_strings" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compares two strings based on individual letter distances.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>sA</strong> : str</p>
-<blockquote>
-<div><p>Word to compare</p>
-</div></blockquote>
-<p><strong>aB</strong> : str</p>
-<blockquote>
-<div><p>Word to compare</p>
-</div></blockquote>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>sA</strong> (<em>str</em>) &#8211; Word to compare</li>
+<li><strong>aB</strong> (<em>str</em>) &#8211; Word to compare</li>
+</ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">float</p>
-<blockquote class="last">
-<div><p>Dissimilarity of two words</p>
-</div></blockquote>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Dissimilarity of two words</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
 </td>
 </tr>
 </tbody>
@@ -582,27 +546,19 @@ between two letters given an alphabet size.</p>
 
 <dl class="method">
 <dt id="lcc.stars_processing.utilities.sax.SAX.to_letter_rep">
-<code class="descname">to_letter_rep</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/utilities/sax.html#SAX.to_letter_rep"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.utilities.sax.SAX.to_letter_rep" title="Permalink to this definition">¶</a></dt>
+<code class="descname">to_letter_rep</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="headerlink" href="#lcc.stars_processing.utilities.sax.SAX.to_letter_rep" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function takes a series of data, x, and transforms it
 to a string representation.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>x</strong> : list, iterable</p>
-<blockquote>
-<div><p>Data series</p>
-</div></blockquote>
-</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>x</strong> (<em>list, iterable</em>) &#8211; Data series</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">str</p>
-<blockquote>
-<div><p>SAX word</p>
-</div></blockquote>
-<p>list</p>
-<blockquote class="last">
-<div><p>Indices</p>
-</div></blockquote>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><ul class="simple">
+<li><em>str</em> &#8211; SAX word</li>
+<li><em>list</em> &#8211; Indices</li>
+</ul>
 </td>
 </tr>
 </tbody>
@@ -616,46 +572,37 @@ to a string representation.</p>
 <span id="lcc-stars-processing-utilities-superv-base-decider-module"></span><h2>lcc.stars_processing.utilities.superv_base_decider module<a class="headerlink" href="#module-lcc.stars_processing.utilities.superv_base_decider" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="lcc.stars_processing.utilities.superv_base_decider.SupervisedBase">
-<em class="property">class </em><code class="descclassname">lcc.stars_processing.utilities.superv_base_decider.</code><code class="descname">SupervisedBase</code><span class="sig-paren">(</span><em>clf</em>, <em>threshold=0.5</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/utilities/superv_base_decider.html#SupervisedBase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.utilities.superv_base_decider.SupervisedBase" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">lcc.stars_processing.utilities.superv_base_decider.</code><code class="descname">SupervisedBase</code><span class="sig-paren">(</span><em>clf</em>, <em>threshold=0.5</em><span class="sig-paren">)</span><a class="headerlink" href="#lcc.stars_processing.utilities.superv_base_decider.SupervisedBase" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#lcc.stars_processing.utilities.base_decider.BaseDecider" title="lcc.stars_processing.utilities.base_decider.BaseDecider"><code class="xref py py-class docutils literal"><span class="pre">lcc.stars_processing.utilities.base_decider.BaseDecider</span></code></a></p>
 <p>Base class for <cite>sklearn</cite> library supervised classes transformed
 to the package content. It is not intended to use this directly,
 but thru certain method subclasses.</p>
-<p class="rubric">Attributes</p>
-<table border="1" class="docutils">
-<colgroup>
-<col width="7%" />
-<col width="93%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td>threshold</td>
-<td>(float) Border probability value (objects with probability higher then this value is considered as searched object)</td>
-</tr>
-<tr class="row-even"><td>learner</td>
-<td>(sklearn object) Learner object for desired method of supervised learning</td>
-</tr>
-</tbody>
-</table>
-<p class="rubric">Methods</p>
+<dl class="attribute">
+<dt id="lcc.stars_processing.utilities.superv_base_decider.SupervisedBase.threshold">
+<code class="descname">threshold</code><a class="headerlink" href="#lcc.stars_processing.utilities.superv_base_decider.SupervisedBase.threshold" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>float</em> &#8211; Border probability value (objects with probability higher then this
+value is considered as searched object)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="lcc.stars_processing.utilities.superv_base_decider.SupervisedBase.learner">
+<code class="descname">learner</code><a class="headerlink" href="#lcc.stars_processing.utilities.superv_base_decider.SupervisedBase.learner" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>sklearn object</em> &#8211; Learner object for desired method of supervised learning</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="lcc.stars_processing.utilities.superv_base_decider.SupervisedBase.evaluate">
-<code class="descname">evaluate</code><span class="sig-paren">(</span><em>coords</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/utilities/superv_base_decider.html#SupervisedBase.evaluate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.utilities.superv_base_decider.SupervisedBase.evaluate" title="Permalink to this definition">¶</a></dt>
+<code class="descname">evaluate</code><span class="sig-paren">(</span><em>coords</em><span class="sig-paren">)</span><a class="headerlink" href="#lcc.stars_processing.utilities.superv_base_decider.SupervisedBase.evaluate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get probability of membership</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>coords</strong> : list of lists</p>
-<blockquote>
-<div><p>List of prameter space coordinates</p>
-</div></blockquote>
-</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>coords</strong> (<em>list of lists</em>) &#8211; List of prameter space coordinates</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">list of floats</p>
-<blockquote class="last">
-<div><p>List of probabilities</p>
-</div></blockquote>
-</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">List of probabilities</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list of floats</td>
 </tr>
 </tbody>
 </table>
@@ -663,26 +610,22 @@ but thru certain method subclasses.</p>
 
 <dl class="method">
 <dt id="lcc.stars_processing.utilities.superv_base_decider.SupervisedBase.learn">
-<code class="descname">learn</code><span class="sig-paren">(</span><em>right_coords</em>, <em>wrong_coords</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/utilities/superv_base_decider.html#SupervisedBase.learn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.utilities.superv_base_decider.SupervisedBase.learn" title="Permalink to this definition">¶</a></dt>
+<code class="descname">learn</code><span class="sig-paren">(</span><em>right_coords</em>, <em>wrong_coords</em><span class="sig-paren">)</span><a class="headerlink" href="#lcc.stars_processing.utilities.superv_base_decider.SupervisedBase.learn" title="Permalink to this definition">¶</a></dt>
 <dd><p>Learn to recognize objects</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>right_coords: iterable</strong></p>
-<blockquote>
-<div><p>List of coordinates (list of numbers) of searched objects</p>
-</div></blockquote>
-<p><strong>wrong_coords: iterable</strong></p>
-<blockquote>
-<div><p>List of coordinates (list of numbers) of contamination objects</p>
-</div></blockquote>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>right_coords</strong> (<em>iterable</em>) &#8211; List of coordinates (list of numbers) of searched objects</li>
+<li><strong>wrong_coords</strong> (<em>iterable</em>) &#8211; List of coordinates (list of numbers) of contamination objects</li>
+</ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">NoneType</p>
-<blockquote class="last">
-<div><p>None</p>
-</div></blockquote>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">None</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">NoneType</p>
 </td>
 </tr>
 </tbody>
@@ -696,33 +639,28 @@ but thru certain method subclasses.</p>
 <span id="lcc-stars-processing-utilities-symbolic-representation-module"></span><h2>lcc.stars_processing.utilities.symbolic_representation module<a class="headerlink" href="#module-lcc.stars_processing.utilities.symbolic_representation" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="lcc.stars_processing.utilities.symbolic_representation.SymbolicRepresentation">
-<em class="property">class </em><code class="descclassname">lcc.stars_processing.utilities.symbolic_representation.</code><code class="descname">SymbolicRepresentation</code><a class="reference internal" href="_modules/lcc/stars_processing/utilities/symbolic_representation.html#SymbolicRepresentation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.utilities.symbolic_representation.SymbolicRepresentation" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<em class="property">class </em><code class="descclassname">lcc.stars_processing.utilities.symbolic_representation.</code><code class="descname">SymbolicRepresentation</code><a class="headerlink" href="#lcc.stars_processing.utilities.symbolic_representation.SymbolicRepresentation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">abc.ABC</span></code></p>
 <p>This common class for all descriptors based on symbolic representation
 of data.</p>
-<p class="rubric">Methods</p>
 <dl class="method">
 <dt id="lcc.stars_processing.utilities.symbolic_representation.SymbolicRepresentation.compareTwoStars">
-<code class="descname">compareTwoStars</code><span class="sig-paren">(</span><em>star</em>, <em>comp_star</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/utilities/symbolic_representation.html#SymbolicRepresentation.compareTwoStars"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.utilities.symbolic_representation.SymbolicRepresentation.compareTwoStars" title="Permalink to this definition">¶</a></dt>
+<code class="descname">compareTwoStars</code><span class="sig-paren">(</span><em>star</em>, <em>comp_star</em><span class="sig-paren">)</span><a class="headerlink" href="#lcc.stars_processing.utilities.symbolic_representation.SymbolicRepresentation.compareTwoStars" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compare two stars according to a filter implementation</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>star</strong> : <cite>Star</cite> instance</p>
-<blockquote>
-<div><p>Star to compare</p>
-</div></blockquote>
-<p><strong>comp_star</strong> : <cite>Star</cite> instance</p>
-<blockquote>
-<div><p>Star to compare</p>
-</div></blockquote>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>star</strong> (<cite>Star</cite> instance) &#8211; Star to compare</li>
+<li><strong>comp_star</strong> (<cite>Star</cite> instance) &#8211; Star to compare</li>
+</ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">float</p>
-<blockquote class="last">
-<div><p>Dissimilarity of two stars</p>
-</div></blockquote>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Dissimilarity of two stars</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
 </td>
 </tr>
 </tbody>
@@ -736,18 +674,17 @@ of data.</p>
 <span id="lcc-stars-processing-utilities-unsupervised-base-module"></span><h2>lcc.stars_processing.utilities.unsupervised_base module<a class="headerlink" href="#module-lcc.stars_processing.utilities.unsupervised_base" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="lcc.stars_processing.utilities.unsupervised_base.UnsupervisedBase">
-<em class="property">class </em><code class="descclassname">lcc.stars_processing.utilities.unsupervised_base.</code><code class="descname">UnsupervisedBase</code><span class="sig-paren">(</span><em>classifier</em>, <em>params</em>, <em>threshold=0.5</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/utilities/unsupervised_base.html#UnsupervisedBase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.utilities.unsupervised_base.UnsupervisedBase" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">lcc.stars_processing.utilities.unsupervised_base.</code><code class="descname">UnsupervisedBase</code><span class="sig-paren">(</span><em>classifier</em>, <em>params</em>, <em>threshold=0.5</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#lcc.stars_processing.utilities.unsupervised_base.UnsupervisedBase" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#lcc.stars_processing.utilities.base_decider.BaseDecider" title="lcc.stars_processing.utilities.base_decider.BaseDecider"><code class="xref py py-class docutils literal"><span class="pre">lcc.stars_processing.utilities.base_decider.BaseDecider</span></code></a></p>
 <p>classdocs</p>
-<p class="rubric">Methods</p>
 <dl class="method">
 <dt id="lcc.stars_processing.utilities.unsupervised_base.UnsupervisedBase.evaluate">
-<code class="descname">evaluate</code><span class="sig-paren">(</span><em>star_coords</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/utilities/unsupervised_base.html#UnsupervisedBase.evaluate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.utilities.unsupervised_base.UnsupervisedBase.evaluate" title="Permalink to this definition">¶</a></dt>
+<code class="descname">evaluate</code><span class="sig-paren">(</span><em>star_coords</em><span class="sig-paren">)</span><a class="headerlink" href="#lcc.stars_processing.utilities.unsupervised_base.UnsupervisedBase.evaluate" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="lcc.stars_processing.utilities.unsupervised_base.UnsupervisedBase.learn">
-<code class="descname">learn</code><span class="sig-paren">(</span><em>coords</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/utilities/unsupervised_base.html#UnsupervisedBase.learn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.utilities.unsupervised_base.UnsupervisedBase.learn" title="Permalink to this definition">¶</a></dt>
+<code class="descname">learn</code><span class="sig-paren">(</span><em>coords</em><span class="sig-paren">)</span><a class="headerlink" href="#lcc.stars_processing.utilities.unsupervised_base.UnsupervisedBase.learn" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -784,19 +721,13 @@ of data.</p>
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
-  <li><a href="lcc.html">lcc package</a><ul>
-  <li><a href="lcc.stars_processing.html">lcc.stars_processing package</a><ul>
-      <li>Previous: <a href="lcc.stars_processing.tools.html" title="previous chapter">lcc.stars_processing.tools package</a></li>
-      <li>Next: <a href="lcc.tests.html" title="next chapter">lcc.tests package</a></li>
-  </ul></li>
-  </ul></li>
   </ul></li>
 </ul>
 </div>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="_sources/lcc.stars_processing.utilities.rst.txt"
+      <li><a href="_sources/lcc.stars_processing.utilities.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
@@ -815,14 +746,14 @@ of data.</p>
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2017, Martin Vo.
+      &copy;2018, Martin Vo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.3</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.9</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
-      <a href="_sources/lcc.stars_processing.utilities.rst.txt"
+      <a href="_sources/lcc.stars_processing.utilities.txt"
           rel="nofollow">Page source</a>
     </div>
 

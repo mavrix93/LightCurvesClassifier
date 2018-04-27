@@ -1,0 +1,23 @@
+lcc package
+===========
+
+Subpackages
+-----------
+
+.. toctree::
+
+    lcc.bin
+    lcc.cli
+    lcc.data_manager
+    lcc.db_tier
+    lcc.entities
+    lcc.stars_processing
+    lcc.utils
+
+Module contents
+---------------
+
+.. automodule:: lcc
+    :members:
+    :undoc-members:
+    :show-inheritance:

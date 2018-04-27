@@ -2,11 +2,11 @@
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>lcc.stars_processing package &#8212; LightCurvesClassifier 1.0 documentation</title>
+    <title>lcc.stars_processing package &#8212; Light Curves Classifier 1.2.3 documentation</title>
     
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,11 +14,10 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '1.0',
+        VERSION:     '1.2.3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
+        HAS_SOURCE:  true
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
@@ -26,8 +25,7 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="lcc.stars_processing.deciders package" href="lcc.stars_processing.deciders.html" />
-    <link rel="prev" title="lcc.entities package" href="lcc.entities.html" />
+    <link rel="top" title="Light Curves Classifier 1.2.3 documentation" href="index.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
@@ -72,10 +70,12 @@
 <li class="toctree-l2"><a class="reference internal" href="lcc.stars_processing.descriptors.html#module-lcc.stars_processing.descriptors.color_index_descr">lcc.stars_processing.descriptors.color_index_descr module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="lcc.stars_processing.descriptors.html#module-lcc.stars_processing.descriptors.curve_density_descr">lcc.stars_processing.descriptors.curve_density_descr module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="lcc.stars_processing.descriptors.html#module-lcc.stars_processing.descriptors.curve_descr">lcc.stars_processing.descriptors.curve_descr module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="lcc.stars_processing.descriptors.html#module-lcc.stars_processing.descriptors.curve_shape_descr">lcc.stars_processing.descriptors.curve_shape_descr module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lcc.stars_processing.descriptors.html#module-lcc.stars_processing.descriptors.curves_shape_descr">lcc.stars_processing.descriptors.curves_shape_descr module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="lcc.stars_processing.descriptors.html#module-lcc.stars_processing.descriptors.hist_shape_descr">lcc.stars_processing.descriptors.hist_shape_descr module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lcc.stars_processing.descriptors.html#module-lcc.stars_processing.descriptors.kurtosis_desc">lcc.stars_processing.descriptors.kurtosis_desc module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="lcc.stars_processing.descriptors.html#module-lcc.stars_processing.descriptors.position_descriptor">lcc.stars_processing.descriptors.position_descriptor module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="lcc.stars_processing.descriptors.html#module-lcc.stars_processing.descriptors.property_desc">lcc.stars_processing.descriptors.property_desc module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lcc.stars_processing.descriptors.html#module-lcc.stars_processing.descriptors.skewness_desc">lcc.stars_processing.descriptors.skewness_desc module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="lcc.stars_processing.descriptors.html#module-lcc.stars_processing.descriptors.variogram_shape_descr">lcc.stars_processing.descriptors.variogram_shape_descr module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="lcc.stars_processing.descriptors.html#module-lcc.stars_processing.descriptors.variogram_slope_descr">lcc.stars_processing.descriptors.variogram_slope_descr module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="lcc.stars_processing.descriptors.html#module-lcc.stars_processing.descriptors">Module contents</a></li>
@@ -84,6 +84,7 @@
 <li class="toctree-l1"><a class="reference internal" href="lcc.stars_processing.systematic_search.html">lcc.stars_processing.systematic_search package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="lcc.stars_processing.systematic_search.html#submodules">Submodules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="lcc.stars_processing.systematic_search.html#module-lcc.stars_processing.systematic_search.stars_searcher">lcc.stars_processing.systematic_search.stars_searcher module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lcc.stars_processing.systematic_search.html#module-lcc.stars_processing.systematic_search.worker">lcc.stars_processing.systematic_search.worker module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="lcc.stars_processing.systematic_search.html#module-lcc.stars_processing.systematic_search">Module contents</a></li>
 </ul>
 </li>
@@ -117,63 +118,66 @@
 <span id="lcc-stars-processing-stars-filter-module"></span><h2>lcc.stars_processing.stars_filter module<a class="headerlink" href="#module-lcc.stars_processing.stars_filter" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="lcc.stars_processing.stars_filter.StarsFilter">
-<em class="property">class </em><code class="descclassname">lcc.stars_processing.stars_filter.</code><code class="descname">StarsFilter</code><span class="sig-paren">(</span><em>descriptors</em>, <em>deciders</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/stars_filter.html#StarsFilter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.stars_filter.StarsFilter" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">lcc.stars_processing.stars_filter.</code><code class="descname">StarsFilter</code><span class="sig-paren">(</span><em>descriptors</em>, <em>deciders</em><span class="sig-paren">)</span><a class="headerlink" href="#lcc.stars_processing.stars_filter.StarsFilter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
 <p>This class is responsible for filtering stars according to given filters
 (their own implementation of filtering)</p>
-<p class="rubric">Attributes</p>
-<table border="1" class="docutils">
-<colgroup>
-<col width="15%" />
-<col width="85%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td>descriptors</td>
-<td>(list) Descriptor objects</td>
-</tr>
-<tr class="row-even"><td>decider</td>
-<td>(list) Decider object</td>
-</tr>
-<tr class="row-odd"><td>learned</td>
-<td>(bool) It is True after executing the learning</td>
-</tr>
-<tr class="row-even"><td>searched_coords</td>
-<td>(list) Parameters space coordinates (got from descriptors) of searched objects</td>
-</tr>
-<tr class="row-odd"><td>others_coords</td>
-<td>(list) Parameters space coordinates (got from descriptors) of contamination objects</td>
-</tr>
-</tbody>
-</table>
-<p class="rubric">Methods</p>
+<dl class="attribute">
+<dt id="lcc.stars_processing.stars_filter.StarsFilter.descriptors">
+<code class="descname">descriptors</code><a class="headerlink" href="#lcc.stars_processing.stars_filter.StarsFilter.descriptors" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>list</em> &#8211; Descriptor objects</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="lcc.stars_processing.stars_filter.StarsFilter.decider">
+<code class="descname">decider</code><a class="headerlink" href="#lcc.stars_processing.stars_filter.StarsFilter.decider" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>list</em> &#8211; Decider object</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="lcc.stars_processing.stars_filter.StarsFilter.learned">
+<code class="descname">learned</code><a class="headerlink" href="#lcc.stars_processing.stars_filter.StarsFilter.learned" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>bool</em> &#8211; It is True after executing the learning</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="lcc.stars_processing.stars_filter.StarsFilter.searched_coords">
+<code class="descname">searched_coords</code><a class="headerlink" href="#lcc.stars_processing.stars_filter.StarsFilter.searched_coords" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>list</em> &#8211; Parameters space coordinates (got from descriptors) of searched
+objects</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="lcc.stars_processing.stars_filter.StarsFilter.others_coords">
+<code class="descname">others_coords</code><a class="headerlink" href="#lcc.stars_processing.stars_filter.StarsFilter.others_coords" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>list</em> &#8211; Parameters space coordinates (got from descriptors) of contamination
+objects</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="lcc.stars_processing.stars_filter.StarsFilter.evaluateCoordinates">
-<code class="descname">evaluateCoordinates</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/stars_filter.html#StarsFilter.evaluateCoordinates"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.stars_filter.StarsFilter.evaluateCoordinates" title="Permalink to this definition">¶</a></dt>
+<code class="descname">evaluateCoordinates</code><span class="sig-paren">(</span><em>stars_coords</em>, <em>meth='mean'</em><span class="sig-paren">)</span><a class="headerlink" href="#lcc.stars_processing.stars_filter.StarsFilter.evaluateCoordinates" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get probability of membership calculated from all deciders</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>stars_coords</strong> : list, iterable</p>
-<blockquote>
-<div><p>List of coordinates (lists)</p>
-</div></blockquote>
-<p><strong>meth</strong> : str</p>
-<blockquote>
-<div><dl class="docutils">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>stars_coords</strong> (<em>list, iterable</em>) &#8211; List of coordinates (lists)</li>
+<li><strong>meth</strong> (<em>str</em>) &#8211; <dl class="docutils">
 <dt>Method for filtering:</dt>
-<dd><p class="first">mean - mean probability</p>
-<p>highest - highest probability</p>
+<dd>mean - mean probability<p>highest - highest probability</p>
 <p class="last">lowest - lowest probability</p>
 </dd>
 </dl>
-</div></blockquote>
+</li>
+</ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">list</p>
-<blockquote class="last">
-<div><p>Probabilities of membership according to selected the method</p>
-</div></blockquote>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Probabilities of membership according to selected method</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list</p>
 </td>
 </tr>
 </tbody>
@@ -182,32 +186,28 @@
 
 <dl class="method">
 <dt id="lcc.stars_processing.stars_filter.StarsFilter.evaluateStars">
-<code class="descname">evaluateStars</code><span class="sig-paren">(</span><em>stars</em>, <em>meth='mean'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/stars_filter.html#StarsFilter.evaluateStars"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.stars_filter.StarsFilter.evaluateStars" title="Permalink to this definition">¶</a></dt>
+<code class="descname">evaluateStars</code><span class="sig-paren">(</span><em>stars</em>, <em>meth='mean'</em><span class="sig-paren">)</span><a class="headerlink" href="#lcc.stars_processing.stars_filter.StarsFilter.evaluateStars" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get probabilities of membership of inspected stars</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>stars</strong> : list</p>
-<blockquote>
-<div><p>Star objects</p>
-</div></blockquote>
-<p><strong>meth</strong> : str</p>
-<blockquote>
-<div><dl class="docutils">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>stars</strong> (<em>list</em>) &#8211; Star objects</li>
+<li><strong>meth</strong> (<em>str</em>) &#8211; <dl class="docutils">
 <dt>Method for filtering:</dt>
-<dd><p class="first">mean - mean probability</p>
-<p>highest - highest probability</p>
+<dd>mean - mean probability<p>highest - highest probability</p>
 <p class="last">lowest - lowest probability</p>
 </dd>
 </dl>
-</div></blockquote>
+</li>
+</ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">list</p>
-<blockquote class="last">
-<div><p>Probabilities of membership according to selected the method</p>
-</div></blockquote>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Probabilities of membership according to selected the method</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list</p>
 </td>
 </tr>
 </tbody>
@@ -216,32 +216,28 @@
 
 <dl class="method">
 <dt id="lcc.stars_processing.stars_filter.StarsFilter.filterStars">
-<code class="descname">filterStars</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/stars_filter.html#StarsFilter.filterStars"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.stars_filter.StarsFilter.filterStars" title="Permalink to this definition">¶</a></dt>
+<code class="descname">filterStars</code><span class="sig-paren">(</span><em>stars</em>, <em>pass_method='all'</em><span class="sig-paren">)</span><a class="headerlink" href="#lcc.stars_processing.stars_filter.StarsFilter.filterStars" title="Permalink to this definition">¶</a></dt>
 <dd><p>Apply all deciders</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>stars</strong> : list, iterable</p>
-<blockquote>
-<div><p>Star objects to be filtered</p>
-</div></blockquote>
-<p><strong>pass_method</strong> : str</p>
-<blockquote>
-<div><p>Inspected star pass if it fulfill the selected condition.
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>stars</strong> (<em>list, iterable</em>) &#8211; Star objects to be filtered</li>
+<li><strong>pass_method</strong> (<em>str</em>) &#8211; <p>Inspected star pass if it fulfill the selected condition.
 Methods for filtering:</p>
 <blockquote>
-<div><p>all - all probabilities have to be greater then the threshold</p>
-<p>mean - mean probability has to be greater then the threshold</p>
+<div>all - all probabilities have to be greater then the threshold<p>mean - mean probability has to be greater then the threshold</p>
 <p>one - at least one has to be greater then the threshold</p>
 </div></blockquote>
-</div></blockquote>
+</li>
+</ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">list of <a href="#id1"><span class="problematic" id="id2">`</span></a>Star`s</p>
-<blockquote class="last">
-<div><p>Stars which passed thru filtering</p>
-</div></blockquote>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Stars which passed thru filtering</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list of <a href="#id1"><span class="problematic" id="id2">`</span></a>Star`s</p>
 </td>
 </tr>
 </tbody>
@@ -249,24 +245,59 @@ Methods for filtering:</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="lcc.stars_processing.stars_filter.StarsFilter.getAllPredictions">
+<code class="descname">getAllPredictions</code><span class="sig-paren">(</span><em>stars</em>, <em>with_features=False</em>, <em>check_passing=False</em><span class="sig-paren">)</span><a class="headerlink" href="#lcc.stars_processing.stars_filter.StarsFilter.getAllPredictions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get probability of membership calculated from all deciders</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="lcc.stars_processing.stars_filter.StarsFilter.getEvaluations">
+<code class="descname">getEvaluations</code><span class="sig-paren">(</span><em>stars</em><span class="sig-paren">)</span><a class="headerlink" href="#lcc.stars_processing.stars_filter.StarsFilter.getEvaluations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get probabilities of membership of inspected stars for all deciders</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>stars</strong> (<em>list</em>) &#8211; Star objects</li>
+<li><strong>meth</strong> (<em>str</em>) &#8211; <dl class="docutils">
+<dt>Method for filtering:</dt>
+<dd>mean - mean probability<p>highest - highest probability</p>
+<p class="last">lowest - lowest probability</p>
+</dd>
+</dl>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Probabilities of membership according to selected the method</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="lcc.stars_processing.stars_filter.StarsFilter.getROC">
+<code class="descname">getROC</code><span class="sig-paren">(</span><em>s_stars</em>, <em>c_stars</em>, <em>n=30</em><span class="sig-paren">)</span><a class="headerlink" href="#lcc.stars_processing.stars_filter.StarsFilter.getROC" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
 <dt id="lcc.stars_processing.stars_filter.StarsFilter.getSpaceCoordinates">
-<code class="descname">getSpaceCoordinates</code><span class="sig-paren">(</span><em>stars</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/stars_filter.html#StarsFilter.getSpaceCoordinates"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.stars_filter.StarsFilter.getSpaceCoordinates" title="Permalink to this definition">¶</a></dt>
+<code class="descname">getSpaceCoordinates</code><span class="sig-paren">(</span><em>stars</em><span class="sig-paren">)</span><a class="headerlink" href="#lcc.stars_processing.stars_filter.StarsFilter.getSpaceCoordinates" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get params space coordinates according to descriptors</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>stars</strong> : list, tuple</p>
-<blockquote>
-<div><p>List of <cite>Star</cite> objects</p>
-</div></blockquote>
-</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>stars</strong> (<em>list, tuple</em>) &#8211; List of <cite>Star</cite> objects</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">pandas.DataFrame</p>
-<blockquote class="last">
-<div><p>Coordinates of the stars as pandas DataFrame</p>
-</div></blockquote>
-</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Coordinates of the stars as pandas DataFrame</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">pandas.DataFrame</td>
 </tr>
 </tbody>
 </table>
@@ -274,28 +305,20 @@ Methods for filtering:</p>
 
 <dl class="method">
 <dt id="lcc.stars_processing.stars_filter.StarsFilter.getStatistic">
-<code class="descname">getStatistic</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/stars_filter.html#StarsFilter.getStatistic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.stars_filter.StarsFilter.getStatistic" title="Permalink to this definition">¶</a></dt>
+<code class="descname">getStatistic</code><span class="sig-paren">(</span><em>s_stars</em>, <em>c_stars</em>, <em>threshold=None</em><span class="sig-paren">)</span><a class="headerlink" href="#lcc.stars_processing.stars_filter.StarsFilter.getStatistic" title="Permalink to this definition">¶</a></dt>
 <dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>s_stars</strong> : list of <cite>Star</cite> objects</p>
-<blockquote>
-<div><p>Searched stars</p>
-</div></blockquote>
-<p><strong>c_stars</strong> : list of <cite>Star</cite> objects</p>
-<blockquote>
-<div><p>Contamination stars</p>
-</div></blockquote>
-<p><strong>threshold</strong> : float</p>
-<blockquote>
-<div><p>Treshold value for filtering (number from 0 to 1)</p>
-</div></blockquote>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>s_stars</strong> (list of <cite>Star</cite> objects) &#8211; Searched stars</li>
+<li><strong>c_stars</strong> (list of <cite>Star</cite> objects) &#8211; Contamination stars</li>
+<li><strong>threshold</strong> (<em>float</em>) &#8211; Treshold value for filtering (number from 0 to 1)</li>
+</ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>statistic information</strong> : dict</p>
-<blockquote class="last">
-<div><dl class="docutils">
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><p><strong>statistic information</strong> &#8211;</p>
+<dl class="docutils">
 <dt>precision (float)</dt>
 <dd><p class="first last">True positive / (true positive + false positive)</p>
 </dd>
@@ -306,7 +329,7 @@ Methods for filtering:</p>
 <dd><p class="first last">Proportion of negatives that are correctly identified as such</p>
 </dd>
 <dt>false_positive_rate (float)</dt>
-<dd><p class="first last">Proportion of positives that are incorrectly identified
+<dd><p class="first last">Proportion of positives that are incorrectly identifiexd
 as negatives</p>
 </dd>
 <dt>false_negative_rate (float)</dt>
@@ -314,7 +337,10 @@ as negatives</p>
 as positives</p>
 </dd>
 </dl>
-</div></blockquote>
+</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">dict</p>
 </td>
 </tr>
 </tbody>
@@ -323,23 +349,22 @@ as positives</p>
 
 <dl class="method">
 <dt id="lcc.stars_processing.stars_filter.StarsFilter.learn">
-<code class="descname">learn</code><span class="sig-paren">(</span><em>searched</em>, <em>others</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/stars_filter.html#StarsFilter.learn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.stars_filter.StarsFilter.learn" title="Permalink to this definition">¶</a></dt>
+<code class="descname">learn</code><span class="sig-paren">(</span><em>searched</em>, <em>others</em><span class="sig-paren">)</span><a class="headerlink" href="#lcc.stars_processing.stars_filter.StarsFilter.learn" title="Permalink to this definition">¶</a></dt>
 <dd><p>Train deciders on given sample of <cite>Star</cite> objects</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>searched</strong> : list, tuple</p>
-<blockquote>
-<div><p>Sample of searched group of stars</p>
-</div></blockquote>
-<p><strong>others</strong> : list, tuple</p>
-<blockquote>
-<div><p>Contamination sample of stars</p>
-</div></blockquote>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>searched</strong> (<em>list, tuple</em>) &#8211; Sample of searched group of stars</li>
+<li><strong>others</strong> (<em>list, tuple</em>) &#8211; Contamination sample of stars</li>
+</ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">None</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">None</p>
 </td>
 </tr>
 </tbody>
@@ -348,23 +373,22 @@ as positives</p>
 
 <dl class="method">
 <dt id="lcc.stars_processing.stars_filter.StarsFilter.learnOnCoords">
-<code class="descname">learnOnCoords</code><span class="sig-paren">(</span><em>searched_coords</em>, <em>others_coords</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/stars_processing/stars_filter.html#StarsFilter.learnOnCoords"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.stars_processing.stars_filter.StarsFilter.learnOnCoords" title="Permalink to this definition">¶</a></dt>
+<code class="descname">learnOnCoords</code><span class="sig-paren">(</span><em>searched_coords</em>, <em>others_coords</em><span class="sig-paren">)</span><a class="headerlink" href="#lcc.stars_processing.stars_filter.StarsFilter.learnOnCoords" title="Permalink to this definition">¶</a></dt>
 <dd><p>Train deciders on given sample of coordinates</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>searched_coords</strong> : pandas.DataFram, list, tuple</p>
-<blockquote>
-<div><p>Sample of searched coordinates</p>
-</div></blockquote>
-<p><strong>others_coords</strong> : pandas.DataFram, list, tuple</p>
-<blockquote>
-<div><p>Contamination sample of coordinates</p>
-</div></blockquote>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>searched_coords</strong> (<em>pandas.DataFram, list, tuple</em>) &#8211; Sample of searched coordinates</li>
+<li><strong>others_coords</strong> (<em>pandas.DataFram, list, tuple</em>) &#8211; Contamination sample of coordinates</li>
+</ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">None</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">None</p>
 </td>
 </tr>
 </tbody>
@@ -399,17 +423,13 @@ as positives</p>
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
-  <li><a href="lcc.html">lcc package</a><ul>
-      <li>Previous: <a href="lcc.entities.html" title="previous chapter">lcc.entities package</a></li>
-      <li>Next: <a href="lcc.stars_processing.deciders.html" title="next chapter">lcc.stars_processing.deciders package</a></li>
-  </ul></li>
   </ul></li>
 </ul>
 </div>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="_sources/lcc.stars_processing.rst.txt"
+      <li><a href="_sources/lcc.stars_processing.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
@@ -428,14 +448,14 @@ as positives</p>
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2017, Martin Vo.
+      &copy;2018, Martin Vo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.3</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.9</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
-      <a href="_sources/lcc.stars_processing.rst.txt"
+      <a href="_sources/lcc.stars_processing.txt"
           rel="nofollow">Page source</a>
     </div>
 
