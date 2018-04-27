@@ -1,0 +1,78 @@
+lcc.db_tier.connectors package
+==============================
+
+Submodules
+----------
+
+lcc.db_tier.connectors.asas module
+----------------------------------
+
+.. automodule:: lcc.db_tier.connectors.asas
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+lcc.db_tier.connectors.catalina module
+--------------------------------------
+
+.. automodule:: lcc.db_tier.connectors.catalina
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+lcc.db_tier.connectors.corot module
+-----------------------------------
+
+.. automodule:: lcc.db_tier.connectors.corot
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+lcc.db_tier.connectors.file_manager module
+------------------------------------------
+
+.. automodule:: lcc.db_tier.connectors.file_manager
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+lcc.db_tier.connectors.kepler module
+------------------------------------
+
+.. automodule:: lcc.db_tier.connectors.kepler
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+lcc.db_tier.connectors.macho module
+-----------------------------------
+
+.. automodule:: lcc.db_tier.connectors.macho
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+lcc.db_tier.connectors.ogleII module
+------------------------------------
+
+.. automodule:: lcc.db_tier.connectors.ogleII
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+lcc.db_tier.connectors.ogleIII module
+-------------------------------------
+
+.. automodule:: lcc.db_tier.connectors.ogleIII
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: lcc.db_tier.connectors
+    :members:
+    :undoc-members:
+    :show-inheritance:

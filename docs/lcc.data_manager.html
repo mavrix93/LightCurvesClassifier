@@ -2,11 +2,11 @@
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>lcc.data_manager package &#8212; LightCurvesClassifier 1.0 documentation</title>
+    <title>lcc.data_manager package &#8212; Light Curves Classifier 1.2.3 documentation</title>
     
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,11 +14,10 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '1.0',
+        VERSION:     '1.2.3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
+        HAS_SOURCE:  true
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
@@ -26,8 +25,7 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="lcc.db_tier package" href="lcc.db_tier.html" />
-    <link rel="prev" title="lcc.bin package" href="lcc.bin.html" />
+    <link rel="top" title="Light Curves Classifier 1.2.3 documentation" href="index.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
@@ -52,39 +50,33 @@
 <span id="lcc-data-manager-filter-serializer-module"></span><h2>lcc.data_manager.filter_serializer module<a class="headerlink" href="#module-lcc.data_manager.filter_serializer" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="lcc.data_manager.filter_serializer.FiltersSerializer">
-<em class="property">class </em><code class="descclassname">lcc.data_manager.filter_serializer.</code><code class="descname">FiltersSerializer</code><span class="sig-paren">(</span><em>file_name</em>, <em>path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/data_manager/filter_serializer.html#FiltersSerializer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.data_manager.filter_serializer.FiltersSerializer" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">lcc.data_manager.filter_serializer.</code><code class="descname">FiltersSerializer</code><span class="sig-paren">(</span><em>file_name</em>, <em>path</em><span class="sig-paren">)</span><a class="headerlink" href="#lcc.data_manager.filter_serializer.FiltersSerializer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
 <p>This class is responsible for saving and reconstructing filter
 objects from files</p>
-<p class="rubric">Attributes</p>
-<table border="1" class="docutils">
-<colgroup>
-<col width="21%" />
-<col width="79%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td>file_name</td>
-<td>(str) Name of the filter name</td>
-</tr>
-<tr class="row-even"><td>path</td>
-<td>(str) Path to the filter location</td>
-</tr>
-</tbody>
-</table>
-<p class="rubric">Methods</p>
+<dl class="attribute">
+<dt id="lcc.data_manager.filter_serializer.FiltersSerializer.file_name">
+<code class="descname">file_name</code><a class="headerlink" href="#lcc.data_manager.filter_serializer.FiltersSerializer.file_name" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str</em> &#8211; Name of the filter name</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="lcc.data_manager.filter_serializer.FiltersSerializer.path">
+<code class="descname">path</code><a class="headerlink" href="#lcc.data_manager.filter_serializer.FiltersSerializer.path" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str</em> &#8211; Path to the filter location</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="lcc.data_manager.filter_serializer.FiltersSerializer.loadFilter">
-<code class="descname">loadFilter</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/data_manager/filter_serializer.html#FiltersSerializer.loadFilter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.data_manager.filter_serializer.FiltersSerializer.loadFilter" title="Permalink to this definition">¶</a></dt>
+<code class="descname">loadFilter</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lcc.data_manager.filter_serializer.FiltersSerializer.loadFilter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get stars filter object</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">BaseFilter instance</p>
-<blockquote class="last">
-<div><p>Constructed filter object</p>
-</div></blockquote>
-</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Constructed filter object</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">BaseFilter instance</td>
 </tr>
 </tbody>
 </table>
@@ -92,19 +84,16 @@ objects from files</p>
 
 <dl class="method">
 <dt id="lcc.data_manager.filter_serializer.FiltersSerializer.saveFilter">
-<code class="descname">saveFilter</code><span class="sig-paren">(</span><em>star_filter</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/data_manager/filter_serializer.html#FiltersSerializer.saveFilter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.data_manager.filter_serializer.FiltersSerializer.saveFilter" title="Permalink to this definition">¶</a></dt>
+<code class="descname">saveFilter</code><span class="sig-paren">(</span><em>star_filter</em><span class="sig-paren">)</span><a class="headerlink" href="#lcc.data_manager.filter_serializer.FiltersSerializer.saveFilter" title="Permalink to this definition">¶</a></dt>
 <dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>star_filter</strong> : BaseFilter instance</p>
-<blockquote>
-<div><p>Save object as pickle</p>
-</div></blockquote>
-</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>star_filter</strong> (<em>BaseFilter instance</em>) &#8211; Save object as pickle</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">None</p>
-</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">None</td>
 </tr>
 </tbody>
 </table>
@@ -117,31 +106,24 @@ objects from files</p>
 <span id="lcc-data-manager-package-reader-module"></span><h2>lcc.data_manager.package_reader module<a class="headerlink" href="#module-lcc.data_manager.package_reader" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="lcc.data_manager.package_reader.PackageReader">
-<em class="property">class </em><code class="descclassname">lcc.data_manager.package_reader.</code><code class="descname">PackageReader</code><a class="reference internal" href="_modules/lcc/data_manager/package_reader.html#PackageReader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.data_manager.package_reader.PackageReader" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">lcc.data_manager.package_reader.</code><code class="descname">PackageReader</code><a class="headerlink" href="#lcc.data_manager.package_reader.PackageReader" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
 <p>Class for managing modules and its classes in the package</p>
-<p class="rubric">Attributes</p>
-<table border="1" class="docutils">
-<colgroup>
-<col width="9%" />
-<col width="91%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td>MODULE_EXTENSION</td>
-<td>(iterable) Accepted extensions of module files.</td>
-</tr>
-<tr class="row-even"><td>NAMES</td>
-<td>(dict) Keys are identifiers for path to the package where searched classes are located and base filter which all package classes needs to inherit in order to be accepted.</td>
-</tr>
-<tr class="row-odd"><td>EXCLUDE</td>
-<td>(iterable) File names (first letters of them) which will be excluded.</td>
-</tr>
-</tbody>
-</table>
-<p class="rubric">Methods</p>
+<dl class="attribute">
+<dt id="lcc.data_manager.package_reader.PackageReader.MODULE_EXTENSION">
+<code class="descname">MODULE_EXTENSION</code><a class="headerlink" href="#lcc.data_manager.package_reader.PackageReader.MODULE_EXTENSION" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>iterable</em> &#8211; Accepted extensions of module files.</p>
+</dd></dl>
+
 <dl class="attribute">
 <dt id="lcc.data_manager.package_reader.PackageReader.EXCLUDE">
-<code class="descname">EXCLUDE</code><em class="property"> = ()</em><a class="headerlink" href="#lcc.data_manager.package_reader.PackageReader.EXCLUDE" title="Permalink to this definition">¶</a></dt>
+<code class="descname">EXCLUDE</code><a class="headerlink" href="#lcc.data_manager.package_reader.PackageReader.EXCLUDE" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>iterable</em> &#8211; File names (first letters of them) which will be excluded.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">EXCLUDE</code><em class="property"> = ()</em></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
@@ -151,30 +133,34 @@ objects from files</p>
 
 <dl class="attribute">
 <dt id="lcc.data_manager.package_reader.PackageReader.NAMES">
-<code class="descname">NAMES</code><em class="property"> = {'descriptors': ('lcc/stars_processing/descriptors', &lt;class 'lcc.stars_processing.utilities.base_descriptor.BaseDescriptor'&gt;), 'connectors': ('lcc/db_tier/connectors', &lt;class 'lcc.db_tier.base_query.StarsCatalogue'&gt;), 'deciders': ('lcc/stars_processing/deciders', &lt;class 'lcc.stars_processing.utilities.base_decider.BaseDecider'&gt;), 'unsup_deciders': ('lcc/stars_processing/deciders/unsupervised', &lt;class 'lcc.stars_processing.utilities.base_decider.BaseDecider'&gt;)}</em><a class="headerlink" href="#lcc.data_manager.package_reader.PackageReader.NAMES" title="Permalink to this definition">¶</a></dt>
+<code class="descname">NAMES</code><em class="property"> = {'descriptors': (['lcc/stars_processing/descriptors'], &lt;class 'lcc.stars_processing.utilities.base_descriptor.BaseDescriptor'&gt;), 'connectors': (['lcc/db_tier/connectors'], &lt;class 'lcc.db_tier.base_query.StarsCatalogue'&gt;), 'deciders': (['lcc/stars_processing/deciders'], &lt;class 'lcc.stars_processing.utilities.base_decider.BaseDecider'&gt;), 'unsup_deciders': (['lcc/stars_processing/deciders/unsupervised'], &lt;class 'lcc.stars_processing.utilities.base_decider.BaseDecider'&gt;)}</em><a class="headerlink" href="#lcc.data_manager.package_reader.PackageReader.NAMES" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="lcc.data_manager.package_reader.PackageReader.PACKAGE_PATH">
+<code class="descname">PACKAGE_PATH</code><em class="property"> = '/Users/martinvo/workspace/private2/LightCurvesClassifier/lcc/data_manager/../..'</em><a class="headerlink" href="#lcc.data_manager.package_reader.PackageReader.PACKAGE_PATH" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="classmethod">
+<dt id="lcc.data_manager.package_reader.PackageReader.appendModules">
+<em class="property">classmethod </em><code class="descname">appendModules</code><span class="sig-paren">(</span><em>group_key</em>, <em>path</em><span class="sig-paren">)</span><a class="headerlink" href="#lcc.data_manager.package_reader.PackageReader.appendModules" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="classmethod">
 <dt id="lcc.data_manager.package_reader.PackageReader.getClasses">
-<em class="property">classmethod </em><code class="descname">getClasses</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/data_manager/package_reader.html#PackageReader.getClasses"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.data_manager.package_reader.PackageReader.getClasses" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="descname">getClasses</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#lcc.data_manager.package_reader.PackageReader.getClasses" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get all classes in the package which inherit base classes according
 to <cite>NAME</cite> attribute</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>name</strong> : str</p>
-<blockquote>
-<div><p>Key in <cite>NAME</cite> dictionary to package location and parent class</p>
-</div></blockquote>
-</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>name</strong> (<em>str</em>) &#8211; Key in <cite>NAME</cite> dictionary to package location and parent class</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">list</p>
-<blockquote class="last">
-<div><p>List of all classes in the package which inherit base classes
-according to <cite>NAME</cite> attribute</p>
-</div></blockquote>
-</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">List of all classes in the package which inherit base classes
+according to <cite>NAME</cite> attribute</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list</td>
 </tr>
 </tbody>
 </table>
@@ -182,25 +168,19 @@ according to <cite>NAME</cite> attribute</p>
 
 <dl class="classmethod">
 <dt id="lcc.data_manager.package_reader.PackageReader.getClassesDict">
-<em class="property">classmethod </em><code class="descname">getClassesDict</code><span class="sig-paren">(</span><em>package_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/data_manager/package_reader.html#PackageReader.getClassesDict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.data_manager.package_reader.PackageReader.getClassesDict" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="descname">getClassesDict</code><span class="sig-paren">(</span><em>package_name</em><span class="sig-paren">)</span><a class="headerlink" href="#lcc.data_manager.package_reader.PackageReader.getClassesDict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get dictionary of all classes in the package which inherit base classes
 according to <cite>NAME</cite> attribute</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>package_name</strong> : str</p>
-<blockquote>
-<div><p>Key in <cite>NAME</cite> dictionary to package location and parent class</p>
-</div></blockquote>
-</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>package_name</strong> (<em>str</em>) &#8211; Key in <cite>NAME</cite> dictionary to package location and parent class</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">dict</p>
-<blockquote class="last">
-<div><p>Dictionary of all classes in the package which inherit base classes
-according to <cite>NAME</cite> attribute</p>
-</div></blockquote>
-</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Dictionary of all classes in the package which inherit base classes
+according to <cite>NAME</cite> attribute</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">dict</td>
 </tr>
 </tbody>
 </table>
@@ -208,22 +188,16 @@ according to <cite>NAME</cite> attribute</p>
 
 <dl class="classmethod">
 <dt id="lcc.data_manager.package_reader.PackageReader.getModuleClasses">
-<em class="property">classmethod </em><code class="descname">getModuleClasses</code><span class="sig-paren">(</span><em>module</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/data_manager/package_reader.html#PackageReader.getModuleClasses"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.data_manager.package_reader.PackageReader.getModuleClasses" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="descname">getModuleClasses</code><span class="sig-paren">(</span><em>module</em><span class="sig-paren">)</span><a class="headerlink" href="#lcc.data_manager.package_reader.PackageReader.getModuleClasses" title="Permalink to this definition">¶</a></dt>
 <dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>module</strong> : module</p>
-<blockquote>
-<div><p>Module object</p>
-</div></blockquote>
-</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>module</strong> (<em>module</em>) &#8211; Module object</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">list</p>
-<blockquote class="last">
-<div><p>List of classes in the module</p>
-</div></blockquote>
-</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">List of classes in the module</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list</td>
 </tr>
 </tbody>
 </table>
@@ -231,27 +205,26 @@ according to <cite>NAME</cite> attribute</p>
 
 <dl class="classmethod">
 <dt id="lcc.data_manager.package_reader.PackageReader.getPackageContents">
-<em class="property">classmethod </em><code class="descname">getPackageContents</code><span class="sig-paren">(</span><em>package_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/data_manager/package_reader.html#PackageReader.getPackageContents"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.data_manager.package_reader.PackageReader.getPackageContents" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="descname">getPackageContents</code><span class="sig-paren">(</span><em>package_name</em><span class="sig-paren">)</span><a class="headerlink" href="#lcc.data_manager.package_reader.PackageReader.getPackageContents" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get all modules in the package</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>package_name</strong> : str</p>
-<blockquote>
-<div><p>Name of the target package specified in <cite>NAMES</cite> attribute</p>
-</div></blockquote>
-</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>package_name</strong> (<em>str</em>) &#8211; Name of the target package specified in <cite>NAMES</cite> attribute</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">set</p>
-<blockquote class="last">
-<div><p>Set of module names in the package</p>
-</div></blockquote>
-</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Set of module names in the package</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">set</td>
 </tr>
 </tbody>
 </table>
 </dd></dl>
+
+<dl class="classmethod">
+<dt id="lcc.data_manager.package_reader.PackageReader.getSamplePath">
+<em class="property">classmethod </em><code class="descname">getSamplePath</code><span class="sig-paren">(</span><em>sample_name='qso'</em><span class="sig-paren">)</span><a class="headerlink" href="#lcc.data_manager.package_reader.PackageReader.getSamplePath" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 </dd></dl>
 
@@ -260,17 +233,17 @@ according to <cite>NAME</cite> attribute</p>
 <span id="lcc-data-manager-prepare-package-module"></span><h2>lcc.data_manager.prepare_package module<a class="headerlink" href="#module-lcc.data_manager.prepare_package" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="lcc.data_manager.prepare_package.prepare_run">
-<code class="descclassname">lcc.data_manager.prepare_package.</code><code class="descname">prepare_run</code><span class="sig-paren">(</span><em>directory</em>, <em>run_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/data_manager/prepare_package.html#prepare_run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.data_manager.prepare_package.prepare_run" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">lcc.data_manager.prepare_package.</code><code class="descname">prepare_run</code><span class="sig-paren">(</span><em>directory</em>, <em>run_name</em><span class="sig-paren">)</span><a class="headerlink" href="#lcc.data_manager.prepare_package.prepare_run" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="function">
 <dt id="lcc.data_manager.prepare_package.rec">
-<code class="descclassname">lcc.data_manager.prepare_package.</code><code class="descname">rec</code><span class="sig-paren">(</span><em>directory</em>, <em>current_path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/data_manager/prepare_package.html#rec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.data_manager.prepare_package.rec" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">lcc.data_manager.prepare_package.</code><code class="descname">rec</code><span class="sig-paren">(</span><em>directory</em>, <em>current_path</em><span class="sig-paren">)</span><a class="headerlink" href="#lcc.data_manager.prepare_package.rec" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="function">
 <dt id="lcc.data_manager.prepare_package.tree">
-<code class="descclassname">lcc.data_manager.prepare_package.</code><code class="descname">tree</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/data_manager/prepare_package.html#tree"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.data_manager.prepare_package.tree" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">lcc.data_manager.prepare_package.</code><code class="descname">tree</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lcc.data_manager.prepare_package.tree" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </div>
@@ -278,26 +251,22 @@ according to <cite>NAME</cite> attribute</p>
 <span id="lcc-data-manager-status-resolver-module"></span><h2>lcc.data_manager.status_resolver module<a class="headerlink" href="#module-lcc.data_manager.status_resolver" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="lcc.data_manager.status_resolver.StatusResolver">
-<em class="property">class </em><code class="descclassname">lcc.data_manager.status_resolver.</code><code class="descname">StatusResolver</code><span class="sig-paren">(</span><em>status_file_path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/data_manager/status_resolver.html#StatusResolver"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.data_manager.status_resolver.StatusResolver" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">lcc.data_manager.status_resolver.</code><code class="descname">StatusResolver</code><span class="sig-paren">(</span><em>status_file_path</em><span class="sig-paren">)</span><a class="headerlink" href="#lcc.data_manager.status_resolver.StatusResolver" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
 <p>This class is responsible for status files generated thru systematic searches
 into databases and for reading files of planned queries.</p>
-<p class="rubric">Attributes</p>
-<table border="1" class="docutils">
-<colgroup>
-<col width="29%" />
-<col width="71%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td>status_header</td>
-<td>(list) Column names of status file</td>
-</tr>
-<tr class="row-even"><td>status_queries</td>
-<td>(list) Rows of status file</td>
-</tr>
-</tbody>
-</table>
-<p class="rubric">Methods</p>
+<dl class="attribute">
+<dt id="lcc.data_manager.status_resolver.StatusResolver.status_header">
+<code class="descname">status_header</code><a class="headerlink" href="#lcc.data_manager.status_resolver.StatusResolver.status_header" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>list</em> &#8211; Column names of status file</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="lcc.data_manager.status_resolver.StatusResolver.status_queries">
+<code class="descname">status_queries</code><a class="headerlink" href="#lcc.data_manager.status_resolver.StatusResolver.status_queries" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>list</em> &#8211; Rows of status file</p>
+</dd></dl>
+
 <dl class="attribute">
 <dt id="lcc.data_manager.status_resolver.StatusResolver.DELIMITER">
 <code class="descname">DELIMITER</code><em class="property"> = ';'</em><a class="headerlink" href="#lcc.data_manager.status_resolver.StatusResolver.DELIMITER" title="Permalink to this definition">¶</a></dt>
@@ -310,17 +279,15 @@ into databases and for reading files of planned queries.</p>
 
 <dl class="method">
 <dt id="lcc.data_manager.status_resolver.StatusResolver.getQueries">
-<code class="descname">getQueries</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/data_manager/status_resolver.html#StatusResolver.getQueries"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.data_manager.status_resolver.StatusResolver.getQueries" title="Permalink to this definition">¶</a></dt>
+<code class="descname">getQueries</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lcc.data_manager.status_resolver.StatusResolver.getQueries" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get status file as list of queries</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">list</p>
-<blockquote class="last">
-<div><p>List of dictionary queries</p>
-</div></blockquote>
-</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">List of dictionary queries</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">list</td>
 </tr>
 </tbody>
 </table>
@@ -328,47 +295,49 @@ into databases and for reading files of planned queries.</p>
 
 <dl class="classmethod">
 <dt id="lcc.data_manager.status_resolver.StatusResolver.getUnsearchedQuery">
-<em class="property">classmethod </em><code class="descname">getUnsearchedQuery</code><span class="sig-paren">(</span><em>search_plan_file</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/data_manager/status_resolver.html#StatusResolver.getUnsearchedQuery"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.data_manager.status_resolver.StatusResolver.getUnsearchedQuery" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="descname">getUnsearchedQuery</code><span class="sig-paren">(</span><em>search_plan_file</em><span class="sig-paren">)</span><a class="headerlink" href="#lcc.data_manager.status_resolver.StatusResolver.getUnsearchedQuery" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return list of queries which have not been queried yet.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>Search_plan_file</strong> : str</p>
-<blockquote>
-<div><p>Path to the file of planned queries</p>
-</div></blockquote>
-</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>Search_plan_file</strong> (<em>str</em>) &#8211; Path to the file of planned queries</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">list</p>
-<blockquote class="last">
-<div><p>List of query dictionaries</p>
-</div></blockquote>
-</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">List of query dictionaries</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list</td>
 </tr>
 </tbody>
 </table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">FORMAT OF PLAN QUERIES FILE is the same as status file except 3 last
+columns (without found, filtered and passed)</p>
+</div>
 </dd></dl>
 
 <dl class="method">
 <dt id="lcc.data_manager.status_resolver.StatusResolver.getWithStatus">
-<code class="descname">getWithStatus</code><span class="sig-paren">(</span><em>stat</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/data_manager/status_resolver.html#StatusResolver.getWithStatus"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.data_manager.status_resolver.StatusResolver.getWithStatus" title="Permalink to this definition">¶</a></dt>
+<code class="descname">getWithStatus</code><span class="sig-paren">(</span><em>stat</em><span class="sig-paren">)</span><a class="headerlink" href="#lcc.data_manager.status_resolver.StatusResolver.getWithStatus" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get queries with given query status</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>stat</strong> : dict</p>
-<blockquote>
-<div><p>Dictionary with status column name and its value</p>
-</div></blockquote>
-</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>stat</strong> (<em>dict</em>) &#8211; Dictionary with status column name and its value</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">list</p>
-<blockquote class="last">
-<div><p>Returns all queries with desired status</p>
-</div></blockquote>
-</td>
+</tbody>
+</table>
+<p class="rubric">Example</p>
+<p>getStatus({&#8220;passed&#8221; : True}) &#8211;&gt; [{&#8220;field&#8221;:1,&#8221;starid&#8221;:1, &#8220;target&#8221;:&#8221;lmc&#8221;}, .. , {...}]</p>
+<p>This example generates all stars which passed thru filtering</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Returns all queries with desired status</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">list</td>
 </tr>
 </tbody>
 </table>
@@ -376,26 +345,22 @@ into databases and for reading files of planned queries.</p>
 
 <dl class="staticmethod">
 <dt id="lcc.data_manager.status_resolver.StatusResolver.get_with_status">
-<em class="property">static </em><code class="descname">get_with_status</code><span class="sig-paren">(</span><em>queries</em>, <em>stat={'passed': True}</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/data_manager/status_resolver.html#StatusResolver.get_with_status"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.data_manager.status_resolver.StatusResolver.get_with_status" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="descname">get_with_status</code><span class="sig-paren">(</span><em>queries</em>, <em>stat={'passed': True}</em><span class="sig-paren">)</span><a class="headerlink" href="#lcc.data_manager.status_resolver.StatusResolver.get_with_status" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return all queries with desired status</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>stat</strong> : dict</p>
-<blockquote>
-<div><p>Dictionary with status column name and its value</p>
-</div></blockquote>
-<p><strong>queries</strong> : list</p>
-<blockquote>
-<div><p>List of query dictionaries</p>
-</div></blockquote>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>stat</strong> (<em>dict</em>) &#8211; Dictionary with status column name and its value</li>
+<li><strong>queries</strong> (<em>list</em>) &#8211; List of query dictionaries</li>
+</ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">list</p>
-<blockquote class="last">
-<div><p>Returns all queries with desired status</p>
-</div></blockquote>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Returns all queries with desired status</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list</p>
 </td>
 </tr>
 </tbody>
@@ -404,20 +369,17 @@ into databases and for reading files of planned queries.</p>
 
 <dl class="classmethod">
 <dt id="lcc.data_manager.status_resolver.StatusResolver.save_lists_query">
-<em class="property">classmethod </em><code class="descname">save_lists_query</code><span class="sig-paren">(</span><em>query=[]</em>, <em>fi_name='query_file.txt'</em>, <em>PATH='.'</em>, <em>DELIM=None</em>, <em>overwrite=False</em>, <em>header=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/data_manager/status_resolver.html#StatusResolver.save_lists_query"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.data_manager.status_resolver.StatusResolver.save_lists_query" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="descname">save_lists_query</code><span class="sig-paren">(</span><em>query=[]</em>, <em>fi_name='query_file.txt'</em>, <em>PATH='.'</em>, <em>DELIM=None</em>, <em>overwrite=False</em>, <em>header=None</em><span class="sig-paren">)</span><a class="headerlink" href="#lcc.data_manager.status_resolver.StatusResolver.save_lists_query" title="Permalink to this definition">¶</a></dt>
 <dd><p>Save queries into the file which can be loaded for another query</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>query</strong> : list</p>
-<blockquote>
-<div><p>List of lists which contains</p>
-</div></blockquote>
-</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>query</strong> (<em>list</em>) &#8211; List of lists which contains</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">None</p>
-</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">None</td>
 </tr>
 </tbody>
 </table>
@@ -425,20 +387,17 @@ into databases and for reading files of planned queries.</p>
 
 <dl class="classmethod">
 <dt id="lcc.data_manager.status_resolver.StatusResolver.save_query">
-<em class="property">classmethod </em><code class="descname">save_query</code><span class="sig-paren">(</span><em>query</em>, <em>fi_name='query_file.txt'</em>, <em>PATH='.'</em>, <em>DELIM=None</em>, <em>overwrite=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lcc/data_manager/status_resolver.html#StatusResolver.save_query"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lcc.data_manager.status_resolver.StatusResolver.save_query" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="descname">save_query</code><span class="sig-paren">(</span><em>query</em>, <em>fi_name='query_file.txt'</em>, <em>PATH='.'</em>, <em>DELIM=None</em>, <em>overwrite=False</em><span class="sig-paren">)</span><a class="headerlink" href="#lcc.data_manager.status_resolver.StatusResolver.save_query" title="Permalink to this definition">¶</a></dt>
 <dd><p>Save queries into the file which can be loaded for another query</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>query</strong> : list</p>
-<blockquote>
-<div><p>List of dictionaries which contains query params</p>
-</div></blockquote>
-</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>query</strong> (<em>list</em>) &#8211; List of dictionaries which contains query params</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">None</p>
-</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">None</td>
 </tr>
 </tbody>
 </table>
@@ -474,17 +433,13 @@ into databases and for reading files of planned queries.</p>
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
-  <li><a href="lcc.html">lcc package</a><ul>
-      <li>Previous: <a href="lcc.bin.html" title="previous chapter">lcc.bin package</a></li>
-      <li>Next: <a href="lcc.db_tier.html" title="next chapter">lcc.db_tier package</a></li>
-  </ul></li>
   </ul></li>
 </ul>
 </div>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="_sources/lcc.data_manager.rst.txt"
+      <li><a href="_sources/lcc.data_manager.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
@@ -503,14 +458,14 @@ into databases and for reading files of planned queries.</p>
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2017, Martin Vo.
+      &copy;2018, Martin Vo.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.3</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.9</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
-      <a href="_sources/lcc.data_manager.rst.txt"
+      <a href="_sources/lcc.data_manager.txt"
           rel="nofollow">Page source</a>
     </div>
 
