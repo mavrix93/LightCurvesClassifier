@@ -2,13 +2,13 @@ import re
 import warnings
 
 import numpy as np
-import requests
 from astropy.coordinates.sky_coordinate import SkyCoord
 from bs4 import BeautifulSoup
 
 from lcc.db_tier.base_query import LightCurvesDb
 from lcc.entities.exceptions import QueryInputError
 from lcc.entities.star import Star
+from lcc.utils.commons import ProxyRotatingSession
 
 
 class OgleII(LightCurvesDb):
@@ -153,7 +153,7 @@ class OgleII(LightCurvesDb):
                 cparams[key] = value
         # Url for query
         url = "%s/query.php?qtype=%s&first=1" % (self.ROOT, query.get("db"))
-        result = requests.post(url, cparams)
+        result = ProxyRotatingSession().post(url, cparams)
         return self._parseResult(result, lc=load_lc)
 
     def _parseQueries(self, queries):
@@ -300,12 +300,12 @@ class OgleII(LightCurvesDb):
         }
 
         _url = "%s/getobj.php" % self.ROOT
-        requests.post(_url, params)
+        ProxyRotatingSession().post(_url, params)
 
         url = "%s/data/%s/%s_i_%s.dat" % (self.ROOT,
                                           lc_tmp, field.lower(), starid)
         try:
-            result = requests.get(url)
+            result = ProxyRotatingSession().get(url)
 
             if result.status_code == 200:
                 star_curve = []

@@ -23,6 +23,9 @@ for (i=0; i < {{ lcs|length }}; i++){
 var layout = {
   title: "Light Curve",
   autosize: true,
+    font: {
+    size: 25
+  },
   width: 800,
   height: 600,
   margin: {

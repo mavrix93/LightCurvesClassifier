@@ -1,14 +1,15 @@
 """
 There are common functions and decorators mainly for query classes
 """
-from functools import wraps
 import functools
+import random
+from functools import wraps
 
-from lcc.entities.exceptions import MandatoryKeyInQueryDictIsMissing,\
+import requests
+from bs4 import BeautifulSoup
+
+from lcc.entities.exceptions import MandatoryKeyInQueryDictIsMissing, \
     ArgumentValidationError, InvalidArgumentNumberError, InvalidReturnType
-import sys
-import time
-import threading
 
 
 def check_attribute(attribute, cond, if_not=False):
@@ -251,3 +252,62 @@ def accepts(*accepted_arg_types):
             return validate_function(*to_return_args)
         return decorator_wrapper
     return accept_decorator
+
+
+class ProxyRotatingSession:
+    PROXIES_URL = "https://www.sslproxies.org/"
+
+    def __init__(self, first_proxy=False, max_tries=10, catch_status_codes=None):
+        self.first_proxy = first_proxy
+        self.max_tries = max_tries
+        self.catch_status_codes = catch_status_codes or [403]
+
+        self.tries_counter = 0
+
+    def get(self, *args, **kwargs):
+        return self._make_request("get", *args, **kwargs)
+
+    def post(self, *args, **kwargs):
+        return self._make_request("post", *args, **kwargs)
+
+    def _make_request(self, request_type, *args, **kwargs):
+        if self.tries_counter < self.max_tries:
+            session = requests.Session() if not self.first_proxy and self.tries_counter == 0 else self.get_proxy_session()
+            response = getattr(session, request_type)(*args, **kwargs)
+
+            if response.status_code in self.catch_status_codes:
+                self.tries_counter += 1
+                self.get(*args, **kwargs)
+
+            return response
+        else:
+            raise requests.exceptions.RequestException("Maximum number of retries were reached")
+
+    def get_proxy_session(self):
+        s = requests.Session()
+        s.proxies = self.get_proxy()
+        return s
+
+    def get_proxies(self):
+        proxies = []
+        proxies_doc = requests.get(self.PROXIES_URL)
+
+        soup = BeautifulSoup(proxies_doc.text, 'html.parser')
+        proxies_table = soup.find(id='proxylisttable')
+
+        for row in proxies_table.tbody.find_all('tr'):
+            proxies.append({
+                'ip': row.find_all('td')[0].string,
+                'port': row.find_all('td')[1].string
+            })
+        return proxies
+
+    def get_proxy(self):
+        proxy = self._get_proxy()
+
+        return {'http': "http://{}:{}".format(proxy["ip"], proxy["port"]),
+                "https": "https://{}:{}".format(proxy["ip"], proxy["port"])}
+
+    def _get_proxy(self):
+        return random.choice(self.get_proxies())
+

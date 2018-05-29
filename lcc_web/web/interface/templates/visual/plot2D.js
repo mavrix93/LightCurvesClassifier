@@ -25,7 +25,7 @@ for (i=0; i < traces.length; i++){
       opacity: 0.9,
       marker: {
          color: colors[i],
-         size:10,
+         size:14,
       },
     };
 
@@ -53,7 +53,10 @@ for (i=0; i < traces.length; i++){
   
 var layout = {
   title: "{{ probab_plot_title }}",
-  autosize: true,
+  autosize: false,
+    font: {
+    size: 25
+  },
   margin: {
     l: 65,
     r: 50,
