@@ -2,6 +2,10 @@
 There are common functions and decorators mainly for query classes
 """
 import functools
+<<<<<<< HEAD
+=======
+import logging
+>>>>>>> 712d124... Proxy requests to prevent blacklisting
 import random
 from functools import wraps
 
@@ -271,14 +275,15 @@ class ProxyRotatingSession:
         return self._make_request("post", *args, **kwargs)
 
     def _make_request(self, request_type, *args, **kwargs):
+        logging.info("Making a {} request with counter {}".format(request_type, self.tries_counter))
         if self.tries_counter < self.max_tries:
             session = requests.Session() if not self.first_proxy and self.tries_counter == 0 else self.get_proxy_session()
             response = getattr(session, request_type)(*args, **kwargs)
 
+            logging.info("Got status code {}".format(response.status_code))
             if response.status_code in self.catch_status_codes:
                 self.tries_counter += 1
-                self.get(*args, **kwargs)
-
+                return getattr(self, request_type)(*args, **kwargs)
             return response
         else:
             raise requests.exceptions.RequestException("Maximum number of retries were reached")
@@ -304,7 +309,7 @@ class ProxyRotatingSession:
 
     def get_proxy(self):
         proxy = self._get_proxy()
-
+        logging.info("Using proxy: {}".format(proxy))
         return {'http': "http://{}:{}".format(proxy["ip"], proxy["port"]),
                 "https": "https://{}:{}".format(proxy["ip"], proxy["port"])}
 
