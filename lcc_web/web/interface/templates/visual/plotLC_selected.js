@@ -34,6 +34,9 @@ function plotSelected(id, group=0, len=0){
     var layout = {
       title: labels[iid],
       autosize: true,
+        font: {
+    size: 25
+  },
       margin: {
         l: 65,
         r: 50,
