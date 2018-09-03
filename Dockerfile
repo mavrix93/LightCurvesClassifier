@@ -15,8 +15,8 @@ RUN apt-get update && apt-get -y install redis-server
 RUN apt-get -y install libfreetype6-dev libpng12-dev libxft-dev libblas-dev liblapack-dev libatlas-base-dev gfortran \
     nginx dialog net-tools libxml2-dev libxslt1-dev python-lxml
 
-ENV DOCKYARD_SRVHOME=/srv \
-    DOCKYARD_SRVPROJ=$DOCKYARD_SRVHOME/web \
+ENV DOCKYARD_SRVHOME=/srv
+ENV DOCKYARD_SRVPROJ=$DOCKYARD_SRVHOME/web \
     DOCKYARD_SRVDATA=$DOCKYARD_SRVHOME/data \
     DOCKYARD_SRVSAMPLE=$DOCKYARD_SRVHOME/sample_data \
     DOCKYARD_SRVLOGS=$DOCKYARD_SRVHOME/logs \
