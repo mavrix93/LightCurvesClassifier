@@ -3,7 +3,7 @@ keras
 numpy
 scipy
 matplotlib
-django==1.11.1
+django==1.11.28
 django-graphos
 pandas
 scikit-learn
