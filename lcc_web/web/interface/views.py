@@ -2,7 +2,10 @@ import glob
 import os
 import shutil
 
-import pandas as pd
+try:
+    import pandas as pd
+except Exception:
+    pd = None
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -10,28 +13,28 @@ from django.contrib.auth.forms import UserCreationForm
 from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.shortcuts import render
-from django.shortcuts import render_to_response
-from django.template import RequestContext
 
 
 from interface.forms import LoginForm
 from interface.models import DbQuery
 from interface.models import StarsFilter
 
-pd.set_option('display.max_colwidth', -1)
+if pd is not None:
+    try:
+        pd.set_option('display.max_colwidth', -1)
+    except Exception:
+        pass
 
 
 # TODO
 def handler404(request):
-    response = render_to_response('interface/404.html', {},
-                                  context_instance=RequestContext(request))
+    response = render(request, 'interface/404.html', {})
     response.status_code = 404
     return response
 
 
 def handler500(request):
-    response = render_to_response('interface/500.html', {},
-                                  context_instance=RequestContext(request))
+    response = render(request, 'interface/500.html', {})
     response.status_code = 500
     return response
 
@@ -119,7 +122,13 @@ def guide(request):
 
 
 def show_logs(request):
-    if request.user.is_authenticated():
+    try:
+        is_auth = request.user.is_authenticated
+        if callable(is_auth):
+            is_auth = is_auth()
+    except Exception:
+        is_auth = False
+    if is_auth:
         groups = [g.name for g in request.user.groups.all()]
         if "admin_gr" in groups:
             log_file = request.GET.get('name')

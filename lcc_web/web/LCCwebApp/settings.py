@@ -85,7 +85,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'interface',
-    'graphos',
 ]
 
 MIDDLEWARE = [
@@ -120,12 +119,16 @@ WSGI_APPLICATION = 'LCCwebApp.wsgi.application'
 
 
 # Database
-# https://docs.djangoproject.com/en/1.10/ref/settings/#databases
+# Provide sane defaults when DOCKYARD_* env vars are not set
+_DEFAULT_DATA_DIR = os.environ.get(
+    "DOCKYARD_SRVDATA",
+    os.path.normpath(os.path.join(os.path.dirname(BASE_DIR), "data"))
+)
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(os.environ["DOCKYARD_SRVDATA"], 'db.sqlite3'),
+        'NAME': os.path.join(_DEFAULT_DATA_DIR, 'db.sqlite3'),
     }
 }
 
@@ -170,12 +173,21 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 
+_DEFAULT_SAMPLE_DIR = os.environ.get(
+    "DOCKYARD_SRVSAMPLE",
+    os.path.normpath(os.path.join(os.path.dirname(BASE_DIR), "sample_data"))
+)
+_DEFAULT_STATIC_ROOT = os.environ.get(
+    "DOCKYARD_SRVSTATIC",
+    os.path.normpath(os.path.join(BASE_DIR, "static_collected"))
+)
+
 # TODO: FTP server
-MEDIA_ROOT = os.environ["DOCKYARD_SRVDATA"]
+MEDIA_ROOT = _DEFAULT_DATA_DIR
 
-TEST_SAMPLE = os.environ["DOCKYARD_SRVSAMPLE"]
+TEST_SAMPLE = _DEFAULT_SAMPLE_DIR
 
-STATIC_ROOT = os.environ["DOCKYARD_SRVSTATIC"]
+STATIC_ROOT = _DEFAULT_STATIC_ROOT
 # STATIC_URL = os.path.join(BASE_DIR, "interface", "static/")
 STATIC_URL = "/static/"
 if os.environ.get('DOCKYARD_APP_CONTEXT') is not None:
