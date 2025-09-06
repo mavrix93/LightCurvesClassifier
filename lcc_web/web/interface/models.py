@@ -8,7 +8,7 @@ import json
 
 class StarsFilter(models.Model):
     id = models.AutoField(primary_key=True)
-    user = models.ForeignKey('auth.User')
+    user = models.ForeignKey('auth.User', on_delete=models.CASCADE)
     status = models.CharField(default="Not started", max_length=15)
     start_date = models.DateTimeField(
         default=timezone.now)
@@ -19,7 +19,7 @@ class StarsFilter(models.Model):
 
 class DbQuery(models.Model):
     id = models.AutoField(primary_key=True)
-    user = models.ForeignKey('auth.User')
+    user = models.ForeignKey('auth.User', on_delete=models.CASCADE)
     status = models.CharField(default="Not started", max_length=15)
     start_date = models.DateTimeField(
         default=timezone.now)
